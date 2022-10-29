@@ -2237,6 +2237,6 @@ public class MainWindow extends JFrame {
 	}
 	
 	private Icon getIcon(String name) {
-		return new ImageIcon(getClass().getResource(Options.getIconPath(name)));
+		return new ImageIcon(getClass().getResource(Options.getIconPathStr(name)));
 	}
 }

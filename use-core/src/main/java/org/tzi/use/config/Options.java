@@ -116,8 +116,13 @@ public class Options {
      */
     public static Path homeDir = null;
 
-    public static String getIconPath(String iconName) {
+    public static String getIconPathStr(String iconName) {
         return "/images/" + iconName;
+    }
+    
+    public static Path getIconPath(String iconName) {
+    	Path iconDir = homeDir.resolve("images");
+    	return iconDir.resolve(iconName).toAbsolutePath();
     }
 
     public static boolean compileOnly = false;
