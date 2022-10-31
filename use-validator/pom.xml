@@ -1,8 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>useKodkodPlugin</groupId>
-  <artifactId>useKodkodPlugin</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <parent>
+        <artifactId>use</artifactId>
+        <groupId>org.tzi.use</groupId>
+        <version>7.1.0</version>
+    </parent>   
+    <modelVersion>4.0.0</modelVersion>
+    
+  <groupId>use-validator</groupId>
+  <artifactId>use-validator</artifactId>
+  <version>0.0.1</version>
   <dependencies>
   	<dependency>
      	<groupId>com.google.guava</groupId>

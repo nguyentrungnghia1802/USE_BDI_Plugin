@@ -21,7 +21,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/kodkod.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/use"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/use-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/use-gui"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">

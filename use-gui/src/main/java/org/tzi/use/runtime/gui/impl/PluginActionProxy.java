@@ -34,7 +34,7 @@ public class PluginActionProxy extends PluginAction {
 
 	private static ImageIcon createImageIcon(
 			IPluginActionDescriptor pluginActionDescriptor) {
-		String fallBackImage = Options.getIconPath("New.gif").toString();
+		String fallBackImage = Options.getIconPathStr("New.gif").toString();
 		URL imageUrl = null;
 		String urlString = "jar:"
 			+ pluginActionDescriptor.getParent().getPluginLocation()
