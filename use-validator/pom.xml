@@ -9,6 +9,7 @@
   <groupId>use-validator</groupId>
   <artifactId>use-validator</artifactId>
   <version>0.0.1</version>
+  
   <dependencies>
   	<dependency>
      	<groupId>com.google.guava</groupId>
@@ -51,6 +52,29 @@
     	<artifactId>org.sat4j.core</artifactId>
     	<version>2.3.1</version>
 	</dependency>
+
+	<dependency>
+		<groupId>kodkod</groupId>
+		<artifactId>kodkod</artifactId>
+		<version>1.0</version>
+		<scope>system</scope>
+		<systemPath>D:\hanhdd\workspace.use\use\use-validator/lib/kodkod.jar</systemPath>
+	</dependency>
+	
+	 <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        
+    <!-- https://mvnrepository.com/artifact/org.choco-solver/choco-solver -->
+	<dependency>
+    	<groupId>org.choco-solver</groupId>
+    	<artifactId>choco-solver</artifactId>
+    	<version>4.10.2</version>
+	</dependency>
+        
 	
   </dependencies>
   <build>
