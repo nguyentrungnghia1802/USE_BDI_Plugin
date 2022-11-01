@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE frsl:FrslModel [
+<!ENTITY _0 "http://www.eclipse.org/ocl/2015/Library.oclas">
+]>
+<frsl:FrslModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:frsl="http://www.xtext.org/sme/FRSL"
+    xmlns:pivot="http://www.eclipse.org/ocl/2015/Pivot" xsi:schemaLocation="http://www.xtext.org/sme/FRSL java://org.eclipse.sme.frsl.FrslPackage http://www.eclipse.org/ocl/2015/Pivot java://org.eclipse.ocl.pivot.PivotPackage"
+    xmi:id="AAAAA" name="demo.frsl" externalURI="platform:/resource/demo/demo.frsl" xmiidVersion="1">
+  <ownedPackages xmi:id="v674z" name="posModel">
+    <ownedClasses xmi:id="kfoXp" name="Ticket" superClasses="#tXHEX">
+      <ownedProperties xmi:id="dJOlx" name="value" type="pivot:PrimitiveType &_0;#tYtCd"/>
+      <ownedProperties xmi:id="KISkk" name="isSold" type="pivot:PrimitiveType &_0;#XEMMs"/>
+      <ownedProperties xmi:id="KDdCP" name="customer" type="#2SRD8" opposite="#C2F+4"/>
+      <ownedProperties xmi:id="TTuiz" name="TakeTicket" type="#NQzY+" isImplicit="true" opposite="#Dn2HA"/>
+    </ownedClasses>
+    <ownedClasses xmi:id="2SRD8" name="Customer" superClasses="#tXHEX">
+      <ownedProperties xmi:id="2MBRz" name="money" type="pivot:PrimitiveType &_0;#tYtCd"/>
+      <ownedProperties xmi:id="C2F+4" name="ticket" type="#kfoXp" opposite="#KDdCP"/>
+      <ownedProperties xmi:id="bghQf" name="TakeTicket" type="#NQzY+" isImplicit="true" opposite="#V6HWY"/>
+    </ownedClasses>
+    <ownedClasses xmi:id="tXHEX" name="_DomainClass" superClasses="&_0;#zfDWR">
+      <ownedProperties xmi:id="mgWT+" name="isProblDom" type="pivot:PrimitiveType &_0;#XEMMs"/>
+    </ownedClasses>
+    <ownedClasses xsi:type="pivot:AssociationClass" xmi:id=",JFTL" name="_Tracks" superClasses="&_0;#zfDWR">
+      <ownedProperties xmi:id="brJVA" name="problObj" type="#tXHEX"/>
+      <ownedProperties xmi:id="OkT1C" name="swObj" type="#tXHEX"/>
+    </ownedClasses>
+    <ownedClasses xsi:type="pivot:AssociationClass" xmi:id="LdNWJ" name="TakeTicket" superClasses="#tXHEX">
+      <ownedProperties xmi:id="Dn2HA" name="ticket" isRequired="false" type="#kfoXp" opposite="#V6HWY"/>
+      <ownedProperties xmi:id="V6HWY" name="customer" isRequired="false" type="#2SRD8"/>
+    </ownedClasses>
+  </ownedPackages>
+  <ownedPackages xmi:id="xajEA" name="usecase">
+    <ownedClasses xmi:id="En0Ez" name="BuyTicket" superClasses="&_0;#zfDWR">
+      <ownedOperations xmi:id="U1cJS" name="enter_BuyTicket" type="pivot:PrimitiveType &_0;#XEMMs">
+        <ownedPreconditions xmi:id="P2KQg" name="enter_BuyTicket_post1">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="customer.money>0">
+            <ownedBody xsi:type="pivot:OperationCallExp" name=">" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#5+qvY">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#3rjVz"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:IntegerLiteralExp" type="pivot:PrimitiveType &_0;#tYtCd" integerSymbol="0"/>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="3rjVz" name="self" type="#En0Ez"/>
+          </ownedSpecification>
+        </ownedPreconditions>
+        <ownedPreconditions xmi:id="Q2KQg" name="enter_BuyTicket_post2">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="ticket.value>0">
+            <ownedBody xsi:type="pivot:OperationCallExp" name=">" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#5+qvY">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="value" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#dJOlx">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="ticket" type="#kfoXp" referredProperty="#YZfus">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#AMiZz"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:IntegerLiteralExp" type="pivot:PrimitiveType &_0;#tYtCd" integerSymbol="0"/>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="AMiZz" name="self" type="#En0Ez"/>
+          </ownedSpecification>
+        </ownedPreconditions>
+        <ownedPreconditions xmi:id="R2KQg" name="enter_BuyTicket_post3">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="ticket.isSold=false">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="=" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#2dcxV">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="isSold" type="pivot:PrimitiveType &_0;#XEMMs" referredProperty="#KISkk">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="ticket" type="#kfoXp" referredProperty="#YZfus">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#Jsgdz"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:BooleanLiteralExp" type="pivot:PrimitiveType &_0;#XEMMs" booleanSymbol="false"/>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="Jsgdz" name="self" type="#En0Ez"/>
+          </ownedSpecification>
+        </ownedPreconditions>
+      </ownedOperations>
+      <ownedOperations xmi:id="aAOZw" name="exit_BuyTicket" type="pivot:PrimitiveType &_0;#XEMMs"/>
+      <ownedOperations xmi:id="EE2RD" name="step1_actor" type="pivot:PrimitiveType &_0;#XEMMs">
+        <ownedPostconditions xmi:id="yIbav" name="step1_actor_post1">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="customer.money=customer.money@pre">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="=" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#UJEtV">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#yyBit"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" isPre="true" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#yyBit"/>
+                </ownedSource>
+              </ownedArguments>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="yyBit" name="self" type="#En0Ez"/>
+            <ownedResult xsi:type="pivot:ParameterVariable" name="result" type="pivot:PrimitiveType &_0;#XEMMs"/>
+          </ownedSpecification>
+        </ownedPostconditions>
+      </ownedOperations>
+      <ownedOperations xmi:id="FxZL4" name="step2_actor" type="pivot:PrimitiveType &_0;#XEMMs">
+        <ownedPostconditions xmi:id="wrwJY" name="step2_actor_post1">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="customer.money=customer.money@pre-ticket.value">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="=" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#UJEtV">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#gtmvn"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:OperationCallExp" name="-" type="pivot:PrimitiveType &_0;#tYtCd" referredOperation="&_0;#kA+ir">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" isPre="true" referredProperty="#2MBRz">
+                  <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                    <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#gtmvn"/>
+                  </ownedSource>
+                </ownedSource>
+                <ownedArguments xsi:type="pivot:PropertyCallExp" name="value" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#dJOlx">
+                  <ownedSource xsi:type="pivot:PropertyCallExp" name="ticket" type="#kfoXp" referredProperty="#YZfus">
+                    <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#gtmvn"/>
+                  </ownedSource>
+                </ownedArguments>
+              </ownedArguments>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="gtmvn" name="self" type="#En0Ez"/>
+            <ownedResult xsi:type="pivot:ParameterVariable" name="result" type="pivot:PrimitiveType &_0;#XEMMs"/>
+          </ownedSpecification>
+        </ownedPostconditions>
+        <ownedPostconditions xmi:id="xrwJY" name="step2_actor_post2">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="ticket.isSold=true">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="=" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#2dcxV">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="isSold" type="pivot:PrimitiveType &_0;#XEMMs" referredProperty="#KISkk">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="ticket" type="#kfoXp" referredProperty="#YZfus">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#pNlzn"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:BooleanLiteralExp" type="pivot:PrimitiveType &_0;#XEMMs" booleanSymbol="true"/>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="pNlzn" name="self" type="#En0Ez"/>
+            <ownedResult xsi:type="pivot:ParameterVariable" name="result" type="pivot:PrimitiveType &_0;#XEMMs"/>
+          </ownedSpecification>
+        </ownedPostconditions>
+        <ownedPreconditions xmi:id="trBmi" name="step2_actor_post1">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="customer.money>ticket.value">
+            <ownedBody xsi:type="pivot:OperationCallExp" name=">" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#5+qvY">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#FNECs"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:PropertyCallExp" name="value" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#dJOlx">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="ticket" type="#kfoXp" referredProperty="#YZfus">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#FNECs"/>
+                </ownedSource>
+              </ownedArguments>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="FNECs" name="self" type="#En0Ez"/>
+          </ownedSpecification>
+        </ownedPreconditions>
+      </ownedOperations>
+      <ownedOperations xmi:id="9gkyz" name="step1a_altFlow" type="pivot:PrimitiveType &_0;#XEMMs">
+        <ownedPreconditions xmi:id="9j8qB" name="step1a_altFlow_post1">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="customer.money&lt;ticket.value">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="&lt;" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#3+qvY">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#VH+ZM"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:PropertyCallExp" name="value" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#dJOlx">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="ticket" type="#kfoXp" referredProperty="#YZfus">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#VH+ZM"/>
+                </ownedSource>
+              </ownedArguments>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="VH+ZM" name="self" type="#En0Ez"/>
+          </ownedSpecification>
+        </ownedPreconditions>
+      </ownedOperations>
+      <ownedOperations xmi:id="+NCWP" name="step1a.1_actor" type="pivot:PrimitiveType &_0;#XEMMs">
+        <ownedPostconditions xmi:id="+GN88" name="step1a.1_actor_post1">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="customer.money=customer.money@pre">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="=" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#UJEtV">
+              <ownedSource xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#eixE1"/>
+                </ownedSource>
+              </ownedSource>
+              <ownedArguments xsi:type="pivot:PropertyCallExp" name="money" type="pivot:PrimitiveType &_0;#tYtCd" isPre="true" referredProperty="#2MBRz">
+                <ownedSource xsi:type="pivot:PropertyCallExp" name="customer" type="#2SRD8" referredProperty="#qsw8E">
+                  <ownedSource xsi:type="pivot:VariableExp" name="self" type="#En0Ez" isImplicit="true" referredVariable="#eixE1"/>
+                </ownedSource>
+              </ownedArguments>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="eixE1" name="self" type="#En0Ez"/>
+            <ownedResult xsi:type="pivot:ParameterVariable" name="result" type="pivot:PrimitiveType &_0;#XEMMs"/>
+          </ownedSpecification>
+        </ownedPostconditions>
+      </ownedOperations>
+      <ownedProperties xmi:id="qsw8E" name="customer" type="#2SRD8"/>
+      <ownedProperties xmi:id="YZfus" name="ticket" type="#kfoXp"/>
+    </ownedClasses>
+  </ownedPackages>
+  <ownedPackages name="$$" URI="http://www.eclipse.org/ocl/2015/Orphanage" nsPrefix="orphanage">
+    <ownedClasses xsi:type="pivot:BagType" xmi:id="NQzY+" name="Bag" superClasses="#jrbaN">
+      <ownedBindings>
+        <ownedSubstitutions actual="#LdNWJ" formal="&_0;#k2OA6"/>
+      </ownedBindings>
+    </ownedClasses>
+    <ownedClasses xsi:type="pivot:CollectionType" xmi:id="jrbaN" name="Collection" superClasses="&_0;#jbMkR">
+      <ownedBindings>
+        <ownedSubstitutions actual="#LdNWJ" formal="&_0;#qs59R"/>
+      </ownedBindings>
+    </ownedClasses>
+  </ownedPackages>
+  <actor name="Customer"/>
+  <usecase name="BuyTicket" description="This use-case describes customer buying ticket" primaryActor="#//@actor.0">
+    <precondition description="Customer is ready to buy ticket.">
+      <snapshot constraint="#P2KQg #Q2KQg #R2KQg">
+        <object name="customer" type="#qsw8E" isMatched="true"/>
+        <object name="ticket" type="#YZfus" isMatched="true"/>
+        <link objVar="#//@usecase.0/@precondition/@snapshot/@object.0 #//@usecase.0/@precondition/@snapshot/@object.1" assoc="#LdNWJ"
+            isNeg="true"/>
+      </snapshot>
+    </precondition>
+    <postcondition description="Customer buys ticket successfully.">
+      <snapshot>
+        <object name="customer" type="#qsw8E"/>
+        <object name="ticket" type="#YZfus"/>
+        <link objVar="#//@usecase.0/@postcondition/@snapshot/@object.0 #//@usecase.0/@postcondition/@snapshot/@object.1" assoc="#LdNWJ"/>
+      </snapshot>
+    </postcondition>
+    <firstStep xsi:type="frsl:ActStep" name="step01" description="1. Customer takes the ticket." isActorStep="true">
+      <nextStep xsi:type="frsl:ActStep" name="step02" description="2. Customer pays and owns that ticket." isActorStep="true">
+        <preSnapshot constraint="#trBmi">
+          <object name="customer" type="#qsw8E"/>
+          <object name="ticket" type="#YZfus"/>
+        </preSnapshot>
+        <postSnapshot constraint="#wrwJY #xrwJY">
+          <object name="customer" type="#qsw8E"/>
+          <object name="ticket" type="#YZfus"/>
+        </postSnapshot>
+      </nextStep>
+      <altFlow description="Customer doesnt have enough money.">
+        <condition constraint="#9j8qB"/>
+        <altStep xsi:type="frsl:ActStep" name="step01a" description="1a. Customer returns ticket" isActorStep="true">
+          <preSnapshot>
+            <object name="customer" type="#qsw8E"/>
+            <object name="ticket" type="#YZfus"/>
+          </preSnapshot>
+          <postSnapshot constraint="#+GN88">
+            <object name="customer" type="#qsw8E"/>
+            <object name="ticket" type="#YZfus"/>
+            <link objVar="#//@usecase.0/@firstStep/@altFlow.0/@altStep/@preSnapshot/@object.0 #//@usecase.0/@firstStep/@altFlow.0/@altStep/@preSnapshot/@object.1"
+                assoc="#LdNWJ" isNeg="true"/>
+          </postSnapshot>
+        </altStep>
+      </altFlow>
+      <preSnapshot>
+        <object name="customer" type="#qsw8E"/>
+        <object name="ticket" type="#YZfus"/>
+      </preSnapshot>
+      <postSnapshot constraint="#yIbav">
+        <object name="customer" type="#qsw8E"/>
+        <object name="ticket" type="#YZfus"/>
+        <link objVar="#//@usecase.0/@firstStep/@preSnapshot/@object.0 #//@usecase.0/@firstStep/@preSnapshot/@object.1" assoc="#LdNWJ"/>
+      </postSnapshot>
+    </firstStep>
+  </usecase>
+</frsl:FrslModel>

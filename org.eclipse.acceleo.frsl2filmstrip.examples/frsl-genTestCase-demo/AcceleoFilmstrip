@@ -1,0 +1,794 @@
+[comment encoding = UTF-8 /]
+[module generateMain('platform:/resource/org.eclipse.sme.frsl.ecore/model/FRSL.ecore', 'http://www.eclipse.org/ocl/2015/Pivot')]
+
+
+[template public generateMain(aFrslModel : FrslModel)]
+[comment @main/]
+[for (usecase : Usecase | aFrslModel.usecase)]
+[file (usecase.name + '.use', false, 'UTF-8')]
+[comment][aFrslModel.usecase->first().firstStep.generateOperations()/][/comment]
+[comment][aFrslModel.getModelClassIntersect('ProcessSales')->collect(c|c.name)->sep(', ')/][/comment]
+[comment][aFrslModel.usecase->any(u | u.name='ProcessSales').getAllOperationsOfUsecase()->collect(s|if (s.name.oclIsUndefined()) then 'tst' else s.name endif)->sep(',\n')/]
+[aFrslModel.usecase->any(u | u.name='ProcessSales').getAllOperationsOfUsecase()->sep('\n ')/]
+[aFrslModel.usecase->any(u | u.name='ProcessSales').firstStep.getAllRoutes(Bag(OrderedSet(Step)){}, OrderedSet(Step){})->collect(o: OrderedSet(Step) | o->size())->sep('\n ')/][/comment]
+[comment][aFrslModel.usecase->any(u | u.name='BuyTicket').firstStep.getAllRoutes(Bag(OrderedSet(Step)){}, OrderedSet(Step){})->collectNested(o: OrderedSet(Step) | o->collect(s: Step | s.name)->sep('\t'))->sep('\n') /][/comment]
+model POS
+
+[comment]-----------Generate Step[/comment]
+[comment][for (usecase: Usecase | aFrslModel.usecase)]
+[generateUsecase(usecase)/]
+[/for][/comment]
+
+[comment]------------Generate Model[/comment]
+[comment][let model: Package = aFrslModel.ownedPackages->any(frslModel: Package | frslModel.name='posModel')]
+[generateModelClass(model)/]
+[/let][/comment]
+
+[comment][comment]--------------Generate Usecase Association[/comment]
+[comment][aFrslModel.ownedPackages->any(p | p.name='usecase').generateUsecaseAssociations('ProcessSales')/][/comment][/comment]
+
+[comment]----------------Generate Constraint[/comment]
+[comment][let model: Class = aFrslModel.ownedPackages->any(p | p.name='usecase').ownedClasses
+	->any(c | c.name='ProcessSales')]
+[let temp: Set(Class) = model.getPropertyTypeFromUsecase()]
+[temp->collect(c|c.name)->sep(',')/]
+[for (c: Class | temp)]
+[model.ownedProperties->select(p | p.type.name=c.name and 
+	not (p.name.contains('includedUC') or p.name.contains('output_step')))->collect(p | p.name)/]
+[/for]
+[/let]
+[/let][/comment]
+
+[comment]-------------Generate Usecase Class[/comment]
+[aFrslModel.generateUsecaseClass(usecase.name)/]
+
+[comment][aFrslModel.getModelClass()->collect(c|c.name)->size()/][/comment]
+
+
+[comment]-------------Generate Operations[/comment]
+[comment][generateStep(aFrslModel.usecase->any(c: Usecase | c.name='HandleCashPayment').firstStep)/][/comment]
+
+[comment]--------------Generate Classed and Associations[/comment]
+[aFrslModel.generateModelClass()/]
+[aFrslModel.generateAssociation()/]
+[aFrslModel.generateUsecaseAssociation(usecase.name)/]
+[comment][aFrslModel.generateTrackAssociation('BuyTicket')/][/comment]
+
+constraints
+[aFrslModel.generateUsecaseConstraint(usecase.name)/]
+[aFrslModel.generateOperaionConstraint(usecase.name)/]
+[comment][aFrslModel.testGenerateTestStepConstraint()/][/comment]
+
+[aFrslModel.generatePropertyFile()/]
+[/file]
+[/for]
+[/template]
+
+
+
+[comment]-----------PropertyFile[/comment]
+
+[template public generatePropertyFile(aFrslModel : FrslModel)]
+[for (usecase : Usecase | aFrslModel.usecase)]
+[file (usecase.name + '.filmstrip.properties', false, 'UTF-8')]
+[comment][aFrslModel.usecase->any(u|u.name='ProcessSales').eAllContents(Step)->collect(s|s.name)->sep('\n')/][/comment]
+[comment][aFrslModel.usecase->any(u|u.name='HandleCashPayment').getVarLinkFromPreSnapshotUsecase()->collect(v|v.assoc.name)->sep('\n')/][/comment]
+[for (route : OrderedSet(Step) | aFrslModel.usecase->any(u | u.name=usecase.name).firstStep.getAllRoutes(Bag(OrderedSet(Step)){}, OrderedSet(Step){})) separator ('\n')]
+['['/][route->collect(s: Step | s.name)->sep('_')/][']'/]
+
+Integer_min = -10
+Integer_max = 10
+
+String_max = 10
+
+Real_min = -2.0
+Real_max = 2.0
+Real_step = 0.5
+
+[aFrslModel.propertyUsecase(usecase.name, route->size().toString())/]
+[aFrslModel.propertyModelClass(usecase.name, route->size().toString())/]
+[aFrslModel.propertyFilmstrip(usecase.name, route, route->size().toString())/]
+[aFrslModel.propertyModelAssociation(usecase.name)/]
+[/for]
+
+
+[/file]
+[/for]
+[/template]
+
+[template public generateAssociation(frslModel : FrslModel) 
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');}]
+[for (associationClass: AssociationClass | usecaseModel.getAssociationFromModel())]
+association [associationClass.name/] between
+[let firstProperty: Property = associationClass.ownedProperties->at(1)]
+[let secondProperty: Property = associationClass.ownedProperties->at(2)]
+[if (firstProperty.type.oclIsKindOf(CollectionType))]
+	[firstProperty.getTypeOfCollectionProperty().name/][else]
+	[firstProperty.type.name/][/if][firstProperty.getPropertyMultiplicity()/] role [firstProperty.name/]
+[if (secondProperty.type.oclIsKindOf(CollectionType))]
+	[secondProperty.getTypeOfCollectionProperty().name/][else]
+	[secondProperty.type.name/][/if][secondProperty.getPropertyMultiplicity()/] role [secondProperty.name/]
+end
+[/let]
+[/let]
+[/for]
+[/template]
+
+[template public generateUsecaseAssociation(frslModel : FrslModel, usecaseName : String) 
+	{usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	modelClass: Set(Class) = frslModel.getModelClass();}]
+[for (p: Property | frslModel.getModelPropertyFromUsecase(usecaseName))]
+association FRSL[p.name/][usecaseName/] between
+[if (p.type.oclIsKindOf(CollectionType))]
+	[p.getTypeOfCollectionProperty().name/]['['/]1..*[']'/] role [p.name/]
+	[usecaseName/]['['/]0..1[']'/] role [usecaseName.toLowerFirst()/][p.name.toUpperFirst()/]
+[else]
+	[p.type.name/]['['/]1[']'/] role [p.name/]
+	[usecaseName/]['['/]0..1[']'/] role [usecaseName.toLowerFirst()/][p.name.toUpperFirst()/]
+[/if]
+end
+
+[/for]
+[/template]
+
+[comment]TODO: Add Tracks[/comment]
+[template public generateTrackAssociation(frslModel : FrslModel, usecaseName : String)]
+[for (modelClass : Class | frslModel.getModelClassInUsecase(usecaseName))]
+association _Track[modelClass.name/] between
+	[modelClass.name/]['['/]0..1[']'/] role [modelClass.name.toLowerFirst()/]Tracks
+	[modelClass.name/]['['/]0..1[']'/] role _[modelClass.name.toLowerFirst()/]Tracks
+end
+
+[/for]
+[/template]
+
+[template public generateModelClass(frslModel : FrslModel) 
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');}]
+[comment][for (class: Class | model.ownedClasses->select(c: Class | c.oclIsTypeOf(Class)))][/comment]
+[for (class: Class | usecaseModel.ownedClasses->select(c | c.oclIsTypeOf(Class) and c.name<>'_DomainClass'))]
+class [class.name/]
+attributes
+[for (properties: Property | class.ownedProperties->select(p: Property | p.type.eClass().name='PrimitiveType'))]
+[comment][for (properties: Property | class.ownedProperties)][/comment]
+	[properties.name/]: [properties.type.name/]
+[/for]
+[comment]	isMatched: Boolean[/comment]
+end
+
+[/for]
+[/template]
+
+[template public generateUsecaseClass(frslModel : FrslModel, usecaseName : String)
+	{usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);}]
+class [usecase.name/]
+attributes
+[for (properties: Property | usecase.ownedProperties->select(p: Property | p.type.eClass().name='PrimitiveType'))]
+[comment][for (properties: Property | class.ownedProperties)][/comment]
+	[properties.name/]: [properties.type.name/]
+[/for]
+[comment][for (p: Property | frslModel.getModelPropertyFromUsecase(usecaseName))]
+[if (p.type.oclIsKindOf(CollectionType))]
+	[p.name/]: [p.type.name/]([p.getTypeOfCollectionProperty().name/])
+[else]
+	[p.name/]: [p.type.name/]
+[/if]
+[/for][/comment]
+	step: String
+operations
+[comment]	step1()
+	step2()
+	step3()[/comment]
+	[usecaseEntity.firstStep.generateOperations()/]
+end
+[/template]
+
+
+[comment]------------------Properties File[/comment]
+
+[template public propertyUsecase(frslModel : FrslModel, usecaseName : String, numberOfStep : String)]
+------------Usecase Class
+[usecaseName/]_min = [numberOfStep.add('1')/]
+[usecaseName/]_max = [numberOfStep.add('1')/]
+
+[usecaseName/]_step = Set{[frslModel.propertyStepName(usecaseName)/]}
+
+Snapshot[usecaseName/]_min = [numberOfStep.add('1')/]
+Snapshot[usecaseName/]_max = [numberOfStep.add('1')/]
+
+PredSucc[usecaseName/]_min = [numberOfStep/]
+PredSucc[usecaseName/]_max = [numberOfStep/]
+
+------------FRSL association
+[for (p: Property | frslModel.getModelPropertyFromUsecase(usecaseName)) separator ('\n')]
+FRSL[p.name/][usecaseName/]_min = [numberOfStep.add('1')/]
+FRSL[p.name/][usecaseName/]_max = [numberOfStep.add('1')/]
+[/for]
+[/template]
+
+[comment]Property of model class, Snapshot association, PredSucc association[/comment]
+[template public propertyModelClass(frslModel : FrslModel, usecaseName : String, numberOfStep : String)
+	{usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);}]
+------------Model class, Snapshot association, PredSucc association
+[for (c : Class | frslModel.getModelClass()) separator ('\n')]
+[if (frslModel.getModelClassInUsecase(usecaseName)->includes(c))]
+[let num : String = usecase.getPropertyOfSpecificTypeFromUsecase(c)->size().toString()]
+[c.name/]_min = [num.mul(numberOfStep.add('1'))/]
+[c.name/]_max = [num.mul(numberOfStep.add('1'))/]
+
+Snapshot[c.name/]_min = [num.mul(numberOfStep.add('1'))/]
+Snapshot[c.name/]_max = [num.mul(numberOfStep.add('1'))/]
+
+PredSucc[c.name/]_min = [num.mul(numberOfStep)/]
+PredSucc[c.name/]_max = [num.mul(numberOfStep)/]
+[/let]
+[else]
+[c.name/]_min = 0
+[c.name/]_max = 0
+
+Snapshot[c.name/]_min = 0
+Snapshot[c.name/]_max = 0
+
+PredSucc[c.name/]_min = 0
+PredSucc[c.name/]_max = 0
+[/if]
+
+[/for]
+
+
+[comment]hhehehheh
+[for (step : Step | usecaseEntity.getAllRoutes()->any(true)) separator ('\t')]
+[step.name/]
+[/for][/comment]
+[/template]
+
+[template public propertyModelAssociation(frslModel : FrslModel, usecaseName : String)
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);}]
+-------------Model Association
+[for (associationClass : AssociationClass | usecaseModel.getAssociationFromModel()) separator ('\n')]
+[associationClass.name/]_min = 0
+[if (usecaseEntity.getAssociationFromUsecase()->includes(associationClass))]
+[associationClass.name/]_max = -1
+[else]
+[associationClass.name/]_max = 0
+[/if]
+[/for]	
+
+[comment][for (associationClass : AssociationClass | usecaseEntity.getAssociationFromUsecase())]
+[associationClass.name/]
+[/for][/comment]
+[/template]
+
+[template public propertyFilmstrip(frslModel : FrslModel, usecaseName : String, route : OrderedSet(Step), numberOfStep : String)
+	{usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);}]
+--------------Snapshot & Filmstrip
+Snapshot_min = [numberOfStep.add('1')/]
+Snapshot_max = [numberOfStep.add('1')/]
+
+Filmstrip_min = [numberOfStep/]
+Filmstrip_max = [numberOfStep/]
+
+-------------Operation Class OpC
+[for (step : Step | usecaseEntity.getAllOperationsOfUsecase() - route)]
+[step.getOperationName()/]_[usecaseName/]OpC_min = 0
+[step.getOperationName()/]_[usecaseName/]OpC_max = 0
+[/for]
+[/template]
+
+[template public generateOperations(aStep : Step)]
+[for (altFlow : AltFlow | aStep.altFlow)]
+[if (not altFlow.altStep.oclIsUndefined())]
+[altFlow.altStep.generateOperations()/][/if]
+[/for]
+[if (not aStep.oclIsTypeOf(UCStep))]
+[aStep.getOperationName()/]()
+[/if]
+[comment][elseif (aStep.oclIsTypeOf(RejoinStep))]
+[aStep.generateRejoinStep()/]	
+[else]
+[aStep.generateUcStep()/][/comment]
+[if (not aStep.nextStep.oclIsUndefined())]
+[generateOperations(aStep.nextStep)/]
+[/if]
+[/template]
+
+[query public getOperationName(step : Step) : String = 
+	if (step.oclIsTypeOf(ActStep)) then
+		'actStep_' + step.name
+	else 
+		if (step.oclIsTypeOf(RejoinStep)) then
+			'rejoinStep_' + step.name
+		else
+			''
+		endif
+	endif
+/]
+
+[template public generateActStepName(step : ActStep)]
+actStep_[step.name/]()
+[/template]
+
+[template public generateRejoinStep(step : RejoinStep)]
+rejoinStep_[step.name/]()
+[/template]
+
+[template public generateUcStep(step : UCStep)]
+ucStep_
+[/template]
+
+[template public generateAltFlow(step : Step)]
+altStep_[step.name/]
+[/template]
+
+[template private generateOperationConstraint(step : Step)]
+[/template]
+
+[comment]------------------Properties File[/comment]
+[template public propertyStepName(frslModel : FrslModel, usecaseName : String)]
+[for (step : Step | frslModel.usecase->any(u | u.name=usecaseName).getAllOperationsOfUsecase()) separator (', ')]
+'[step.name/]'[/for], ''
+[/template]
+
+[template public generateUsecaseConstraint(frslModel : FrslModel, usecaseName : String)
+	{usecase: Class = frslModel.getUsecaseClass(usecaseName);}]
+context [usecase.name/] inv usecaseContraint:
+[comment]	[usecase.generateUniquePropertyConstraint(frslModel)/] 
+	and [usecase.generateAvailPropertyAmountConstraint(frslModel)/][/comment]
+	[usecase.name/].allInstances()->size=1
+
+context [usecase.name/] inv usecaseConnectAll:
+[for (modelClass : Class | frslModel.getModelClassInUsecase(usecaseName)) before ('\t') separator (' and\n\t')]
+[modelClass.name/].allInstances->forAll(x|[for (p : Property | usecase.getPropertyOfSpecificTypeFromUsecase(modelClass)) separator (' + ')]
+x.[usecaseName.toLowerFirst()/][p.name.toUpperFirst()/]->size()[/for] = 1)[/for]
+	
+[/template]
+
+[template private generateUniquePropertyConstraint(usecase : Class, frslModel : FrslModel)]
+Bag{[usecase.ownedProperties->select(c | 
+	frslModel.getModelClass()->includes(c.type))
+	->collect(c | c.name)->sep(',')/]}->isUnique(p|p)
+[/template]
+
+[template private generateAvailPropertyAmountConstraint(usecase : Class, frslModel : FrslModel)]
+Bag{[usecase.ownedProperties->select(c | 
+	frslModel.getModelClass()->includes(c.type))
+	->collect(c | c.name)->sep(',')/]}->size=[for (t: Type | usecase.ownedProperties->select(c | 
+	frslModel.getModelClass()->includes(c.type))->collect(p | p.type)->asSet()) separator(' + ')]
+[t.name/].allInstances()->size[/for]
+[/template]
+
+[template public generateOperaionConstraint(frslModel : FrslModel, usecaseName : String) post(trim())
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);}]
+[for (step : Step | usecaseEntity.getAllOperationsOfUsecase()) separator ('\n')]
+
+context [usecaseName/]::[step.getOperationName()/]()
+[if (i=1)]
+	[frslModel.generateUCPrecondition(usecaseName)/]
+[/if]
+
+	[step.generateStepConstraint()/]
+
+	[step.generateUnchangeConstraint(frslModel, usecaseName)/]
+
+	[step.generateConAltStep(frslModel, usecaseName)/]
+
+	[step.generatePreCondition(frslModel, usecaseName)/]
+
+	[step.generatePostCondition(frslModel, usecaseName)/]
+
+[comment][for (class: Class | step.oclAsType(ActStep).postSnapshot.getObjTypeAllFromSnapshot()) before('\t\t') separator(' and\n\t\t')]
+[let excludeObj : Set(String) = step.oclAsType(ActStep).postSnapshot.getObjNameAllFromSnapshot()]
+[for (property : Property | class.getPropertiesOfModelClass()) before(' and ') separator(' and ')]
+x.[property.name/]@pre=x.[property.name/][/for])[/let][/for][/comment]
+[comment]------------Test
+[comment][step.getAllNextStep()->collect(s|s.name)->sep('\t')/][/comment]
+[comment][step.oclAsType(ActStep).postSnapshot.getObjInVarLinkFromSnapshot()->collect(o|o.name)->sep('\t')/][/comment]
+[step.oclAsType(ActStep).postSnapshot.getAttrInOCLOfModelClass('customer')/]
+[step.oclAsType(ActStep).postSnapshot.getAttrInVarLinkOfModelClass('customer')/]
+[step.oclAsType(ActStep).postSnapshot.getObjNameAllFromSnapshot()->sep('\t')/]
+[step.getObjNameAllFromStep()->sep('\t')/]
+------------------------------safsdfsa
+[step.oclAsType(ActStep).postSnapshot.getObjFromSnapshot()->collect(s: Sequence(OclAny) | s->at(2).oclAsType(Class).name)/]
+[step.oclAsType(ActStep).postSnapshot.getObjTypeAllFromSnapshot()->collect(c|c.name)->sep('\t')/]
+[step.getAllNextStep()->collect(s | s.oclAsType(ActStep).preSnapshot.getObjNameAllFromSnapshot())->sep('\t')/][/comment]
+
+[comment]------------Test[/comment]
+[comment][frslModel.getPropertyClassFromName(usecaseName, 'term').name/][/comment]
+[comment][step.getAllNextStep()->collect(s|s.name)/][/comment]
+[comment][for (s : Set(Sequence(OclAny)) | step.getObjFromStep())]
+[s->collect(s:Sequence(OclAny)|s->first())/][/for][/comment]
+[comment][step.getObjFromStep()->collect(s:Sequence(OclAny)|s->first())/]
+[step.getObjNameAllFromStep()->sep('\t')/][/comment]
+[/for]
+[/template]
+
+[template private generateStepConstraint(step : Step) post(trim())]
+
+pre beforeStep: step='[if (not step.preStep.oclIsUndefined())]
+[step.preStep.name/][elseif (not step.eContainer().oclAsType(AltFlow).baseStep.oclIsUndefined())]
+[step.eContainer().oclAsType(AltFlow).baseStep.name/][/if]'
+post afterStep: step='[step.name/]'
+[/template]
+
+[template private generateUnchangeConstraint(step : Step, frslModel : FrslModel, usecaseName : String) post(trim())
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);}]
+	
+post unChange:
+[for (class: Class | frslModel.getModelClassInUsecase(usecaseName)) before('\t') separator(' and\n\t')]
+[let excludeObj : String = usecase.getPropertyOfSpecificTypeFromUsecase(class)->collect(p | p.name)->intersection(step.getObjNameAllFromStep())->sep(',')->toString()]
+([class.name/].allInstances - Set{[excludeObj/]})->forAll(x | x@pre=x[for (property : Property | class.getPropertiesOfModelClass()) before(' and ') separator(' and ')]
+x.[property.name/]@pre=x.[property.name/][/for])[/let]
+[/for]
+[for (propertyName : String | usecase.ownedProperties->select(p: Property | p.type.eClass().name='PrimitiveType')->collect(p | p.name)->asSet()
+	- step.getObjNameAllFromStep()) before('and ') separator(' and\n\t')]
+[propertyName/]@pre=[propertyName/]
+[/for]
+[comment][step.getObjNameAllFromStep()/][/comment]
+[/template]
+
+[template private generatePostCondition(step : Step, frslModel : FrslModel, usecaseName : String) post(trim())
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);}]
+
+post postCon: true
+[for (objName : String | step.getObjNameAllFromStep()->select(objName: String | 
+	not frslModel.getPropertyClassFromName(usecaseName, objName).oclIsUndefined())) before('\t')]
+[for (attr : String | (frslModel.getPropertyClassFromName(usecaseName, objName).getPropertiesOfModelClass()->collect(p | p.name)->asSet() - 
+	step.getAttrAllInModelClassFromStep(objName)->asSet())) before(' and ') separator(' and ')]
+[objName/].[attr/]@pre=[objName/].[attr/][/for]
+[/for]
+
+[comment]Generate condition from VarLink[/comment]
+[for (varLink : VarLink | step.oclAsType(ActStep).postSnapshot.link) before('\tand ') separator(' and ')]
+[if (varLink.isNeg)]
+[varLink.objVar->at(1).name/].[varLink.objVar->at(2).name/]->isEmpty()
+[else]
+[varLink.objVar->at(1).name/].[varLink.objVar->at(2).name/]=[varLink.objVar->at(2).name/][/if]
+[/for]
+[comment]Generate condition from OclConstraint[/comment]
+[for (oclConstraint : Constraint | step.oclAsType(ActStep).postSnapshot.constraint) before('\tand ') separator(' and ')]
+[oclConstraint.ownedSpecification._body/]
+[/for]
+[/template]
+
+[template private generatePreCondition(step : Step, frslModel : FrslModel, usecaseName : String) post(trim())
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);}]
+
+pre preCon: true
+[comment]Generate condition from VarLink[/comment]
+[for (varLink : VarLink | step.oclAsType(ActStep).preSnapshot.link) before('\tand ') separator(' and ')]
+[if (varLink.isNeg)]
+[varLink.objVar->at(1).name/].[varLink.objVar->at(2).name/]->isEmpty()
+[else]
+[varLink.objVar->at(1).name/].[varLink.objVar->at(2).name/]=[varLink.objVar->at(2).name/][/if]
+[/for]
+[comment]Generate condition from OclConstraint[/comment]
+[for (oclConstraint : Constraint | step.oclAsType(ActStep).preSnapshot.constraint) before('\tand ') separator(' and ')]
+[oclConstraint.ownedSpecification._body/]
+[/for]
+[/template]
+
+[template private generateUCPrecondition(frslModel : FrslModel, usecaseName: String) post(trim())
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);
+	ucPreSnap: SnapshotPattern = usecaseEntity.precondition.snapshot;
+	objNameAllInSnap: Set(String) = ucPreSnap.getObjNameAllFromSnapshot();}]
+pre preUC: true
+[for (objName : String | usecase.ownedProperties->collect(p | p.name)) before('\tand ') separator('\tand ')]
+[if (frslModel.getPropertyClassFromName(usecaseName, objName).oclIsUndefined())]
+[if (not objNameAllInSnap->includes(objName) and usecase.ownedProperties->any(p|p.name=objName).type.name='Integer')][objName/]=0[else]true[/if]
+[else]
+[for (attr : String | (frslModel.getPropertyClassFromName(usecaseName, objName).getPropertiesOfModelClass()->collect(p | p.name)->asSet() - 
+	ucPreSnap.getAttrAllInModelClassFromSnap(objName)->asSet())) separator(' and ')]
+[if (frslModel.getPropertyClassFromName(usecaseName, objName).ownedProperties->any(p | p.name=attr).type.eClass().name='PrimitiveType')]
+[if (frslModel.getPropertyClassFromName(usecaseName, objName).ownedProperties->any(p | p.name=attr).type.name='Integer')][objName/].[attr/]=0[else]true111[/if]
+[else]
+[objName/].[attr/]->isEmpty()
+[/if][/for][/if]
+[/for]
+
+[comment]Generate condition from VarLink[/comment]
+[for (varLink : VarLink | ucPreSnap.link) before('\tand ') separator(' and ')]
+[if (varLink.isNeg)]
+[varLink.objVar->at(1).name/].[varLink.objVar->at(2).name/]->isEmpty()
+[else]
+[varLink.objVar->at(1).name/].[varLink.objVar->at(2).name/]=[varLink.objVar->at(2).name/][/if]
+[/for]
+[comment]Generate condition from OclConstraint[/comment]
+[for (oclConstraint : Constraint | ucPreSnap.constraint) before('\tand ') separator('\tand ')]
+[oclConstraint.ownedSpecification._body/]
+[/for]
+[/template]
+
+[template private generateConAltStep(step : Step, frslModel : FrslModel, usecaseName : String) post(trim())
+	{usecaseModel: Package = frslModel.ownedPackages->any(p: Package | p.name='posModel');
+	usecase: Class = frslModel.getUsecaseClass(usecaseName);
+	usecaseEntity: Usecase = frslModel.usecase->any(u | u.name=usecaseName);
+	altConSnap: SnapshotPattern = step.eContainer().oclAsType(AltFlow).condition;}]
+[if (step.eContainer().oclIsTypeOf(AltFlow) and altConSnap.constraint->size()>0)]
+pre altFlow:
+[comment]Generate condition from OclConstraint[/comment]
+[for (oclConstraint : Constraint | altConSnap.constraint) before('\t') separator(' and ')]
+[oclConstraint.ownedSpecification._body/][/for][/if]
+[/template]
+
+[comment]------------------Properties File[/comment]
+[template public propertyFileConfig(frslModel : FrslModel, usecaseName : String)]
+	
+[/template]
+
+[query public generateUtils (aClass : Class) : OclAny = self/]
+
+[comment][template public generateUsecase(aUsecase : Usecase)]
+[file (aUsecase.name, false, 'UTF-8')]
+[generateStep(aUsecase.firstStep)/]
+[/file]
+[/template][/comment]
+
+[comment][template public generateUsecaseAssociations(packageUsecase : Package, usecaseName : String)]
+[let usecase: Class = packageUsecase.ownedClasses->any(c | c.name=usecaseName)]
+[usecase.name/]
+
+[for (property: Property | usecase.ownedProperties->select(p | 
+	not (p.name.contains('includedUC') or p.name.contains('output_step'))))]
+
+associations [property.name/]_Usecase betweens
+	Usecase['['/]0..1[']'/]
+	[property.type.name/]['['/]1[']'/] role [property.name/]
+end
+
+[/for]
+[/let]
+[/template][/comment]
+
+[query public getUsecaseClass(aFrslModel : FrslModel, usecaseName : String) : Class =  
+	aFrslModel.ownedPackages->any(p | p.name='usecase').ownedClasses->any(c | c.name=usecaseName)/]
+
+
+[query public getModelClass(aFrslModel : FrslModel) : Set(Class) = 
+	aFrslModel.ownedPackages->any(p | p.name='posModel')
+	.ownedClasses->select(c: Class | c.oclIsTypeOf(Class))/]
+
+[comment]Get Model class of usecase[/comment]
+[query public getModelClassInUsecase(aFrslModel : FrslModel, usecaseName : String) : Set(Class) = 
+	aFrslModel.getUsecaseClass(usecaseName).getPropertyTypeFromUsecase()->intersection(aFrslModel.getModelClass()) /]
+
+[comment]Model property of usecase is property that not is Primitive[/comment]
+[query public getModelPropertyFromUsecase(frslModel : FrslModel, usecaseName : String) : Set(Property) = 
+	frslModel.getUsecaseClass(usecaseName).ownedProperties->select(p | frslModel.getModelClassInUsecase(usecaseName)->includes(p.type)) /]
+
+[query public getPropertyOfSpecificTypeFromUsecase(usecase : Class, type : Class) : Set(Property) = 
+	usecase.ownedProperties->select(p | 
+	if (p.type.oclIsKindOf(CollectionType)) then
+		p.getTypeOfCollectionProperty()=type
+ 	else
+		p.type=type
+	endif)->asSet()/]
+
+
+[query public getPropertyTypeFromUsecase(usecase : Class) : Set(Class) = 
+	usecase.ownedProperties->collect(p: Property | 
+	if (p.type.oclIsKindOf(CollectionType)) then
+		p.getTypeOfCollectionProperty()
+ 	else
+		p.type
+	endif)->asSet()/]
+
+[comment]p.isRequired => [1] but it make so many case wrong[/comment]
+[comment][query public getPropertyMultiplicity(p : Property) : String = 
+	if (p.type.oclIsKindOf(CollectionType)) then
+		'[' + p.type.oclAsType(CollectionType).lower + '..*]'
+ 	else
+		if (p.isRequired) then
+			'[0..1]'
+		else
+			'[0..1]'
+		endif
+	endif
+ /][/comment]
+[query public getPropertyMultiplicity(p : Property) : String = 
+	if (p.type.oclIsKindOf(CollectionType)) then
+		'[0..*]'
+ 	else
+		if (p.isRequired) then
+			'[0..1]'
+		else
+			'[0..1]'
+		endif
+	endif
+ /]
+
+[query public getTypeOfCollectionProperty(p : Property) : Type =  
+	p.type.oclAsType(SetType).ownedBindings.ownedSubstitutions.actual->any(true)/]
+
+[comment]obsolete[/comment]
+[comment][query public getAllOperationsOfUsecase(step : Step) : OrderedSet(Step) = 
+	if (step.oclIsUndefined()) then
+		OrderedSet{}
+	else if (not step.altFlow->isEmpty()) then
+		step.nextStep.getAllOperationsOfUsecase()->prepend(step.altFlow->first().altStep)->prepend(step)
+	else
+		step.nextStep.getAllOperationsOfUsecase()->prepend(step)
+	endif
+	endif
+/][/comment]
+[query public getAllOperationsOfUsecase(usecaseEntity : Usecase) : OrderedSet(Step) = 
+	usecaseEntity.eAllContents(Step)->asOrderedSet()	
+/]
+
+[query public getAssociationFromUsecase(usecaseEntity : Usecase) : Set(AssociationClass) = 
+	usecaseEntity.eAllContents(VarLink)->collect(v: VarLink | v.assoc)->select(a: AssociationClass | a.name<>'_Tracks')->asSet() /]
+
+[query public getVarLinkFromUsecase(usecaseEntity : Usecase) : Sequence(VarLink) = 
+	usecaseEntity.eAllContents(VarLink) /]
+
+[query public getAssociationFromModel(usecaseModel : Package) : Set(AssociationClass) = 
+	usecaseModel.ownedClasses->select(c: Class | c.oclIsTypeOf(AssociationClass) and c.name<>'_Tracks') /]
+
+[comment]need to do this[/comment]
+[comment][query public getAllRoutes(step : Step, allRoutes : Bag(OrderedSet(Step)), curRoutes : OrderedSet(Step)) : Bag(OrderedSet(Step)) = 
+	if (step.oclIsUndefined()) then
+		allRoutes->including(curRoutes)
+	else if (not step.altFlow->isEmpty()) then
+		step.altFlow->collect(f: AltFlow | f.altStep.getAllRoutes(Bag(OrderedSet(Step)){}, curRoutes->including(f.altStep)->asOrderedSet())->any(true))->asBag()
+			->union(step.nextStep.getAllRoutes(allRoutes, curRoutes->including(step)->asOrderedSet()))
+	else
+		step.nextStep.getAllRoutes(allRoutes, curRoutes->including(step)->asOrderedSet())
+	endif
+	endif	
+/][/comment]
+[comment][query public getAllRoutes(step : Step, allRoutes : Bag(OrderedSet(Step)), curRoutes : OrderedSet(Step)) : Bag(OrderedSet(Step)) = 
+	if (step.oclIsUndefined()) then
+		allRoutes->including(curRoutes)
+	else 
+		step.nextStep.getAllRoutes(allRoutes, curRoutes->including(step)->asOrderedSet())
+	endif	
+/][/comment]
+[comment]------------WORK[/comment]
+[comment][query public getAllRoutes(step : Step, allRoutes : Bag(OrderedSet(Step)), curRoutes : OrderedSet(Step)) : Bag(OrderedSet(Step)) = 
+	if (step.oclIsUndefined()) then
+		allRoutes->including(curRoutes)
+	else if (not step.altFlow->isEmpty()) then
+		step.nextStep.getAllRoutes(allRoutes, curRoutes->including(step)->asOrderedSet())
+			->including(step.altFlow->first().altStep.getAllRoutes(Bag(OrderedSet(Step)){}, curRoutes->including(step)->asOrderedSet())->any(true))
+	else
+		step.nextStep.getAllRoutes(allRoutes, curRoutes->including(step)->asOrderedSet())
+	endif
+	endif	
+/][/comment]
+[query public getAllRoutes(step : Step, allRoutes : Bag(OrderedSet(Step)), curRoutes : OrderedSet(Step)) : Bag(OrderedSet(Step)) = 
+	if (step.oclIsUndefined()) then
+		allRoutes->including(curRoutes)
+	else if (not step.altFlow->isEmpty()) then
+		step.nextStep.getAllRoutes(allRoutes, curRoutes->including(step)->asOrderedSet())
+			->union(step.altFlow->collectNested(f: AltFlow | f.altStep.getAllRoutes(Bag(OrderedSet(Step)){}, curRoutes->including(step)->asOrderedSet())->any(true))->asBag())
+	else
+		step.nextStep.getAllRoutes(allRoutes, curRoutes->including(step)->asOrderedSet())
+	endif
+	endif	
+/]
+
+[query public getAllNextStep(step : Step) : OrderedSet(Step) = 
+	if (step.nextStep.oclIsUndefined()) then
+		OrderedSet(Step){}
+	else
+		step.altFlow->collect(f: AltFlow | f.altStep)->including(step.nextStep)->asOrderedSet()
+	endif
+/]
+
+[comment]----------Constraint[/comment]
+[comment]Get obj name in VarLink like customer in (customer, ticket): CustomerTicket[/comment]
+[query public getObjInVarLinkFromSnapshot(snap : SnapshotPattern) : Set(ObjVar) =  
+	snap.link->collect(v: VarLink | v.objVar)->asSet()
+/]
+[comment][query public getObjInOCLFromSnapshot(snap : SnapshotPattern, isPre : Boolean) : Set(PropertyCallExp) = 
+	snap.constraint->select(c: Constraint | if (isPre=true) then c.->forAll(o: ObjVar | o.isMatched=true) else true endif)
+		->collect(c: Constraint | if c.eAllContents(PropertyCallExp)->first().ownedSource.oclIsTypeOf(PropertyCallExp) 
+		then c.eAllContents(PropertyCallExp)->first().ownedSource else c.eAllContents(PropertyCallExp)->first() endif)->asSet()
+/][/comment]
+
+[comment]Get obj name in OCL like customer in [customer.money>10][/comment]
+[query public getObjInOCLFromSnapshot(snap : SnapshotPattern) : Set(PropertyCallExp) = 
+	snap.constraint->collect(c: Constraint | if c.eAllContents(PropertyCallExp)->first().ownedSource.oclIsTypeOf(PropertyCallExp) 
+		then c.eAllContents(PropertyCallExp)->first().ownedSource else c.eAllContents(PropertyCallExp)->first() endif)->asSet()
+/]
+
+[comment]Get all obj name from OCL and VarLink in pre/post snapshot[/comment]
+[query public getObjNameAllFromSnapshot(snap : SnapshotPattern) : Set(String) = 
+	snap.getObjInVarLinkFromSnapshot()->collect(o | o.name)->addAll(snap.getObjInOCLFromSnapshot()->collect(p | p.name))->asSet()
+/]
+
+[comment]Get all obj type from OCL and VarLink in pre/post snapshot[/comment]
+[query public getObjTypeAllFromSnapshot(snap : SnapshotPattern) : Set(Class) =  
+	snap.getObjInVarLinkFromSnapshot()->collect(o | o.type.type)->addAll(snap.getObjInOCLFromSnapshot()->collect(p | p.type))->asSet()
+/]
+
+[comment]Get all obj name from OCL and VarLink in post cur step and pre next step[/comment]
+[query public getObjNameAllFromStep(step : Step) : Set(String) = 
+	step.getAllNextStep()->collect(s | s.oclAsType(ActStep).preSnapshot.getObjNameAllFromSnapshot())->asSet()
+		->union(step.oclAsType(ActStep).postSnapshot.getObjNameAllFromSnapshot())
+/]
+
+[comment]Get all Obj as Sequence{obj.name(String), obj.type(Class)} from OCL and VarLink in pre/post snapshot[/comment]
+[query public getObjFromSnapshot(snap : SnapshotPattern) : Set(Sequence(OclAny)) = 
+	snap.getObjInVarLinkFromSnapshot()->collectNested(o | Sequence{o.name, o.type.type})->addAll(snap.getObjInOCLFromSnapshot()->collectNested(p | Sequence{p.name, p.type}))->asSet()
+/]
+
+[query public getObjFromStep(step : Step) : Set(Sequence(OclAny)) =
+	step.getAllNextStep()->collectNested(s | s.oclAsType(ActStep).preSnapshot.getObjFromSnapshot())->any(true)
+/]
+
+[query public getPropertyClassFromName(aFrslModel : FrslModel, usecaseName : String, name : String) : Class = 
+	aFrslModel.getModelPropertyFromUsecase(aFrslModel, usecaseName)->select(p: Property | p.name=name)->any(true).type
+/]
+
+[comment]step.getAllNextStep()->collectNested(s | s.oclAsType(ActStep).preSnapshot.getObjFromSnapshot())->any(true)->union(step.oclAsType(ActStep).postSnapshot.getObjFromSnapshot()->asSet())[/comment]
+[comment]	step.oclAsType(ActStep).postSnapshot.getObjFromSnapshot()->addAll(step.getAllNextStep()->collectNested(s | s.oclAsType(ActStep).preSnapshot.getObjFromSnapshot()))[/comment]
+
+[comment]step.getAllNextStep()->collect(s | s.oclAsType(ActStep).preSnapshot.getObjFromSnapshot())[/comment]
+
+
+[query public extractChild(parent : Set(Sequence(OclAny)), newParent : Set(OclAny)) : OclAny = self /]
+
+
+
+[comment]Get attr of Model Class!!! Need to change its name[/comment]
+[query public getPropertiesOfModelClass(modelClass : Class) : OrderedSet(Property) = 
+	modelClass.ownedProperties->select(p: Property | not p.type.oclIsKindOf(CollectionType))
+/]
+
+[comment]Get modify attr of obj from OCL in pre/post snapshot[/comment]
+[query public getAttrInOCLOfModelClass(snap : SnapshotPattern, modelClassRoleName : String) : Set(String) =
+	snap.getObjInOCLFromSnapshot()->select(p: PropertyCallExp | p.name=modelClassRoleName)->collect(p: PropertyCallExp | p.eContainer().oclAsType(PropertyCallExp).name)->asSet()
+/]
+
+[comment]Get modify attr of obj from VarLink in pre/post snapshot[/comment]
+[query public getAttrInVarLinkOfModelClass(snap : SnapshotPattern, modelClassRoleName : String) : Set(String) = 
+	snap.getObjInVarLinkFromSnapshot()->select(o: ObjVar | o.name=modelClassRoleName)->collect(o | o.siblings(ObjVar)->first().name)->asSet()
+/]
+
+[comment]Get modify attr of obj from OCL in pre/post snapshot[/comment]
+[query public getAttrAllInModelClassFromSnap(snap : SnapshotPattern, modelClassRoleName : String) : Set(String) = 
+	snap.getAttrInOCLOfModelClass(modelClassRoleName)->addAll(snap.getAttrInVarLinkOfModelClass(modelClassRoleName))
+/]
+
+[query public getAttrAllInModelClassFromStep(step : Step, modelClassRoleName : String) : Set(String) = 
+	step.getAllNextStep()->collect(s | s.oclAsType(ActStep).preSnapshot.getAttrAllInModelClassFromSnap(modelClassRoleName))->asSet()
+		->union(step.oclAsType(ActStep).postSnapshot.getAttrAllInModelClassFromSnap(modelClassRoleName))
+/]
+
+
+
+
+[query public add(arg1 : String, arg2 : String) : String = (arg1.toInteger() + arg2.toInteger()).toString() /]
+
+[query public sub(arg1 : String, arg2 : String) : String = (arg1.toInteger() - arg2.toInteger()).toString() /]
+
+[query public mul(arg1 : String, arg2 : String) : String = (arg1.toInteger() * arg2.toInteger()).toString() /]
+
+[comment]---------------Test[/comment]
+
+[query public testRecursive(step : Step, allRoutes : OrderedSet(Step)) : OrderedSet(Step) =  
+	if (step.oclIsUndefined()) then
+		allRoutes
+	else 
+		step.nextStep.testRecursive(allRoutes->including(step)->asOrderedSet())
+	endif	 
+/]
+
+
+[query public getAltFlow(baseStep : Step) : AltFlow =
+	AltFlow.allInstances() -> any(e | e.baseStep = baseStep)
+/]
+
