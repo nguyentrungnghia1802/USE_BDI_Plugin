@@ -1,0 +1,77 @@
+package posModel{	
+	class Ticket{
+		attribute value: Integer;
+		attribute isSold: Boolean;
+	}					
+	class Customer {				
+		attribute money: Integer;			
+	}	
+}
+
+association TakeTicket
+  ticket: Ticket[0..1]
+  customer: Customer[0..1]
+end
+
+actor Customer
+end
+
+usecase BuyTicket		
+	description = 'This use-case describes customer buying ticket'	
+	primaryActor = Customer
+	
+	ucPrecondition	
+	description = 'Customer is ready to buy ticket.'
+		customer: Customer;
+		ticket: Ticket;
+		!(customer, ticket): TakeTicket;
+		[customer.money>0]
+		[ticket.value>0]
+		[ticket.isSold=false]
+	end
+	
+	ucPostcondition	
+	description = 'Customer buys ticket successfully.'
+		customer: Customer;
+		ticket: Ticket;
+		(customer, ticket): TakeTicket;
+	end
+	
+	actStep step01
+	description = '1. Customer takes the ticket.'
+	from
+		customer: Customer;
+		ticket: Ticket;
+	to
+		(customer, ticket): TakeTicket;
+		[customer.money=customer.money@pre]
+	end
+	
+	actStep step02
+	description = '2. Customer pays and owns that ticket.'
+	from
+		customer: Customer;
+		ticket: Ticket;
+		[customer.money>ticket.value]
+	to
+		[customer.money=customer.money@pre-ticket.value]
+		[ticket.isSold=true]
+	end
+	
+	altStep at step01
+		description = 'Customer doesnt have enough money.'
+		when
+			[customer.money<ticket.value]		
+		end
+		
+		actStep step01a
+		description = '1a. Customer returns ticket'
+		from
+			customer: Customer;
+			ticket: Ticket;
+		to
+			!(customer, ticket): TakeTicket;
+			[customer.money=customer.money@pre]
+		end
+	end
+end
