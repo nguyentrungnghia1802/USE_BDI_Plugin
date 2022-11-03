@@ -27,7 +27,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/use-core/target/use-core-7.1.0.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/use-gui"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/use-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
