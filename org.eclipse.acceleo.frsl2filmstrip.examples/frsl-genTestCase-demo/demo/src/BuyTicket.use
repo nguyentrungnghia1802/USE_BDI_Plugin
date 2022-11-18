@@ -1,0 +1,141 @@
+model POS
+
+
+
+
+
+class BuyTicket
+attributes
+	step: String
+operations
+	actStep_step01a()
+	actStep_step01()
+	actStep_step02()
+	
+	
+end
+
+
+
+
+class Customer
+attributes
+	money: Integer
+end
+
+class Ticket
+attributes
+	value: Integer
+	isSold: Boolean
+end
+
+
+association TakeTicket between
+	Ticket[0..1] role ticket
+	Customer[0..1] role customer
+end
+
+association FRSLcustomerBuyTicket between
+	Customer[1] role customer
+	BuyTicket[0..1] role buyTicketCustomer
+end
+
+association FRSLticketBuyTicket between
+	Ticket[1] role ticket
+	BuyTicket[0..1] role buyTicketTicket
+end
+
+
+association _TrackCustomer between
+	Customer[0..1] role customer
+	Customer[0..1] role _customer
+end
+
+association _TrackTicket between
+	Ticket[0..1] role ticket
+	Ticket[0..1] role _ticket
+end
+
+
+
+constraints
+context BuyTicket inv usecaseContraint:
+	BuyTicket.allInstances()->size=1
+
+context BuyTicket inv usecaseConnectAll:
+	Customer.allInstances->forAll(x|x.buyTicketCustomer->size() = 1) and
+	Ticket.allInstances->forAll(x|x.buyTicketTicket->size() = 1)	
+context BuyTicket::actStep_step01()
+	pre preUC: true
+		and customer._customer->isEmpty()
+	 and customer.customer->isEmpty()
+		and ticket._ticket->isEmpty()
+	 and ticket.ticket->isEmpty()
+	
+		and ticket.customer->isEmpty()
+		and customer.money>0
+		and ticket.value>0
+		and ticket.isSold=false
+
+	pre beforeStep: step=''
+	post afterStep: step='step01'
+
+	post unChange:
+		(Customer.allInstances - Set{customer})->forAll(x | x@pre=x and x.money@pre=x.money and x.ticket@pre=x.ticket and x._customer@pre=x._customer and x.customer@pre=x.customer) and
+		(Ticket.allInstances - Set{ticket})->forAll(x | x@pre=x and x.value@pre=x.value and x.isSold@pre=x.isSold and x.customer@pre=x.customer and x._ticket@pre=x._ticket and x.ticket@pre=x.ticket)
+
+	
+
+	pre preCon: true
+
+	post postCon: true
+		 and ticket._ticket@pre=ticket._ticket and ticket.ticket@pre=ticket.ticket and ticket.isSold@pre=ticket.isSold and ticket.value@pre=ticket.value and customer._customer@pre=customer._customer and customer.customer@pre=customer.customer
+		and ticket.customer=customer	and customer.money=customer.money@pre
+
+
+
+
+context BuyTicket::actStep_step02()
+
+	pre beforeStep: step='step01'
+	post afterStep: step='step02'
+
+	post unChange:
+		(Customer.allInstances - Set{customer})->forAll(x | x@pre=x and x.money@pre=x.money and x.ticket@pre=x.ticket and x._customer@pre=x._customer and x.customer@pre=x.customer) and
+		(Ticket.allInstances - Set{ticket})->forAll(x | x@pre=x and x.value@pre=x.value and x.isSold@pre=x.isSold and x.customer@pre=x.customer and x._ticket@pre=x._ticket and x.ticket@pre=x.ticket)
+
+	
+
+	pre preCon: true
+		and customer.money>ticket.value
+
+	post postCon: true
+		 and ticket._ticket@pre=ticket._ticket and ticket.ticket@pre=ticket.ticket and ticket.value@pre=ticket.value and ticket.customer@pre=ticket.customer and customer.ticket@pre=customer.ticket and customer._customer@pre=customer._customer and customer.customer@pre=customer.customer
+		and customer.money=customer.money@pre-ticket.value
+	 and ticket.isSold=true
+
+
+
+
+context BuyTicket::actStep_step01a()
+
+	pre beforeStep: step='step01'
+	post afterStep: step='step01a'
+
+	post unChange:
+		(Customer.allInstances - Set{customer})->forAll(x | x@pre=x and x.money@pre=x.money and x.ticket@pre=x.ticket and x._customer@pre=x._customer and x.customer@pre=x.customer) and
+		(Ticket.allInstances - Set{ticket})->forAll(x | x@pre=x and x.value@pre=x.value and x.isSold@pre=x.isSold and x.customer@pre=x.customer and x._ticket@pre=x._ticket and x.ticket@pre=x.ticket)
+
+	pre altFlow:
+		customer.money<ticket.value
+
+	pre preCon: true
+
+	post postCon: true
+		 and ticket._ticket@pre=ticket._ticket and ticket.ticket@pre=ticket.ticket and ticket.isSold@pre=ticket.isSold and ticket.value@pre=ticket.value and customer._customer@pre=customer._customer and customer.customer@pre=customer.customer
+		and ticket.customer->isEmpty()
+		and customer.money=customer.money@pre
+
+
+
+

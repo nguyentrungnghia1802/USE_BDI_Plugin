@@ -74,7 +74,8 @@ public class VariableOperationVisitor extends DefaultExpressionVisitor {
 			} else {
 				throw new TransformationException("Cannot determine type of source expression for " + StringUtil.inQuotes(exp.toString()) + ".");
 			}
-		}
+		}		
+		
 		IAttribute attribute = attributeClass.getAttribute(exp.attr().name());
 		
 		if (attribute != null) {
@@ -93,7 +94,30 @@ public class VariableOperationVisitor extends DefaultExpressionVisitor {
 				attributeClass = null;
 			}
 		} else {
-			throw new TransformationException("Cannot find attribute " + exp.attr().name() + ".");
+			//hanhdd-Begin
+			//throw new TransformationException("Cannot find attribute " + exp.attr().name() + ".");			
+			org.tzi.kodkod.model.type.Type sourceType = new TypeConverter(model).convert(exp.objExp().type());
+			if(sourceType instanceof ObjectType){
+				attributeClass = ((ObjectType) sourceType).clazz();
+			} else {
+				throw new TransformationException("Cannot determine type of source expression for " + StringUtil.inQuotes(exp.toString()) + ".");
+			}
+			
+			attribute = attributeClass.getAttribute(exp.attr().name());
+			
+			/*System.out.println("Hanhdd::sourceType=" + sourceType.toString());
+			System.out.println("Hanhdd::attributeClass.name()=" + attributeClass.name());
+			System.out.println("Hanhdd::expr=" + exp.toString());
+			System.out.println("Hanhdd::exp.type().toString()=" + exp.type().toString());
+			System.out.println("Hanhdd::exp.objExp().toString()=" + exp.objExp().toString());
+			System.out.println("Hanhdd::exp.objExp().type().toString()=" + exp.objExp().type().toString());
+			System.out.println("Hanhdd::exp.objExp().type().shortName()=" + exp.objExp().type().shortName());			
+			System.out.println("Hanhdd::exp.attr().toString()=" + exp.attr().toString());*/
+			
+			//hanhdd-end
+			if( attribute == null) {
+				throw new TransformationException("Cannot find attribute " + exp.attr().name() + ".");
+			}			
 		}
 	}
 
