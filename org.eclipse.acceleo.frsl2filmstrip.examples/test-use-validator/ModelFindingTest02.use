@@ -1,7 +1,0 @@
-model ModelFindingTest02
-
-class DomainClass
-attributes
-	--isPrbl: Boolean
-	int: Integer
-end
