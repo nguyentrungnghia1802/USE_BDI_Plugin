@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <diagram_Layout version="13">
     <diagramOptions>
-        <autolayout>false</autolayout>
+        <autolayout>true</autolayout>
         <antialiasing>false</antialiasing>
         <showassocnames>false</showassocnames>
         <showattributes>true</showattributes>
@@ -13,72 +13,64 @@
     <node id="Snapshot" sizeCalculated="true" type="Class">
         <name>Snapshot</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>1159.6909746062904</x>
-            <y>323.0246290404864</y>
+            <x>1508.9324679508077</x>
+            <y>299.5956299871815</y>
         </strategy>
         <hidden>false</hidden>
     </node>
-    <node id="Ticket" sizeCalculated="true" type="Class">
-        <name>Ticket</name>
+    <node id="DomainClass" sizeCalculated="true" type="Class">
+        <name>DomainClass</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>138.2979467062321</x>
-            <y>268.30319476086885</y>
-        </strategy>
-        <hidden>false</hidden>
-    </node>
-    <node id="Customer" sizeCalculated="true" type="Class">
-        <name>Customer</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>1158.8903616170828</x>
-            <y>161.35464164906634</y>
+            <x>642.1940969375639</x>
+            <y>85.69517005589753</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="OperationCall" sizeCalculated="true" type="Class">
         <name>OperationCall</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>738.9569987031268</x>
-            <y>519.3456690236588</y>
+            <x>1176.0902219156962</x>
+            <y>276.28333927818545</y>
         </strategy>
         <hidden>false</hidden>
     </node>
-    <node id="actStep_step02_BuyTicketOpC" sizeCalculated="true" type="Class">
-        <name>actStep_step02_BuyTicketOpC</name>
+    <node id="SnapshotItem" sizeCalculated="true" type="Class">
+        <name>SnapshotItem</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>537.5886827206772</x>
-            <y>120.33538950594053</y>
+            <x>1533.8653373314937</x>
+            <y>243.26618366178266</y>
         </strategy>
         <hidden>false</hidden>
     </node>
-    <node id="actStep_step01_BuyTicketOpC" sizeCalculated="true" type="Class">
-        <name>actStep_step01_BuyTicketOpC</name>
+    <node id="step1_ClassAOpC" sizeCalculated="true" type="Class">
+        <name>step1_ClassAOpC</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>1205.354646848182</x>
-            <y>421.86082258014596</y>
+            <x>974.3892106834121</x>
+            <y>20.0</y>
         </strategy>
         <hidden>false</hidden>
     </node>
-    <node id="actStep_step01a_BuyTicketOpC" sizeCalculated="true" type="Class">
-        <name>actStep_step01a_BuyTicketOpC</name>
+    <node id="step2_ClassAOpC" sizeCalculated="true" type="Class">
+        <name>step2_ClassAOpC</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>127.24404048601</x>
-            <y>499.562530947166</y>
+            <x>1023.8806811062359</x>
+            <y>497.0</y>
         </strategy>
         <hidden>false</hidden>
     </node>
-    <node id="BuyTicketOpC" sizeCalculated="true" type="Class">
-        <name>BuyTicketOpC</name>
+    <node id="ClassAOpC" sizeCalculated="true" type="Class">
+        <name>ClassAOpC</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>677.4235699687472</x>
-            <y>368.6267196698105</y>
+            <x>1010.5707683922749</x>
+            <y>258.2750100265992</y>
         </strategy>
         <hidden>false</hidden>
     </node>
-    <node id="BuyTicket" sizeCalculated="true" type="Class">
-        <name>BuyTicket</name>
+    <node id="ClassA" sizeCalculated="true" type="Class">
+        <name>ClassA</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>832.9422936221499</x>
-            <y>295.902828674942</y>
+            <x>2395.5135164185067</x>
+            <y>365.3773301403439</y>
         </strategy>
         <hidden>false</hidden>
     </node>
@@ -91,8 +83,8 @@
             <offsetX>0.0</offsetX>
             <offsetY>0.0</offsetY>
             <related length="2">
-                <related0>OperationCall</related0>
-                <related1>Snapshot</related1>
+                <related0>Snapshot</related0>
+                <related1>OperationCall</related1>
             </related>
         </strategy>
         <connectedNode>Snapshot</connectedNode>
@@ -120,20 +112,6 @@
             <target>Snapshot</target>
             <name>pred</name>
             <properties>
-                <edgeproperty id="Filmstrip::pred::target::rolename"
-                    sizeCalculated="true" type="rolename"
-                    userDefined="false" visible="true">
-                    <name>pred</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>0.0</userOffsetX>
-                        <userOffsetY>0.0</userOffsetY>
-                        <attached>Filmstrip::pred::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>TOP</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
                 <edgeproperty id="Filmstrip::pred::target::multiplicity"
                     sizeCalculated="true" type="multiplicity"
                     userDefined="false" visible="true">
@@ -145,6 +123,20 @@
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
                         <placement>BOTTOM</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
+                <edgeproperty id="Filmstrip::pred::target::rolename"
+                    sizeCalculated="true" type="rolename"
+                    userDefined="false" visible="true">
+                    <name>pred</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>Filmstrip::pred::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>TOP</placement>
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
@@ -182,20 +174,6 @@
             <target>Snapshot</target>
             <name>succ</name>
             <properties>
-                <edgeproperty id="Filmstrip::succ::target::rolename"
-                    sizeCalculated="true" type="rolename"
-                    userDefined="false" visible="true">
-                    <name>succ</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>0.0</userOffsetX>
-                        <userOffsetY>0.0</userOffsetY>
-                        <attached>Filmstrip::succ::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>TOP</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
                 <edgeproperty id="Filmstrip::succ::target::multiplicity"
                     sizeCalculated="true" type="multiplicity"
                     userDefined="false" visible="true">
@@ -207,6 +185,20 @@
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
                         <placement>BOTTOM</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
+                <edgeproperty id="Filmstrip::succ::target::rolename"
+                    sizeCalculated="true" type="rolename"
+                    userDefined="false" visible="true">
+                    <name>succ</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>Filmstrip::succ::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>TOP</placement>
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
@@ -245,21 +237,6 @@
             <name>operationCall</name>
             <properties>
                 <edgeproperty
-                    id="Filmstrip::operationCall::target::rolename"
-                    sizeCalculated="true" type="rolename"
-                    userDefined="false" visible="true">
-                    <name>operationCall</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>0.0</userOffsetX>
-                        <userOffsetY>0.0</userOffsetY>
-                        <attached>Filmstrip::operationCall::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>TOP</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
-                <edgeproperty
                     id="Filmstrip::operationCall::target::multiplicity"
                     sizeCalculated="true" type="multiplicity"
                     userDefined="false" visible="true">
@@ -271,6 +248,21 @@
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
                         <placement>BOTTOM</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
+                <edgeproperty
+                    id="Filmstrip::operationCall::target::rolename"
+                    sizeCalculated="true" type="rolename"
+                    userDefined="false" visible="true">
+                    <name>operationCall</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>Filmstrip::operationCall::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>TOP</placement>
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
@@ -306,85 +298,85 @@
         <hidden>false</hidden>
     </node>
     <edge type="BinaryEdge">
-        <source>Customer</source>
-        <target>Customer</target>
-        <name>PredSuccCustomer</name>
+        <source>ClassA</source>
+        <target>ClassA</target>
+        <name>PredSuccClassA</name>
         <properties>
-            <edgeproperty id="PredSuccCustomer::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccCustomer::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::target::rolename"
+            <edgeproperty id="PredSuccClassA::source::rolename"
                 sizeCalculated="true" type="rolename"
                 userDefined="false" visible="true">
-                <name>succ</name>
+                <name>predClassA {redefines pred}</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccCustomer::WayPoint::4</attached>
+                    <attached>PredSuccClassA::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>pred</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccCustomer::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::source::multiplicity"
+            <edgeproperty id="PredSuccClassA::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccCustomer::WayPoint::0</attached>
+                    <attached>PredSuccClassA::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::AssociationName"
+            <edgeproperty id="PredSuccClassA::target::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>succClassA {redefines succ}</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSuccClassA::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSuccClassA::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSuccClassA::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSuccClassA::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
-                <name>PredSuccCustomer</name>
+                <name>PredSuccClassA</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <offsetX>0.0</offsetX>
                     <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>PredSuccCustomer::WayPoint::2</related0>
-                        <related1>PredSuccCustomer::WayPoint::3</related1>
+                        <related0>PredSuccClassA::WayPoint::2</related0>
+                        <related1>PredSuccClassA::WayPoint::3</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
         </properties>
         <waypoints>
-            <edgeproperty id="PredSuccCustomer::WayPoint::0"
+            <edgeproperty id="PredSuccClassA::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -398,13 +390,13 @@
                     <deltaY>-0.3333</deltaY>
                     <maxDeltaY>66.66</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
+                    <relativeNodeId>ClassA</relativeNodeId>
                 </strategy>
                 <id>0</id>
                 <specialid>1</specialid>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::WayPoint::1"
+            <edgeproperty id="PredSuccClassA::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>1</name>
@@ -418,13 +410,13 @@
                     <deltaY>-0.3333</deltaY>
                     <maxDeltaY>66.66</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
+                    <relativeNodeId>ClassA</relativeNodeId>
                 </strategy>
                 <id>1</id>
                 <specialid>3</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::WayPoint::2"
+            <edgeproperty id="PredSuccClassA::WayPoint::2"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>2</name>
@@ -438,13 +430,13 @@
                     <deltaY>0.6666</deltaY>
                     <maxDeltaY>133.32</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
+                    <relativeNodeId>ClassA</relativeNodeId>
                 </strategy>
                 <id>2</id>
                 <specialid>4</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::WayPoint::3"
+            <edgeproperty id="PredSuccClassA::WayPoint::3"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>3</name>
@@ -458,13 +450,13 @@
                     <deltaY>0.6666</deltaY>
                     <maxDeltaY>133.32</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
+                    <relativeNodeId>ClassA</relativeNodeId>
                 </strategy>
                 <id>3</id>
                 <specialid>5</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccCustomer::WayPoint::4"
+            <edgeproperty id="PredSuccClassA::WayPoint::4"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>4</name>
@@ -478,7 +470,7 @@
                     <deltaY>0.0</deltaY>
                     <maxDeltaY>0.0</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
+                    <relativeNodeId>ClassA</relativeNodeId>
                 </strategy>
                 <id>4</id>
                 <specialid>2</specialid>
@@ -488,767 +480,85 @@
         <hidden>false</hidden>
     </edge>
     <edge type="BinaryEdge">
-        <source>Ticket</source>
+        <source>SnapshotItem</source>
         <target>Snapshot</target>
-        <name>SnapshotTicket</name>
+        <name>SnapElement</name>
         <properties>
-            <edgeproperty id="SnapshotTicket::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotTicket::target::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>snapshot</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotTicket::source::multiplicity"
+            <edgeproperty id="SnapElement::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>*</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotTicket::WayPoint::0</attached>
+                    <attached>SnapElement::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotTicket::source::rolename"
+            <edgeproperty id="SnapElement::source::rolename"
                 sizeCalculated="true" type="rolename"
                 userDefined="false" visible="true">
-                <name>ticket</name>
+                <name>snapshotItem</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotTicket::WayPoint::0</attached>
+                    <attached>SnapElement::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotTicket::AssociationName"
-                sizeCalculated="true" type="associationName"
-                userDefined="false" visible="true">
-                <name>SnapshotTicket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <offsetX>0.0</offsetX>
-                    <offsetY>-10.0</offsetY>
-                    <related length="2">
-                        <related0>SnapshotTicket::WayPoint::0</related0>
-                        <related1>SnapshotTicket::WayPoint::1</related1>
-                    </related>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </properties>
-        <waypoints>
-            <edgeproperty id="SnapshotTicket::WayPoint::0"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>0</id>
-                <specialid>1</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotTicket::WayPoint::1"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>1</id>
-                <specialid>2</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </waypoints>
-        <hidden>false</hidden>
-    </edge>
-    <edge type="BinaryEdge">
-        <source>Ticket</source>
-        <target>BuyTicket</target>
-        <name>FRSLticketBuyTicket</name>
-        <properties>
-            <edgeproperty id="FRSLticketBuyTicket::target::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>buyTicketTicket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLticketBuyTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLticketBuyTicket::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLticketBuyTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLticketBuyTicket::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>ticket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLticketBuyTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLticketBuyTicket::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLticketBuyTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLticketBuyTicket::AssociationName"
-                sizeCalculated="true" type="associationName"
-                userDefined="false" visible="true">
-                <name>FRSLticketBuyTicket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <offsetX>0.0</offsetX>
-                    <offsetY>-10.0</offsetY>
-                    <related length="2">
-                        <related0>FRSLticketBuyTicket::WayPoint::0</related0>
-                        <related1>FRSLticketBuyTicket::WayPoint::1</related1>
-                    </related>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </properties>
-        <waypoints>
-            <edgeproperty id="FRSLticketBuyTicket::WayPoint::0"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>0</id>
-                <specialid>1</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLticketBuyTicket::WayPoint::1"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>1</id>
-                <specialid>2</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </waypoints>
-        <hidden>false</hidden>
-    </edge>
-    <edge type="BinaryEdge">
-        <source>BuyTicket</source>
-        <target>BuyTicket</target>
-        <name>PredSuccBuyTicket</name>
-        <properties>
-            <edgeproperty id="PredSuccBuyTicket::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccBuyTicket::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::target::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>succ</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccBuyTicket::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccBuyTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>pred</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccBuyTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::AssociationName"
-                sizeCalculated="true" type="associationName"
-                userDefined="false" visible="true">
-                <name>PredSuccBuyTicket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <offsetX>0.0</offsetX>
-                    <offsetY>-10.0</offsetY>
-                    <related length="2">
-                        <related0>PredSuccBuyTicket::WayPoint::2</related0>
-                        <related1>PredSuccBuyTicket::WayPoint::3</related1>
-                    </related>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </properties>
-        <waypoints>
-            <edgeproperty id="PredSuccBuyTicket::WayPoint::0"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>ABSOLUTE</basisDeltaX>
-                    <deltaX>0.0</deltaX>
-                    <maxDeltaX>0.0</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>-0.3333</deltaY>
-                    <maxDeltaY>66.66</maxDeltaY>
-                    <corner>NORTH_EAST</corner>
-                    <relativeNodeId>BuyTicket</relativeNodeId>
-                </strategy>
-                <id>0</id>
-                <specialid>1</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::WayPoint::1"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="false">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>0.6666</deltaX>
-                    <maxDeltaX>133.32</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>-0.3333</deltaY>
-                    <maxDeltaY>66.66</maxDeltaY>
-                    <corner>NORTH_EAST</corner>
-                    <relativeNodeId>BuyTicket</relativeNodeId>
-                </strategy>
-                <id>1</id>
-                <specialid>3</specialid>
-                <hidden>true</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::WayPoint::2"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="false">
-                <name>2</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>0.6666</deltaX>
-                    <maxDeltaX>133.32</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>0.6666</deltaY>
-                    <maxDeltaY>133.32</maxDeltaY>
-                    <corner>NORTH_EAST</corner>
-                    <relativeNodeId>BuyTicket</relativeNodeId>
-                </strategy>
-                <id>2</id>
-                <specialid>4</specialid>
-                <hidden>true</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::WayPoint::3"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="false">
-                <name>3</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>-0.3333</deltaX>
-                    <maxDeltaX>66.66</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>0.6666</deltaY>
-                    <maxDeltaY>133.32</maxDeltaY>
-                    <corner>NORTH_EAST</corner>
-                    <relativeNodeId>BuyTicket</relativeNodeId>
-                </strategy>
-                <id>3</id>
-                <specialid>5</specialid>
-                <hidden>true</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccBuyTicket::WayPoint::4"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>4</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>-0.3333</deltaX>
-                    <maxDeltaX>66.66</maxDeltaX>
-                    <basisDeltaY>ABSOLUTE</basisDeltaY>
-                    <deltaY>0.0</deltaY>
-                    <maxDeltaY>0.0</maxDeltaY>
-                    <corner>NORTH_EAST</corner>
-                    <relativeNodeId>BuyTicket</relativeNodeId>
-                </strategy>
-                <id>4</id>
-                <specialid>2</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </waypoints>
-        <hidden>false</hidden>
-    </edge>
-    <edge type="BinaryEdge">
-        <source>Ticket</source>
-        <target>Customer</target>
-        <name>TakeTicket</name>
-        <properties>
-            <edgeproperty id="TakeTicket::target::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>customer</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>TakeTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="TakeTicket::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>TakeTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="TakeTicket::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>ticket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>TakeTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="TakeTicket::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>TakeTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="TakeTicket::AssociationName"
-                sizeCalculated="true" type="associationName"
-                userDefined="false" visible="true">
-                <name>TakeTicket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <offsetX>0.0</offsetX>
-                    <offsetY>-10.0</offsetY>
-                    <related length="2">
-                        <related0>TakeTicket::WayPoint::0</related0>
-                        <related1>TakeTicket::WayPoint::1</related1>
-                    </related>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </properties>
-        <waypoints>
-            <edgeproperty id="TakeTicket::WayPoint::0"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>0</id>
-                <specialid>1</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="TakeTicket::WayPoint::1"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>1</id>
-                <specialid>2</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </waypoints>
-        <hidden>false</hidden>
-    </edge>
-    <edge type="BinaryEdge">
-        <source>Customer</source>
-        <target>Customer</target>
-        <name>_TrackCustomer</name>
-        <properties>
-            <edgeproperty id="_TrackCustomer::target::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>_customer</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>_TrackCustomer::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>_TrackCustomer::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>customer</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>_TrackCustomer::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>_TrackCustomer::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::AssociationName"
-                sizeCalculated="true" type="associationName"
-                userDefined="false" visible="true">
-                <name>_TrackCustomer</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <offsetX>0.0</offsetX>
-                    <offsetY>10.0</offsetY>
-                    <related length="2">
-                        <related0>_TrackCustomer::WayPoint::2</related0>
-                        <related1>_TrackCustomer::WayPoint::3</related1>
-                    </related>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </properties>
-        <waypoints>
-            <edgeproperty id="_TrackCustomer::WayPoint::0"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>ABSOLUTE</basisDeltaX>
-                    <deltaX>0.0</deltaX>
-                    <maxDeltaX>0.0</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>-0.3333</deltaY>
-                    <maxDeltaY>66.66</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
-                </strategy>
-                <id>0</id>
-                <specialid>1</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::WayPoint::1"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="false">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>0.6666</deltaX>
-                    <maxDeltaX>133.32</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>-0.3333</deltaY>
-                    <maxDeltaY>66.66</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
-                </strategy>
-                <id>1</id>
-                <specialid>3</specialid>
-                <hidden>true</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::WayPoint::2"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="false">
-                <name>2</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>0.6666</deltaX>
-                    <maxDeltaX>133.32</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>0.6666</deltaY>
-                    <maxDeltaY>133.32</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
-                </strategy>
-                <id>2</id>
-                <specialid>4</specialid>
-                <hidden>true</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::WayPoint::3"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="false">
-                <name>3</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>-0.3333</deltaX>
-                    <maxDeltaX>66.66</maxDeltaX>
-                    <basisDeltaY>RELATIVE</basisDeltaY>
-                    <deltaY>0.6666</deltaY>
-                    <maxDeltaY>133.32</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
-                </strategy>
-                <id>3</id>
-                <specialid>5</specialid>
-                <hidden>true</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackCustomer::WayPoint::4"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>4</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <basisDeltaX>RELATIVE</basisDeltaX>
-                    <deltaX>-0.3333</deltaX>
-                    <maxDeltaX>66.66</maxDeltaX>
-                    <basisDeltaY>ABSOLUTE</basisDeltaY>
-                    <deltaY>0.0</deltaY>
-                    <maxDeltaY>0.0</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Customer</relativeNodeId>
-                </strategy>
-                <id>4</id>
-                <specialid>2</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </waypoints>
-        <hidden>false</hidden>
-    </edge>
-    <edge type="BinaryEdge">
-        <source>Customer</source>
-        <target>Snapshot</target>
-        <name>SnapshotCustomer</name>
-        <properties>
-            <edgeproperty id="SnapshotCustomer::target::rolename"
+            <edgeproperty id="SnapElement::target::rolename"
                 sizeCalculated="true" type="rolename"
                 userDefined="false" visible="true">
                 <name>snapshot</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotCustomer::WayPoint::1</attached>
+                    <attached>SnapElement::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotCustomer::target::multiplicity"
+            <edgeproperty id="SnapElement::target::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotCustomer::WayPoint::1</attached>
+                    <attached>SnapElement::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotCustomer::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>*</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotCustomer::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotCustomer::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>customer</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotCustomer::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotCustomer::AssociationName"
+            <edgeproperty id="SnapElement::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
-                <name>SnapshotCustomer</name>
+                <name>SnapElement</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <offsetX>0.0</offsetX>
                     <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>SnapshotCustomer::WayPoint::0</related0>
-                        <related1>SnapshotCustomer::WayPoint::1</related1>
+                        <related0>SnapElement::WayPoint::0</related0>
+                        <related1>SnapElement::WayPoint::1</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
         </properties>
         <waypoints>
-            <edgeproperty id="SnapshotCustomer::WayPoint::0"
+            <edgeproperty id="SnapElement::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1260,7 +570,7 @@
                 <specialid>1</specialid>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotCustomer::WayPoint::1"
+            <edgeproperty id="SnapElement::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>
@@ -1276,85 +586,85 @@
         <hidden>false</hidden>
     </edge>
     <edge type="BinaryEdge">
-        <source>Ticket</source>
-        <target>Ticket</target>
-        <name>PredSuccTicket</name>
+        <source>SnapshotItem</source>
+        <target>SnapshotItem</target>
+        <name>PredSucc</name>
         <properties>
-            <edgeproperty id="PredSuccTicket::target::multiplicity"
+            <edgeproperty id="PredSucc::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccTicket::WayPoint::4</attached>
+                    <attached>PredSucc::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccTicket::target::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>succ</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccTicket::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccTicket::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccTicket::source::rolename"
+            <edgeproperty id="PredSucc::source::rolename"
                 sizeCalculated="true" type="rolename"
                 userDefined="false" visible="true">
                 <name>pred</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>PredSuccTicket::WayPoint::0</attached>
+                    <attached>PredSucc::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccTicket::AssociationName"
+            <edgeproperty id="PredSucc::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSucc::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSucc::target::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>succ</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSucc::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSucc::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
-                <name>PredSuccTicket</name>
+                <name>PredSucc</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <offsetX>0.0</offsetX>
                     <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>PredSuccTicket::WayPoint::2</related0>
-                        <related1>PredSuccTicket::WayPoint::3</related1>
+                        <related0>PredSucc::WayPoint::2</related0>
+                        <related1>PredSucc::WayPoint::3</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
         </properties>
         <waypoints>
-            <edgeproperty id="PredSuccTicket::WayPoint::0"
+            <edgeproperty id="PredSucc::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1368,13 +678,13 @@
                     <deltaY>-0.3333</deltaY>
                     <maxDeltaY>66.66</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <relativeNodeId>SnapshotItem</relativeNodeId>
                 </strategy>
                 <id>0</id>
                 <specialid>1</specialid>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccTicket::WayPoint::1"
+            <edgeproperty id="PredSucc::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>1</name>
@@ -1388,13 +698,13 @@
                     <deltaY>-0.3333</deltaY>
                     <maxDeltaY>66.66</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <relativeNodeId>SnapshotItem</relativeNodeId>
                 </strategy>
                 <id>1</id>
                 <specialid>3</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccTicket::WayPoint::2"
+            <edgeproperty id="PredSucc::WayPoint::2"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>2</name>
@@ -1408,13 +718,13 @@
                     <deltaY>0.6666</deltaY>
                     <maxDeltaY>133.32</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <relativeNodeId>SnapshotItem</relativeNodeId>
                 </strategy>
                 <id>2</id>
                 <specialid>4</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccTicket::WayPoint::3"
+            <edgeproperty id="PredSucc::WayPoint::3"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>3</name>
@@ -1428,13 +738,13 @@
                     <deltaY>0.6666</deltaY>
                     <maxDeltaY>133.32</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <relativeNodeId>SnapshotItem</relativeNodeId>
                 </strategy>
                 <id>3</id>
                 <specialid>5</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="PredSuccTicket::WayPoint::4"
+            <edgeproperty id="PredSucc::WayPoint::4"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>4</name>
@@ -1448,7 +758,7 @@
                     <deltaY>0.0</deltaY>
                     <maxDeltaY>0.0</maxDeltaY>
                     <corner>NORTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <relativeNodeId>SnapshotItem</relativeNodeId>
                 </strategy>
                 <id>4</id>
                 <specialid>2</specialid>
@@ -1458,83 +768,85 @@
         <hidden>false</hidden>
     </edge>
     <edge type="BinaryEdge">
-        <source>Ticket</source>
-        <target>Ticket</target>
-        <name>_TrackTicket</name>
+        <source>DomainClass</source>
+        <target>DomainClass</target>
+        <name>PredSuccDomainClass</name>
         <properties>
-            <edgeproperty id="_TrackTicket::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
+            <edgeproperty id="PredSuccDomainClass::source::rolename"
+                sizeCalculated="true" type="rolename"
                 userDefined="false" visible="true">
-                <name>0..1</name>
+                <name>predDomainClass {redefines pred}</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>_TrackTicket::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="_TrackTicket::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>_ticket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>-7.0</userOffsetX>
-                    <userOffsetY>13.0</userOffsetY>
-                    <attached>_TrackTicket::WayPoint::4</attached>
+                    <attached>PredSuccDomainClass::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="_TrackTicket::source::multiplicity"
+            <edgeproperty id="PredSuccDomainClass::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>_TrackTicket::WayPoint::0</attached>
+                    <attached>PredSuccDomainClass::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="_TrackTicket::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>ticket</name>
+            <edgeproperty id="PredSuccDomainClass::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>5.0</userOffsetX>
-                    <userOffsetY>19.0</userOffsetY>
-                    <attached>_TrackTicket::WayPoint::0</attached>
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSuccDomainClass::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSuccDomainClass::target::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>succDomainClass {redefines succ}</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSuccDomainClass::WayPoint::4</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="_TrackTicket::AssociationName"
+            <edgeproperty id="PredSuccDomainClass::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
-                <name>_TrackTicket</name>
+                <name>PredSuccDomainClass</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <offsetX>0.0</offsetX>
-                    <offsetY>10.0</offsetY>
+                    <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>_TrackTicket::WayPoint::2</related0>
-                        <related1>_TrackTicket::WayPoint::3</related1>
+                        <related0>PredSuccDomainClass::WayPoint::2</related0>
+                        <related1>PredSuccDomainClass::WayPoint::3</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
         </properties>
         <waypoints>
-            <edgeproperty id="_TrackTicket::WayPoint::0"
+            <edgeproperty id="PredSuccDomainClass::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1547,14 +859,14 @@
                     <basisDeltaY>RELATIVE</basisDeltaY>
                     <deltaY>-0.3333</deltaY>
                     <maxDeltaY>66.66</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <corner>NORTH_EAST</corner>
+                    <relativeNodeId>DomainClass</relativeNodeId>
                 </strategy>
                 <id>0</id>
                 <specialid>1</specialid>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="_TrackTicket::WayPoint::1"
+            <edgeproperty id="PredSuccDomainClass::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>1</name>
@@ -1567,14 +879,14 @@
                     <basisDeltaY>RELATIVE</basisDeltaY>
                     <deltaY>-0.3333</deltaY>
                     <maxDeltaY>66.66</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <corner>NORTH_EAST</corner>
+                    <relativeNodeId>DomainClass</relativeNodeId>
                 </strategy>
                 <id>1</id>
                 <specialid>3</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="_TrackTicket::WayPoint::2"
+            <edgeproperty id="PredSuccDomainClass::WayPoint::2"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>2</name>
@@ -1587,14 +899,14 @@
                     <basisDeltaY>RELATIVE</basisDeltaY>
                     <deltaY>0.6666</deltaY>
                     <maxDeltaY>133.32</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <corner>NORTH_EAST</corner>
+                    <relativeNodeId>DomainClass</relativeNodeId>
                 </strategy>
                 <id>2</id>
                 <specialid>4</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="_TrackTicket::WayPoint::3"
+            <edgeproperty id="PredSuccDomainClass::WayPoint::3"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="false">
                 <name>3</name>
@@ -1607,14 +919,14 @@
                     <basisDeltaY>RELATIVE</basisDeltaY>
                     <deltaY>0.6666</deltaY>
                     <maxDeltaY>133.32</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <corner>NORTH_EAST</corner>
+                    <relativeNodeId>DomainClass</relativeNodeId>
                 </strategy>
                 <id>3</id>
                 <specialid>5</specialid>
                 <hidden>true</hidden>
             </edgeproperty>
-            <edgeproperty id="_TrackTicket::WayPoint::4"
+            <edgeproperty id="PredSuccDomainClass::WayPoint::4"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>4</name>
@@ -1627,8 +939,8 @@
                     <basisDeltaY>ABSOLUTE</basisDeltaY>
                     <deltaY>0.0</deltaY>
                     <maxDeltaY>0.0</maxDeltaY>
-                    <corner>SOUTH_EAST</corner>
-                    <relativeNodeId>Ticket</relativeNodeId>
+                    <corner>NORTH_EAST</corner>
+                    <relativeNodeId>DomainClass</relativeNodeId>
                 </strategy>
                 <id>4</id>
                 <specialid>2</specialid>
@@ -1638,193 +950,85 @@
         <hidden>false</hidden>
     </edge>
     <edge type="BinaryEdge">
-        <source>Customer</source>
-        <target>BuyTicket</target>
-        <name>FRSLcustomerBuyTicket</name>
-        <properties>
-            <edgeproperty
-                id="FRSLcustomerBuyTicket::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLcustomerBuyTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLcustomerBuyTicket::target::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>buyTicketCustomer</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLcustomerBuyTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLcustomerBuyTicket::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>customer</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLcustomerBuyTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="FRSLcustomerBuyTicket::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>FRSLcustomerBuyTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLcustomerBuyTicket::AssociationName"
-                sizeCalculated="true" type="associationName"
-                userDefined="false" visible="true">
-                <name>FRSLcustomerBuyTicket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <offsetX>0.0</offsetX>
-                    <offsetY>-10.0</offsetY>
-                    <related length="2">
-                        <related0>FRSLcustomerBuyTicket::WayPoint::0</related0>
-                        <related1>FRSLcustomerBuyTicket::WayPoint::1</related1>
-                    </related>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </properties>
-        <waypoints>
-            <edgeproperty id="FRSLcustomerBuyTicket::WayPoint::0"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>0</id>
-                <specialid>1</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="FRSLcustomerBuyTicket::WayPoint::1"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>1</id>
-                <specialid>2</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </waypoints>
-        <hidden>false</hidden>
-    </edge>
-    <edge type="BinaryEdge">
-        <source>BuyTicket</source>
+        <source>DomainClass</source>
         <target>Snapshot</target>
-        <name>SnapshotBuyTicket</name>
+        <name>SnapshotDomainClass</name>
         <properties>
-            <edgeproperty id="SnapshotBuyTicket::target::rolename"
+            <edgeproperty id="SnapshotDomainClass::source::rolename"
                 sizeCalculated="true" type="rolename"
                 userDefined="false" visible="true">
-                <name>snapshot</name>
+                <name>domainClass</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotBuyTicket::WayPoint::1</attached>
+                    <attached>SnapshotDomainClass::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotBuyTicket::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotBuyTicket::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotBuyTicket::source::rolename"
-                sizeCalculated="true" type="rolename"
-                userDefined="false" visible="true">
-                <name>buyTicket</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotBuyTicket::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotBuyTicket::source::multiplicity"
+            <edgeproperty id="SnapshotDomainClass::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>*</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotBuyTicket::WayPoint::0</attached>
+                    <attached>SnapshotDomainClass::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotBuyTicket::AssociationName"
+            <edgeproperty id="SnapshotDomainClass::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapshotDomainClass::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotDomainClass::target::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>snapshotDomainClass {redefines snapshot}</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapshotDomainClass::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotDomainClass::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
-                <name>SnapshotBuyTicket</name>
+                <name>SnapshotDomainClass</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <offsetX>0.0</offsetX>
                     <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>SnapshotBuyTicket::WayPoint::0</related0>
-                        <related1>SnapshotBuyTicket::WayPoint::1</related1>
+                        <related0>SnapshotDomainClass::WayPoint::0</related0>
+                        <related1>SnapshotDomainClass::WayPoint::1</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
         </properties>
         <waypoints>
-            <edgeproperty id="SnapshotBuyTicket::WayPoint::0"
+            <edgeproperty id="SnapshotDomainClass::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1836,7 +1040,113 @@
                 <specialid>1</specialid>
                 <hidden>false</hidden>
             </edgeproperty>
-            <edgeproperty id="SnapshotBuyTicket::WayPoint::1"
+            <edgeproperty id="SnapshotDomainClass::WayPoint::1"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                </strategy>
+                <id>1</id>
+                <specialid>2</specialid>
+                <hidden>false</hidden>
+            </edgeproperty>
+        </waypoints>
+        <hidden>false</hidden>
+    </edge>
+    <edge type="BinaryEdge">
+        <source>ClassA</source>
+        <target>Snapshot</target>
+        <name>SnapshotClassA</name>
+        <properties>
+            <edgeproperty id="SnapshotClassA::source::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>*</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapshotClassA::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotClassA::source::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>classA</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapshotClassA::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotClassA::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapshotClassA::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotClassA::target::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>snapshotClassA {redefines snapshot}</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapshotClassA::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotClassA::AssociationName"
+                sizeCalculated="true" type="associationName"
+                userDefined="false" visible="true">
+                <name>SnapshotClassA</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <offsetX>0.0</offsetX>
+                    <offsetY>-10.0</offsetY>
+                    <related length="2">
+                        <related0>SnapshotClassA::WayPoint::0</related0>
+                        <related1>SnapshotClassA::WayPoint::1</related1>
+                    </related>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+        </properties>
+        <waypoints>
+            <edgeproperty id="SnapshotClassA::WayPoint::0"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
+                <name>0</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                </strategy>
+                <id>0</id>
+                <specialid>1</specialid>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotClassA::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>
@@ -1852,13 +1162,48 @@
         <hidden>false</hidden>
     </edge>
     <edge type="Generalization">
-        <source>BuyTicketOpC</source>
+        <source>step2_ClassAOpC</source>
+        <target>ClassAOpC</target>
+        <name>Inheritance</name>
+        <properties/>
+        <waypoints>
+            <edgeproperty
+                id="Generalization::step2_ClassAOpC::ClassAOpC::WayPoint::0"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
+                <name>0</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                </strategy>
+                <id>0</id>
+                <specialid>1</specialid>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="Generalization::step2_ClassAOpC::ClassAOpC::WayPoint::1"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                </strategy>
+                <id>1</id>
+                <specialid>2</specialid>
+                <hidden>false</hidden>
+            </edgeproperty>
+        </waypoints>
+        <hidden>false</hidden>
+    </edge>
+    <edge type="Generalization">
+        <source>ClassAOpC</source>
         <target>OperationCall</target>
         <name>Inheritance</name>
         <properties/>
         <waypoints>
             <edgeproperty
-                id="Generalization::BuyTicketOpC::OperationCall::WayPoint::0"
+                id="Generalization::ClassAOpC::OperationCall::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1871,7 +1216,7 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="Generalization::BuyTicketOpC::OperationCall::WayPoint::1"
+                id="Generalization::ClassAOpC::OperationCall::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>
@@ -1887,13 +1232,13 @@
         <hidden>false</hidden>
     </edge>
     <edge type="Generalization">
-        <source>actStep_step01a_BuyTicketOpC</source>
-        <target>BuyTicketOpC</target>
+        <source>ClassA</source>
+        <target>SnapshotItem</target>
         <name>Inheritance</name>
         <properties/>
         <waypoints>
             <edgeproperty
-                id="Generalization::actStep_step01a_BuyTicketOpC::BuyTicketOpC::WayPoint::0"
+                id="Generalization::ClassA::SnapshotItem::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1906,7 +1251,7 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="Generalization::actStep_step01a_BuyTicketOpC::BuyTicketOpC::WayPoint::1"
+                id="Generalization::ClassA::SnapshotItem::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>
@@ -1922,13 +1267,13 @@
         <hidden>false</hidden>
     </edge>
     <edge type="Generalization">
-        <source>actStep_step02_BuyTicketOpC</source>
-        <target>BuyTicketOpC</target>
+        <source>DomainClass</source>
+        <target>SnapshotItem</target>
         <name>Inheritance</name>
         <properties/>
         <waypoints>
             <edgeproperty
-                id="Generalization::actStep_step02_BuyTicketOpC::BuyTicketOpC::WayPoint::0"
+                id="Generalization::DomainClass::SnapshotItem::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1941,7 +1286,7 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="Generalization::actStep_step02_BuyTicketOpC::BuyTicketOpC::WayPoint::1"
+                id="Generalization::DomainClass::SnapshotItem::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>
@@ -1957,13 +1302,13 @@
         <hidden>false</hidden>
     </edge>
     <edge type="Generalization">
-        <source>actStep_step01_BuyTicketOpC</source>
-        <target>BuyTicketOpC</target>
+        <source>step1_ClassAOpC</source>
+        <target>ClassAOpC</target>
         <name>Inheritance</name>
         <properties/>
         <waypoints>
             <edgeproperty
-                id="Generalization::actStep_step01_BuyTicketOpC::BuyTicketOpC::WayPoint::0"
+                id="Generalization::step1_ClassAOpC::ClassAOpC::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1976,7 +1321,7 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="Generalization::actStep_step01_BuyTicketOpC::BuyTicketOpC::WayPoint::1"
+                id="Generalization::step1_ClassAOpC::ClassAOpC::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>

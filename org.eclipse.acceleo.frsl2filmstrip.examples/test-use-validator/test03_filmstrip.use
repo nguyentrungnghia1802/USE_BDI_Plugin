@@ -1,10 +1,5 @@
-model ModelFindingTest01
+model ModelFindingTest02
 
-
-aggregation PredSuccClassA between
-  ClassA[0..1] role pred
-  ClassA[0..1] role succ
-end
 
 class Snapshot
 operations
@@ -12,18 +7,13 @@ operations
     begin
       declare s : Snapshot;
       s := new Snapshot;
-      for cl in self.classA do 
-        declare x : ClassA;
-        x := new ClassA;
-        insert (cl,x) into PredSuccClassA;
-        insert (x,s) into SnapshotClassA;
+      for cl in self.domainClass do 
+        declare x : DomainClass;
+        x := new DomainClass;
+        insert (cl,x) into PredSuccDomainClass;
+        insert (x,s) into SnapshotDomainClass;
       end;
       ;
-      for cl in s.classA do 
-        cl.changedAttr := cl.pred.changedAttr;
-        cl.curStep := cl.pred.curStep;
-        cl.unchanedAttr := cl.pred.unchanedAttr;
-      end;
       result := s;
     end
   pred() : Snapshot = 
@@ -32,10 +22,20 @@ operations
     if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
 end
 
---association SnapElement between
---  SnapshotItem[*]
--- Snapshot[1]
---end
+association SnapElement between
+  SnapshotItem[*]
+  Snapshot[1]
+end
+
+abstract class DomainClassOpC < OperationCall
+attributes
+  aSelf : DomainClass
+end
+
+aggregation PredSucc between
+  SnapshotItem[0..1] role pred
+  SnapshotItem[0..1] role succ
+end
 
 abstract class OperationCall
 operations
@@ -48,9 +48,14 @@ end
 abstract class SnapshotItem
 end
 
-class step1_ClassAOpC < ClassAOpC
-attributes
-  a : Integer
+aggregation PredSuccDomainClass between
+  DomainClass[0..1] role predDomainClass redefines pred
+  DomainClass[0..1] role succDomainClass redefines succ
+end
+
+association SnapshotDomainClass between
+  DomainClass[*]
+  Snapshot[1] role snapshotDomainClass redefines snapshot
 end
 
 association Filmstrip between
@@ -59,40 +64,24 @@ association Filmstrip between
   OperationCall[0..1]
 end
 
-class step2_ClassAOpC < ClassAOpC
+class inc_DomainClassOpC < DomainClassOpC
 attributes
-  b : Integer
+  a : Integer
 end
 
-association SnapshotClassA between
-  ClassA[*]
-  --Snapshot[1] role snapshotClassA redefines snapshot
-  Snapshot[1] role snapshot
-end
-
-abstract class ClassAOpC < OperationCall
-attributes
-  aSelf : ClassA
-end
-
-class ClassA < SnapshotItem
-attributes
-  changedAttr : Integer
-  unchanedAttr : Integer
-  curStep : String
+class DomainClass < SnapshotItem
 operations
-  step1(a : Integer)
-  step2(b : Integer)
+  inc(a : Integer)
 end
 
 constraints
-context ClassA inv validSnapshotLinking:
+context DomainClass inv validSnapshotLinking:
   (self.succ.isDefined() implies (self.succ.snapshot = self.snapshot.succ()))
 
-context ClassAOpC inv aSelfDefined:
+context DomainClassOpC inv aSelfDefined:
   self.aSelf.isDefined()
 
-context ClassAOpC inv aSelfInPred:
+context DomainClassOpC inv aSelfInPred:
   (self.aSelf.snapshot = self.pred())
 
 context OperationCall inv assocClassBehavior:
@@ -104,11 +93,8 @@ context Snapshot inv cycleFree:
 context Snapshot inv oneFilmstrip:
   ((Snapshot.allInstances()->select( s:Snapshot | s.pred().isUndefined() )->size() = 1) and (Snapshot.allInstances()->select( s:Snapshot | s.succ().isUndefined() )->size() = 1))
 
-context step1_ClassAOpC inv post_post1:
-  (aSelf.succ.changedAttr = (aSelf.changedAttr + a))
-
-context step2_ClassAOpC inv post_post2:
-  (aSelf.succ.changedAttr = (aSelf.changedAttr - b))
+context inc_DomainClassOpC inv post_postInc:
+  (self.succ().domainClass->size() = a)
 
 context Snapshot::copy() : Snapshot
   pre uncopied: self.succ().isUndefined()

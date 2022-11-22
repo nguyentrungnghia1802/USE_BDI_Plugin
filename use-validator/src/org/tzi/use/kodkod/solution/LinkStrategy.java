@@ -8,8 +8,11 @@ import org.tzi.kodkod.model.type.TypeConstants;
 import org.tzi.use.api.UseApiException;
 import org.tzi.use.api.UseSystemApi;
 import org.tzi.use.uml.mm.MAssociation;
+import org.tzi.use.uml.mm.MClass;
+import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MObjectState;
+import org.tzi.use.uml.sys.MSystemState;
 
 /**
  * Strategy for the creation of links for an assocation.
@@ -45,7 +48,29 @@ public class LinkStrategy extends ElementStrategy {
 			}
 		}
 		
-		systemApi.createLinkEx(mAssociation, tupleObjects);
+		// hanhdd-begin ==================================
+		//System.out.println("hanhdd@association.name = " + mAssociation.name());
+		MClass[] mClasses= new MClass[tupleObjects.length];
+		for(int i = 0; i < tupleObjects.length; i++) {
+			mClasses[i] = tupleObjects[i].cls();
+			//System.out.println("hanhdd@connectedObject=" + tupleObjects[i].name() + "  class="+ mClasses[i].name());
+		}
+		for(MAssociation assoc: mAssociation.getRedefinedByClosure() ) {
+			//System.out.println("hanhdd@assoc.name = " + assoc.name() );
+			//System.out.println("hanhdd@assoc.isAssignableFrom = " + assoc.isAssignableFrom(mClasses) );
+			if( assoc.isAssignableFrom(mClasses) ) {
+				mAssociation = assoc;
+				break;
+			}
+		}
+		
+		MSystemState sysState = systemApi.getSystem().state();
+		MLinkSet linkSet = sysState.linksOfAssociation(mAssociation);
+		if( !linkSet.hasLinkBetweenObjects(tupleObjects) ) {
+			systemApi.createLinkEx(mAssociation, tupleObjects);
+		}
+		//systemApi.createLinkEx(mAssociation, tupleObjects);
+		// hanhdd-end ====================================
 	}
 
 }
