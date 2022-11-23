@@ -45,8 +45,13 @@ public class FilmstripUtil {
 				}
 			}
 			else {
-				MNavigableElement succ = cls.navigableEnd(FilmstripModelConstants.SUCC_ROLENAME);
-				MNavigableElement pred = cls.navigableEnd(FilmstripModelConstants.PRED_ROLENAME);
+				
+				//hanhdd-begin ==================================
+				//MNavigableElement succ = cls.navigableEnd(  FilmstripModelConstants.SUCC_ROLENAME);
+				//MNavigableElement pred = cls.navigableEnd(FilmstripModelConstants.PRED_ROLENAME);
+				MNavigableElement succ = cls.navigableEnd(  FilmstripModelConstants.SUCC_ROLENAME + cls.name() );
+				MNavigableElement pred = cls.navigableEnd(FilmstripModelConstants.PRED_ROLENAME + cls.name() );
+				//hanhdd-end ====================================
 				
 				try {
 					if(goPred){

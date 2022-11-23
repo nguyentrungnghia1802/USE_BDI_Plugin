@@ -25,9 +25,12 @@ import java.util.List;
 
 import org.tzi.use.uml.mm.MAssociation;
 import org.tzi.use.uml.mm.MAssociationClass;
+import org.tzi.use.uml.mm.MClass;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.sys.MLinkSet;
 import org.tzi.use.uml.sys.MObject;
 import org.tzi.use.uml.sys.MSystemException;
+import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.StatementEvaluationResult;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.soil.exceptions.EvaluationFailedException;
@@ -195,7 +198,29 @@ public class MLinkInsertionStatement extends MStatement {
 			
 		} else {
             try {
+            	// hanhdd-begin ==================================
+            	//System.out.println("hanhdd@association.name = " + mAssociation.name());
+            	MClass[] mClasses= new MClass[participants.size()];
+            	for(int i = 0; i < participants.size(); i++) {
+            		mClasses[i] = participants.get(i).cls();
+            		//System.out.println("hanhdd@connectedObject=" + participants.get(i).name() + "  class="+ mClasses[i].name());
+            	}
+            	for(MAssociation assoc: fAssociation.getRedefinedByClosure() ) {
+            		//System.out.println("hanhdd@assoc.name = " + assoc.name() );
+            		//System.out.println("hanhdd@assoc.isAssignableFrom = " + assoc.isAssignableFrom(mClasses) );
+            		if( assoc.isAssignableFrom(mClasses) ) {
+            			fAssociation = assoc;
+            			break;
+            		}
+            	}
+
+            	/*MSystemState sysState = context.getSystem().state();
+            	MLinkSet linkSet = sysState.linksOfAssociation(fAssociation);
+            	if( !linkSet.hasLinkBetweenObjects( participants.toArray(MObject[] ::new)) ) {
+            		context.getSystem().createLink(result, fAssociation, participants, qualifierValues);
+            	}*/
                 context.getSystem().createLink(result, fAssociation, participants, qualifierValues);
+            	// hanhdd-end ====================================
             } catch (MSystemException e) {
                 throw new EvaluationFailedException(e.getMessage());
             }

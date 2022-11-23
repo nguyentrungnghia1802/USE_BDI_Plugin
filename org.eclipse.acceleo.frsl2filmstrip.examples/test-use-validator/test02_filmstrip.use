@@ -15,7 +15,7 @@ operations
       end;
       ;
       for cl in s.domainClass do 
-        cl.n := cl.pred.n;
+        cl.n := cl.predDomainClass.n;
       end;
       result := s;
     end
@@ -99,7 +99,7 @@ context Snapshot inv oneFilmstrip:
   ((Snapshot.allInstances()->select( s:Snapshot | s.pred().isUndefined() )->size() = 1) and (Snapshot.allInstances()->select( s:Snapshot | s.succ().isUndefined() )->size() = 1))
 
 context inc_DomainClassOpC inv post_postInc:
-  (aSelf.succ.n = (aSelf.n + a))
+  (aSelf.succDomainClass.n = (aSelf.succDomainClass.predDomainClass.n + a))
 
 context Snapshot::copy() : Snapshot
   pre uncopied: self.succ().isUndefined()
