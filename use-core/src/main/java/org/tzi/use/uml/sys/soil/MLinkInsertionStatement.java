@@ -198,7 +198,7 @@ public class MLinkInsertionStatement extends MStatement {
 			
 		} else {
             try {
-            	// hanhdd-begin ==================================
+            	/*/ hanhdd-begin ==================================
             	//System.out.println("hanhdd@association.name = " + mAssociation.name());
             	MClass[] mClasses= new MClass[participants.size()];
             	for(int i = 0; i < participants.size(); i++) {
@@ -218,9 +218,10 @@ public class MLinkInsertionStatement extends MStatement {
             	MLinkSet linkSet = sysState.linksOfAssociation(fAssociation);
             	if( !linkSet.hasLinkBetweenObjects( participants.toArray(MObject[] ::new)) ) {
             		context.getSystem().createLink(result, fAssociation, participants, qualifierValues);
-            	}*/
+            	}
+            	hanhdd-end ====================================*/
                 context.getSystem().createLink(result, fAssociation, participants, qualifierValues);
-            	// hanhdd-end ====================================
+            	
             } catch (MSystemException e) {
                 throw new EvaluationFailedException(e.getMessage());
             }

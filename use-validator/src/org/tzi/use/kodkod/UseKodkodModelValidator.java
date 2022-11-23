@@ -93,7 +93,10 @@ public class UseKodkodModelValidator extends KodkodModelValidator {
 			} else {
 				LOG.error(LogMessages.objDiagramCreationError + " Reason: " + ex.getMessage());
 			}
-			return false;
+			//hanhdd-begin
+			//return false;
+			return true;
+			//hanhdd-end
 		}
 	}
 

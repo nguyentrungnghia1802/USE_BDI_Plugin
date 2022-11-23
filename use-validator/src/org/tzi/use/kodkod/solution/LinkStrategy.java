@@ -66,11 +66,11 @@ public class LinkStrategy extends ElementStrategy {
 		
 		MSystemState sysState = systemApi.getSystem().state();
 		MLinkSet linkSet = sysState.linksOfAssociation(mAssociation);
-		if( !linkSet.hasLinkBetweenObjects(tupleObjects) ) {
+		if( !linkSet.hasLinkBetweenObjects(tupleObjects) && mAssociation.isAssignableFrom(mClasses) ) {
 			systemApi.createLinkEx(mAssociation, tupleObjects);
 		}
 		//systemApi.createLinkEx(mAssociation, tupleObjects);
-		// hanhdd-end ====================================
+		//hanhdd-end ====================================
 	}
 
 }
