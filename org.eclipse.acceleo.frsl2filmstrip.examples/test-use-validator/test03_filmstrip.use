@@ -1,4 +1,4 @@
-model ModelFindingTest02
+model ModelFindingTest03
 
 
 class Snapshot
@@ -11,7 +11,7 @@ operations
         declare x : DomainClass;
         x := new DomainClass;
         insert (cl,x) into PredSuccDomainClass;
-        insert (x,s) into SnapshotDomainClass;
+        insert (s,x) into SnapshotDomainClass;
       end;
       ;
       result := s;
@@ -22,9 +22,9 @@ operations
     if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
 end
 
-association SnapElement between
-  SnapshotItem[*]
+composition SnapElement between
   Snapshot[1]
+  SnapshotItem[*]
 end
 
 abstract class DomainClassOpC < OperationCall
@@ -53,9 +53,9 @@ aggregation PredSuccDomainClass between
   DomainClass[0..1] role succDomainClass redefines succ
 end
 
-association SnapshotDomainClass between
-  DomainClass[*]
+composition SnapshotDomainClass between
   Snapshot[1] role snapshotDomainClass redefines snapshot
+  DomainClass[*]
 end
 
 association Filmstrip between

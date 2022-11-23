@@ -1,4 +1,4 @@
-model ModelFindingTest02
+model ModelFindingTest03
 
 class DomainClass
 operations

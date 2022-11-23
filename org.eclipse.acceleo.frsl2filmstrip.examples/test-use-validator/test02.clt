@@ -5,7 +5,7 @@
         <antialiasing>false</antialiasing>
         <showassocnames>false</showassocnames>
         <showattributes>true</showattributes>
-        <showmultiplicities>true</showmultiplicities>
+        <showmultiplicities>false</showmultiplicities>
         <showoperations>false</showoperations>
         <showrolenames>true</showrolenames>
         <showgrid>false</showgrid>
@@ -13,57 +13,63 @@
     <node id="Snapshot" sizeCalculated="true" type="Class">
         <name>Snapshot</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>332.4333779619212</x>
-            <y>107.46526834129949</y>
+            <x>460.8643864359444</x>
+            <y>157.59749683755126</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="DomainClassOpC" sizeCalculated="true" type="Class">
         <name>DomainClassOpC</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>593.2274236370873</x>
-            <y>178.54677050150252</y>
+            <x>270.7842771595085</x>
+            <y>38.78487760339965</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="DomainClass" sizeCalculated="true" type="Class">
         <name>DomainClass</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>107.87112634697917</x>
-            <y>288.0</y>
+            <x>731.9399822634927</x>
+            <y>288.69224697157847</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="OperationCall" sizeCalculated="true" type="Class">
         <name>OperationCall</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>607.636499981466</x>
-            <y>107.58326884561853</y>
+            <x>449.8652869061061</x>
+            <y>45.894533577302354</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="SnapshotItem" sizeCalculated="true" type="Class">
         <name>SnapshotItem</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>105.67310990747984</x>
-            <y>108.0</y>
+            <x>730.293141300861</x>
+            <y>157.45356672212858</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="inc_DomainClassOpC" sizeCalculated="true" type="Class">
         <name>inc_DomainClassOpC</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>588.6610140711769</x>
-            <y>277.64632688170326</y>
+            <x>268.7019353138976</x>
+            <y>163.03246072871917</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node height="20.0" id="Filmstrip::DiamondNode" kind="association"
         sizeCalculated="false" type="DiamondNode" width="40.0">
         <name>Filmstrip</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>466.03493897169363</x>
-            <y>109.524268593459</y>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+            <userOffsetX>0.0</userOffsetX>
+            <userOffsetY>0.0</userOffsetY>
+            <offsetX>0.0</offsetX>
+            <offsetY>0.0</offsetY>
+            <related length="2">
+                <related0>Snapshot</related0>
+                <related1>OperationCall</related1>
+            </related>
         </strategy>
         <connectedNode>Snapshot</connectedNode>
         <connectedNode>OperationCall</connectedNode>
@@ -90,27 +96,13 @@
             <target>Snapshot</target>
             <name>pred</name>
             <properties>
-                <edgeproperty id="Filmstrip::pred::target::multiplicity"
-                    sizeCalculated="true" type="multiplicity"
-                    userDefined="true" visible="true">
-                    <name>0..1</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>0.0</userOffsetX>
-                        <userOffsetY>-10.0</userOffsetY>
-                        <attached>Filmstrip::pred::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>BOTTOM</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
                 <edgeproperty id="Filmstrip::pred::target::rolename"
                     sizeCalculated="true" type="rolename"
                     userDefined="true" visible="true">
                     <name>pred</name>
                     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>25.0</userOffsetX>
-                        <userOffsetY>-12.0</userOffsetY>
+                        <userOffsetX>2.0</userOffsetX>
+                        <userOffsetY>8.0</userOffsetY>
                         <attached>Filmstrip::pred::WayPoint::1</attached>
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
@@ -118,23 +110,29 @@
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
+                <edgeproperty id="Filmstrip::pred::target::multiplicity"
+                    sizeCalculated="true" type="multiplicity"
+                    userDefined="false" visible="true">
+                    <name>0..1</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>Filmstrip::pred::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>BOTTOM</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
             </properties>
             <waypoints>
                 <edgeproperty id="Filmstrip::pred::WayPoint::0"
                     sizeCalculated="true" type="WayPoint"
-                    userDefined="true" visible="true">
+                    userDefined="false" visible="true">
                     <name>0</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                        <userOffsetX>15.770582007970859</userOffsetX>
-                        <userOffsetY>7.614708996014556</userOffsetY>
-                        <basisDeltaX>ABSOLUTE</basisDeltaX>
-                        <deltaX>0.0</deltaX>
-                        <maxDeltaX>1.7976931348623157E308</maxDeltaX>
-                        <basisDeltaY>ABSOLUTE</basisDeltaY>
-                        <deltaY>0.0</deltaY>
-                        <maxDeltaY>1.7976931348623157E308</maxDeltaY>
-                        <corner>NORTH_WEST</corner>
-                        <relativeNodeId>Filmstrip::DiamondNode</relativeNodeId>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
                     </strategy>
                     <id>0</id>
                     <specialid>1</specialid>
@@ -142,19 +140,11 @@
                 </edgeproperty>
                 <edgeproperty id="Filmstrip::pred::WayPoint::1"
                     sizeCalculated="true" type="WayPoint"
-                    userDefined="true" visible="true">
+                    userDefined="false" visible="true">
                     <name>1</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                        <userOffsetX>57.0</userOffsetX>
-                        <userOffsetY>11.324628292969308</userOffsetY>
-                        <basisDeltaX>ABSOLUTE</basisDeltaX>
-                        <deltaX>0.0</deltaX>
-                        <maxDeltaX>1.7976931348623157E308</maxDeltaX>
-                        <basisDeltaY>ABSOLUTE</basisDeltaY>
-                        <deltaY>0.0</deltaY>
-                        <maxDeltaY>1.7976931348623157E308</maxDeltaY>
-                        <corner>NORTH_WEST</corner>
-                        <relativeNodeId>Snapshot</relativeNodeId>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
                     </strategy>
                     <id>1</id>
                     <specialid>2</specialid>
@@ -170,11 +160,11 @@
             <properties>
                 <edgeproperty id="Filmstrip::succ::target::multiplicity"
                     sizeCalculated="true" type="multiplicity"
-                    userDefined="true" visible="true">
+                    userDefined="false" visible="true">
                     <name>0..1</name>
                     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>4.0</userOffsetX>
-                        <userOffsetY>6.0</userOffsetY>
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
                         <attached>Filmstrip::succ::WayPoint::1</attached>
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
@@ -187,8 +177,8 @@
                     userDefined="true" visible="true">
                     <name>succ</name>
                     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>32.0</userOffsetX>
-                        <userOffsetY>7.0</userOffsetY>
+                        <userOffsetX>39.0</userOffsetX>
+                        <userOffsetY>5.0</userOffsetY>
                         <attached>Filmstrip::succ::WayPoint::1</attached>
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
@@ -231,32 +221,32 @@
             <name>operationCall</name>
             <properties>
                 <edgeproperty
+                    id="Filmstrip::operationCall::target::multiplicity"
+                    sizeCalculated="true" type="multiplicity"
+                    userDefined="false" visible="true">
+                    <name>0..1</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>Filmstrip::operationCall::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>BOTTOM</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
+                <edgeproperty
                     id="Filmstrip::operationCall::target::rolename"
                     sizeCalculated="true" type="rolename"
                     userDefined="true" visible="true">
                     <name>operationCall</name>
                     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>4.0</userOffsetX>
-                        <userOffsetY>-13.0</userOffsetY>
+                        <userOffsetX>80.0</userOffsetX>
+                        <userOffsetY>5.0</userOffsetY>
                         <attached>Filmstrip::operationCall::WayPoint::1</attached>
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
                         <placement>TOP</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
-                <edgeproperty
-                    id="Filmstrip::operationCall::target::multiplicity"
-                    sizeCalculated="true" type="multiplicity"
-                    userDefined="true" visible="true">
-                    <name>0..1</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>-1.0</userOffsetX>
-                        <userOffsetY>12.0</userOffsetY>
-                        <attached>Filmstrip::operationCall::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>BOTTOM</placement>
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
@@ -296,12 +286,39 @@
         <target>Snapshot</target>
         <name>SnapElement</name>
         <properties>
+            <edgeproperty id="SnapElement::target::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>snapshot</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>19.0</userOffsetX>
+                    <userOffsetY>-10.0</userOffsetY>
+                    <attached>SnapElement::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapElement::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapElement::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
             <edgeproperty id="SnapElement::source::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
                 <name>snapshotItem</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>14.0</userOffsetX>
-                    <userOffsetY>9.0</userOffsetY>
+                    <userOffsetX>3.0</userOffsetX>
+                    <userOffsetY>-11.0</userOffsetY>
                     <attached>SnapElement::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
@@ -311,42 +328,15 @@
             </edgeproperty>
             <edgeproperty id="SnapElement::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
-                userDefined="true" visible="true">
+                userDefined="false" visible="true">
                 <name>*</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>5.0</userOffsetX>
-                    <userOffsetY>12.0</userOffsetY>
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
                     <attached>SnapElement::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapElement::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="true" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>-19.0</userOffsetX>
-                    <userOffsetY>10.0</userOffsetY>
-                    <attached>SnapElement::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapElement::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>snapshot</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>3.0</userOffsetX>
-                    <userOffsetY>-10.0</userOffsetY>
-                    <attached>SnapElement::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
@@ -400,39 +390,13 @@
         <target>SnapshotItem</target>
         <name>PredSucc</name>
         <properties>
-            <edgeproperty id="PredSucc::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>pred</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>17.0</userOffsetX>
-                    <userOffsetY>-10.0</userOffsetY>
-                    <attached>PredSucc::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSucc::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="true" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>54.0</userOffsetX>
-                    <userOffsetY>-8.0</userOffsetY>
-                    <attached>PredSucc::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
             <edgeproperty id="PredSucc::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
                 <name>succ</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>38.0</userOffsetX>
-                    <userOffsetY>-9.0</userOffsetY>
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
                     <attached>PredSucc::WayPoint::4</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
@@ -442,12 +406,39 @@
             </edgeproperty>
             <edgeproperty id="PredSucc::target::multiplicity"
                 sizeCalculated="true" type="multiplicity"
-                userDefined="true" visible="true">
+                userDefined="false" visible="true">
                 <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>4.0</userOffsetX>
-                    <userOffsetY>4.0</userOffsetY>
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
                     <attached>PredSucc::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSucc::source::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>pred</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>18.0</userOffsetX>
+                    <userOffsetY>16.0</userOffsetY>
+                    <attached>PredSucc::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSucc::source::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSucc::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -580,13 +571,40 @@
         <target>DomainClass</target>
         <name>PredSuccDomainClass</name>
         <properties>
-            <edgeproperty id="PredSuccDomainClass::source::multiplicity"
+            <edgeproperty id="PredSuccDomainClass::target::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>succDomainClass {redefines succ}</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>185.0</userOffsetX>
+                    <userOffsetY>-15.0</userOffsetY>
+                    <attached>PredSuccDomainClass::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSuccDomainClass::target::multiplicity"
                 sizeCalculated="true" type="multiplicity"
-                userDefined="true" visible="true">
+                userDefined="false" visible="true">
                 <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>22.0</userOffsetX>
-                    <userOffsetY>-12.0</userOffsetY>
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>PredSuccDomainClass::WayPoint::4</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="PredSuccDomainClass::source::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
                     <attached>PredSuccDomainClass::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
@@ -598,36 +616,9 @@
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
                 <name>predDomainClass {redefines pred}</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>28.0</userOffsetX>
-                    <userOffsetY>19.0</userOffsetY>
+                    <userOffsetX>21.0</userOffsetX>
+                    <userOffsetY>9.0</userOffsetY>
                     <attached>PredSuccDomainClass::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccDomainClass::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="true" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>30.0</userOffsetX>
-                    <userOffsetY>-19.0</userOffsetY>
-                    <attached>PredSuccDomainClass::WayPoint::4</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="PredSuccDomainClass::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>succDomainClass {redefines succ}</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>97.0</userOffsetX>
-                    <userOffsetY>-55.0</userOffsetY>
-                    <attached>PredSuccDomainClass::WayPoint::4</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
@@ -760,40 +751,13 @@
         <target>Snapshot</target>
         <name>SnapshotDomainClass</name>
         <properties>
-            <edgeproperty id="SnapshotDomainClass::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>domainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>119.0</userOffsetX>
-                    <userOffsetY>-25.0</userOffsetY>
-                    <attached>SnapshotDomainClass::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty id="SnapshotDomainClass::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="true" visible="true">
-                <name>*</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>29.0</userOffsetX>
-                    <userOffsetY>-21.0</userOffsetY>
-                    <attached>SnapshotDomainClass::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
             <edgeproperty id="SnapshotDomainClass::target::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
                 <name>snapshotDomainClass {redefines snapshot}</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>137.0</userOffsetX>
-                    <userOffsetY>17.0</userOffsetY>
-                    <attached>SnapshotDomainClass::WayPoint::1</attached>
+                    <userOffsetX>228.0</userOffsetX>
+                    <userOffsetY>10.0</userOffsetY>
+                    <attached>SnapshotDomainClass::WayPoint::2</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
@@ -807,7 +771,34 @@
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>SnapshotDomainClass::WayPoint::1</attached>
+                    <attached>SnapshotDomainClass::WayPoint::2</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotDomainClass::source::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>domainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>1.0</userOffsetX>
+                    <userOffsetY>-14.0</userOffsetY>
+                    <attached>SnapshotDomainClass::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotDomainClass::source::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>*</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>SnapshotDomainClass::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -825,7 +816,7 @@
                     <offsetY>-10.0</offsetY>
                     <related length="2">
                         <related0>SnapshotDomainClass::WayPoint::0</related0>
-                        <related1>SnapshotDomainClass::WayPoint::1</related1>
+                        <related1>SnapshotDomainClass::WayPoint::2</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
@@ -845,14 +836,25 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty id="SnapshotDomainClass::WayPoint::1"
+                sizeCalculated="true" type="WayPoint" userDefined="true" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
+                    <x>485.0</x>
+                    <y>296.0</y>
+                </strategy>
+                <id>1</id>
+                <specialid>0</specialid>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty id="SnapshotDomainClass::WayPoint::2"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
-                <name>1</name>
+                <name>2</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                 </strategy>
-                <id>1</id>
+                <id>2</id>
                 <specialid>2</specialid>
                 <hidden>false</hidden>
             </edgeproperty>
