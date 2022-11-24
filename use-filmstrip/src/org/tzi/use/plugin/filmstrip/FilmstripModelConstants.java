@@ -90,6 +90,24 @@ public final class FilmstripModelConstants {
 	private FilmstripModelConstants(){
 	}
 	
+	//hanhdd-begin
+	
+	//OPC_INV_SELFINPRED
+	public static String makeOpC_Inv_SelfInPred(String clsName){
+		return "self." + OPC_SELF_VARNAME
+		+ "." + SNAPSHOT_ROLENAME + clsName + " = self."
+		+ PRED_ROLENAME + "()";
+	}
+	//CLASS_INV_VALIDLINKING
+	public static String makeCls_Inv_ValidLinking(String clsName){
+		return "self." + SUCC_ROLENAME + clsName
+		+ ".isDefined() implies " + "self." + SUCC_ROLENAME + clsName + "."
+		+ SNAPSHOT_ROLENAME + clsName + " = self."
+		+ SNAPSHOT_ROLENAME + clsName + "." + SUCC_ROLENAME + "()";
+	}
+	
+	//hanhdd-end
+	
 	public static String makeOpCName(String className){
 		return String.format("%s%s", className, FilmstripModelConstants.OPC_ABBREVIATION);
 	}

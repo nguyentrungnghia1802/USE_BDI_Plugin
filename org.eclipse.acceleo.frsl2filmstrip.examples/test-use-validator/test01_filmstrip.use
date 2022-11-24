@@ -1,35 +1,9 @@
 model ModelFindingTest01
 
 
-aggregation PredSucc between
-  SnapshotItem[0..1] role pred
-  SnapshotItem[0..1] role succ
-end
-
-class step1_ClassAOpC < ClassAOpC
-attributes
-  a : Integer
-end
-
-association Filmstrip between
-  Snapshot[0..1] role pred
-  Snapshot[0..1] role succ
-  OperationCall[0..1]
-end
-
-composition SnapshotClassA between
-  Snapshot[1] role snapshotClassA redefines snapshot
-  ClassA[*]
-end
-
-abstract class ClassAOpC < OperationCall
-attributes
-  aSelf : ClassA
-end
-
 aggregation PredSuccClassA between
-  ClassA[0..1] role predClassA redefines pred
-  ClassA[0..1] role succClassA redefines succ
+  ClassA[0..1] role predClassA
+  ClassA[0..1] role succClassA
 end
 
 class Snapshot
@@ -52,13 +26,13 @@ operations
       end;
       ;
       for cl in s.classA do 
-        cl.changedAttr := cl.pred.changedAttr;
-        cl.curStep := cl.pred.curStep;
-        cl.obj := cl.pred.obj.succ;
-        cl.unchanedAttr := cl.pred.unchanedAttr;
+        cl.changedAttr := cl.predClassA.changedAttr;
+        cl.curStep := cl.predClassA.curStep;
+        cl.obj := cl.predClassA.obj.succDomainClass;
+        cl.unchanedAttr := cl.predClassA.unchanedAttr;
       end;
       for cl in s.domainClass do 
-        cl.isPrbl := cl.pred.isPrbl;
+        cl.isPrbl := cl.predDomainClass.isPrbl;
       end;
       result := s;
     end
@@ -66,11 +40,6 @@ operations
     if (self.pred->size() = 1) then self.pred->any( $elem0:Snapshot | true ) else null endif
   succ() : Snapshot = 
     if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
-end
-
-composition SnapElement between
-  Snapshot[1]
-  SnapshotItem[*]
 end
 
 abstract class OperationCall
@@ -81,17 +50,25 @@ operations
     if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
 end
 
-abstract class SnapshotItem
-end
-
 aggregation PredSuccDomainClass between
-  DomainClass[0..1] role predDomainClass redefines pred
-  DomainClass[0..1] role succDomainClass redefines succ
+  DomainClass[0..1] role predDomainClass
+  DomainClass[0..1] role succDomainClass
 end
 
 composition SnapshotDomainClass between
-  Snapshot[1] role snapshotDomainClass redefines snapshot
+  Snapshot[1] role snapshotDomainClass
   DomainClass[*]
+end
+
+class step1_ClassAOpC < ClassAOpC
+attributes
+  a : Integer
+end
+
+association Filmstrip between
+  Snapshot[0..1] role pred
+  Snapshot[0..1] role succ
+  OperationCall[0..1]
 end
 
 class step2_ClassAOpC < ClassAOpC
@@ -99,12 +76,22 @@ attributes
   b : Integer
 end
 
-class DomainClass < SnapshotItem
+composition SnapshotClassA between
+  Snapshot[1] role snapshotClassA
+  ClassA[*]
+end
+
+abstract class ClassAOpC < OperationCall
+attributes
+  aSelf : ClassA
+end
+
+class DomainClass
 attributes
   isPrbl : Boolean
 end
 
-class ClassA < SnapshotItem
+class ClassA
 attributes
   obj : DomainClass
   changedAttr : Integer
@@ -117,16 +104,16 @@ end
 
 constraints
 context ClassA inv validSnapshotLinking:
-  (self.succ.isDefined() implies (self.succ.snapshot = self.snapshot.succ()))
+  (self.succClassA.isDefined() implies (self.succClassA.snapshotClassA = self.snapshotClassA.succ()))
 
 context ClassAOpC inv aSelfDefined:
   self.aSelf.isDefined()
 
 context ClassAOpC inv aSelfInPred:
-  (self.aSelf.snapshot = self.pred())
+  (self.aSelf.snapshotClassA = self.pred())
 
 context DomainClass inv validSnapshotLinking:
-  (self.succ.isDefined() implies (self.succ.snapshot = self.snapshot.succ()))
+  (self.succDomainClass.isDefined() implies (self.succDomainClass.snapshotDomainClass = self.snapshotDomainClass.succ()))
 
 context OperationCall inv assocClassBehavior:
   (((self.pred->size() = 1) and (self.succ->size() = 1)) and OperationCall.allInstances()->forAll( op:OperationCall | (((self.pred = op.pred) and (self.succ = op.succ)) implies (self = op)) ))
@@ -138,10 +125,10 @@ context Snapshot inv oneFilmstrip:
   ((Snapshot.allInstances()->select( s:Snapshot | s.pred().isUndefined() )->size() = 1) and (Snapshot.allInstances()->select( s:Snapshot | s.succ().isUndefined() )->size() = 1))
 
 context step1_ClassAOpC inv post_post1:
-  ((aSelf.curStep = '') and (aSelf.succ.curStep = 'step1'))
+  ((aSelf.succClassA.predClassA.curStep = '') and (aSelf.succClassA.curStep = 'step1'))
 
 context step2_ClassAOpC inv post_post2:
-  ((aSelf.curStep = 'step1') and (aSelf.succ.curStep = 'step2'))
+  ((aSelf.succClassA.predClassA.curStep = 'step1') and (aSelf.succClassA.curStep = 'step2'))
 
 context Snapshot::copy() : Snapshot
   pre uncopied: self.succ().isUndefined()

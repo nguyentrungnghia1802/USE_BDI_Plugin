@@ -75,6 +75,8 @@ public class FilmstripMMVisitor implements MMVisitor {
 		try {
 			createFilmstripElements();
 			
+			//hanhdd-begin ===================
+			/*
 			// additional elements for the SnapshotItem interface
 			// classes
 			model.createClass(FilmstripModelConstants.SNAPSHOTITEM_CLASSNAME, true);
@@ -103,6 +105,8 @@ public class FilmstripMMVisitor implements MMVisitor {
 					"*",
 					MAggregationKind.NONE
 					);
+			*/
+			//hanhdd-end ===================					
 		} catch (UseApiException e) {
 			throw new TransformationException("Error initialising the model", e);
 		}
@@ -139,13 +143,18 @@ public class FilmstripMMVisitor implements MMVisitor {
 							FilmstripModelConstants.OPC_CLASSNAME);
 					model.createInvariant(
 							FilmstripModelConstants.OPC_INV_SELFDEFINED_NAME,
-							opcName,
-							FilmstripModelConstants.OPC_INV_SELFDEFINED,
+							opcName,							
+							FilmstripModelConstants.OPC_INV_SELFDEFINED,							
 							false);
 					model.createInvariant(
 							FilmstripModelConstants.OPC_INV_SELFINPRED_NAME,
 							opcName,
-							FilmstripModelConstants.OPC_INV_SELFINPRED,
+							//hanhdd-begin
+							//FilmstripModelConstants.OPC_INV_SELFINPRED,
+							FilmstripModelConstants.makeOpC_Inv_SelfInPred(cls.name()),
+							//hanhdd-end
+
+							
 							false);
 				}
 				catch (UseApiException ex) {
@@ -169,7 +178,10 @@ public class FilmstripMMVisitor implements MMVisitor {
 			model.createInvariant(
 					FilmstripModelConstants.CLASS_INV_VALIDLINKING_NAME,
 					cls.name(),
-					FilmstripModelConstants.CLASS_INV_VALIDLINKING,
+					//hanhdd-begin ==========
+					//FilmstripModelConstants.CLASS_INV_VALIDLINKING,
+					FilmstripModelConstants.makeCls_Inv_ValidLinking(cls.name()),
+					//hanhdd-end ==========
 					false);
 		} catch (UseApiException ex) {
 			throw new TransformationException(
@@ -458,7 +470,9 @@ public class FilmstripMMVisitor implements MMVisitor {
 		try {
 			newAssocClass = model.createAssociationClass(e.name(), e.isAbstract(), assocEnds,
 					roleNames, multiplicities, aggregationKinds);
-			model.createGeneralization(e.name(), FilmstripModelConstants.SNAPSHOTITEM_CLASSNAME);
+			//hanhdd-begin========
+			//model.createGeneralization(e.name(), FilmstripModelConstants.SNAPSHOTITEM_CLASSNAME);
+			//hanhdd-end========
 		} catch (UseApiException ex) {
 			throw new TransformationException("Error adding associationclass "
 					+ StringUtil.inQuotes(e.name()), ex);
@@ -500,7 +514,10 @@ public class FilmstripMMVisitor implements MMVisitor {
 		MClass newClass;
 		try {
 			newClass = model.createClass(e.name(), e.isAbstract());
-			model.createGeneralization(e.name(), FilmstripModelConstants.SNAPSHOTITEM_CLASSNAME);
+			//hanhdd-begin========
+			//model.createGeneralization(e.name(), FilmstripModelConstants.SNAPSHOTITEM_CLASSNAME);
+			//hanhdd-end========
+
 			
 			MAssociation snapshotAssoc = model.createAssociation(
 					FilmstripModelConstants.makeSnapshotClsAssocName(e.name()),
@@ -522,8 +539,10 @@ public class FilmstripMMVisitor implements MMVisitor {
 					"*",
 					MAggregationKind.NONE
 					);
-					//hanhdd-end
+					//hanhdd-end================
 			
+			//hanhdd-begin======================
+			/*
 			// add redefines marks
 			MAssociation snapshotBaseAssoc = model.getAssociation(FilmstripModelConstants.SNAPSHOTELEMENT_ASSOCNAME);
 			snapshotAssoc.addRedefines(snapshotBaseAssoc);
@@ -539,7 +558,8 @@ public class FilmstripMMVisitor implements MMVisitor {
 					break;
 				}
 			}
-			
+			*/
+			//hanhdd-end=======================
 			MAssociation orderableAssoc = model.createAssociation(
 					FilmstripModelConstants.makeClsOrdableAssocName(e.name()),
 					e.name(),
@@ -551,6 +571,8 @@ public class FilmstripMMVisitor implements MMVisitor {
 					"0..1",
 					MAggregationKind.NONE);
 			
+			//hanhdd-begin =======================
+			/*
 			// add redefines marks
 			MAssociation orderableBaseAssoc = model.getAssociation(FilmstripModelConstants.ORDERABLE_ASSOCNAME);
 			orderableAssoc.addRedefines(orderableBaseAssoc);
@@ -565,6 +587,8 @@ public class FilmstripMMVisitor implements MMVisitor {
 					}
 				}
 			}
+			*/
+			//hanhdd-end =======================
 		}
 		catch (UseApiException ex) {
 			throw new TransformationException("Error transforming class "

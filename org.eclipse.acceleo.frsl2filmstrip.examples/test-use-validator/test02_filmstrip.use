@@ -25,19 +25,9 @@ operations
     if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
 end
 
-composition SnapElement between
-  Snapshot[1]
-  SnapshotItem[*]
-end
-
 abstract class DomainClassOpC < OperationCall
 attributes
   aSelf : DomainClass
-end
-
-aggregation PredSucc between
-  SnapshotItem[0..1] role pred
-  SnapshotItem[0..1] role succ
 end
 
 abstract class OperationCall
@@ -48,16 +38,13 @@ operations
     if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
 end
 
-abstract class SnapshotItem
-end
-
 aggregation PredSuccDomainClass between
-  DomainClass[0..1] role predDomainClass redefines pred
-  DomainClass[0..1] role succDomainClass redefines succ
+  DomainClass[0..1] role predDomainClass
+  DomainClass[0..1] role succDomainClass
 end
 
 composition SnapshotDomainClass between
-  Snapshot[1] role snapshotDomainClass redefines snapshot
+  Snapshot[1] role snapshotDomainClass
   DomainClass[*]
 end
 
@@ -72,7 +59,7 @@ attributes
   a : Integer
 end
 
-class DomainClass < SnapshotItem
+class DomainClass
 attributes
   n : Integer
 operations
@@ -81,13 +68,13 @@ end
 
 constraints
 context DomainClass inv validSnapshotLinking:
-  (self.succ.isDefined() implies (self.succ.snapshot = self.snapshot.succ()))
+  (self.succDomainClass.isDefined() implies (self.succDomainClass.snapshotDomainClass = self.snapshotDomainClass.succ()))
 
 context DomainClassOpC inv aSelfDefined:
   self.aSelf.isDefined()
 
 context DomainClassOpC inv aSelfInPred:
-  (self.aSelf.snapshot = self.pred())
+  (self.aSelf.snapshotDomainClass = self.pred())
 
 context OperationCall inv assocClassBehavior:
   (((self.pred->size() = 1) and (self.succ->size() = 1)) and OperationCall.allInstances()->forAll( op:OperationCall | (((self.pred = op.pred) and (self.succ = op.succ)) implies (self = op)) ))
