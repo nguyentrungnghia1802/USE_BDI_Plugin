@@ -90,7 +90,7 @@ public final class FilmstripModelConstants {
 	private FilmstripModelConstants(){
 	}
 	
-	//hanhdd-begin
+	//hanhdd-begin ============================
 	
 	//OPC_INV_SELFINPRED
 	public static String makeOpC_Inv_SelfInPred(String clsName){
@@ -106,7 +106,7 @@ public final class FilmstripModelConstants {
 		+ SNAPSHOT_ROLENAME + clsName + "." + SUCC_ROLENAME + "()";
 	}
 	
-	//hanhdd-end
+	//hanhdd-end  ============================
 	
 	public static String makeOpCName(String className){
 		return String.format("%s%s", className, FilmstripModelConstants.OPC_ABBREVIATION);
@@ -206,4 +206,18 @@ public final class FilmstripModelConstants {
 		}
 	}
 	
+	// hanhdd-begin =======================
+	public static String makeValidLinkingInvPart(String endName, String sourceClsName, String targetClsName, boolean isCollection){
+		if(isCollection){
+			return String.format("self.%s->forAll( c | c.%s = self.%s )", endName,
+					SNAPSHOT_ROLENAME + targetClsName,
+					SNAPSHOT_ROLENAME + sourceClsName);
+		}
+		else {
+			return String.format("(self.%s.isDefined implies self.%s = self.%s.%s)", endName,
+					SNAPSHOT_ROLENAME + sourceClsName, endName,
+					SNAPSHOT_ROLENAME + targetClsName);
+		}
+	}
+	// hanhdd-end =======================
 }

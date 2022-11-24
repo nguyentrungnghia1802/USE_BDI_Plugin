@@ -22,7 +22,7 @@
     <node id="snapshot2" sizeCalculated="true" type="Object">
         <name>snapshot2</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>540.8750137954366</x>
+            <x>550.8750137954366</x>
             <y>187.55544460937352</y>
         </strategy>
         <hidden>false</hidden>
@@ -38,47 +38,47 @@
     <node id="step2_classaopc1" sizeCalculated="true" type="Object">
         <name>step2_classaopc1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>670.1391615328835</x>
-            <y>79.27257960284601</y>
+            <x>667.1391615328835</x>
+            <y>80.27257960284601</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="step1_classaopc1" sizeCalculated="true" type="Object">
         <name>step1_classaopc1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>365.75078294325294</x>
-            <y>80.41998845109634</y>
+            <x>363.75078294325294</x>
+            <y>81.41998845109634</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="domainclass1" sizeCalculated="true" type="Object">
         <name>domainclass1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>525.7054226811051</x>
-            <y>444.6278419247037</y>
+            <x>937.7054226811051</x>
+            <y>441.6278419247037</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="domainclass3" sizeCalculated="true" type="Object">
         <name>domainclass3</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>186.40379707646343</x>
-            <y>444.5967717980018</y>
+            <x>534.4037970764634</x>
+            <y>441.5967717980018</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="domainclass2" sizeCalculated="true" type="Object">
         <name>domainclass2</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>939.7094971834417</x>
-            <y>444.1945122635573</y>
+            <x>184.70949718344173</x>
+            <y>441.1945122635573</y>
         </strategy>
         <hidden>false</hidden>
     </node>
     <node id="classa2" sizeCalculated="true" type="Object">
         <name>classa2</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>654.1470933157093</x>
+            <x>661.1470933157093</x>
             <y>301.502413818341</y>
         </strategy>
         <hidden>false</hidden>
@@ -94,8 +94,8 @@
     <node id="classa3" sizeCalculated="true" type="Object">
         <name>classa3</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-            <x>364.0423186248054</x>
-            <y>284.60929203442515</y>
+            <x>358.0423186248054</x>
+            <y>297.60929203442515</y>
         </strategy>
         <hidden>false</hidden>
     </node>
@@ -133,21 +133,6 @@
             <name>pred</name>
             <properties>
                 <edgeproperty
-                    id="[Filmstrip : (operationCall:step1_classaopc1, pred:snapshot1, succ:snapshot2)]::pred::target::multiplicity"
-                    sizeCalculated="true" type="multiplicity"
-                    userDefined="false" visible="true">
-                    <name>0..1</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>0.0</userOffsetX>
-                        <userOffsetY>0.0</userOffsetY>
-                        <attached>[Filmstrip : (operationCall:step1_classaopc1, pred:snapshot1, succ:snapshot2)]::pred::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>BOTTOM</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
-                <edgeproperty
                     id="[Filmstrip : (operationCall:step1_classaopc1, pred:snapshot1, succ:snapshot2)]::pred::target::rolename"
                     sizeCalculated="true" type="rolename"
                     userDefined="true" visible="true">
@@ -159,6 +144,21 @@
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
                         <placement>TOP</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
+                <edgeproperty
+                    id="[Filmstrip : (operationCall:step1_classaopc1, pred:snapshot1, succ:snapshot2)]::pred::target::multiplicity"
+                    sizeCalculated="true" type="multiplicity"
+                    userDefined="false" visible="true">
+                    <name>0..1</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>[Filmstrip : (operationCall:step1_classaopc1, pred:snapshot1, succ:snapshot2)]::pred::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>BOTTOM</placement>
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
@@ -302,8 +302,8 @@
                     userDefined="true" visible="true">
                     <name>0</name>
                     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                        <userOffsetX>61.957661859856216</userOffsetX>
-                        <userOffsetY>-130.97883092992808</userOffsetY>
+                        <userOffsetX>-245.04233814014378</userOffsetX>
+                        <userOffsetY>-197.97883092992808</userOffsetY>
                         <basisDeltaX>ABSOLUTE</basisDeltaX>
                         <deltaX>0.0</deltaX>
                         <maxDeltaX>1.7976931348623157E308</maxDeltaX>
@@ -435,21 +435,6 @@
             <name>operationCall</name>
             <properties>
                 <edgeproperty
-                    id="[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::operationCall::target::multiplicity"
-                    sizeCalculated="true" type="multiplicity"
-                    userDefined="false" visible="true">
-                    <name>0..1</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>0.0</userOffsetX>
-                        <userOffsetY>0.0</userOffsetY>
-                        <attached>[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::operationCall::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>BOTTOM</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
-                <edgeproperty
                     id="[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::operationCall::target::rolename"
                     sizeCalculated="true" type="rolename"
                     userDefined="true" visible="true">
@@ -461,6 +446,21 @@
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
                         <placement>TOP</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
+                <edgeproperty
+                    id="[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::operationCall::target::multiplicity"
+                    sizeCalculated="true" type="multiplicity"
+                    userDefined="false" visible="true">
+                    <name>0..1</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::operationCall::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>BOTTOM</placement>
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
@@ -501,21 +501,6 @@
             <name>pred</name>
             <properties>
                 <edgeproperty
-                    id="[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::pred::target::multiplicity"
-                    sizeCalculated="true" type="multiplicity"
-                    userDefined="false" visible="true">
-                    <name>0..1</name>
-                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                        <userOffsetX>0.0</userOffsetX>
-                        <userOffsetY>0.0</userOffsetY>
-                        <attached>[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::pred::WayPoint::1</attached>
-                        <offset_x>8</offset_x>
-                        <offset_y>8</offset_y>
-                        <placement>BOTTOM</placement>
-                    </strategy>
-                    <hidden>false</hidden>
-                </edgeproperty>
-                <edgeproperty
                     id="[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::pred::target::rolename"
                     sizeCalculated="true" type="rolename"
                     userDefined="true" visible="true">
@@ -527,6 +512,21 @@
                         <offset_x>8</offset_x>
                         <offset_y>8</offset_y>
                         <placement>TOP</placement>
+                    </strategy>
+                    <hidden>false</hidden>
+                </edgeproperty>
+                <edgeproperty
+                    id="[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::pred::target::multiplicity"
+                    sizeCalculated="true" type="multiplicity"
+                    userDefined="false" visible="true">
+                    <name>0..1</name>
+                    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                        <userOffsetX>0.0</userOffsetX>
+                        <userOffsetY>0.0</userOffsetY>
+                        <attached>[Filmstrip : (operationCall:step2_classaopc1, pred:snapshot2, succ:snapshot3)]::pred::WayPoint::1</attached>
+                        <offset_x>8</offset_x>
+                        <offset_y>8</offset_y>
+                        <placement>BOTTOM</placement>
                     </strategy>
                     <hidden>false</hidden>
                 </edgeproperty>
@@ -564,19 +564,19 @@
         <hidden>false</hidden>
     </node>
     <edge type="BinaryEdge">
-        <source>snapshot3</source>
-        <target>domainclass2</target>
-        <name>SnapshotDomainClass</name>
+        <source>domainclass2</source>
+        <target>domainclass3</target>
+        <name>PredSuccDomainClass</name>
         <properties>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::target::multiplicity"
+                id="[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
-                <name>*</name>
+                <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::1</attached>
+                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -584,13 +584,13 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::target::rolename"
+                id="[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::source::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>domainClass</name>
+                <name>predDomainClass</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>78.0</userOffsetX>
-                    <userOffsetY>4.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::1</attached>
+                    <userOffsetX>1.0</userOffsetX>
+                    <userOffsetY>-13.0</userOffsetY>
+                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
@@ -598,14 +598,28 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::source::multiplicity"
+                id="[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::target::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>succDomainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>8.0</userOffsetX>
+                    <userOffsetY>-12.0</userOffsetY>
+                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::target::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
-                <name>1</name>
+                <name>0..1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::0</attached>
+                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -613,32 +627,18 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>snapshotDomainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>124.0</userOffsetX>
-                    <userOffsetY>18.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::AssociationName"
+                id="[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
-                <name>SnapshotDomainClass</name>
+                <name>PredSuccDomainClass</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <offsetX>0.0</offsetX>
                     <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::0</related0>
-                        <related1>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::1</related1>
+                        <related0>[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::0</related0>
+                        <related1>[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::1</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
@@ -646,7 +646,7 @@
         </properties>
         <waypoints>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::0"
+                id="[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -659,7 +659,7 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]::WayPoint::1"
+                id="[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>
@@ -673,13 +673,156 @@
             </edgeproperty>
         </waypoints>
         <hidden>false</hidden>
-        <linkValue>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot3)]</linkValue>
+        <linkValue>[PredSuccDomainClass : (predDomainClass:domainclass2, succDomainClass:domainclass3)]</linkValue>
+    </edge>
+    <edge type="BinaryEdge">
+        <source>snapshot2</source>
+        <target>domainclass3</target>
+        <name>SnapshotDomainClass</name>
+        <properties>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::source::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>snapshotDomainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::source::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::target::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>domainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>*</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::AssociationName"
+                sizeCalculated="true" type="associationName"
+                userDefined="false" visible="true">
+                <name>SnapshotDomainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <offsetX>0.0</offsetX>
+                    <offsetY>-10.0</offsetY>
+                    <related length="2">
+                        <related0>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::0</related0>
+                        <related1>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::1</related1>
+                    </related>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+        </properties>
+        <waypoints>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::0"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
+                <name>0</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                </strategy>
+                <id>0</id>
+                <specialid>1</specialid>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]::WayPoint::1"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                </strategy>
+                <id>1</id>
+                <specialid>2</specialid>
+                <hidden>false</hidden>
+            </edgeproperty>
+        </waypoints>
+        <hidden>false</hidden>
+        <linkValue>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot2)]</linkValue>
     </edge>
     <edge type="BinaryEdge">
         <source>classa3</source>
         <target>classa2</target>
         <name>PredSuccClassA</name>
         <properties>
+            <edgeproperty
+                id="[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::source::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>predClassA</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>15.0</userOffsetX>
+                    <userOffsetY>-10.0</userOffsetY>
+                    <attached>[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::source::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
             <edgeproperty
                 id="[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::target::multiplicity"
                 sizeCalculated="true" type="multiplicity"
@@ -710,35 +853,6 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>predClassA</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>15.0</userOffsetX>
-                    <userOffsetY>-10.0</userOffsetY>
-                    <attached>[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
                 id="[PredSuccClassA : (predClassA:classa3, succClassA:classa2)]::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
@@ -762,8 +876,8 @@
                 sizeCalculated="true" type="WayPoint" userDefined="true" visible="true">
                 <name>0</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>107.0</userOffsetX>
-                    <userOffsetY>52.566816400264656</userOffsetY>
+                    <userOffsetX>106.0</userOffsetX>
+                    <userOffsetY>38.566816400264656</userOffsetY>
                     <basisDeltaX>ABSOLUTE</basisDeltaX>
                     <deltaX>0.0</deltaX>
                     <maxDeltaX>1.7976931348623157E308</maxDeltaX>
@@ -807,35 +921,6 @@
         <name>PredSuccDomainClass</name>
         <properties>
             <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>succDomainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>4.0</userOffsetX>
-                    <userOffsetY>-14.0</userOffsetY>
-                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
                 id="[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::source::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
                 <name>predDomainClass</name>
@@ -858,6 +943,35 @@
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <attached>[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::target::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>succDomainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>4.0</userOffsetX>
+                    <userOffsetY>-14.0</userOffsetY>
+                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass3, succDomainClass:domainclass1)]::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -919,31 +1033,16 @@
         <name>PredSuccClassA</name>
         <properties>
             <edgeproperty
-                id="[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::target::rolename"
+                id="[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::source::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>succClassA</name>
+                <name>predClassA</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>7.0</userOffsetX>
-                    <userOffsetY>-13.0</userOffsetY>
-                    <attached>[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::WayPoint::1</attached>
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>-16.0</userOffsetY>
+                    <attached>[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
@@ -963,16 +1062,31 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::source::rolename"
+                id="[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::target::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>predClassA</name>
+                <name>succClassA</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>8.0</userOffsetX>
-                    <userOffsetY>-14.0</userOffsetY>
-                    <attached>[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::WayPoint::0</attached>
+                    <userOffsetY>-16.0</userOffsetY>
+                    <attached>[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>0..1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
                 </strategy>
                 <hidden>false</hidden>
             </edgeproperty>
@@ -1033,130 +1147,19 @@
         <linkValue>[PredSuccClassA : (predClassA:classa2, succClassA:classa1)]</linkValue>
     </edge>
     <edge type="BinaryEdge">
-        <source>domainclass1</source>
+        <source>snapshot1</source>
         <target>domainclass2</target>
-        <name>PredSuccDomainClass</name>
-        <properties>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>succDomainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>8.0</userOffsetX>
-                    <userOffsetY>-12.0</userOffsetY>
-                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>predDomainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>17.0</userOffsetX>
-                    <userOffsetY>-12.0</userOffsetY>
-                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>0..1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::AssociationName"
-                sizeCalculated="true" type="associationName"
-                userDefined="false" visible="true">
-                <name>PredSuccDomainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <offsetX>0.0</offsetX>
-                    <offsetY>-10.0</offsetY>
-                    <related length="2">
-                        <related0>[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::0</related0>
-                        <related1>[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::1</related1>
-                    </related>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </properties>
-        <waypoints>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::0"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>0</id>
-                <specialid>1</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]::WayPoint::1"
-                sizeCalculated="true" type="WayPoint"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                </strategy>
-                <id>1</id>
-                <specialid>2</specialid>
-                <hidden>false</hidden>
-            </edgeproperty>
-        </waypoints>
-        <hidden>false</hidden>
-        <linkValue>[PredSuccDomainClass : (predDomainClass:domainclass1, succDomainClass:domainclass2)]</linkValue>
-    </edge>
-    <edge type="BinaryEdge">
-        <source>snapshot2</source>
-        <target>domainclass1</target>
         <name>SnapshotDomainClass</name>
         <properties>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>domainClass</name>
+                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::source::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>snapshotDomainClass</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>6.0</userOffsetX>
+                    <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::1</attached>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
@@ -1164,14 +1167,44 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::target::multiplicity"
+                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::source::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>1</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::target::rolename"
+                sizeCalculated="true" type="rolename"
+                userDefined="false" visible="true">
+                <name>domainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::target::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>*</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::1</attached>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -1179,36 +1212,7 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::source::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>snapshotDomainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>5.0</userOffsetX>
-                    <userOffsetY>14.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::AssociationName"
+                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
                 <name>SnapshotDomainClass</name>
@@ -1218,8 +1222,8 @@
                     <offsetX>0.0</offsetX>
                     <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::0</related0>
-                        <related1>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::1</related1>
+                        <related0>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::0</related0>
+                        <related1>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::1</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
@@ -1227,40 +1231,26 @@
         </properties>
         <waypoints>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::0"
-                sizeCalculated="true" type="WayPoint" userDefined="true" visible="true">
+                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::0"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
                 <name>0</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>15.747075033709848</userOffsetX>
-                    <userOffsetY>32.0</userOffsetY>
-                    <basisDeltaX>ABSOLUTE</basisDeltaX>
-                    <deltaX>0.0</deltaX>
-                    <maxDeltaX>1.7976931348623157E308</maxDeltaX>
-                    <basisDeltaY>ABSOLUTE</basisDeltaY>
-                    <deltaY>0.0</deltaY>
-                    <maxDeltaY>1.7976931348623157E308</maxDeltaY>
-                    <corner>NORTH_WEST</corner>
-                    <relativeNodeId>snapshot2</relativeNodeId>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
                 </strategy>
                 <id>0</id>
                 <specialid>1</specialid>
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]::WayPoint::1"
-                sizeCalculated="true" type="WayPoint" userDefined="true" visible="true">
+                id="[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]::WayPoint::1"
+                sizeCalculated="true" type="WayPoint"
+                userDefined="false" visible="true">
                 <name>1</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-                    <userOffsetX>38.47689643951185</userOffsetX>
-                    <userOffsetY>-1.0</userOffsetY>
-                    <basisDeltaX>ABSOLUTE</basisDeltaX>
-                    <deltaX>0.0</deltaX>
-                    <maxDeltaX>1.7976931348623157E308</maxDeltaX>
-                    <basisDeltaY>ABSOLUTE</basisDeltaY>
-                    <deltaY>0.0</deltaY>
-                    <maxDeltaY>1.7976931348623157E308</maxDeltaY>
-                    <corner>NORTH_WEST</corner>
-                    <relativeNodeId>domainclass1</relativeNodeId>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
                 </strategy>
                 <id>1</id>
                 <specialid>2</specialid>
@@ -1268,42 +1258,13 @@
             </edgeproperty>
         </waypoints>
         <hidden>false</hidden>
-        <linkValue>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot2)]</linkValue>
+        <linkValue>[SnapshotDomainClass : (domainClass:domainclass2, snapshotDomainClass:snapshot1)]</linkValue>
     </edge>
     <edge type="BinaryEdge">
         <source>snapshot1</source>
         <target>classa3</target>
         <name>SnapshotClassA</name>
         <properties>
-            <edgeproperty
-                id="[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>classA</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>37.0</userOffsetX>
-                    <userOffsetY>-19.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>*</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
             <edgeproperty
                 id="[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::source::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
@@ -1327,6 +1288,35 @@
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
                     <attached>[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::target::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>classA</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>42.0</userOffsetX>
+                    <userOffsetY>-15.0</userOffsetY>
+                    <attached>[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>*</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotClassA : (classA:classa3, snapshotClassA:snapshot1)]::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -1388,28 +1378,13 @@
         <name>SnapshotClassA</name>
         <properties>
             <edgeproperty
-                id="[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>*</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::target::rolename"
+                id="[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::source::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>classA</name>
+                <name>snapshotClassA</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>59.0</userOffsetX>
-                    <userOffsetY>1.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::WayPoint::1</attached>
+                    <userOffsetX>107.0</userOffsetX>
+                    <userOffsetY>3.0</userOffsetY>
+                    <attached>[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
@@ -1432,13 +1407,28 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>snapshotClassA</name>
+                id="[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>*</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>107.0</userOffsetX>
-                    <userOffsetY>3.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::WayPoint::0</attached>
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::target::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>classA</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>59.0</userOffsetX>
+                    <userOffsetY>1.0</userOffsetY>
+                    <attached>[SnapshotClassA : (classA:classa2, snapshotClassA:snapshot2)]::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
@@ -1507,14 +1497,28 @@
         <name>SnapshotClassA</name>
         <properties>
             <edgeproperty
-                id="[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::target::multiplicity"
+                id="[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::source::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>snapshotClassA</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>-1.0</userOffsetX>
+                    <userOffsetY>4.0</userOffsetY>
+                    <attached>[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::WayPoint::0</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
-                <name>*</name>
+                <name>1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::WayPoint::1</attached>
+                    <attached>[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -1536,28 +1540,14 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::source::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>snapshotClassA</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>-6.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::WayPoint::0</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::source::multiplicity"
+                id="[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::target::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
-                <name>1</name>
+                <name>*</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::WayPoint::0</attached>
+                    <attached>[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]::WayPoint::1</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -1621,48 +1611,19 @@
         <linkValue>[SnapshotClassA : (classA:classa1, snapshotClassA:snapshot3)]</linkValue>
     </edge>
     <edge type="BinaryEdge">
-        <source>snapshot1</source>
-        <target>domainclass3</target>
+        <source>snapshot3</source>
+        <target>domainclass1</target>
         <name>SnapshotDomainClass</name>
         <properties>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::target::rolename"
-                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
-                <name>domainClass</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>81.0</userOffsetX>
-                    <userOffsetY>7.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>TOP</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::target::multiplicity"
-                sizeCalculated="true" type="multiplicity"
-                userDefined="false" visible="true">
-                <name>*</name>
-                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>0.0</userOffsetX>
-                    <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::1</attached>
-                    <offset_x>8</offset_x>
-                    <offset_y>8</offset_y>
-                    <placement>BOTTOM</placement>
-                </strategy>
-                <hidden>false</hidden>
-            </edgeproperty>
-            <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::source::multiplicity"
+                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::source::multiplicity"
                 sizeCalculated="true" type="multiplicity"
                 userDefined="false" visible="true">
                 <name>1</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
                     <userOffsetX>0.0</userOffsetX>
                     <userOffsetY>0.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::0</attached>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>BOTTOM</placement>
@@ -1670,13 +1631,13 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::source::rolename"
+                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::source::rolename"
                 sizeCalculated="true" type="rolename" userDefined="true" visible="true">
                 <name>snapshotDomainClass</name>
                 <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
-                    <userOffsetX>4.0</userOffsetX>
-                    <userOffsetY>19.0</userOffsetY>
-                    <attached>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::0</attached>
+                    <userOffsetX>128.0</userOffsetX>
+                    <userOffsetY>15.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::0</attached>
                     <offset_x>8</offset_x>
                     <offset_y>8</offset_y>
                     <placement>TOP</placement>
@@ -1684,7 +1645,36 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::AssociationName"
+                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::target::multiplicity"
+                sizeCalculated="true" type="multiplicity"
+                userDefined="false" visible="true">
+                <name>*</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>0.0</userOffsetX>
+                    <userOffsetY>0.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>BOTTOM</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::target::rolename"
+                sizeCalculated="true" type="rolename" userDefined="true" visible="true">
+                <name>domainClass</name>
+                <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToAttached">
+                    <userOffsetX>83.0</userOffsetX>
+                    <userOffsetY>3.0</userOffsetY>
+                    <attached>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::1</attached>
+                    <offset_x>8</offset_x>
+                    <offset_y>8</offset_y>
+                    <placement>TOP</placement>
+                </strategy>
+                <hidden>false</hidden>
+            </edgeproperty>
+            <edgeproperty
+                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::AssociationName"
                 sizeCalculated="true" type="associationName"
                 userDefined="false" visible="true">
                 <name>SnapshotDomainClass</name>
@@ -1694,8 +1684,8 @@
                     <offsetX>0.0</offsetX>
                     <offsetY>-10.0</offsetY>
                     <related length="2">
-                        <related0>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::0</related0>
-                        <related1>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::1</related1>
+                        <related0>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::0</related0>
+                        <related1>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::1</related1>
                     </related>
                 </strategy>
                 <hidden>false</hidden>
@@ -1703,7 +1693,7 @@
         </properties>
         <waypoints>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::0"
+                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::0"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>0</name>
@@ -1716,7 +1706,7 @@
                 <hidden>false</hidden>
             </edgeproperty>
             <edgeproperty
-                id="[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]::WayPoint::1"
+                id="[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]::WayPoint::1"
                 sizeCalculated="true" type="WayPoint"
                 userDefined="false" visible="true">
                 <name>1</name>
@@ -1730,6 +1720,6 @@
             </edgeproperty>
         </waypoints>
         <hidden>false</hidden>
-        <linkValue>[SnapshotDomainClass : (domainClass:domainclass3, snapshotDomainClass:snapshot1)]</linkValue>
+        <linkValue>[SnapshotDomainClass : (domainClass:domainclass1, snapshotDomainClass:snapshot3)]</linkValue>
     </edge>
 </diagram_Layout>

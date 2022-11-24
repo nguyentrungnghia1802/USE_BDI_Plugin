@@ -209,9 +209,14 @@ public class FilmstripMMVisitor implements MMVisitor {
 				sourceClass = end.cls().name();
 				continue;
 			}
-			
-			ends[i++] = FilmstripModelConstants.makeValidLinkingInvPart(end.name(),
+			//hanhdd-begin ============
+			/*
+			 * ends[i++] = FilmstripModelConstants.makeValidLinkingInvPart(end.name(),
+			 *   isTernary || end.multiplicity().isCollection());
+			 */
+			ends[i++] = FilmstripModelConstants.makeValidLinkingInvPart(end.name(), sourceClass, end.cls().name(),
 					isTernary || end.multiplicity().isCollection());
+			//hanhdd-end ============
 		}
 		
 		String inv = StringUtil.fmtSeq(ends, " and ");

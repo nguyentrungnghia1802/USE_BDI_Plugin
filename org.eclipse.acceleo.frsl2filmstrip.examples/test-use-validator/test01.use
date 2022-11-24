@@ -20,14 +20,14 @@ constraints
 
 context ClassA::step1(a: Integer) 
 post:
-	--changedAttr = changedAttr@pre + a and 
-	--(obj.isPrbl = true) and 
+	changedAttr = changedAttr@pre + a and 
+	(obj.isPrbl = true) and 
 	(curStep@pre = '') and 
 	(curStep = 'step1')
 
 context ClassA::step2(b: Integer) 
 post:
-	--changedAttr = changedAttr@pre - b and 
-	--(obj.isPrbl = false) and 
+	changedAttr = changedAttr@pre - b and 
+	(obj.isPrbl = false) and 
 	(curStep@pre = 'step1')	and 
 	(curStep = 'step2')
