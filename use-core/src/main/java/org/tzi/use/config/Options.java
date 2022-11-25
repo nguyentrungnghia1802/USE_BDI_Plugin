@@ -424,7 +424,10 @@ public class Options {
         }
         
         setLastDirectory(homeDir);
-		pluginDir = homeDir.resolve("lib").resolve("plugins");
+        //hanhdd-begin =================================
+		//pluginDir = homeDir.resolve("lib").resolve("plugins");
+		pluginDir = homeDir.getParent().getParent().resolve("use-assembly\\src\\main\\resources\\plugins");
+		//hanhdd-end =================================
 
         if (quiet && (specFilename == null || cmdFilename == null) ) {
 			System.err
