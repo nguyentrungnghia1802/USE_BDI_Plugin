@@ -82,7 +82,7 @@ public class KodkodModelValidatorConfiguration {
 	private final File iniSaveFile;
 	private boolean read = false;
 
-	private static final KodkodModelValidatorConfiguration INSTANCE = new KodkodModelValidatorConfiguration();
+	public static final KodkodModelValidatorConfiguration INSTANCE = new KodkodModelValidatorConfiguration();
 	private KodkodModelValidatorConfiguration() {
 		iniSaveFile = new File(PathHelper.getPluginPath() + FOLDER_NAME, INI_FILENAME);
 

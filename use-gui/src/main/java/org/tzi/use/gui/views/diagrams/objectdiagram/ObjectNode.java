@@ -54,17 +54,17 @@ import org.tzi.use.uml.sys.MObjectState;
  */
 public class ObjectNode extends PlaceableNode implements SortChangeListener, ObjectNodeActivity {
 
-	private final ObjDiagramOptions fOpt;
+	protected final ObjDiagramOptions fOpt;
 	private final NewObjectDiagramView fParent;
 	private final MObject fObject;
-	private final String fLabel;
+	protected final String fLabel;
 	protected AttributedString fLabelA;
 
-	private List<MAttribute> fAttributes;
-	private final String[] fValues;
+	protected List<MAttribute> fAttributes;
+	protected final String[] fValues;
 
 	private List<MStateMachine> fStateMachines;
-	private final String[] fStateValues;
+	protected final String[] fStateValues;
 
 	private boolean fIsGreyed;
 

@@ -304,7 +304,7 @@ public class NewObjectDiagramView extends JPanel
         viewcount--;
     }
 
-    void createObject(String clsName) {
+    public void createObject(String clsName) {
         fMainWindow.createObject(clsName);
     }
 

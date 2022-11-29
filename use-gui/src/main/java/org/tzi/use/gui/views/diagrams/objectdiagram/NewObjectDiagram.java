@@ -231,7 +231,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 
 	protected ObjectDiagramData visibleData = new ObjectDiagramData();
 
-	private ObjectDiagramData hiddenData = new ObjectDiagramData();
+	protected ObjectDiagramData hiddenData = new ObjectDiagramData();
 
 	private NewObjectDiagramView fParent;
 
@@ -246,7 +246,7 @@ public class NewObjectDiagram extends DiagramViewWithObjectNode implements Highl
 	 * nodes (object nodes, linkobject nodes) are positioned as they were
 	 * before. Objects use {@link StrategyFixed}, so we just save the position.
 	 */
-	private Map<MObject, Point2D> lastKnownNodePositions = new WeakHashMap<>();
+	protected Map<MObject, Point2D> lastKnownNodePositions = new WeakHashMap<>();
 	private Map<MLink, PositionStrategy> lastKnownLinkPositions = new WeakHashMap<>();
 
 	protected ShowObjectPropertiesViewMouseListener showObjectPropertiesViewMouseListener = new ShowObjectPropertiesViewMouseListener();
