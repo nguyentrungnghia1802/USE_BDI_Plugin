@@ -314,7 +314,15 @@ public class ModelConfigurator extends Configurator<IModel> {
 				String first = valueAtom.toString().substring(0, 1).toUpperCase();
 				value = first + valueAtom.toString().substring(1);
 			} else {
-				value = valueAtom.toString().split("_")[1];
+				String[] tmp = valueAtom.toString().split("_");
+				//System.out.println("hanhdd$attrType = " + attributeType.toString());
+				//System.out.println("hanhdd$valueAtom.toString() = " + valueAtom.toString());				
+				//System.out.println("hanhdd$tmp.length = " + tmp.length);
+				if(tmp.length < 2) {
+					value = "";
+				}else {
+					value = tmp[1];
+				}
 			}
 			return getNotUndefinedValueLiteral(value, attributeType);
 		}
