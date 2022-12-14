@@ -80,19 +80,28 @@ end
 ----------------------------------------
 
 constraints
+	
+	-- context BuyTicket inv oneInstance: 
+		-- BuyTicket.allInstances()->size=1
 
 	context BuyTicket::step1_act()
 		pre preStep: 
 			curStep = 's0' and enter_BuyTicket()
 		post nextStep: 
 			curStep = 'step1_act'
-		
+		post unChangedPart: 
+			let uc: BuyTicket = BuyTicket.allInstances->any(true) in uc.customer = uc.customer@pre
+			and
+			(Customer.allInstances- Set{customer})->forAll(x | x@pre=x and x.money@pre=x.money) and
+			(Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
 	context BuyTicket::step2_sys()
 		pre preStep: 
 			curStep = 'step1_act'
 		post nextStep: 
 			curStep = 'step2_sys'
-		
+		post unChangedPart: 
+			(Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money) and
+			(Ticket.allInstances- (avblTickets))->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
 	context BuyTicket::step3_act()
 		pre preStep: 
 			if ( curStep = 'step2_sys' ) then
@@ -101,14 +110,22 @@ constraints
 				curStep = enum2String(rejnStepIndex) endif
 		post nextStep: 
 			curStep = 'step3_act'
-		
+		post unChangedPart: 
+			let uc: BuyTicket = BuyTicket.allInstances->any(true) in uc.avblTickets = uc.avblTickets@pre
+			and
+			(Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money) and
+			(Ticket.allInstances- (avblTickets))->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
 	context BuyTicket::step4_sys()
 		pre preStep: 
 			curStep = 'step3_act'
 		post nextStep: 
 			curStep = 'step4_sys'
-			 and exit_BuyTicket()
-		
+			and exit_BuyTicket()
+		post unChangedPart: 
+			let uc: BuyTicket = BuyTicket.allInstances->any(true) in uc.customer = uc.customer@pre
+			and
+			(Customer.allInstances- Set{customer})->forAll(x | x@pre=x and x.money@pre=x.money) and
+			(Ticket.allInstances- Set{ticket})->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
 	
 	context BuyTicket::step3a1_sys()
 		pre preStep: 
@@ -118,4 +135,7 @@ constraints
 			else curStep = preStep endif endif
 		post nextStep: 
 			curStep = 'step3a1_sys'
+		post unChangedPart: 
+			(Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money) and
+			(Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
 ----------------------------------------
