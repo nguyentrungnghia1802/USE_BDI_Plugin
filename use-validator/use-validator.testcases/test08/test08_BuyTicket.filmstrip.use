@@ -7,9 +7,7 @@ enum RejnStep {
 class step1_act_BuyTicketOpC < BuyTicketOpC
 end
 
-aggregation PredSuccBuyTicket between
-  BuyTicket[0..1] role predBuyTicket
-  BuyTicket[0..1] role succBuyTicket
+class matchPara4step3_act_BuyTicketOpC < BuyTicketOpC
 end
 
 association Filmstrip between
@@ -18,17 +16,49 @@ association Filmstrip between
   OperationCall[0..1]
 end
 
+aggregation PredSuccCustomer between
+  Customer[0..1] role predCustomer
+  Customer[0..1] role succCustomer
+end
+
+class step4_sys_BuyTicketOpC < BuyTicketOpC
+end
+
+abstract class OperationCall
+operations
+  pred() : Snapshot = 
+    if (self.pred->size() = 1) then self.pred->any( $elem0:Snapshot | true ) else null endif
+  succ() : Snapshot = 
+    if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
+end
+
+composition SnapshotCustomer between
+  Snapshot[1] role snapshotCustomer
+  Customer[*]
+end
+
+class matchPara4step4_sys_BuyTicketOpC < BuyTicketOpC
+end
+
+aggregation PredSuccTicket between
+  Ticket[0..1] role predTicket
+  Ticket[0..1] role succTicket
+end
+
+aggregation PredSuccBuyTicket between
+  BuyTicket[0..1] role predBuyTicket
+  BuyTicket[0..1] role succBuyTicket
+end
+
+class matchPara4step2_sys_BuyTicketOpC < BuyTicketOpC
+end
+
 abstract class BuyTicketOpC < OperationCall
 attributes
   aSelf : BuyTicket
 end
 
 class step3_act_BuyTicketOpC < BuyTicketOpC
-end
-
-aggregation PredSuccCustomer between
-  Customer[0..1] role predCustomer
-  Customer[0..1] role succCustomer
 end
 
 composition SnapshotTicket between
@@ -64,6 +94,7 @@ operations
       for cl in s.buyTicket do 
         cl.curStep := cl.predBuyTicket.curStep;
         cl.inputId := cl.predBuyTicket.inputId;
+        cl.matchedStep := cl.predBuyTicket.matchedStep;
         cl.msg := cl.predBuyTicket.msg;
         cl.ticketIds := cl.predBuyTicket.ticketIds;
       end;
@@ -102,28 +133,7 @@ operations
     if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
 end
 
-class step4_sys_BuyTicketOpC < BuyTicketOpC
-end
-
 class step2_sys_BuyTicketOpC < BuyTicketOpC
-end
-
-abstract class OperationCall
-operations
-  pred() : Snapshot = 
-    if (self.pred->size() = 1) then self.pred->any( $elem0:Snapshot | true ) else null endif
-  succ() : Snapshot = 
-    if (self.succ->size() = 1) then self.succ->any( $elem0:Snapshot | true ) else null endif
-end
-
-composition SnapshotCustomer between
-  Snapshot[1] role snapshotCustomer
-  Customer[*]
-end
-
-aggregation PredSuccTicket between
-  Ticket[0..1] role predTicket
-  Ticket[0..1] role succTicket
 end
 
 class step3a1_sys_BuyTicketOpC < BuyTicketOpC
@@ -151,15 +161,19 @@ attributes
   msg : String
   ticketIds : Set(Integer)
   curStep : String
+  matchedStep : String
 operations
   enter_BuyTicket() : Boolean = 
-    (self.customer.ticket->excludes(self.ticket) and (self.curStep = 's0'))
+    (((not self.customer.isUndefined() and not self.ticket.isUndefined()) and self.customer.ticket->excludes(self.ticket)) and (self.curStep = 's0'))
   exit_BuyTicket() : Boolean = 
     (self.customer.ticket->includes(self.ticket) and self.isFinalStep(self.curStep))
   step1_act()
   step2_sys()
+  matchPara4step2_sys()
   step3_act()
+  matchPara4step3_act()
   step4_sys()
+  matchPara4step4_sys()
   step3a_alt()
   step3a1_sys()
   step3a2_rejn_step3_1()
@@ -230,50 +244,95 @@ context Snapshot inv oneFilmstrip:
 context Ticket inv validSnapshotLinking:
   (self.succTicket.isDefined() implies (self.succTicket.snapshotTicket = self.snapshotTicket.succ()))
 
+context matchPara4step2_sys_BuyTicketOpC inv post_post1:
+  ((aSelf.succBuyTicket.avblTickets = self.succ().ticket->select( t:Ticket | t.customer.isUndefined() )) and (aSelf.succBuyTicket.matchedStep = 'step2_sys'))
+
+context matchPara4step2_sys_BuyTicketOpC inv pre_pre1:
+  (aSelf.matchedStep = 'null')
+
+context matchPara4step3_act_BuyTicketOpC inv post_post2:
+  (not aSelf.succBuyTicket.inputId.isUndefined() and (aSelf.succBuyTicket.matchedStep = 'step3_act'))
+
+context matchPara4step3_act_BuyTicketOpC inv pre_pre2:
+  (aSelf.matchedStep = 'null')
+
+context matchPara4step4_sys_BuyTicketOpC inv post_post3:
+  (((not aSelf.succBuyTicket.ticket.isUndefined() and aSelf.succBuyTicket.customer.ticket->excludes(aSelf.succBuyTicket.ticket)) and (aSelf.succBuyTicket.ticket.id = aSelf.succBuyTicket.inputId)) and (aSelf.succBuyTicket.matchedStep = 'step4_sys'))
+
+context matchPara4step4_sys_BuyTicketOpC inv pre_pre3:
+  (aSelf.matchedStep = 'null')
+
 context step1_act_BuyTicketOpC inv post_nextStep:
-  (aSelf.succBuyTicket.curStep = 'step1_act')
+  ((aSelf.succBuyTicket.curStep = 'step1_act') and (aSelf.succBuyTicket.matchedStep = 'null'))
+
+context step1_act_BuyTicketOpC inv post_postSnapshot:
+  true
 
 context step1_act_BuyTicketOpC inv post_unChangedPart:
-  (let uc:BuyTicket = self.succ().buyTicket->any( $elem0:BuyTicket | true ) in (((uc.customer = uc.predBuyTicket.customer.succCustomer) and (self.succ().customer - Set{aSelf.succBuyTicket.customer})->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) )) and self.succ().ticket->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )))
+  (((((((self.succ().customer - Set{aSelf.succBuyTicket.customer})->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) ) and self.succ().ticket->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )) and (aSelf.succBuyTicket.ticket = aSelf.succBuyTicket.predBuyTicket.ticket.succTicket)) and (aSelf.succBuyTicket.avblTickets = aSelf.succBuyTicket.predBuyTicket.avblTickets->collectNested( t1:Ticket | t1.succTicket )->asSet())) and (aSelf.succBuyTicket.inputId = aSelf.succBuyTicket.predBuyTicket.inputId)) and (aSelf.succBuyTicket.msg = aSelf.succBuyTicket.predBuyTicket.msg)) and (aSelf.succBuyTicket.ticketIds = aSelf.succBuyTicket.predBuyTicket.ticketIds))
+
+context step1_act_BuyTicketOpC inv pre_preSnapshot:
+  (aSelf.customer.money > 0)
 
 context step1_act_BuyTicketOpC inv pre_preStep:
   ((aSelf.curStep = 's0') and aSelf.enter_BuyTicket())
 
 context step2_sys_BuyTicketOpC inv post_nextStep:
-  (aSelf.succBuyTicket.curStep = 'step2_sys')
+  ((aSelf.succBuyTicket.curStep = 'step2_sys') and (aSelf.succBuyTicket.matchedStep = 'null'))
+
+context step2_sys_BuyTicketOpC inv post_postSnapshot:
+  true
 
 context step2_sys_BuyTicketOpC inv post_unChangedPart:
-  (self.succ().customer->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) ) and (self.succ().ticket - aSelf.succBuyTicket.avblTickets)->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) ))
+  ((((((self.succ().customer->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) ) and self.succ().ticket->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )) and (aSelf.succBuyTicket.customer = aSelf.succBuyTicket.predBuyTicket.customer.succCustomer)) and (aSelf.succBuyTicket.ticket = aSelf.succBuyTicket.predBuyTicket.ticket.succTicket)) and (aSelf.succBuyTicket.inputId = aSelf.succBuyTicket.predBuyTicket.inputId)) and (aSelf.succBuyTicket.msg = aSelf.succBuyTicket.predBuyTicket.msg)) and (aSelf.succBuyTicket.ticketIds = aSelf.succBuyTicket.predBuyTicket.ticketIds))
+
+context step2_sys_BuyTicketOpC inv pre_preSnapshot:
+  (aSelf.avblTickets = self.pred().ticket->select( t:Ticket | t.customer.isUndefined() ))
 
 context step2_sys_BuyTicketOpC inv pre_preStep:
-  (aSelf.curStep = 'step1_act')
+  ((aSelf.curStep = 'step1_act') and (aSelf.matchedStep = 'step2_sys'))
 
 context step3_act_BuyTicketOpC inv post_nextStep:
-  (aSelf.succBuyTicket.curStep = 'step3_act')
+  ((aSelf.succBuyTicket.curStep = 'step3_act') and (aSelf.succBuyTicket.matchedStep = 'null'))
+
+context step3_act_BuyTicketOpC inv post_postSnapshot:
+  true
 
 context step3_act_BuyTicketOpC inv post_unChangedPart:
-  (let uc:BuyTicket = self.succ().buyTicket->any( $elem1:BuyTicket | true ) in (((uc.avblTickets = uc.predBuyTicket.avblTickets->collectNested( t1:Ticket | t1.succTicket )->asSet()) and self.succ().customer->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) )) and (self.succ().ticket - aSelf.succBuyTicket.avblTickets)->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )))
+  (((((self.succ().customer->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) ) and self.succ().ticket->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )) and (aSelf.succBuyTicket.customer = aSelf.succBuyTicket.predBuyTicket.customer.succCustomer)) and (aSelf.succBuyTicket.ticket = aSelf.succBuyTicket.predBuyTicket.ticket.succTicket)) and (aSelf.succBuyTicket.msg = aSelf.succBuyTicket.predBuyTicket.msg)) and (aSelf.succBuyTicket.ticketIds = aSelf.succBuyTicket.predBuyTicket.ticketIds))
+
+context step3_act_BuyTicketOpC inv pre_preSnapshot:
+  not aSelf.inputId.isUndefined()
 
 context step3_act_BuyTicketOpC inv pre_preStep:
-  if (aSelf.curStep = 'step2_sys') then true else (let rejnStepIndex:RejnStep = Set{RejnStep::step3a2_rejn_step3_1}->any( rj:RejnStep | aSelf.isValidRejnStep(rj) ) in (aSelf.curStep = aSelf.enum2String(rejnStepIndex))) endif
+  (if (aSelf.curStep = 'step2_sys') then true else (let rejnStepIndex:RejnStep = Set{RejnStep::step3a2_rejn_step3_1}->any( rj:RejnStep | aSelf.isValidRejnStep(rj) ) in (aSelf.curStep = aSelf.enum2String(rejnStepIndex))) endif and (aSelf.matchedStep = 'step3_act'))
 
 context step3a1_sys_BuyTicketOpC inv post_nextStep:
-  (aSelf.succBuyTicket.curStep = 'step3a1_sys')
+  ((aSelf.succBuyTicket.curStep = 'step3a1_sys') and (aSelf.succBuyTicket.matchedStep = 'null'))
+
+context step3a1_sys_BuyTicketOpC inv post_postSnapshot:
+  true
 
 context step3a1_sys_BuyTicketOpC inv post_unChangedPart:
-  (self.succ().customer->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) ) and self.succ().ticket->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) ))
+  (((((((self.succ().customer->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) ) and self.succ().ticket->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )) and (aSelf.succBuyTicket.customer = aSelf.succBuyTicket.predBuyTicket.customer.succCustomer)) and (aSelf.succBuyTicket.ticket = aSelf.succBuyTicket.predBuyTicket.ticket.succTicket)) and (aSelf.succBuyTicket.avblTickets = aSelf.succBuyTicket.predBuyTicket.avblTickets->collectNested( t1:Ticket | t1.succTicket )->asSet())) and (aSelf.succBuyTicket.inputId = aSelf.succBuyTicket.predBuyTicket.inputId)) and (aSelf.succBuyTicket.msg = aSelf.succBuyTicket.predBuyTicket.msg)) and (aSelf.succBuyTicket.ticketIds = aSelf.succBuyTicket.predBuyTicket.ticketIds))
 
 context step3a1_sys_BuyTicketOpC inv pre_preStep:
   (let preStep:String = if (aSelf.customer.money < aSelf.ticket.value) then 'step2_sys' else 'null' endif in if (preStep = 's0') then (aSelf.curStep = 's0') else if (preStep = 'null') then false else (aSelf.curStep = preStep) endif endif)
 
 context step4_sys_BuyTicketOpC inv post_nextStep:
-  ((aSelf.succBuyTicket.curStep = 'step4_sys') and aSelf.succBuyTicket.exit_BuyTicket())
+  (((aSelf.succBuyTicket.curStep = 'step4_sys') and (aSelf.succBuyTicket.matchedStep = 'null')) and aSelf.succBuyTicket.exit_BuyTicket())
+
+context step4_sys_BuyTicketOpC inv post_postSnapshot:
+  true
 
 context step4_sys_BuyTicketOpC inv post_unChangedPart:
-  (let uc:BuyTicket = self.succ().buyTicket->any( $elem2:BuyTicket | true ) in (((uc.customer = uc.predBuyTicket.customer.succCustomer) and (self.succ().customer - Set{aSelf.succBuyTicket.customer})->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) )) and (self.succ().ticket - Set{aSelf.succBuyTicket.ticket})->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )))
+  ((((((self.succ().customer - Set{aSelf.succBuyTicket.customer})->forAll( x:Customer | ((x = x) and (x.predCustomer.money = x.money)) ) and (self.succ().ticket - Set{aSelf.succBuyTicket.ticket})->forAll( x:Ticket | ((((x = x) and (x.predTicket.id = x.id)) and (x.predTicket.value = x.value)) and (x.predTicket.customer.succCustomer = x.customer)) )) and (aSelf.succBuyTicket.avblTickets = aSelf.succBuyTicket.predBuyTicket.avblTickets->collectNested( t1:Ticket | t1.succTicket )->asSet())) and (aSelf.succBuyTicket.inputId = aSelf.succBuyTicket.predBuyTicket.inputId)) and (aSelf.succBuyTicket.msg = aSelf.succBuyTicket.predBuyTicket.msg)) and (aSelf.succBuyTicket.ticketIds = aSelf.succBuyTicket.predBuyTicket.ticketIds))
+
+context step4_sys_BuyTicketOpC inv pre_preSnapshot:
+  ((not aSelf.ticket.isUndefined() and aSelf.customer.ticket->excludes(aSelf.ticket)) and (aSelf.ticket.id = aSelf.inputId))
 
 context step4_sys_BuyTicketOpC inv pre_preStep:
-  (aSelf.curStep = 'step3_act')
+  ((aSelf.curStep = 'step3_act') and (aSelf.matchedStep = 'step4_sys'))
 
 context Snapshot::copy() : Snapshot
   pre uncopied: self.succ().isUndefined()
