@@ -51,16 +51,26 @@
       </ownedOperations>
       <ownedOperations xmi:id="d7NtD" name="step2_sys" type="pivot:PrimitiveType &_0;#XEMMs">
         <ownedPreconditions xmi:id="QOEXJ" name="step2_sys_pre1">
-          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="'oclInEcore'&lt;>'avblTickets = Ticket.allInstances()->select(t:Ticket | t.customer.oclIsUndefined() = true)'">
-            <ownedBody xsi:type="pivot:OperationCallExp" name="&lt;>" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#Ap5cn">
-              <ownedSource xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="oclInEcore"/>
-              <ownedArguments xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="avblTickets = Ticket.allInstances()->select(t:Ticket | t.customer.oclIsUndefined() = true)"/>
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="'@oclCompile' = 'avblTickets = Ticket.allInstances()->select(t:Ticket | t.customer.oclIsUndefined())'">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="=" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#7L5cn">
+              <ownedSource xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="@oclCompile"/>
+              <ownedArguments xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="avblTickets = Ticket.allInstances()->select(t:Ticket | t.customer.oclIsUndefined())"/>
             </ownedBody>
             <ownedContext xsi:type="pivot:ParameterVariable" name="self" type="#En0Ez"/>
           </ownedSpecification>
         </ownedPreconditions>
       </ownedOperations>
-      <ownedOperations xmi:id="jArwD" name="step3_act" type="pivot:PrimitiveType &_0;#XEMMs"/>
+      <ownedOperations xmi:id="jArwD" name="step3_act" type="pivot:PrimitiveType &_0;#XEMMs">
+        <ownedPreconditions xmi:id="4I,1c" name="step3_act_pre1">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="'@oclCompile' = 'avblTickets->collect(id)->asSet()->includes(inputId)'">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="=" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#7L5cn">
+              <ownedSource xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="@oclCompile"/>
+              <ownedArguments xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="avblTickets->collect(id)->asSet()->includes(inputId)"/>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" name="self" type="#En0Ez"/>
+          </ownedSpecification>
+        </ownedPreconditions>
+      </ownedOperations>
       <ownedOperations xmi:id="f3Q0D" name="step4_sys" type="pivot:PrimitiveType &_0;#XEMMs">
         <ownedPostconditions xmi:id="8QXD7" name="step4_sys_post1">
           <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="customer.money=customer.money@pre - ticket.value">
@@ -84,6 +94,16 @@
               </ownedArguments>
             </ownedBody>
             <ownedContext xsi:type="pivot:ParameterVariable" xmi:id="M8Puc" name="self" type="#En0Ez"/>
+            <ownedResult xsi:type="pivot:ParameterVariable" name="result" type="pivot:PrimitiveType &_0;#XEMMs"/>
+          </ownedSpecification>
+        </ownedPostconditions>
+        <ownedPostconditions xmi:id="9QXD7" name="step4_sys_post2">
+          <ownedSpecification xsi:type="pivot:ExpressionInOCL" type="pivot:PrimitiveType &_0;#XEMMs" body="'@changed' &lt;> 'customer/{money}; ticket/{customer}'">
+            <ownedBody xsi:type="pivot:OperationCallExp" name="&lt;>" type="pivot:PrimitiveType &_0;#XEMMs" referredOperation="&_0;#Ap5cn">
+              <ownedSource xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="@changed"/>
+              <ownedArguments xsi:type="pivot:StringLiteralExp" type="pivot:PrimitiveType &_0;#AlwVZ" stringSymbol="customer/{money}; ticket/{customer}"/>
+            </ownedBody>
+            <ownedContext xsi:type="pivot:ParameterVariable" name="self" type="#En0Ez"/>
             <ownedResult xsi:type="pivot:ParameterVariable" name="result" type="pivot:PrimitiveType &_0;#XEMMs"/>
           </ownedSpecification>
         </ownedPostconditions>
@@ -250,7 +270,7 @@
               <link objVar="#//@usecase.0/@firstStep/@nextStep/@nextStep/@nextStep/@preSnapshot/@object.0 #//@usecase.0/@firstStep/@nextStep/@nextStep/@nextStep/@preSnapshot/@object.1"
                   assoc="#M68L8" isNeg="true"/>
             </preSnapshot>
-            <postSnapshot constraint="#8QXD7">
+            <postSnapshot constraint="#8QXD7 #9QXD7">
               <object name="customer" type="#qsw8E"/>
               <object name="ticket" type="#YZfus"/>
               <link objVar="#//@usecase.0/@firstStep/@nextStep/@nextStep/@nextStep/@preSnapshot/@object.0 #//@usecase.0/@firstStep/@nextStep/@nextStep/@nextStep/@preSnapshot/@object.1"
@@ -271,11 +291,15 @@
               <action xsi:type="frsl:SystemAction" type="outputAct" actor="#//@actor.0" objVars="#//@usecase.0/@firstStep/@nextStep/@nextStep/@altFlow.0/@altStep/@postSnapshot/@object.0"/>
             </altStep>
           </altFlow>
-          <preSnapshot>
+          <preSnapshot constraint="#4I,1c">
+            <object name="avblTickets" type="#0Xm4O"/>
             <object name="inputId" type="#RHiVV" isMatched="true"/>
           </preSnapshot>
-          <postSnapshot/>
-          <action xsi:type="frsl:ActorAction" type="inputAct" actor="#//@actor.0" objVars="#//@usecase.0/@firstStep/@nextStep/@nextStep/@preSnapshot/@object.0"/>
+          <postSnapshot>
+            <object name="avblTickets" type="#0Xm4O"/>
+            <object name="inputId" type="#RHiVV"/>
+          </postSnapshot>
+          <action xsi:type="frsl:ActorAction" type="inputAct" actor="#//@actor.0" objVars="#//@usecase.0/@firstStep/@nextStep/@nextStep/@preSnapshot/@object.1"/>
         </nextStep>
         <preSnapshot constraint="#QOEXJ">
           <object name="avblTickets" type="#0Xm4O" isMatched="true"/>
