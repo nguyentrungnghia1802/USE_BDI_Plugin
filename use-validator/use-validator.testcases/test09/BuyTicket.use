@@ -8,15 +8,15 @@ model BuyTicketModel
 -- classes -----------------------------
 ---------------------------------------- 
 
-class Customer
-attributes
-	money: Integer
-end
-
 class Ticket
 attributes
 	id: Integer
 	value: Integer
+end
+
+class Customer
+attributes
+	money: Integer
 end
 
 enum RejnStep{step3a2_rejn_step3_1}
@@ -100,14 +100,14 @@ constraints
 			and matchedStep = 'match_null'
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
+			inputId = inputId@pre
 			and ticketIds = ticketIds@pre
-			and ticket = ticket@pre
-			and avblTickets = avblTickets@pre
 			and msg = msg@pre
-			and inputId = inputId@pre
-			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
+			and ticket = ticket@pre
+			and customer = customer@pre
+			and avblTickets = avblTickets@pre
 			and (Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
+			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 		-- constraints for the preSnapshot
 		pre preSnapshot:
 			(customer.money > 0)
@@ -124,19 +124,16 @@ constraints
 			and matchedStep = 'match_null'
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
-			and ticket = ticket@pre
-			and avblTickets = avblTickets@pre
+			inputId = inputId@pre
 			and msg = msg@pre
-			and inputId = inputId@pre
-			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
+			and ticket = ticket@pre
+			and customer = customer@pre
+			and avblTickets = avblTickets@pre
 			and (Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
+			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 		-- constraints for the preSnapshot
 		pre preSnapshot:
 			(avblTickets = Ticket.allInstances()->select(t:Ticket | t.customer.oclIsUndefined()))
-		-- constraints for the postSnapshot
-		--post postSnapshot: 
-			--not ticketIds->isEmpty() and ticketIds=avblTickets->collect(id)->asSet()
 	
 	context BuyTicket::step3_act()
 		-- constraints for the nextstep
@@ -150,14 +147,14 @@ constraints
 			and matchedStep = 'match_null'
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
+			inputId = inputId@pre
 			and ticketIds = ticketIds@pre
-			and ticket = ticket@pre
-			and avblTickets = avblTickets@pre
 			and msg = msg@pre
-			and inputId = inputId@pre
-			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
+			and ticket = ticket@pre
+			and customer = customer@pre
+			and avblTickets = avblTickets@pre
 			and (Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
+			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 		-- constraints for the preSnapshot
 		pre preSnapshot:
 			(not inputId.oclIsUndefined())
@@ -173,14 +170,14 @@ constraints
 			and exit_BuyTicket()
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
+			inputId = inputId@pre
 			and ticketIds = ticketIds@pre
-			and ticket = ticket@pre
-			and avblTickets = avblTickets@pre
 			and msg = msg@pre
-			and inputId = inputId@pre
-			and (Customer.allInstances - Set{customer})->forAll(x | x@pre=x and x.money@pre=x.money)
+			and ticket = ticket@pre
+			and customer = customer@pre
+			and avblTickets = avblTickets@pre
 			and (Ticket.allInstances - Set{ticket})->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
+			and (Customer.allInstances - Set{customer})->forAll(x | x@pre=x and x.money@pre=x.money)
 			and ticket.id = ticket.id@pre
 			and ticket.value = ticket.value@pre
 		-- constraints for the preSnapshot
@@ -207,16 +204,13 @@ constraints
 			and matchedStep = 'match_null'
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
+			inputId = inputId@pre
 			and ticketIds = ticketIds@pre
 			and ticket = ticket@pre
+			and customer = customer@pre
 			and avblTickets = avblTickets@pre
-			and inputId = inputId@pre
-			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 			and (Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
-		-- constraints for the postSnapshot
-		post postSnapshot: 
-			not msg.oclIsUndefined() and msg='The money is not enought!'
+			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 
 	context BuyTicket::match_step2_sys()
 		pre:
@@ -226,13 +220,13 @@ constraints
 			and matchedStep = 'match_step2_sys'
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
-			and ticket = ticket@pre
-			and avblTickets = avblTickets@pre
+			inputId = inputId@pre
 			and msg = msg@pre
-			and inputId = inputId@pre
-			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
+			and ticket = ticket@pre
+			and customer = customer@pre
+			and avblTickets = avblTickets@pre
 			and (Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
+			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 			and curStep = curStep@pre
 	context BuyTicket::match_step3_act()
 		pre:
@@ -243,13 +237,13 @@ constraints
 			and matchedStep = 'match_step3_act'
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
-			and ticketIds = ticketIds@pre
-			and ticket = ticket@pre
-			and avblTickets = avblTickets@pre
+			ticketIds = ticketIds@pre
 			and msg = msg@pre
-			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
+			and ticket = ticket@pre
+			and customer = customer@pre
+			and avblTickets = avblTickets@pre
 			and (Ticket.allInstances)->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
+			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 			and curStep = curStep@pre
 	context BuyTicket::match_step4_sys()
 		pre:
@@ -261,14 +255,14 @@ constraints
 			and matchedStep = 'match_step4_sys'
 		-- constraints for the unchanged part
 		post unChangedPart:
-			customer = customer@pre
+			inputId = inputId@pre
 			and ticketIds = ticketIds@pre
-			and ticket = ticket@pre
-			and avblTickets = avblTickets@pre
 			and msg = msg@pre
-			and inputId = inputId@pre
-			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
+			and ticket = ticket@pre
+			and customer = customer@pre
+			and avblTickets = avblTickets@pre
 			and (Ticket.allInstances - Set{ticket})->forAll(x | x@pre=x and x.id@pre=x.id and x.value@pre=x.value and x.customer@pre=x.customer)
+			and (Customer.allInstances)->forAll(x | x@pre=x and x.money@pre=x.money)
 			and ticket.id = ticket.id@pre
 			and ticket.value = ticket.value@pre
 			and ticket.customer = ticket.customer@pre
