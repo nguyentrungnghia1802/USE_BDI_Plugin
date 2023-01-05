@@ -64,12 +64,19 @@
     	<version>2.3.1</version>
 	</dependency>
 
+	<!-- 
+		Note: Kodkod dynamic path. 
+		
+              If Eclipse can't run/compile, go to Preferences/Java/Compiler/Building/Build path problems
+              Unselect `Abort build when build path errors occur`
+              The remaining "path errors" are acceptable, as long as it is buildable.
+	-->
 	<dependency>
 		<groupId>kodkod</groupId>
 		<artifactId>kodkod</artifactId>
 		<version>1.0</version>
 		<scope>system</scope>
-		<systemPath>E:\hanhdd\workspace.use\use\use-validator/lib/kodkod.jar</systemPath>
+		<systemPath>${project.basedir}/lib/kodkod.jar</systemPath>
 	</dependency>
 	
 	 <dependency>
