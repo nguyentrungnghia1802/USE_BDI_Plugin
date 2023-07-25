@@ -3,6 +3,8 @@
 (Note that this is a release of a research prototype. There is no
 warranty of any kind.)
 
+-- Note của lab: Có thể cài đặt theo hướng dẫn https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
+
 ## Overview
 
 USE is a system for the specification of information systems. It is
