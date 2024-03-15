@@ -70,7 +70,6 @@
               If Eclipse can't run/compile, go to Preferences/Java/Compiler/Building/Build path problems
               Unselect `Abort build when build path errors occur`
               The remaining "path errors" are acceptable, as long as it is buildable.
-	-->
 	<dependency>
 		<groupId>kodkod</groupId>
 		<artifactId>kodkod</artifactId>
@@ -78,7 +77,13 @@
 		<scope>system</scope>
 		<systemPath>${project.basedir}/lib/kodkod.jar</systemPath>
 	</dependency>
-	
+	-->
+	<dependency>
+		<groupId>kodkod</groupId>
+		<artifactId>kodkod</artifactId>
+		<version>1.0</version>
+	</dependency>
+		
 	 <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

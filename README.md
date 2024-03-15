@@ -3,7 +3,17 @@
 (Note that this is a release of a research prototype. There is no
 warranty of any kind.)
 
--- Note của lab: Có thể cài đặt theo hướng dẫn https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
+## SME Notes 
+
+- Install the local jar file kodkod with "Maven Build" (Eclipse). 
+  install:install-file  -Dfile=${project.basedir}/lib/kodkod.jar \
+                          -DgroupId=kodkod \
+                          -DartifactId=kodkod \
+                          -Dversion=1.0 \
+                          -Dpackaging=jar 
+                           
+
+- Take a look at the use-rtl tutorial: https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
 
 ## Overview
 

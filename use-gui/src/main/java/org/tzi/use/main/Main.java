@@ -79,8 +79,8 @@ public final class Main {
 
 		if (!Options.disableExtensions) {
 			//hanhdd-begin ===========
-			//ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + "/oclextensions";			
-			ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir.getParent().getParent().resolve("use-core\\src\\main\\resources\\oclextensions").toString();
+			ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir + "/oclextensions";			
+			//ExtensionManager.EXTENSIONS_FOLDER = Options.homeDir.getParent().getParent().resolve("use-core\\src\\main\\resources\\oclextensions").toString();
 			//hanhdd-end =============
 			ExtensionManager.getInstance().loadExtensions();
 		}
