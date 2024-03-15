@@ -3,7 +3,7 @@
 <plugin name="ModelValidatorPlugin" version="5.2.0-r1" publisher="Hendrik Reitmann">
 	<actions>
 		<action label="Kodkod Validation"
-			icon="resources/kodkod.png"
+			icon="images/kodkod.png"
 			class="org.tzi.use.kodkod.plugin.KodkodValidatePropertyAction"
 			tooltip="Choose a properties file and validate the current model."
 			menu="Model Validator"
@@ -12,7 +12,7 @@
 			id="org.tzi.use.kodkod.plugin.KodkodValidatePropertyAction">
 		</action>
 		<action label="Kodkod Configuration"
-			icon="resources/kodkod-gui.png"
+			icon="images/kodkod-gui.png"
 			class="org.tzi.use.kodkod.plugin.KodkodValidateConfigurationAction"
 			tooltip="Create a configuration and validate the current model."
 			menu="Model Validator"
@@ -42,7 +42,7 @@
 			label="ConfigurationCmd"
 			shellcmd="modelvalidator -config"
 			alias="mv -config">
-		</command>		
+		</command>
 		<command id="org.tzi.use.kodkod.plugin.ModelResetCmd"
 			class="org.tzi.use.kodkod.plugin.ModelResetCmd"
 			help="Resets the configuration and partial solutions."
