@@ -17,19 +17,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.mm;
+
+import org.eclipse.jdt.annotation.NonNull;
 
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 /** 
  * An association connects two or more classes.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public interface MAssociation extends MClassifier {
@@ -37,7 +34,7 @@ public interface MAssociation extends MClassifier {
 	/** 
      * Adds an association end.
      *
-     * @exception MInvalidModel trying to add another composition
+     * @exception MInvalidModelException trying to add another composition
      *            or aggregation end.
      */
     void addAssociationEnd(@NonNull MAssociationEnd aend) throws MInvalidModelException;

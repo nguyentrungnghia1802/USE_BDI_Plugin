@@ -17,13 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.parser.use;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.antlr.runtime.Token;
 import org.tzi.use.parser.Context;
@@ -42,55 +36,58 @@ import org.tzi.use.uml.ocl.expr.VarDeclList;
 import org.tzi.use.uml.ocl.type.Type;
 import org.tzi.use.util.StringUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Node of the abstract syntax tree constructed by the parser.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  */
 public class ASTAssociationEnd extends ASTAnnotatable {
-    private Token fName;
-    private ASTMultiplicity fMultiplicity;
-    private Token fRolename;  // optional: may be null!
-    private boolean fOrdered;
-    private boolean isUnion = false;
+    protected Token fName;
+    protected ASTMultiplicity fMultiplicity;
+    protected Token fRolename;  // optional: may be null!
+    protected boolean fOrdered;
+    protected boolean isUnion = false;
     
     /**
      * List of subsetted association end names.
      * Initialized with an empty immutable collection
      * which is replaced at the first time of writing. 
      */
-    private List<Token> subsetsRolename = Collections.emptyList();
+    protected List<Token> subsetsRolename = Collections.emptyList();
     
     /**
      * List of redefined association end names.
      * Initialized with an empty immutable collection
      * which is replaced at the first time of writing. 
      */
-    private List<Token> redefinesRolenames = Collections.emptyList();
+    protected List<Token> redefinesRolenames = Collections.emptyList();
     
     /**
      * List of qualifiers. Initialized with an empty immutable collection
      * which is replaced at the first time of writing. 
      */
-    private List<ASTVariableDeclaration> qualifiers = Collections.emptyList();
+    protected List<ASTVariableDeclaration> qualifiers = Collections.emptyList();
     
     
     /**
      * Parameter declarations for the derive expression
      */
-    private ASTElemVarsDeclaration deriveParameter = null;
+    protected ASTElemVarsDeclaration deriveParameter = null;
     
     /**
      * AST for the optional derive expression
      */
-    private ASTExpression derivedExpression = null;
+    protected ASTExpression derivedExpression = null;
     
     /**
      * Saves the generated association end for a second
      * "compile run".
      */
-    private MAssociationEnd mAend;
+    protected MAssociationEnd mAend;
     
     public ASTAssociationEnd(Token name, ASTMultiplicity mult) {
         fName = name;
@@ -181,7 +178,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     
     /**
      * Adds a name to the list of association end names this end redefines. 
-     * @param name The <code>Token</code> of the association end name this end should redefine.
+     * @param rolename The <code>Token</code> of the association end name this end should redefine.
      */
     public void addRedefinesRolename(Token rolename) {
     	// Lazy initialization of the list.
@@ -228,8 +225,7 @@ public class ASTAssociationEnd extends ASTAnnotatable {
     }
     
     /**
-     * Gets the list of defined qualifiers at this end. 
-     * @param qualifier
+     * Gets the list of defined qualifiers at this end.
      */
     public List<ASTVariableDeclaration> getQualifiers() {
     	return this.qualifiers;

@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.expr;
 
 import org.tzi.use.parser.SrcPos;
@@ -52,7 +50,7 @@ public abstract class Expression implements BufferedToString {
     
     /**
      * Sets the source position of the expression.
-     * @param expression
+     * @param position The source position
      */
     public void setSourcePosition(SrcPos position) {
     	fSourcePosition = position;
@@ -102,9 +100,9 @@ public abstract class Expression implements BufferedToString {
     }
     
     /**
-     * Returns the string "@pre" if this expression has the
+     * Returns the string <code>@pre</code> if this expression has the
      * 
-     * @pre modifier, otherwise returns "".
+     * @return <code>@pre</code>-modifier, otherwise returns "".
      */
     protected String atPre() {
         return fIsPre ? "@pre" : "";

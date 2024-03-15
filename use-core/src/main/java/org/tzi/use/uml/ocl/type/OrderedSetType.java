@@ -21,19 +21,18 @@
 
 package org.tzi.use.uml.ocl.type;
 
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.OrderedSetValue;
+import org.tzi.use.uml.ocl.value.Value;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.OrderedSetValue;
-import org.tzi.use.uml.ocl.value.Value;
-
 /**
  * The OCL Sequence type.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Lars Hamann
  * @see     SetType
  * @see     SequenceType
@@ -110,7 +109,7 @@ public final class OrderedSetType extends CollectionType {
     /** 
      * Returns the set of all supertypes (including this type).  If
      * this collection has type Sequence(T) the result is the set of
-     * all types Sequence(T') and Collection(T') where T' <= T.
+     * all types Sequence(T') and Collection(T') where T' &lt;= T.
      */
     public Set<Type> allSupertypes() {
         Set<Type> res = new HashSet<Type>();

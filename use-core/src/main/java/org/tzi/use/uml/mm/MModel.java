@@ -17,21 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.mm;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 import org.eclipse.jdt.annotation.Nullable;
 import org.tzi.use.graph.DirectedGraph;
 import org.tzi.use.graph.DirectedGraphBase;
@@ -40,8 +29,8 @@ import org.tzi.use.uml.ocl.type.EnumType;
 import org.tzi.use.util.StringUtil;
 import org.tzi.use.util.collections.CollectionUtil;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
+import java.io.File;
+import java.util.*;
 
 /**
  * A Model is a top-level package containing all other model elements.
@@ -70,11 +59,11 @@ public class MModel extends MModelElementImpl {
 
 	private Map<String, MClass> fClasses;
 
-	private Map<String, MAssociation> fAssociations;
+	protected Map<String, MAssociation> fAssociations;
 
 	private DirectedGraph<MClassifier, MGeneralization> fGenGraph;
 
-	private Map<String, MClassInvariant> fClassInvariants;
+	protected Map<String, MClassInvariant> fClassInvariants;
 
 	private Map<String, MPrePostCondition> fPrePostConditions;
 
@@ -130,7 +119,7 @@ public class MModel extends MModelElementImpl {
 	/**
 	 * Adds a class. The class must have a unique name within the model.
 	 * 
-	 * @exception MInvalidModel
+	 * @exception MInvalidModelException
 	 *                model already contains a class with the same name.
 	 */
 	public void addClass(MClass cls) throws MInvalidModelException {
@@ -176,7 +165,7 @@ public class MModel extends MModelElementImpl {
 	/**
 	 * Returns the specified association class.
 	 * 
-	 * @return null if class <code>name</name> does not exist.
+	 * @return null if class <code>name</code> does not exist.
 	 */
 	public MAssociationClass getAssociationClass(String name) {
 		MClass cls = fClasses.get(name);
@@ -218,7 +207,7 @@ public class MModel extends MModelElementImpl {
 	 * Adds an association. The association must have a unique name within the
 	 * model.
 	 * 
-	 * @exception MInvalidModel
+	 * @exception MInvalidModelException
 	 *                model already contains an association with the same name.
 	 */
 	public void addAssociation(MAssociation assoc)
@@ -447,7 +436,7 @@ public class MModel extends MModelElementImpl {
 	/**
 	 * Adds an enumeration type.
 	 * 
-	 * @exception MInvalidModel
+	 * @exception MInvalidModelException
 	 *                model already contains an element with same name.
 	 */
 	public void addEnumType(EnumType e) throws MInvalidModelException {
@@ -495,7 +484,7 @@ public class MModel extends MModelElementImpl {
 	 * Adds a class invariant. The class + invariant name must have a unique
 	 * name within the model.
 	 * 
-	 * @exception MInvalidModel
+	 * @exception MInvalidModelException
 	 *                model already contains an invariant with same name.
 	 */
 	public void addClassInvariant(MClassInvariant inv)
@@ -589,7 +578,7 @@ public class MModel extends MModelElementImpl {
 	/**
 	 * Returns the specified invariant. The name must be given as "class::inv".
 	 * 
-	 * @return null if invariant <code>name</name> does not exist.
+	 * @return <code>null</code> if invariant <code>name</code> does not exist.
 	 */
 	public MClassInvariant getClassInvariant(String name) {
 		return fClassInvariants.get(name);

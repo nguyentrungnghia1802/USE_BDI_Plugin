@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.sys.events.tags;
 
 /**
@@ -28,7 +26,7 @@ package org.tzi.use.uml.sys.events.tags;
  *   <li>NORMAL_EXECUTION</li>
  *   <li>UNDO</li>
  *   <li>REDO</li>
- * <ul>
+ * </ul>
  * @author Lars Hamann
  *
  */

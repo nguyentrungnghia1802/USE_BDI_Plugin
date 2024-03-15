@@ -17,23 +17,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.uml.ocl.type;
+
+import org.tzi.use.uml.ocl.value.CollectionValue;
+import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.util.StringUtil;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.tzi.use.uml.ocl.value.CollectionValue;
-import org.tzi.use.uml.ocl.value.Value;
-import org.tzi.use.util.StringUtil;
-
 /**
  * Collection is the abstract base class for set, sequence, and bag.
  *
- * @version     $ProjectVersion: 0.393 $
  * @author  Mark Richters
  * @see     SetType
  * @see     SequenceType
@@ -76,7 +73,7 @@ public class CollectionType extends TypeImpl {
     /** 
      * Returns the set of all supertypes (including this type).  If
      * this collection has type Collection(T) the result is the set of
-     * all types Collection(T') where T' <= T.
+     * all types Collection(T') where T' &lt;= T.
      */
     @Override
     public Set<Type> allSupertypes() {

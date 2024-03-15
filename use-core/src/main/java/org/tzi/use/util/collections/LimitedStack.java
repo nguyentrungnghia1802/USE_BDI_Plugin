@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.collections;
 
 import java.util.Collection;
@@ -85,7 +83,7 @@ public class LimitedStack<E> implements Collection<E> {
      * object as the value of this function.
      *
      * @return     The object at the top of this stack (the last item
-     *             of the <tt>Vector</tt> object).
+     *             of the <code>Vector</code> object).
      * @exception  EmptyStackException  if this stack is empty.
      */
     public synchronized E pop() {
@@ -97,7 +95,7 @@ public class LimitedStack<E> implements Collection<E> {
      * from the stack.
      *
      * @return     the object at the top of this stack (the last item
-     *             of the <tt>Vector</tt> object).
+     *             of the <code>Vector</code> object).
      * @exception  EmptyStackException  if this stack is empty.
      */
     public synchronized E peek() {

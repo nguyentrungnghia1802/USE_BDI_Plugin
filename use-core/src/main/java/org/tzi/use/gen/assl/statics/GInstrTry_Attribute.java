@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.gen.assl.statics;
 
 import org.tzi.use.gen.assl.dynamics.GEvalInstrTry_Attribute;
@@ -41,8 +39,8 @@ public class GInstrTry_Attribute extends GInstrTry implements GInstruction {
     
 	/**
 	 * @param range
-	 * @param attribute2
-	 * @param values2
+	 * @param attribute
+	 * @param values
 	 */
 	public GInstrTry_Attribute(GOCLExpression range, MAttribute attribute,
 			GOCLExpression values) {

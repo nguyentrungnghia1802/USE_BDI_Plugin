@@ -17,8 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.analysis.coverage;
 
 import org.tzi.use.uml.mm.MAssociation;
@@ -75,7 +73,8 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	}
 	
 	/**
-	 * @param sourceType
+	 * @param sourceClass
+	 * @param att
 	 */
 	@Override
 	protected void addAttributeCoverage(MClass sourceClass, MAttribute att) {
@@ -94,7 +93,8 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	}
 	
 	/**
-	 * @param sourceType
+	 * @param sourceClass
+	 * @param op
 	 */
 	@Override
 	protected void addOperationCoverage(MClass sourceClass, MOperation op) {
@@ -107,7 +107,7 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	}
 	
 	/**
-	 * @param sourceType
+	 * @param assoc
 	 */
 	@Override
 	protected void addAssociationCoverage(MAssociation assoc) {
@@ -119,7 +119,7 @@ public class CoverageCalculationVisitor extends AbstractCoverageVisitor {
 	}
 	
 	/**
-	 * @param sourceType
+	 * @param dst
 	 */
 	@Override
 	protected void addAssociationEndCoverage(MNavigableElement dst) {

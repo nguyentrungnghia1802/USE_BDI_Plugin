@@ -17,13 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-// $Id$
-
 package org.tzi.use.util.soil;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 
 import org.tzi.use.uml.sys.MLink;
 import org.tzi.use.uml.sys.MLinkObject;
@@ -32,6 +26,10 @@ import org.tzi.use.uml.sys.MSystemState;
 import org.tzi.use.uml.sys.MSystemState.DeleteObjectResult;
 import org.tzi.use.uml.sys.soil.MStatement;
 import org.tzi.use.util.collections.CollectionUtil;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
 
 
 /**
@@ -443,13 +441,13 @@ public class StateDifference {
     
     
     /**
-     * adds a new link
+     * Adds a new link
      * <p>
      * if {@code link} is among the deleted links, it is deleted from
      * there and nothing else happens. if not, it is added to the new links.
      * <p>
      * if {@code link} is a link object, it is also added to the new objects
-     * following the semantics of {@link #addNewObject(MLink) addNewObject}
+     * following the semantics of {@link StateDifference#addNewObject(MObject) addNewObject}
      * 
      * @param link a new link
      */
@@ -466,7 +464,7 @@ public class StateDifference {
      * adds multiple new links
      * <p>
      * calling this is equivalent to repeatedly calling 
-     * {@link #addNewLink(MObject) addNewLink}
+     * {@link StateDifference#addNewLink(MLink) addNewLink}
      * 
      * @param links some new links
      */
@@ -481,7 +479,7 @@ public class StateDifference {
      * adds multiple new links
      * <p>
      * calling this is equivalent to repeatedly calling 
-     * {@link #addNewLink(MObject) addNewLink}
+     * {@link StateDifference#addNewLink(MLink) addNewLink}
      * 
      * @param links some new links
      */
@@ -518,7 +516,7 @@ public class StateDifference {
      * <p>
      * if {@code link} is a link object, it is also added to the deleted objects
      * following the semantics of 
-     * {@link #addDeletedObject(MLink) addDeletedObject}
+     * {@link StateDifference#addDeletedObject(MObject) addDeletedObject}
      * 
      * @param link a deleted link
      */
@@ -535,7 +533,7 @@ public class StateDifference {
      * adds multiple deleted links
      * <p>
      * calling this is equivalent to repeatedly calling 
-     * {@link #addDeletedLink(MObject) addDeletedLink}
+     * {@link StateDifference#addDeletedLink(MLink) addDeletedLink}
      * 
      * @param links some deleted links
      */
@@ -550,7 +548,7 @@ public class StateDifference {
      * adds multiple deleted links
      * <p>
      * calling this is equivalent to repeatedly calling 
-     * {@link #addDeletedLink(MObject) addDeletedLink}
+     * {@link StateDifference#addDeletedLink(MLink) addDeletedLink}
      * 
      * @param links some deleted links
      */
