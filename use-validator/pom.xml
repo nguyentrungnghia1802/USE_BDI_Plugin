@@ -70,8 +70,7 @@
 			<groupId>kodkod</groupId>
 			<artifactId>kodkod</artifactId>
 			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/kodkod.jar</systemPath>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
