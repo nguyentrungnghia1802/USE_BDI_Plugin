@@ -52,24 +52,51 @@ public class PluginRegistry {
 		return pluginDescriptor;
 	}
 
-	private PluginModel parseConfigFile(URL location) {
+	private String extractPluginNameFromPath(String path) {
+		String separator = System.getProperty("file.separator");
 
+		if (path.indexOf(separator) >= 0) {
+			path = path.substring(path.lastIndexOf(separator) + 1);
+		}
+
+		if (path.indexOf(".") > 0)
+			path = path.substring(0, path.lastIndexOf("."));
+
+		return path;
+	}
+
+	private PluginModel parseConfigFile(URL location) {
 		PluginModel pluginModel = null;
+		String pluginPath = location.getFile().replaceAll("%20", " ");
+		String pluginName = extractPluginNameFromPath(pluginPath);
+
 		// during the URL creation, spaces were transformed to %20
 		// replace all occurrences of %20 back to a space
-		File pluginFile = new File(location.getFile().replaceAll("%20", " "));
-		
-		try (JarFile jarFile = new JarFile(pluginFile); InputStream inputStream = jarFile.getInputStream(jarFile.getEntry(PLUGINXML))){
+		File pluginFile = new File(pluginPath);
+
+		try (JarFile jarFile = new JarFile(pluginFile);
+				InputStream inputStream = jarFile.getInputStream(jarFile.getEntry(PLUGINXML))) {
 			Log.debug("Creating jarfile path: [" + pluginFile + "]");
-			
+
 			InputSource inputSource = new InputSource(inputStream);
 			Log.debug("Creating plugin for: " + pluginFile);
 			pluginModel = new PluginParser().parsePlugin(inputSource);
-		} catch (SAXException | ParserConfigurationException se) {
-			Log.error("Error while parsing plugin config file: ", se);
-		} catch (IOException ioe) {
-			Log.error("No such plugin config file: 	", ioe);
+		} catch (Exception oe) {
+			String message = String.format("An exception occurred while trying to load plugin \"%s\", detail below.",
+					pluginName);
+			Log.error(message);
+
+			try {
+				throw oe;
+			} catch (SAXException | ParserConfigurationException se) {
+				Log.error("Error while parsing plugin config file: ", se);
+			} catch (IOException ioe) {
+				Log.error("No such plugin config file: ", ioe);
+			} catch (Exception e) {
+				Log.error("Unknown exception occurred: ", e);
+			}
 		}
+
 		return pluginModel;
 	}
 
@@ -77,7 +104,7 @@ public class PluginRegistry {
 	 * Method to register a Plugin in the given plugin location path.
 	 * 
 	 * @param location
-	 *            The plugin location path
+	 *                 The plugin location path
 	 * @return The Plugin Descriptor of the registered Plugin
 	 */
 	public IPluginDescriptor registerPlugin(URL location) {
