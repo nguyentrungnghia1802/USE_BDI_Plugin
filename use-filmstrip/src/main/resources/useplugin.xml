@@ -3,7 +3,7 @@
 <plugin name="Filmstrip Plugin" version="1.0">
 	<actions>
 		<action label="Transform Model into Filmstrip Model"
-			icon="resources/filmstrip.png"
+			icon="images/filmstrip.png"
 			class="org.tzi.use.plugin.filmstrip.TransformIntoFilmstripAction"
 			tooltip="Transform the currently loaded model into a filmstrip model and save it to disk"
 			menu="Filmstrip"
