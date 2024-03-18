@@ -1,0 +1,4 @@
+[submodule "use-rtl"]
+	path = use-rtl
+	url = git@github.com:vnu-frsl/use-rtl.git
+	branch = master
