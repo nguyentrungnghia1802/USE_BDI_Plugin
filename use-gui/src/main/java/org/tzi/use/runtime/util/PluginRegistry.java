@@ -82,7 +82,8 @@ public class PluginRegistry {
 			Log.debug("Creating plugin for: " + pluginFile);
 			pluginModel = new PluginParser().parsePlugin(inputSource);
 		} catch (Exception oe) {
-			String message = String.format("An exception occurred while trying to load plugin \"%s\", detail below.",
+			String message = String.format(
+					"An exception occurred while trying to read plugin \"%s\" config file, detail below.",
 					pluginName);
 			Log.error(message);
 
