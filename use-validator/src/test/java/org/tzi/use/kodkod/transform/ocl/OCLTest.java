@@ -51,11 +51,12 @@ public class OCLTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		File file = new File("test/org/tzi/use/kodkod/transform/ocl/testModel.use");
+		File file = new File("src/test/java/org/tzi/use/kodkod/transform/ocl/testModel.use");
 
 		MModel mModel;
-		try (FileInputStream specStream = new FileInputStream(file)){
-			mModel = USECompiler.compileSpecification(specStream, "testModel.use", new PrintWriter(System.err), new ModelFactory());
+		try (FileInputStream specStream = new FileInputStream(file)) {
+			mModel = USECompiler.compileSpecification(specStream, "testModel.use", new PrintWriter(System.err),
+					new ModelFactory());
 		}
 
 		Session session = new Session();
@@ -104,11 +105,13 @@ public class OCLTest {
 	}
 
 	protected org.tzi.use.uml.ocl.expr.Expression toOCLExpression(String ocl) {
-		return OCLCompiler.compileExpression(mSystem.model(), mSystem.state(), ocl, "Test", errorWriter, mSystem.varBindings());
+		return OCLCompiler.compileExpression(mSystem.model(), mSystem.state(), ocl, "Test", errorWriter,
+				mSystem.varBindings());
 	}
 
 	protected Object toKodkod(org.tzi.use.uml.ocl.expr.Expression expression) {
-		DefaultExpressionVisitor visitor = new DefaultExpressionVisitor(model, new HashMap<String, Node>(), new HashMap<String, IClass>(), new HashMap<String, Variable>(), new ArrayList<String>());
+		DefaultExpressionVisitor visitor = new DefaultExpressionVisitor(model, new HashMap<String, Node>(),
+				new HashMap<String, IClass>(), new HashMap<String, Variable>(), new ArrayList<String>());
 		expression.processWithVisitor(visitor);
 		return visitor.getObject();
 	}
@@ -244,7 +247,8 @@ public class OCLTest {
 	}
 
 	public static void main(String[] args) {
-		String test = "(!(((Undefined_Set in (none + Int[1])) =>  " + "Undefined_Set else " + "(none + Int[1])) = Undefined_Set) && "
+		String test = "(!(((Undefined_Set in (none + Int[1])) =>  " + "Undefined_Set else "
+				+ "(none + Int[1])) = Undefined_Set) && "
 				+ "one ((Undefined_Set in (none + Int[1])) => " + "Undefined_Set else " + "(none + Int[1])) && "
 				+ "(some i: (Undefined_Set in (none + Int[1])) => " + "Undefined_Set else " + "(none + Int[1]) | "
 				+ "  Boolean_True = Boolean_True)) => " + "((Undefined_Set in (none + Int[1])) => " + "Undefined_Set else "
