@@ -11,6 +11,17 @@ cd use-validator
 ./init.sh           # (or init.cmd on Windows)
 ```
 
+- `use-core` comes with auto generated source code, to add generated source code
+ in Eclipse IDE:
+1. Right click on `use-core` in `Package manager`
+2. Navigate and click on `Build Path` > `Configure Build Path`
+3. Navigate and click on `Java Build Path (left explorer)` > `Source (tab)`
+4. Click `Add Folder`
+5. Select `target/generated-sources/antlr3` (left checkbox)
+6. Selected build path should be displayed on the list, double click on its `Output folder`
+7. Select `Specific output folder` and fill `target/generated-sources/antlr3`
+8. Click `OK` and `Apply and Close`.
+
 - Take a look at the use-rtl tutorial: https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
 
 ## Overview
