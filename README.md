@@ -10,6 +10,14 @@ warranty of any kind.)
 cd use-validator
 ./init.sh           # (or init.cmd on Windows)
 ```
+- Or install local Kodkokd JAR with "Maven build" inside Eclipse IDE: 
+```sh
+    install:install-file -Dfile=${project.basedir}/lib/kodkod.jar \
+                         -DgroupId=kodkod \
+                         -DartifactId=kodkod \
+                         -Dversion=1.0 \
+                         -Dpackaging=jar 
+```
 
 - `use-core` comes with auto generated source code, to add generated source code
  in Eclipse IDE:
