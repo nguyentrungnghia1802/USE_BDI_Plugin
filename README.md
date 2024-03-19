@@ -5,13 +5,11 @@ warranty of any kind.)
 
 ## SME Notes 
 
-- Install the local jar file kodkod with "Maven Build" (Eclipse). 
-  install:install-file  -Dfile=${project.basedir}/lib/kodkod.jar \
-                          -DgroupId=kodkod \
-                          -DartifactId=kodkod \
-                          -Dversion=1.0 \
-                          -Dpackaging=jar 
-                           
+- To build use-validator project, install Kodkod JAR to local repository first:
+```sh
+cd use-validator
+./init.sh           # (or init.cmd on Windows)
+```
 
 - Take a look at the use-rtl tutorial: https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
 
