@@ -5,24 +5,8 @@ warranty of any kind.)
 
 ## SME Notes 
 
-- To build use-validator project, install Kodkod JAR to local repository first:
-  * using the external maven:
-    ```sh
-    cd use-validator
-    ./init.sh           # (or init.cmd on Windows)
-    ```
-  * Or using Maven inside Eclipse IDE, input the Goals text-box with the following value: 
-    ```sh
-        install:install-file -Dfile=${project.basedir}/lib/kodkod.jar \
-                         -DgroupId=kodkod \
-                         -DartifactId=kodkod \
-                         -Dversion=1.0 \
-                         -Dpackaging=jar 
-    ```
-
 - `use-core` comes with auto generated source code, to add generated source code
  in Eclipse IDE:
-
     * Right click on `use-core` in `Package manager`
     * Navigate and click on `Build Path` > `Configure Build Path`
     * Navigate and click on `Java Build Path (left explorer)` > `Source (tab)`
@@ -31,8 +15,20 @@ warranty of any kind.)
     * Selected build path should be displayed on the list, double click on its `Output folder`
     * Select `Specific output folder` and fill `target/generated-sources/antlr3`
     * Click `OK` and `Apply and Close`.
+      
+- To package the USE project (in order to obtain the jar file)
+  * Right click on the root folder for USE `Run As \ Maven build` 
+  * Right click on the package folder 'Run As \ Maven build' : set the `Goals` the value `package`  
 
-- You might take a look at the use-rtl tutorial: https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
+- To run the USE
+  * Unzip the `use-assembly/target/use<curVersion>.zip` (after packing the USE project)
+  * Run `use<curVersion>/bin/use` 
+
+- To load the file jar for the under-development plugin:
+  * Package the plugin (in order to obtain the jar file):
+    - Right click on the package folder (inside Eclipse) `Run As \ Maven build` : set the `Goals` the value `package`
+    - With an external maven using the command: ```mvn ... package ...```
+  * Copy the generated jar file into the USE directory (i.e., the `use-assembly/target/use<curVersion>/lib/plugins` directory). Instead of copying this jar file, you could create a soft link (in linux) for it.
 
 ## Overview
 
