@@ -8,3 +8,6 @@
 [submodule "use-filmstrip"]
 	path = use-filmstrip
 	url = git@github.com:vnu-frsl/use-filmstrip.git
+[submodule "use-frsl"]
+	path = use-frsl
+	url = git@github.com:vnu-frsl/use-frsl.git
