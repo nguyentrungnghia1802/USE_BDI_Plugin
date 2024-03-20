@@ -6,31 +6,33 @@ warranty of any kind.)
 ## SME Notes 
 
 - To build use-validator project, install Kodkod JAR to local repository first:
-```sh
-cd use-validator
-./init.sh           # (or init.cmd on Windows)
-```
-- Or install local Kodkokd JAR with "Maven build" inside Eclipse IDE: 
-```sh
-    install:install-file -Dfile=${project.basedir}/lib/kodkod.jar \
+  * using the external maven:
+    ```sh
+    cd use-validator
+    ./init.sh           # (or init.cmd on Windows)
+    ```
+  * Or using Maven inside Eclipse IDE, input the Goals text-box with the following value: 
+    ```sh
+        install:install-file -Dfile=${project.basedir}/lib/kodkod.jar \
                          -DgroupId=kodkod \
                          -DartifactId=kodkod \
                          -Dversion=1.0 \
                          -Dpackaging=jar 
-```
+    ```
 
 - `use-core` comes with auto generated source code, to add generated source code
  in Eclipse IDE:
-1. Right click on `use-core` in `Package manager`
-2. Navigate and click on `Build Path` > `Configure Build Path`
-3. Navigate and click on `Java Build Path (left explorer)` > `Source (tab)`
-4. Click `Add Folder`
-5. Select `target/generated-sources/antlr3` (left checkbox)
-6. Selected build path should be displayed on the list, double click on its `Output folder`
-7. Select `Specific output folder` and fill `target/generated-sources/antlr3`
-8. Click `OK` and `Apply and Close`.
 
-- Take a look at the use-rtl tutorial: https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
+    * Right click on `use-core` in `Package manager`
+    * Navigate and click on `Build Path` > `Configure Build Path`
+    * Navigate and click on `Java Build Path (left explorer)` > `Source (tab)`
+    * Click `Add Folder`
+    * Select `target/generated-sources/antlr3` (left checkbox)
+    * Selected build path should be displayed on the list, double click on its `Output folder`
+    * Select `Specific output folder` and fill `target/generated-sources/antlr3`
+    * Click `OK` and `Apply and Close`.
+
+- You might take a look at the use-rtl tutorial: https://www.youtube.com/watch?v=aGQBi7gRAUo&feature=youtu.be&ab_channel=HQTCSDLNh%C3%B3m21 
 
 ## Overview
 
