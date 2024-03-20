@@ -28,7 +28,7 @@ warranty of any kind.)
   * Package the plugin (in order to obtain the jar file):
     - Right click on the package folder (inside Eclipse) `Run As \ Maven build` : set the `Goals` the value `package`
     - With an external maven using the command: ```mvn ... package ...```
-  * Copy the generated jar file into the USE directory (i.e., the `use-assembly/target/use<curVersion>/lib/plugins` directory). Instead of copying this jar file, you could create a soft link (in linux) for it.
+  * Copy the generated jar file (the file with full jar dependencies) for the plugin into the USE directory (i.e., the `use-assembly/target/use<curVersion>/lib/plugins` directory). Instead of copying this jar file, you could create a soft link (in linux) for it.
 
 ## Overview
 
