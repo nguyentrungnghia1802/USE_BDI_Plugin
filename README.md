@@ -4,18 +4,7 @@
 warranty of any kind.)
 
 ## SME Notes 
-
-- `use-core` comes with auto generated source code, to add generated source code
- in Eclipse IDE:
-    * Right click on `use-core` in `Package manager`
-    * Navigate and click on `Build Path` > `Configure Build Path`
-    * Navigate and click on `Java Build Path (left explorer)` > `Source (tab)`
-    * Click `Add Folder`
-    * Select `target/generated-sources/antlr3` (left checkbox)
-    * Selected build path should be displayed on the list, double click on its `Output folder`
-    * Select `Specific output folder` and fill `target/generated-sources/antlr3`
-    * Click `OK` and `Apply and Close`.
-      
+     
 - To package the USE project (in order to obtain the jar file)
   * Right click on the root folder for USE `Run As \ Maven build` 
   * Right click on the package folder 'Run As \ Maven build' : set the `Goals` the value `package`  

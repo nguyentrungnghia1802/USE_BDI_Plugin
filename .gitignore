@@ -112,7 +112,6 @@ fabric.properties
 
 .vscode/
 .settings/
-.classpath
 .project
 
 target/
