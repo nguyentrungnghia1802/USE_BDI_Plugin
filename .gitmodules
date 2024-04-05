@@ -1,0 +1,3 @@
+[submodule "use-validator"]
+	path = use-validator
+	url = git@github.com:vnu-sme/use-validator.git
