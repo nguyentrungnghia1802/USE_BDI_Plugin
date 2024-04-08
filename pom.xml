@@ -11,9 +11,9 @@
     <modules>
         <module>use-core</module>
         <module>use-gui</module>
-        <module>use-assembly</module>
-        <module>use-validator</module>
+        <module>use-assembly</module>        
 <!--        
+		<module>use-validator</module>
         <module>use-filmstrip</module>
         <module>use-rtl</module> 
         <module>use-frsl</module>
