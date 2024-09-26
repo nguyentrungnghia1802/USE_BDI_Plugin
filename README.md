@@ -4,7 +4,8 @@
 warranty of any kind.)
 
 ## SME Notes 
-     
+- With the java project use-code, we need to add `use-core/target/generated-sources/antlr3` to the build path in Eclipse    
+
 - To package the USE project (in order to obtain the jar file)
   * Right click on the root folder for USE `Run As \ Maven build` 
   * Right click on the package folder 'Run As \ Maven build' : set the `Goals` the value `package`  
