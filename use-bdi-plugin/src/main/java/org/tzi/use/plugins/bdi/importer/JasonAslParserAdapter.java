@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.Properties;
 
 import jason.asSemantics.Agent;
+import jason.asSyntax.parser.ParseException;
+import jason.asSyntax.parser.Token;
 
 public final class JasonAslParserAdapter {
     private static final String VERSION_RESOURCE = "jason-parser.properties";
@@ -25,6 +27,8 @@ public final class JasonAslParserAdapter {
         agent.initAg();
         try {
             agent.parseAS(normalizedSource.toFile());
+        } catch (ParseException error) {
+            throw new AslParseException(toSyntaxDiagnostic(normalizedSource, error), error);
         } catch (Exception error) {
             throw new AslParseException("Could not parse AgentSpeak source: " + normalizedSource, error);
         }
@@ -35,6 +39,20 @@ public final class JasonAslParserAdapter {
                 agent.getInitialBels().size(),
                 agent.getInitialGoals().size(),
                 agent.getPL().size());
+    }
+
+    private static AslDiagnostic toSyntaxDiagnostic(Path source, ParseException error) {
+        Token errorToken = error.currentToken == null ? null : error.currentToken.next;
+        int line = errorToken == null ? AslDiagnostic.UNKNOWN_POSITION : errorToken.beginLine;
+        int column = errorToken == null ? AslDiagnostic.UNKNOWN_POSITION : errorToken.beginColumn;
+        String message = error.getMessage() == null ? "AgentSpeak syntax error" : error.getMessage();
+        return new AslDiagnostic(
+                AslDiagnostic.SYNTAX_ERROR_CODE,
+                AslDiagnosticSeverity.ERROR,
+                source,
+                line,
+                column,
+                message);
     }
 
     private static String loadJasonVersion() {

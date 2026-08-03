@@ -27,7 +27,7 @@
 
 - [x] Thêm dependency Jason pin version.
 - [x] Parse `.asl` hợp lệ.
-- [ ] Bắt syntax error.
+- [x] Bắt syntax error.
 - [ ] Multi-file import.
 - [ ] Partial success policy.
 - [ ] Source location extraction.
@@ -132,7 +132,7 @@
 ## 11. Testing
 
 - [x] Valid ASL fixtures.
-- [ ] Invalid ASL fixtures.
+- [x] Invalid ASL fixtures.
 - [ ] Unsupported fixtures.
 - [ ] Golden IR tests.
 - [ ] Rule tests.
@@ -215,3 +215,18 @@
   remain deliberately open.
 - `use-bdi-plugin/scripts/smoke.ps1` parsed the fixture through the shaded JAR
   from the assembled distribution and passed the existing USE GUI menu smoke.
+
+## Phase 1 syntax diagnostic slice evidence - 2026-08-04
+
+- Invalid fixture `missing-plan-body.asl` deterministically fails at the `;`
+  token on line 3, column 8.
+- `JasonAslParserAdapter` catches Jason `ParseException` and exposes a
+  Jason-independent `AslDiagnostic` with rule ID `ASL-001`, `ERROR` severity,
+  normalized source path, one-based position, and parser message.
+- Missing-file errors remain distinct and do not carry a syntax diagnostic.
+- `mvn -pl use-bdi-plugin test` passed with four tests.
+- `use-bdi-plugin/scripts/smoke.ps1` rebuilt the distribution, reproduced
+  `ASL-001` at line 3, column 8 through the shaded plugin JAR, and passed the
+  existing USE GUI menu smoke.
+- IR `SourceSpan`, unsupported syntax/`ASL-002`, multi-file partial success, and
+  the consistency-rule SPI remain open tasks.

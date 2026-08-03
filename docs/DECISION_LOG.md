@@ -172,3 +172,52 @@ API is assumed.
 - `use-bdi-plugin/scripts/smoke.ps1` parsed the fixture using the shaded JAR
   copied into the assembled distribution, verified the third-party notice, then
   passed the USE GUI menu smoke.
+
+## ADR-0003 - AgentSpeak syntax diagnostic boundary
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Phase 1 single-file syntax-error slice
+
+### Context
+
+Invalid AgentSpeak input must produce evidence suitable for the future Problems
+view and reports without leaking Jason parser types into domain or presentation
+code. The existing adapter wrapped every parser failure in a generic exception,
+which lost structured source position and severity.
+
+### Verified findings
+
+1. Jason 3.3.0's generated `ParseException` exposes `currentToken`. Its source
+   documents that `currentToken` is the last successfully consumed token and
+   `currentToken.next` is the first error token.
+2. Jason's generated `Token` exposes one-based `beginLine` and `beginColumn`.
+   Parsing the checked-in invalid fixture directly with Jason reports `;` at
+   line 3, column 8, matching those fields and the parser message.
+3. The rule catalog already reserves `ASL-001` for a Jason parse error and
+   assigns Error severity. A second parse-error identifier would fragment
+   reporting.
+4. Jason can also construct message-only `ParseException` instances with no
+   token. Position therefore needs an explicit unknown representation rather
+   than guessed values.
+
+### Decision
+
+- Catch `ParseException` specifically inside `JasonAslParserAdapter`; keep all
+  Jason exception/token access in that adapter.
+- Expose immutable Java-only `AslDiagnostic` with code, severity, source,
+  one-based line/column, and message. Use `0/0` when Jason provides no error
+  token and expose `hasSourcePosition()` to distinguish that case.
+- Attach the diagnostic to `AslParseException` while preserving generic
+  missing-file and non-syntax failures without a diagnostic. A later multi-file
+  importer can collect these diagnostics into a partial-success result.
+- Use catalog ID `ASL-001` and `ERROR` severity. Do not mark the future rule SPI,
+  IR `SourceSpan`, or unsupported-feature diagnostic as complete in this slice.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with four tests.
+- `JasonAslParserAdapterTest` verifies exact code, severity, normalized source,
+  line 3, column 8, message evidence, and separation from missing-file errors.
+- `use-bdi-plugin/scripts/smoke.ps1` passed the distribution/fat-JAR diagnostic
+  check and the existing USE GUI menu smoke.

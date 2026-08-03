@@ -2,6 +2,7 @@ package org.tzi.use.plugins.bdi.importer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -34,6 +35,24 @@ class JasonAslParserAdapterTest {
         assertEquals(
                 "AgentSpeak source is not a regular file: " + missing.toAbsolutePath().normalize(),
                 error.getMessage());
+        assertTrue(error.diagnostic().isEmpty());
+    }
+
+    @Test
+    void reportsSyntaxErrorWithSourcePosition() throws Exception {
+        Path source = fixture("fixtures/asl/invalid/missing-plan-body.asl");
+
+        AslParseException error = assertThrows(AslParseException.class, () -> parser.parse(source));
+
+        AslDiagnostic diagnostic = error.diagnostic().orElseThrow();
+        assertEquals(AslDiagnostic.SYNTAX_ERROR_CODE, diagnostic.code());
+        assertEquals(AslDiagnosticSeverity.ERROR, diagnostic.severity());
+        assertEquals(source.toAbsolutePath().normalize(), diagnostic.source());
+        assertEquals(3, diagnostic.line());
+        assertEquals(8, diagnostic.column());
+        assertTrue(diagnostic.hasSourcePosition());
+        assertTrue(diagnostic.message().contains("Encountered"));
+        assertTrue(diagnostic.message().contains("Was expecting"));
     }
 
     private static Path fixture(String name) throws URISyntaxException {

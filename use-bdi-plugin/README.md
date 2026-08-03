@@ -14,10 +14,12 @@ From the repository root:
 mvn -pl use-bdi-plugin test
 ```
 
-The parser fixture test verifies one initial belief, one initial goal, one plan,
-and the pinned parser version. The adapter disables Jason's optional web mind
-inspector before initializing the parser so an offline import does not open a
-background HTTP server.
+The parser fixture tests verify one initial belief, one initial goal, one plan,
+the pinned parser version, and a structured `ASL-001` diagnostic for invalid
+syntax. Diagnostics carry severity, source file, message, and a one-based line
+and column when Jason provides an error token. The adapter disables Jason's
+optional web mind inspector before initializing the parser so an offline import
+does not open a background HTTP server.
 
 ## Build and automated smoke
 
@@ -27,9 +29,9 @@ From the repository root:
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1
 ```
 
-The script builds the reactor through `package`, parses the valid fixture using
-the shaded plugin JAR from the distribution, starts the GUI briefly, and
-verifies the menu hierarchy.
+The script builds the reactor through `package`, parses valid and invalid
+fixtures using the shaded plugin JAR from the distribution, starts the GUI
+briefly, and verifies the menu hierarchy.
 
 ## Manual GUI run
 
