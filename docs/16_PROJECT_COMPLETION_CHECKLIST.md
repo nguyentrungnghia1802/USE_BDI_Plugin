@@ -1,0 +1,201 @@
+# 16. Project Completion Checklist
+
+> Đây là nguồn sự thật cho tiến độ. Sau mỗi phiên làm việc, cập nhật checkbox, ghi commit và bằng chứng test.
+
+## 0. Repository baseline
+
+- [x] Xác nhận `java -version` là Java 21.
+- [x] Chạy `mvn clean test` tại root.
+- [x] Chạy USE GUI từ clean build.
+- [x] Ghi USE commit hash và version.
+- [x] Tạo branch `thesis/bdi-plugin`.
+- [ ] Di chuyển prototype files khỏi root vào case study/fixtures.
+- [x] Tạo module `use-bdi-plugin`.
+
+## 1. Plugin spike
+
+- [x] Xác định plugin descriptor/manifest.
+- [x] Xác định lifecycle interface.
+- [x] Xác định cách thêm menu.
+- [x] Xác định cách thêm custom view/panel.
+- [x] Xác định cách lấy current model/session/state.
+- [x] Xác định classloader/dependency packaging.
+- [x] Hello plugin chạy trong distribution.
+- [x] Ghi kết quả vào `DECISION_LOG.md`.
+
+## 2. Jason importer
+
+- [ ] Thêm dependency Jason pin version.
+- [ ] Parse `.asl` hợp lệ.
+- [ ] Bắt syntax error.
+- [ ] Multi-file import.
+- [ ] Partial success policy.
+- [ ] Source location extraction.
+- [ ] Parser version in report.
+
+## 3. Intermediate representation
+
+- [ ] `AgentModel`.
+- [ ] `BeliefModel`.
+- [ ] `GoalModel`.
+- [ ] `PlanModel`.
+- [ ] `TriggerModel`.
+- [ ] `ContextExpr` tree.
+- [ ] `PlanStepModel` hierarchy.
+- [ ] `TermModel` hierarchy.
+- [ ] `SourceSpan`.
+- [ ] `UnsupportedFeature`.
+- [ ] Golden serialization tests.
+
+## 4. BDI index and metamodel
+
+- [ ] Goal -> supporting plans index.
+- [ ] Action -> call sites index.
+- [ ] Predicate references index.
+- [ ] Agent/object references index.
+- [ ] Duplicate label detection.
+- [ ] BDI metamodel version recorded.
+
+## 5. UI shell
+
+- [x] AgentSpeak menu.
+- [ ] File chooser import.
+- [ ] Background import task.
+- [ ] BDI tree.
+- [ ] Node detail/source panel.
+- [ ] Problems table.
+- [ ] Filtering/grouping.
+- [ ] Re-import changed files.
+
+## 6. USE adapter
+
+- [ ] Enumerate UML classes.
+- [ ] Enumerate objects in current state.
+- [ ] Enumerate attributes/associations.
+- [ ] Enumerate operations and parameters.
+- [ ] Expose pre/postconditions.
+- [ ] OCL expression evaluation wrapper.
+- [ ] Stable UML element references/fingerprint.
+
+## 7. Mapping
+
+- [ ] Mapping entity/schema.
+- [ ] Agent -> Class.
+- [ ] Agent -> Object.
+- [ ] Action -> Operation.
+- [ ] Parameter bindings.
+- [ ] Receiver binding.
+- [ ] Belief mapping model.
+- [ ] Suggestion scoring.
+- [ ] Manual editor.
+- [ ] Save/load.
+- [ ] Stale mapping detection.
+
+## 8. Consistency engine
+
+- [ ] Rule SPI/interface.
+- [ ] Phase orchestration.
+- [ ] Issue/evidence model.
+- [ ] ASL-001/002.
+- [ ] BDI-001/002/003/004.
+- [ ] REF-001/002.
+- [ ] MAP-001/002/003.
+- [ ] SIG-001/002/003.
+- [ ] OWN-001.
+- [ ] BEL-001.
+- [ ] MSG-001.
+- [ ] OCL-001/002/003/004.
+- [ ] CTX-001.
+- [ ] Suppression.
+
+## 9. OCL integration
+
+- [ ] Bind receiver.
+- [ ] Bind operation arguments.
+- [ ] Evaluate precondition on snapshot.
+- [ ] PASS/FAIL/UNKNOWN result.
+- [ ] Isolated/safe state mutation strategy.
+- [ ] One bounded effect adapter.
+- [ ] Re-check invariant.
+- [ ] Restore/avoid corrupting user state.
+
+## 10. Reporting
+
+- [ ] JSON report.
+- [ ] HTML or CSV report.
+- [ ] Plugin/USE/Jason versions.
+- [ ] Model and mapping hashes.
+- [ ] Rule configuration.
+- [ ] Issue evidence/source.
+- [ ] Suppressions included.
+
+## 11. Testing
+
+- [ ] Valid ASL fixtures.
+- [ ] Invalid ASL fixtures.
+- [ ] Unsupported fixtures.
+- [ ] Golden IR tests.
+- [ ] Rule tests.
+- [ ] Mapping persistence tests.
+- [ ] USE model integration tests.
+- [ ] OCL tests.
+- [x] UI smoke test.
+- [ ] Performance benchmark.
+- [ ] Clean-clone reproducibility test.
+
+## 12. Case study
+
+- [ ] Auction UML/OCL model.
+- [ ] Auction AgentSpeak files.
+- [ ] Valid mapping.
+- [ ] Baseline report.
+- [ ] Structural mutants.
+- [ ] Signature mutants.
+- [ ] Reference mutants.
+- [ ] OCL mutants.
+- [ ] Ground truth manifest.
+- [ ] Metrics table.
+- [ ] Demo script.
+- [ ] House Building exploratory import (optional).
+
+## 13. Thesis evidence
+
+- [ ] Architecture diagram.
+- [ ] IR class diagram.
+- [ ] BDI metamodel diagram.
+- [ ] Mapping examples.
+- [ ] Rule catalog final.
+- [ ] UI screenshots.
+- [ ] Experiment protocol.
+- [ ] Precision/recall/F1.
+- [ ] Performance chart/table.
+- [ ] Threats to validity.
+- [ ] Limitations.
+- [ ] Future work.
+
+## 14. Release
+
+- [ ] `mvn clean verify` pass.
+- [ ] Plugin install guide.
+- [ ] User guide.
+- [ ] Developer guide.
+- [ ] Third-party notices/licenses.
+- [ ] Release package tested on clean machine/profile.
+- [ ] Git tag `v1.0.0-thesis-rc`.
+- [ ] Backup source, data, report and slides.
+
+## Phase 0 evidence - 2026-08-03
+
+- Baseline: USE `7.1.1`, commit
+  `a455e90e7e68c10c53c04b86647c1ce79ff4610c`, branch
+  `thesis/bdi-plugin`, Java `21.0.5`, Maven `3.9.9`.
+- Root gate: `mvn clean test` passed.
+- Module/package gate: `mvn -pl use-bdi-plugin -am package` passed; one unit
+  test passed.
+- Distribution/UI gate: `use-bdi-plugin/scripts/smoke.ps1` passed and found
+  `Plugins > AgentSpeak > Hello BDI Plugin` in a started USE GUI.
+- Known baseline limitation: root `verify` is blocked by the existing
+  `use-gui` `ShellIT` fork exiting without a Failsafe handshake. See
+  `DECISION_LOG.md` for the command output interpretation and accepted Phase 0
+  gates.
+- Documentation gap: `00_PROJECT_CONTEXT.md` is absent and remains open.

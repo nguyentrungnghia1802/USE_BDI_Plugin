@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?use version="7.1.1"?>
+<plugin id="org.tzi.use.plugins.bdi" name="USE BDI Plugin" version="0.1.0"
+        publisher="VNU SME Thesis Project">
+    <actions>
+        <action id="org.tzi.use.plugins.bdi.hello"
+                label="Hello BDI Plugin"
+                icon="images/New.gif"
+                class="org.tzi.use.plugins.bdi.HelloBdiAction"
+                tooltip="Verify that the USE BDI plugin is loaded"
+                menu="AgentSpeak"
+                menuitem="Hello BDI Plugin"
+                toolbaritem="plugins">
+        </action>
+    </actions>
+</plugin>

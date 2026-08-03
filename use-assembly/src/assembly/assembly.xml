@@ -75,4 +75,14 @@
             </includes>
         </fileSet>
     </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib/plugins</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+            <includes>
+                <include>org.tzi.use:use-bdi-plugin</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
 </assembly>
