@@ -221,3 +221,44 @@ which lost structured source position and severity.
   line 3, column 8, message evidence, and separation from missing-file errors.
 - `use-bdi-plugin/scripts/smoke.ps1` passed the distribution/fat-JAR diagnostic
   check and the existing USE GUI menu smoke.
+
+## ADR-0004 - Multi-file importer result and interim failure behavior
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Phase 1 multi-file valid-import slice
+
+### Context
+
+The technical design calls for an `AslImporter` that accepts multiple paths,
+while the existing API only parsed one file at a time. The new orchestration
+must remain independent of Jason types and must not silently drop an invalid
+file before the project defines a complete partial-success policy.
+
+### Decision
+
+- Introduce `AslImporter.importFiles(List<Path>)` and immutable Java-only
+  `AslImportResult` containing ordered `AslParseSummary` values.
+- Validate and copy the complete input list before parsing. Parse each file with
+  a fresh Jason agent state inside the adapter and preserve input order.
+- Derive aggregate belief, goal, and plan counts from per-file summaries rather
+  than storing duplicate totals that could become inconsistent.
+- Use fail-fast behavior as an explicit interim boundary: the first
+  `AslParseException`, including `ASL-001`, is propagated and no partial result
+  is returned. Do not mark partial-success policy complete until a result model
+  can carry successes and diagnostics together.
+
+### Consequences
+
+- Callers can import any number of valid files without depending on Jason AST.
+- Empty input deterministically produces an empty immutable result.
+- One invalid file prevents publication of earlier summaries for now. A later
+  ADR may supersede this behavior when partial success is implemented.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with seven tests.
+- `JasonAslImporterTest` verifies input order, immutable summaries, aggregate
+  counts, and propagation of the invalid file's structured diagnostic.
+- `use-bdi-plugin/scripts/smoke.ps1` passed multi-file import through the shaded
+  distribution JAR, the existing diagnostic check, and the USE GUI menu smoke.

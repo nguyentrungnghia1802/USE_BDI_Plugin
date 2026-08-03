@@ -28,7 +28,7 @@
 - [x] Thêm dependency Jason pin version.
 - [x] Parse `.asl` hợp lệ.
 - [x] Bắt syntax error.
-- [ ] Multi-file import.
+- [x] Multi-file import.
 - [ ] Partial success policy.
 - [ ] Source location extraction.
 - [ ] Parser version in report.
@@ -230,3 +230,21 @@
   existing USE GUI menu smoke.
 - IR `SourceSpan`, unsupported syntax/`ASL-002`, multi-file partial success, and
   the consistency-rule SPI remain open tasks.
+
+## Phase 1 multi-file importer slice evidence - 2026-08-04
+
+- `AslImporter` accepts an ordered `List<Path>` and returns Java-only
+  `AslImportResult`; no Jason AST type crosses the adapter boundary.
+- `JasonAslImporter` parses each source independently, preserves input order,
+  and returns immutable per-file summaries with aggregate belief, goal, and
+  plan counts.
+- `review-agent.asl` provides a second valid fixture. Together with
+  `minimal.asl`, the importer reports two files, three beliefs, two goals, and
+  two plans.
+- The current multi-file API fails fast and propagates the first structured
+  diagnostic without exposing partial summaries. `Partial success policy`
+  remains deliberately unchecked for the next slice.
+- `mvn -pl use-bdi-plugin test` passed with seven tests.
+- `use-bdi-plugin/scripts/smoke.ps1` rebuilt the distribution, imported both
+  valid fixtures through the shaded JAR with the expected aggregate counts,
+  preserved the `ASL-001` regression check, and passed the USE GUI menu smoke.
