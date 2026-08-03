@@ -28,6 +28,16 @@ try {
     if (-not (Test-Path -LiteralPath $pluginJar)) {
         throw "Plugin JAR is missing from the distribution: $pluginJar"
     }
+    $pluginEntries = & jar tf $pluginJar
+    if ($LASTEXITCODE -ne 0 -or $pluginEntries -notcontains 'META-INF/THIRD-PARTY-NOTICES.txt') {
+        throw 'Third-party notices are missing from the packaged plugin JAR.'
+    }
+
+    $validFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\valid\minimal.asl'
+    & java -cp "$pluginJar;$testJar" org.tzi.use.plugins.bdi.importer.PackagedParserSmoke $validFixture
+    if ($LASTEXITCODE -ne 0) {
+        throw "Packaged parser smoke failed with exit code $LASTEXITCODE."
+    }
 
     $useGuiJar = Join-Path $useHome.FullName 'lib\use-gui.jar'
     & java -cp "$useGuiJar;$testJar" org.tzi.use.plugins.bdi.PluginGuiSmoke $useHome.FullName

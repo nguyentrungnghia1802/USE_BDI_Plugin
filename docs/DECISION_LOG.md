@@ -111,3 +111,64 @@ Baseline used for this spike:
 `docs/00_PROJECT_CONTEXT.md` was requested by the working protocol but is not
 present anywhere in the repository as of this decision. No replacement content
 was inferred. Add or restore the authoritative file before Phase 1 planning.
+
+## ADR-0002 - Jason parser boundary and plugin packaging
+
+- Status: Accepted
+- Date: 2026-08-03
+- Scope: Phase 1 single-file valid-ASL parser slice
+
+### Context
+
+The first importer slice needs a real AgentSpeak parser without coupling the
+future BDI domain model and rules to Jason's mutable syntax tree. ADR-0001 also
+established that USE does not provide a dependency declaration mechanism for
+plugin JARs, so external runtime dependencies must be inside the plugin artifact.
+
+### Verified findings
+
+1. Maven Central artifact `io.github.jason-lang:jason-interpreter:3.3.0` declares
+   JADE `4.3`, `javax.json-api` `1.1.4`, and GlassFish JSON `1.1.4` as runtime
+   dependencies. Its POM declares LGPLv3. JADE declares LGPL, and the GlassFish
+   JSON parent POM declares CDDL 1.1 or GPLv2 with Classpath Exception.
+2. Jason 3.3.0 source and bytecode both expose `Agent.initAg()`,
+   `Agent.parseAS(File)`, `Agent.getInitialBels()`, `Agent.getInitialGoals()`,
+   and `Agent.getPL()`; `PlanLibrary.size()` supplies the plan count. The adapter
+   uses these exact public APIs.
+3. `Agent.initAg()` registers the agent with Jason's web mind inspector by
+   default. The public `Agent.setConsiderToAddMIForThisAgent(false)` must be
+   called first so parsing does not start an HTTP server.
+4. GlassFish JSON 1.1.4 already contains the `javax.json` API classes. Shading
+   the separate `javax.json-api` artifact produced duplicate classes, so that
+   transitive artifact is excluded while the GlassFish implementation remains.
+
+Evidence was obtained from the downloaded 3.3.0 artifact, source JAR, POMs,
+`javap`, Maven dependency tree, and the packaged plugin JAR. No unverified Jason
+API is assumed.
+
+### Decision
+
+- Pin Jason at `3.3.0` through the `jason.version` Maven property.
+- Keep all Jason types inside `JasonAslParserAdapter`. Return only the immutable,
+  Java-only `AslParseSummary`; a later slice will map the syntax tree into the
+  project BDI IR.
+- Build the plugin as an unrelocated shaded JAR. Exclude signatures, module
+  descriptors, duplicate manifests, and the redundant `javax.json-api` artifact.
+- Package `META-INF/THIRD-PARTY-NOTICES.txt` in the plugin JAR for Jason, JADE,
+  and GlassFish JSON. The complete release-wide license audit remains a separate
+  release checklist item.
+- Generate the reported parser version from the same Maven property used by the
+  dependency, avoiding a second hard-coded version in Java.
+- Defer syntax diagnostics, source locations, unsupported-construct policy,
+  multi-file import, and partial-success behavior to explicit later slices.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin -am test`: passed with three plugin tests.
+- `mvn -pl use-bdi-plugin clean package`: passed; the valid fixture produced one
+  belief, one goal, and one plan, without starting the mind inspector.
+- Packaged JAR inspection found `useplugin.xml`, Jason's `Agent.class`, and the
+  parser adapter, with the plugin `Main-Class` preserved.
+- `use-bdi-plugin/scripts/smoke.ps1` parsed the fixture using the shaded JAR
+  copied into the assembled distribution, verified the third-party notice, then
+  passed the USE GUI menu smoke.

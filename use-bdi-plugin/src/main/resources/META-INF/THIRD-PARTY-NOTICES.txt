@@ -1,0 +1,21 @@
+USE BDI Plugin - Third-Party Notices
+
+This plugin artifact includes the following unmodified third-party libraries:
+
+Jason interpreter 3.3.0
+Artifact: io.github.jason-lang:jason-interpreter:3.3.0
+License: GNU Lesser General Public License version 3 (LGPLv3)
+Project: https://jason-lang.github.io
+License: https://www.gnu.org/licenses/lgpl-3.0.html
+
+JADE 4.3
+Artifact: net.sf.ingenias:jade:4.3
+License: GNU Lesser General Public License (LGPL)
+Project: http://jade.tilab.com/
+License: https://www.gnu.org/licenses/lgpl.html
+
+JSR 374 JSON Processing Default Provider 1.1.4
+Artifact: org.glassfish:javax.json:1.1.4
+License: CDDL 1.1 or GPL version 2 with Classpath Exception
+Project: https://javaee.github.io/jsonp
+License: https://oss.oracle.com/licenses/CDDL+GPL-1.1

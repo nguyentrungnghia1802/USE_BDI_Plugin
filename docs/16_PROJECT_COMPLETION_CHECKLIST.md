@@ -25,8 +25,8 @@
 
 ## 2. Jason importer
 
-- [ ] Thêm dependency Jason pin version.
-- [ ] Parse `.asl` hợp lệ.
+- [x] Thêm dependency Jason pin version.
+- [x] Parse `.asl` hợp lệ.
 - [ ] Bắt syntax error.
 - [ ] Multi-file import.
 - [ ] Partial success policy.
@@ -131,7 +131,7 @@
 
 ## 11. Testing
 
-- [ ] Valid ASL fixtures.
+- [x] Valid ASL fixtures.
 - [ ] Invalid ASL fixtures.
 - [ ] Unsupported fixtures.
 - [ ] Golden IR tests.
@@ -199,3 +199,19 @@
   `DECISION_LOG.md` for the command output interpretation and accepted Phase 0
   gates.
 - Documentation gap: `00_PROJECT_CONTEXT.md` is absent and remains open.
+
+## Phase 1 importer slice evidence - 2026-08-03
+
+- Jason `3.3.0` is pinned in `use-bdi-plugin/pom.xml` and shaded into the plugin
+  JAR with its runtime dependencies; USE dependencies remain `provided`.
+- `JasonAslParserAdapter` initializes an offline Jason agent, disables the web
+  mind inspector, parses one file, and returns a Jason-independent
+  `AslParseSummary`.
+- `minimal.asl` is a valid fixture with one initial belief, one initial goal,
+  and one plan; `JasonAslParserAdapterTest` verifies all three counts and the
+  Maven-filtered parser version.
+- `mvn -pl use-bdi-plugin clean package` passed with three tests. The formal
+  report, syntax diagnostics, source locations, multi-file import, and BDI IR
+  remain deliberately open.
+- `use-bdi-plugin/scripts/smoke.ps1` parsed the fixture through the shaded JAR
+  from the assembled distribution and passed the existing USE GUI menu smoke.
