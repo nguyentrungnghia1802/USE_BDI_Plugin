@@ -632,3 +632,72 @@ or invent semantic resolution that belongs to the future USE adapter.
   and GUI menu smoke for both AgentSpeak actions. Windows left the temporary
   smoke directory locked during cleanup, matching the existing environment
   limitation recorded by earlier smoke slices.
+
+## ADR-0012 - Problems, re-import, and read-only USE adapter slice
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: The next ten checklist items: three Section 5 UI items and seven Section 6 USE adapter items
+
+### Context
+
+The BDI explorer already retained normalized models, diagnostics, and indexes,
+but there was no single Problems presentation, changed-source workflow, or
+verified bridge to the live USE model/state. The implementation must remain
+plugin-first, preserve partial import evidence, and avoid modifying USE core or
+guessing APIs.
+
+### Verified API evidence
+
+- `use-core/src/main/java/org/tzi/use/uml/sys/MSystem.java` exposes
+  `model()`, `state()`, and `varBindings()`.
+- `use-core/src/main/java/org/tzi/use/uml/mm/MModel.java` exposes
+  `classes()`, `associations()`, `classInvariants()`, and `filename()`;
+  `MClass`/`MClassifier` expose direct attributes and operations;
+  `MOperation` exposes `paramList()`, `preConditions()`, and
+  `postConditions()`.
+- `use-core/src/main/java/org/tzi/use/uml/sys/MSystemState.java` exposes
+  `allObjects()` and `allLinks()`; `MObject.state(...)` and
+  `MObjectState.attributeValueMap()` provide current object values.
+- `use-core/src/main/java/org/tzi/use/parser/ocl/OCLCompiler.java` has the
+  verified overload `compileExpression(MModel, MSystemState, String, String,
+  PrintWriter, VarBindings)`. `Evaluator` has the verified overload
+  `eval(Expression, MSystemState, VarBindings)`.
+
+### Decision
+
+- Represent Problems as immutable rows with code, severity, normalized source,
+  optional line/column, message, and group. Map `ASL-002` to WARNING rather
+  than dropping recognized-but-unsupported syntax.
+- Keep source change detection in a UI-independent `BdiSourceTracker` using
+  normalized paths and file existence/size/last-modified stamps. Re-import the
+  complete selected set after a change; this preserves unchanged successful
+  models in the snapshot. Guard asynchronous callbacks with an import generation
+  token.
+- Keep USE integration read-only and return plugin-owned immutable `Uml*Ref`
+  records. Include classes, direct attributes, association ends, operations and
+  parameters, pre/postconditions, class invariants, current objects and links.
+- Return explicit OCL statuses and compiler diagnostics. Do not convert a
+  compile/evaluation failure into a boolean result or silently suppress it.
+- Compute the model/state identity from a length-delimited canonical projection
+  and SHA-256, with deterministic sorting of unordered USE collections.
+
+### Consequences and limits
+
+- The Problems tab is useful for import/index evidence but is not yet the
+  consistency-rule engine; mapping and rule phases remain separate.
+- The adapter can enumerate the current state and evaluate an expression, but it
+  intentionally does not resolve BDI references, mutate USE state, or perform
+  whole-project OCL/consistency orchestration.
+- `docs/00_PROJECT_CONTEXT.md` is still absent and remains a documentation
+  blocker recorded from the baseline.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with 32 tests, including Problems
+  filtering/grouping, source stamp/re-import, USE fixture projection, stable
+  fingerprint, pre/post extraction, and OCL compile/evaluation statuses.
+- `mvn -pl use-bdi-plugin -am -DskipTests compile`: passed for `use-core`,
+  `use-gui`, and `use-bdi-plugin`. A reactor test attempt was separately blocked
+  in `use-gui` by a Windows file lock on its existing `target/test-classes`
+  fixture; the plugin-only test gate passed afterward.

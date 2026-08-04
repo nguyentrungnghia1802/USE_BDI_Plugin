@@ -12,6 +12,7 @@ import java.util.Optional;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
@@ -27,6 +28,7 @@ import org.tzi.use.gui.views.View;
 import org.tzi.use.plugins.bdi.ImportBdiAction;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
 import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
+import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
 import org.tzi.use.plugins.bdi.index.BdiIndex;
 import org.tzi.use.plugins.bdi.importer.AslDiagnostic;
 import org.tzi.use.plugins.bdi.model.ir.AchieveGoalStepModel;
@@ -42,6 +44,8 @@ import org.tzi.use.plugins.bdi.model.ir.PlanModel;
 import org.tzi.use.plugins.bdi.model.ir.PlanStepModel;
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.model.ir.TestStepModel;
+import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
+import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
 
 /** Minimal BDI tree and source detail view for the first explorer slice. */
 @SuppressWarnings("serial")
@@ -50,24 +54,40 @@ public final class BdiExplorerView extends JPanel implements View {
     private final JTree tree;
     private final JTextArea detail;
     private final JLabel status;
+    private final BdiProblemPanel problems;
+    private final JButton reimportButton;
+    private final BdiSourceTracker sourceTracker;
     private BdiImportSnapshot snapshot;
     private BdiImportWorker worker;
+    private long importGeneration;
 
     public BdiExplorerView() {
         this(new BdiImportService());
     }
 
     BdiExplorerView(BdiImportService importService) {
+        this(importService, new BdiSourceTracker());
+    }
+
+    BdiExplorerView(BdiImportService importService, BdiSourceTracker sourceTracker) {
         super(new BorderLayout(6, 6));
         this.importService = Objects.requireNonNull(importService, "importService");
+        this.sourceTracker = Objects.requireNonNull(sourceTracker, "sourceTracker");
         this.snapshot = new BdiImportSnapshot(List.of(), List.of(), BdiIndex.empty());
 
         JButton importButton = new JButton("Import .asl...");
         importButton.setToolTipText("Choose AgentSpeak source files");
         importButton.addActionListener(event -> ImportBdiAction.chooseAndImport(this));
+        reimportButton = new JButton("Re-import changed");
+        reimportButton.setToolTipText("Re-import all selected files after a source change");
+        reimportButton.setEnabled(false);
+        reimportButton.addActionListener(event -> reimportChangedFiles());
         status = new JLabel("No AgentSpeak source imported");
+        JPanel buttons = new JPanel();
+        buttons.add(importButton);
+        buttons.add(reimportButton);
         JPanel toolbar = new JPanel(new BorderLayout(6, 0));
-        toolbar.add(importButton, BorderLayout.WEST);
+        toolbar.add(buttons, BorderLayout.WEST);
         toolbar.add(status, BorderLayout.CENTER);
         add(toolbar, BorderLayout.NORTH);
 
@@ -88,21 +108,55 @@ public final class BdiExplorerView extends JPanel implements View {
                 new JScrollPane(detail));
         split.setResizeWeight(0.42);
         split.setPreferredSize(new Dimension(900, 520));
-        add(split, BorderLayout.CENTER);
+        problems = new BdiProblemPanel();
+        JTabbedPane tabs = new JTabbedPane();
+        tabs.addTab("Explorer", split);
+        tabs.addTab("Problems", problems);
+        add(tabs, BorderLayout.CENTER);
         detail.setText("Select a BDI node to inspect its details and source span.");
     }
 
     public void importFiles(List<Path> sources) {
+        List<Path> selectedSources = List.copyOf(Objects.requireNonNull(sources, "sources"));
+        sourceTracker.track(selectedSources);
+        startImport(selectedSources, "Importing AgentSpeak...");
+    }
+
+    public boolean reimportChangedFiles() {
+        List<Path> changed = sourceTracker.changedSources();
+        if (changed.isEmpty()) {
+            status.setText("No changed AgentSpeak source files");
+            return false;
+        }
+        startImport(sourceTracker.sources(), "Re-importing " + changed.size() + " changed file(s)...");
+        return true;
+    }
+
+    private void startImport(List<Path> sources, String message) {
         if (worker != null && !worker.isDone()) {
             worker.cancel(true);
         }
-        status.setText("Importing AgentSpeak...");
-        worker = new BdiImportWorker(importService, sources, this::applySnapshot, this::showFailure);
+        long generation = ++importGeneration;
+        status.setText(message);
+        worker = new BdiImportWorker(
+                importService,
+                sources,
+                imported -> {
+                    if (generation == importGeneration) {
+                        applySnapshot(imported);
+                    }
+                },
+                failure -> {
+                    if (generation == importGeneration) {
+                        showFailure(failure);
+                    }
+                });
         worker.execute();
     }
 
     @Override
     public void detachModel() {
+        importGeneration++;
         if (worker != null && !worker.isDone()) {
             worker.cancel(true);
         }
@@ -120,14 +174,30 @@ public final class BdiExplorerView extends JPanel implements View {
         return snapshot;
     }
 
+    BdiProblemPanel problemsForTest() {
+        return problems;
+    }
+
+    JButton reimportButtonForTest() {
+        return reimportButton;
+    }
+
+    JLabel statusForTest() {
+        return status;
+    }
+
     private void applySnapshot(BdiImportSnapshot imported) {
         Runnable update = () -> {
             snapshot = imported;
+            sourceTracker.markImported();
+            problems.setProblems(BdiProblemCollector.collect(imported));
+            reimportButton.setEnabled(!sourceTracker.sources().isEmpty());
             tree.setModel(new DefaultTreeModel(createTree(imported)));
             String message = imported.fileCount() + " file(s), "
                     + imported.index().allPredicateReferences().size() + " predicate reference(s)";
-            if (imported.hasErrors()) {
-                message += ", " + imported.diagnostics().size() + " diagnostic(s)";
+            int problemCount = problems.problemCount();
+            if (problemCount > 0) {
+                message += ", " + problemCount + " problem(s)";
             }
             status.setText(message);
             detail.setText("Select a BDI node to inspect its details and source span.");

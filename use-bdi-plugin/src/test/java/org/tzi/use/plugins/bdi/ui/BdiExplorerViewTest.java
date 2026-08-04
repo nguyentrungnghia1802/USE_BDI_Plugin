@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
 
 class BdiExplorerViewTest {
@@ -41,6 +43,25 @@ class BdiExplorerViewTest {
         assertTrue(view.detailForTest().getText().contains("Source:"));
         assertTrue(view.detailForTest().getText().contains("Source excerpt:"));
         assertEquals(1, view.snapshotForTest().fileCount());
+    }
+
+    @Test
+    void reimportsAllSelectedSourcesWhenOneSourceChanges(@TempDir Path tempDir) throws Exception {
+        Path source = tempDir.resolve("changed.asl");
+        Files.copy(fixture("fixtures/asl/valid/minimal.asl"), source);
+        BdiExplorerView view = new BdiExplorerView(new BdiImportService());
+        view.importFiles(List.of(source));
+        waitForImport(view);
+        assertTrue(view.reimportButtonForTest().isEnabled());
+
+        Files.writeString(source, Files.readString(source) + "\n+changed.\n");
+        assertTrue(view.reimportChangedFiles());
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+        while (view.statusForTest().getText().startsWith("Re-importing") && System.nanoTime() < deadline) {
+            Thread.sleep(25);
+        }
+        flushEdt();
+        assertTrue(view.statusForTest().getText().startsWith("1 file(s)"));
     }
 
     private static void waitForImport(BdiExplorerView view) throws Exception {

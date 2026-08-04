@@ -63,19 +63,19 @@
 - [x] Background import task.
 - [x] BDI tree.
 - [x] Node detail/source panel.
-- [ ] Problems table.
-- [ ] Filtering/grouping.
-- [ ] Re-import changed files.
+- [x] Problems table.
+- [x] Filtering/grouping.
+- [x] Re-import changed files.
 
 ## 6. USE adapter
 
-- [ ] Enumerate UML classes.
-- [ ] Enumerate objects in current state.
-- [ ] Enumerate attributes/associations.
-- [ ] Enumerate operations and parameters.
-- [ ] Expose pre/postconditions.
-- [ ] OCL expression evaluation wrapper.
-- [ ] Stable UML element references/fingerprint.
+- [x] Enumerate UML classes.
+- [x] Enumerate objects in current state.
+- [x] Enumerate attributes/associations.
+- [x] Enumerate operations and parameters.
+- [x] Expose pre/postconditions.
+- [x] OCL expression evaluation wrapper.
+- [x] Stable UML element references/fingerprint.
 
 ## 7. Mapping
 
@@ -382,3 +382,34 @@
   the temporary smoke directory locked during cleanup; this does not affect
   the build or smoke assertions. Problems table, filtering, re-import, USE
   adapter, mapping, and rules remain open tasks.
+
+## Phase 2 Problems/re-import and USE adapter slice evidence - 2026-08-04
+
+- `BdiProblemCollector` converts retained `AslDiagnostic`, `UnsupportedFeature`
+  (`ASL-002`), and duplicate plan-label evidence into immutable problem rows.
+  `BdiProblemTableModel` supports text/severity filtering and deterministic
+  grouping by problem group, source, or code; `BdiProblemPanel` exposes those
+  controls in the explorer's `Problems` tab.
+- `BdiSourceTracker` normalizes selected paths and records existence, size, and
+  last-modified stamps after an import. `BdiExplorerView` re-imports the complete
+  selected set when any source changes, so unchanged successful models are not
+  silently dropped; an import-generation token ignores stale worker callbacks.
+- `UseUmlModelFacade` reads the verified USE 7.1.1 APIs for classes, direct
+  attributes, associations and ends, operations/parameters, class invariants,
+  operation pre/postconditions, current objects/attribute values, and links.
+  The facade returns plugin-owned immutable records and does not mutate the
+  current USE model or system state.
+- `UseOclEvaluator` wraps the actual `OCLCompiler.compileExpression(...)` and
+  `Evaluator.eval(...)` APIs and reports `EVALUATED`, `COMPILE_ERROR`, or
+  `EVALUATION_ERROR` with diagnostics. `UseModelFingerprint` hashes a canonical
+  sorted projection with SHA-256; each reference record exposes a stable
+  qualified reference string.
+- Fixture `fixtures/use/QueueModel.use` covers classes, attributes, an
+  association, objects/links, operations/parameters, pre/postconditions, and a
+  class invariant. `mvn -pl use-bdi-plugin test` passed with 32 tests, including
+  Problems collector/table, source tracker, UI re-import, facade projection,
+  fingerprint, and OCL status tests.
+- This slice does not claim mapping entities, mapping suggestions/editor,
+  consistency-rule orchestration, or project-wide OCL checks; those remain the
+  next open checklist tasks. The repository still lacks the requested
+  `docs/00_PROJECT_CONTEXT.md` authoritative file.

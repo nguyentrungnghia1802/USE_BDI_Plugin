@@ -103,10 +103,29 @@ interface ConsistencyRule {
 - `ImportBdiAction` and `BdiExplorerView` implement the first file chooser,
   tree, and source-detail UI through the verified USE `ViewFrame` API.
 
+### Implemented Problems/re-import and USE adapter slice
+
+- `BdiProblemCollector`, `BdiProblemTableModel`, and `BdiProblemPanel` retain
+  import diagnostics, unsupported-feature evidence, and duplicate-label index
+  evidence in a filterable/groupable Problems tab.
+- `BdiSourceTracker` records normalized source stamps. Re-import runs the full
+  selected source set when at least one stamp changes and uses a generation token
+  to ignore stale background callbacks.
+- `UseUmlModelFacade` exposes immutable `Uml*Ref` records for the USE model and
+  current system state. It reads `MSystem.model()`, `MSystem.state()`,
+  `MModel.classes()/associations()/classInvariants()`, `MClass.attributes()` and
+  `operations()`, `MOperation.paramList()/preConditions()/postConditions()`,
+  `MSystemState.allObjects()/allLinks()`, and `MObjectState.attributeValueMap()`.
+- `UseOclEvaluator` delegates compilation/evaluation to USE's
+  `OCLCompiler.compileExpression(...)` and `Evaluator.eval(...)` without
+  changing the current state. `UseModelFingerprint` provides deterministic
+  SHA-256 identity for the immutable projection.
+
 The current syntactic reference policy is deliberately conservative: `.send`
 receivers are agent references and named terms in arguments are object
-references, but neither is resolved to a USE class/object until the USE adapter
-slice exists.
+references. `UseUmlModelFacade` now exposes the USE-side symbols, but resolving
+those syntactic references to mapped USE classes/objects remains part of the
+future mapping slice.
 
 ## 6. Dependency packaging
 
