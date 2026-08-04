@@ -49,20 +49,20 @@
 
 ## 4. BDI index and metamodel
 
-- [ ] Goal -> supporting plans index.
-- [ ] Action -> call sites index.
-- [ ] Predicate references index.
-- [ ] Agent/object references index.
-- [ ] Duplicate label detection.
-- [ ] BDI metamodel version recorded.
+- [x] Goal -> supporting plans index.
+- [x] Action -> call sites index.
+- [x] Predicate references index.
+- [x] Agent/object references index.
+- [x] Duplicate label detection.
+- [x] BDI metamodel version recorded.
 
 ## 5. UI shell
 
 - [x] AgentSpeak menu.
-- [ ] File chooser import.
-- [ ] Background import task.
-- [ ] BDI tree.
-- [ ] Node detail/source panel.
+- [x] File chooser import.
+- [x] Background import task.
+- [x] BDI tree.
+- [x] Node detail/source panel.
 - [ ] Problems table.
 - [ ] Filtering/grouping.
 - [ ] Re-import changed files.
@@ -356,3 +356,29 @@
   `IR_TREE_SMOKE_OK`, partial import, diagnostics, third-party notices, and
   `Plugins > AgentSpeak > Hello BDI Plugin`. Windows left the temporary smoke
   directory locked during cleanup, but all gates completed successfully.
+
+## Phase 2 BDI index and explorer slice evidence - 2026-08-04
+
+- `BdiIndexBuilder` builds an immutable Java-only snapshot with predicate
+  signatures, goal-to-supporting-plan lookup, action call sites, predicate
+  occurrences, syntactic agent/object references, duplicate explicit-label
+  evidence, and metamodel version `0.1.0`.
+- Supporting plans use the documented `ACHIEVE + ADD` trigger and matching
+  functor/arity. Jason internal `.send` receivers are indexed as agent
+  references; named terms in predicate/action arguments are retained as
+  object references but are not claimed to be resolved to USE objects.
+- `BdiImportService` materializes each selected source independently and keeps
+  successful models plus per-file diagnostics. `BdiImportWorker` runs the
+  service through `SwingWorker`; `BdiExplorerView` renders file, belief, goal,
+  plan, and ordered-step nodes and shows source spans/excerpts on selection.
+- `ImportBdiAction` adds `Plugins > AgentSpeak > Import AgentSpeak...` with a
+  multi-select `.asl` chooser and opens the view through USE's verified
+  `ViewFrame`/`MainWindow.addNewViewFrame` API.
+- `mvn -pl use-bdi-plugin -am test` passed with 26 tests, including index,
+  partial-import, worker, tree/source-detail, chooser, and existing parser/IR
+  regression coverage.
+- Packaged distribution smoke passed `BDI_INDEX_SMOKE_OK` through the shaded
+  plugin JAR and `GUI_SMOKE_OK` for both AgentSpeak menu actions. Windows left
+  the temporary smoke directory locked during cleanup; this does not affect
+  the build or smoke assertions. Problems table, filtering, re-import, USE
+  adapter, mapping, and rules remain open tasks.

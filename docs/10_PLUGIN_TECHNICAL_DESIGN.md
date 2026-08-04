@@ -93,6 +93,21 @@ interface ConsistencyRule {
 - `BoundedStateSimulator`
 - `ReportExporter`
 
+### Implemented Phase 2 slice
+
+- `BdiIndexBuilder` and immutable `BdiIndex` provide goal, action, predicate,
+  agent/object, and duplicate-label indexes over the normalized IR.
+- `BdiImportService` is the application boundary for full-tree imports and
+  partial per-file diagnostics.
+- `BdiImportWorker` keeps parser/index work off the Swing EDT.
+- `ImportBdiAction` and `BdiExplorerView` implement the first file chooser,
+  tree, and source-detail UI through the verified USE `ViewFrame` API.
+
+The current syntactic reference policy is deliberately conservative: `.send`
+receivers are agent references and named terms in arguments are object
+references, but neither is resolved to a USE class/object until the USE adapter
+slice exists.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

@@ -60,6 +60,17 @@ Domain <- không phụ thuộc UI/Jason/USE concrete classes
 9. `ValidationOrchestrator` chạy rule sets.
 10. `IssueStore` cập nhật Problems view và exporter.
 
+### Phase 2 explorer slice implemented
+
+- `BdiIndexBuilder` consumes only `model/ir` and returns an immutable
+  `BdiIndex`; no Jason or USE concrete type crosses into the index package.
+- `BdiImportService` imports each selected source independently, materializes
+  the normalized tree, and builds the index from successful models while
+  retaining diagnostics for failed files.
+- `BdiImportWorker` executes that service via `SwingWorker`. The first
+  `BdiExplorerView` displays source files, beliefs, goals, plans, ordered
+  steps, and a detail pane with source spans/excerpts.
+
 ## 5. OCL integration levels
 
 ### Level 0 — Model presence

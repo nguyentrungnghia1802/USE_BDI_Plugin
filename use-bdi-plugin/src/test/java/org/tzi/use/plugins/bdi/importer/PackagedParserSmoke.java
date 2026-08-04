@@ -3,6 +3,9 @@ package org.tzi.use.plugins.bdi.importer;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.tzi.use.plugins.bdi.application.BdiImportService;
+import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
+import org.tzi.use.plugins.bdi.index.PredicateSignature;
 import org.tzi.use.plugins.bdi.model.ir.AgentModel;
 import org.tzi.use.plugins.bdi.model.ir.AslAgentModelNormalizer;
 
@@ -24,6 +27,8 @@ public final class PackagedParserSmoke {
         AslImportReport report = result.toReport();
         List<AgentModel> agentModels = new AslAgentModelNormalizer().normalize(result);
         AgentModel materializedModel = new JasonAslParserAdapter().parseModel(firstValid);
+        BdiImportSnapshot bdiSnapshot = new BdiImportService().importFiles(
+                List.of(firstValid, invalid, secondValid));
         if (result.fileCount() != 2
                 || agentModels.size() != 2
                 || !materializedModel.isMaterialized()
@@ -50,7 +55,11 @@ public final class PackagedParserSmoke {
                 || result.totalBeliefCount() != 3
                 || result.totalGoalCount() != 2
                 || result.totalPlanCount() != 2
-                || result.diagnostics().size() != 1) {
+                || result.diagnostics().size() != 1
+                || bdiSnapshot.fileCount() != 2
+                || bdiSnapshot.diagnostics().size() != 1
+                || bdiSnapshot.index().supportingPlans(new PredicateSignature("start", 0)).size() != 1
+                || bdiSnapshot.index().metamodelVersion().isBlank()) {
             throw new IllegalStateException("Unexpected packaged importer result: " + result);
         }
 
@@ -68,6 +77,7 @@ public final class PackagedParserSmoke {
         System.out.println("REPORT_VERSION_SMOKE_OK: parser version 3.3.0");
         System.out.println("AGENT_MODEL_SMOKE_OK: normalized 2 successful files into root IR models");
         System.out.println("IR_TREE_SMOKE_OK: materialized minimal belief-goal-plan tree");
+        System.out.println("BDI_INDEX_SMOKE_OK: goal support and metamodel version indexed");
         System.out.println("DIAGNOSTIC_SMOKE_OK: ASL-001 at line 3, column 8");
     }
 }

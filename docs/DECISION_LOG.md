@@ -550,3 +550,85 @@ the domain package and preserving evidence for constructs not normalized yet.
   rerun passed the complete assembly and printed `IR_TREE_SMOKE_OK`, importer
   diagnostics, third-party notices, and GUI menu smoke. Cleanup warned that the
   temporary directory was still locked by Windows.
+
+## ADR-0011 - BDI index and explorer UI vertical slice
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Section 4 BDI index/metamodel and first four Section 5 UI checklist items
+
+### Context
+
+The normalized IR is now materialized, but the next ten checklist tasks need a
+small end-to-end path from imported `.asl` files to searchable BDI structure in
+USE. The implementation must remain plugin-first and must not modify USE core
+or invent semantic resolution that belongs to the future USE adapter.
+
+### Verified constraints
+
+- USE's actual custom-view path is a Swing component implementing `View`,
+  wrapped in `ViewFrame`, and registered with
+  `MainWindow.addNewViewFrame(...)`. There is no descriptor-level custom-view
+  extension point; this is established in ADR-0001 and the checked-out USE
+  7.1.1 source.
+- The current IR contains source-spanned literal, compound, variable, list,
+  set, arithmetic, context, plan-step, and unsupported-feature nodes. The
+  index therefore consumes IR only and does not depend on Jason AST classes.
+- Jason's `PlanLibrary` rejects duplicate explicit labels while parsing. A
+  duplicate-label detector can still validate normalized models from multiple
+  import sources or future adapters, so its unit test constructs duplicate
+  explicit labels at the IR boundary rather than claiming Jason accepts an
+  invalid source file.
+
+### Decision
+
+- Add immutable `BdiIndex` values built by `BdiIndexBuilder`. A
+  `PredicateSignature` is the exact functor/arity pair; it preserves Jason's
+  spelling, including the leading dot on internal actions such as `.send` and
+  `.print`.
+- Index a goal to plans whose trigger is `ACHIEVE + ADD` with the same
+  functor/arity. Context truth is intentionally not part of static support;
+  applicability belongs to a later snapshot/rule phase.
+- Index external and internal action steps as `ActionCallSite` values with
+  one-based plan-step indexes, optional signatures for dynamic terms, and
+  source spans. Index predicate occurrences separately by kind so beliefs,
+  goals, triggers, contexts, actions, tests, and belief updates remain
+  traceable.
+- Use a conservative syntactic reference policy. The first argument of
+  `.send` is an `AGENT` reference and named literal/compound terms inside
+  predicate or action arguments are `OBJECT` references. Dynamic variables are
+  retained with a `dynamic` flag. These are unresolved symbols, not claims
+  about USE classes or objects.
+- Detect duplicate non-blank plan labels within each imported source and
+  retain all source spans. Do not treat Jason-generated `p__N[...]` labels as
+  source labels; the IR normalizer already removes them.
+- Record normalized metamodel version `0.1.0` in `BdiMetamodelVersion` and in
+  every `BdiIndex` snapshot.
+- Add `BdiImportService` for independent full-tree parsing with partial success,
+  `BdiImportWorker` for `SwingWorker` background execution, and
+  `BdiExplorerView` for file/belief/goal/plan/step tree plus detail/source
+  excerpt. Add the multi-select `.asl` chooser as
+  `Plugins > AgentSpeak > Import AgentSpeak...` and keep the existing Hello
+  action as the plugin loading smoke signal.
+
+### Consequences and limits
+
+- Index results are deterministic, immutable, and usable by later mapping and
+  rule services without importing Jason or Swing into the domain index.
+- Failed files remain diagnostics and do not silently disappear; successful
+  files still produce a tree and index.
+- The view is an overlay and does not mutate the current USE model/session/state.
+- Problems table, filtering/grouping, re-import/watch behavior, USE adapter,
+  mapping, and consistency rules remain separate tasks. Object/agent
+  references are intentionally unresolved until the USE adapter exists.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin -am test`: passed with 26 tests, including index
+  lookup/immutability, Smart Queue agent/object references, partial import,
+  SwingWorker completion, chooser configuration, and tree/source-detail UI.
+- `powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1`:
+  passed the assembly, shaded-plugin `BDI_INDEX_SMOKE_OK`, third-party notices,
+  and GUI menu smoke for both AgentSpeak actions. Windows left the temporary
+  smoke directory locked during cleanup, matching the existing environment
+  limitation recorded by earlier smoke slices.
