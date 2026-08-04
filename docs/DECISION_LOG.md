@@ -398,3 +398,43 @@ Jason AST types.
 - `use-bdi-plugin/scripts/smoke.ps1`: packaged smoke passed source locations at
   lines `1`, `2`, and `4-5` through the shaded plugin JAR, alongside the partial
   import, diagnostic, and GUI menu gates.
+
+## ADR-0008 - Parser version metadata in import reports
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Phase 1 parser-version reporting slice
+
+### Context
+
+`AslParseSummary` already records the Jason parser version for each successful
+file, but the importer had no report-level metadata object. The next slice must
+make that version visible without duplicating summaries/diagnostics or claiming
+the full JSON/HTML report contract.
+
+### Decision
+
+- Add immutable Java-only `AslImportReport` around `AslImportResult`.
+- Derive `parserVersions` from successful summaries, remove duplicates while
+  preserving encounter order, and expose the list as an immutable value.
+- Report no parser version for empty or all-failed imports; do not infer a
+  version for a file that did not produce a parse summary.
+- Keep `AslImportResult.toReport()` as the construction boundary. Do not add
+  plugin/USE versions, model hashes, persistence, or JSON/HTML serialization in
+  this importer slice.
+
+### Consequences
+
+- A future report exporter can include parser-version evidence without reading
+  Jason classes or duplicating importer state.
+- The list supports a future mixed-parser report while the current Jason adapter
+  produces only `3.3.0`.
+- Formal report export and release metadata remain separate checklist tasks.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with eleven tests, including repeated,
+  distinct, and empty parser-version report cases.
+- `use-bdi-plugin/scripts/smoke.ps1`: packaged smoke found parser version
+  `3.3.0` through the shaded plugin JAR and passed the existing partial-import,
+  source-location, diagnostic, and GUI menu gates.

@@ -18,9 +18,11 @@ public final class PackagedParserSmoke {
         Path secondValid = Path.of(args[2]).toAbsolutePath().normalize();
         AslImportResult result = new JasonAslImporter().importFiles(
                 List.of(firstValid, invalid, secondValid));
+        AslImportReport report = result.toReport();
         if (result.fileCount() != 2
                 || !firstValid.equals(result.fileSummaries().get(0).source())
                 || !secondValid.equals(result.fileSummaries().get(1).source())
+                || !List.of("3.3.0").equals(report.parserVersions())
                 || result.fileSummaries().stream()
                         .anyMatch(summary -> !"3.3.0".equals(summary.parserVersion()))
                 || result.fileSummaries().get(0).sourceLocations().size() != 3
@@ -45,6 +47,7 @@ public final class PackagedParserSmoke {
 
         System.out.println("PARTIAL_IMPORT_SMOKE_OK: preserved 2 successful summaries and 1 diagnostic");
         System.out.println("SOURCE_LOCATION_SMOKE_OK: minimal.asl locations at lines 1, 2, and 4-5");
+        System.out.println("REPORT_VERSION_SMOKE_OK: parser version 3.3.0");
         System.out.println("DIAGNOSTIC_SMOKE_OK: ASL-001 at line 3, column 8");
     }
 }

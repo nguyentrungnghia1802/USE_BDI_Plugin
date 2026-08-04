@@ -25,6 +25,9 @@ immutable diagnostics. Summaries also expose top-level initial-belief,
 initial-goal, and plan locations as normalized source paths with Jason's verified
 begin/end line range. Syntax failures use `ASL-001`; file/import failures
 without a parser location use `ASL-IMPORT-001` with position `0/0`.
+`AslImportResult.toReport()` exposes the distinct parser versions used by
+successful files without duplicating summaries or diagnostics; JSON/HTML export
+is intentionally a later reporting slice.
 
 The Smart Queue prototype is kept as a test fixture at
 `src/test/resources/fixtures/smartqueue/Smart_manager_agent.asl`; the smoke

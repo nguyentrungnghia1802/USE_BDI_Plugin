@@ -35,4 +35,8 @@ public record AslImportResult(
         return diagnostics.stream()
                 .anyMatch(diagnostic -> diagnostic.severity() == AslDiagnosticSeverity.ERROR);
     }
+
+    public AslImportReport toReport() {
+        return AslImportReport.from(this);
+    }
 }

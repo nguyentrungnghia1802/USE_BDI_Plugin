@@ -31,7 +31,7 @@
 - [x] Multi-file import.
 - [x] Partial success policy.
 - [x] Source location extraction.
-- [ ] Parser version in report.
+- [x] Parser version in report.
 
 ## 3. Intermediate representation
 
@@ -296,5 +296,19 @@
   line `2`, and `+!start` spanning lines `4-5`; the location list is immutable.
 - `mvn -pl use-bdi-plugin test` passed with nine tests, and the packaged smoke
   verifies the same line locations through the shaded plugin JAR.
-- The full normalized IR `SourceSpan` model and parser-version report remain
-  separate open tasks.
+- The full normalized IR `SourceSpan` model remains a separate open task.
+
+## Phase 1 parser-version report slice evidence - 2026-08-04
+
+- `AslImportReport` wraps the immutable `AslImportResult` instead of copying its
+  summaries or diagnostics, and exposes distinct parser versions in encounter
+  order from successful file summaries.
+- An empty or all-failed import reports no parser version because no parser
+  successfully produced a summary; failed files are not assigned a guessed
+  version.
+- `AslImportReportTest` verifies repeated and distinct versions, encounter
+  ordering, empty input, result identity, and immutable metadata.
+- `mvn -pl use-bdi-plugin test` passed with eleven tests. Packaged smoke reports
+  `3.3.0` through the shaded Jason plugin JAR.
+- This slice does not claim JSON/HTML export, plugin/USE version metadata, model
+  hashes, or report persistence; those remain in the reporting checklist.
