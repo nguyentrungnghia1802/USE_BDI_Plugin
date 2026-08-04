@@ -21,7 +21,9 @@ and column when Jason provides an error token. The adapter disables Jason's
 optional web mind inspector before initializing the parser so an offline import
 does not open a background HTTP server. Multi-file imports preserve input order,
 return immutable per-file summaries, continue after per-file failures, and return
-immutable diagnostics. Syntax failures use `ASL-001`; file/import failures
+immutable diagnostics. Summaries also expose top-level initial-belief,
+initial-goal, and plan locations as normalized source paths with Jason's verified
+begin/end line range. Syntax failures use `ASL-001`; file/import failures
 without a parser location use `ASL-IMPORT-001` with position `0/0`.
 
 The Smart Queue prototype is kept as a test fixture at

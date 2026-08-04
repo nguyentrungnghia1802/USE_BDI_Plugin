@@ -4,10 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
 import jason.asSemantics.Agent;
+import jason.asSyntax.Literal;
+import jason.asSyntax.Plan;
+import jason.asSyntax.SourceInfo;
+import jason.asSyntax.Term;
 import jason.asSyntax.parser.ParseException;
 import jason.asSyntax.parser.Token;
 
@@ -33,12 +40,49 @@ public final class JasonAslParserAdapter {
             throw new AslParseException("Could not parse AgentSpeak source: " + normalizedSource, error);
         }
 
+        List<AslSourceLocation> sourceLocations = extractSourceLocations(agent, normalizedSource);
         return new AslParseSummary(
                 normalizedSource,
                 JASON_VERSION,
                 agent.getInitialBels().size(),
                 agent.getInitialGoals().size(),
-                agent.getPL().size());
+                agent.getPL().size(),
+                sourceLocations);
+    }
+
+    private static List<AslSourceLocation> extractSourceLocations(Agent agent, Path source) {
+        List<AslSourceLocation> locations = new ArrayList<>(
+                agent.getInitialBels().size() + agent.getInitialGoals().size() + agent.getPL().size());
+        for (Literal belief : agent.getInitialBels()) {
+            locations.add(toSourceLocation(source, AslSourceElement.INITIAL_BELIEF, belief, belief.toString()));
+        }
+        for (Literal goal : agent.getInitialGoals()) {
+            locations.add(toSourceLocation(source, AslSourceElement.INITIAL_GOAL, goal, goal.toString()));
+        }
+        for (Plan plan : agent.getPL().getPlans()) {
+            String subject = plan.getTrigger() == null ? plan.toString() : plan.getTrigger().toString();
+            locations.add(toSourceLocation(source, AslSourceElement.PLAN, plan, subject));
+        }
+        locations.sort(Comparator
+                .comparingInt(AslSourceLocation::beginLine)
+                .thenComparingInt(AslSourceLocation::endLine)
+                .thenComparing(AslSourceLocation::element));
+        return locations;
+    }
+
+    private static AslSourceLocation toSourceLocation(
+            Path source,
+            AslSourceElement element,
+            Term term,
+            String subject) {
+        SourceInfo sourceInfo = term.getSrcInfo();
+        int beginLine = sourceInfo == null
+                ? AslSourceLocation.UNKNOWN_POSITION
+                : sourceInfo.getBeginSrcLine();
+        int endLine = sourceInfo == null
+                ? AslSourceLocation.UNKNOWN_POSITION
+                : sourceInfo.getEndSrcLine();
+        return new AslSourceLocation(source, element, subject, beginLine, endLine);
     }
 
     private static AslDiagnostic toSyntaxDiagnostic(Path source, ParseException error) {

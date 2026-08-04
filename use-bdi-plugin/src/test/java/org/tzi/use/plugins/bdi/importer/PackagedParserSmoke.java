@@ -23,6 +23,10 @@ public final class PackagedParserSmoke {
                 || !secondValid.equals(result.fileSummaries().get(1).source())
                 || result.fileSummaries().stream()
                         .anyMatch(summary -> !"3.3.0".equals(summary.parserVersion()))
+                || result.fileSummaries().get(0).sourceLocations().size() != 3
+                || result.fileSummaries().get(0).sourceLocations().get(0).beginLine() != 1
+                || result.fileSummaries().get(0).sourceLocations().get(1).beginLine() != 2
+                || result.fileSummaries().get(0).sourceLocations().get(2).beginLine() != 4
                 || result.totalBeliefCount() != 3
                 || result.totalGoalCount() != 2
                 || result.totalPlanCount() != 2
@@ -40,6 +44,7 @@ public final class PackagedParserSmoke {
         }
 
         System.out.println("PARTIAL_IMPORT_SMOKE_OK: preserved 2 successful summaries and 1 diagnostic");
+        System.out.println("SOURCE_LOCATION_SMOKE_OK: minimal.asl locations at lines 1, 2, and 4-5");
         System.out.println("DIAGNOSTIC_SMOKE_OK: ASL-001 at line 3, column 8");
     }
 }

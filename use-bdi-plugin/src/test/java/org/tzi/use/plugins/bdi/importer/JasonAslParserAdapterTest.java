@@ -18,12 +18,35 @@ class JasonAslParserAdapterTest {
         Path source = fixture("fixtures/asl/valid/minimal.asl");
 
         AslParseSummary result = parser.parse(source);
+        Path normalizedSource = source.toAbsolutePath().normalize();
 
-        assertEquals(source.toAbsolutePath().normalize(), result.source());
+        assertEquals(normalizedSource, result.source());
         assertEquals("3.3.0", result.parserVersion());
         assertEquals(1, result.beliefCount());
         assertEquals(1, result.goalCount());
         assertEquals(1, result.planCount());
+        assertEquals(3, result.sourceLocations().size());
+
+        AslSourceLocation belief = result.sourceLocations().get(0);
+        assertEquals(normalizedSource, belief.source());
+        assertEquals(AslSourceElement.INITIAL_BELIEF, belief.element());
+        assertEquals("ready", belief.subject());
+        assertEquals(1, belief.beginLine());
+        assertEquals(1, belief.endLine());
+
+        AslSourceLocation goal = result.sourceLocations().get(1);
+        assertEquals(AslSourceElement.INITIAL_GOAL, goal.element());
+        assertEquals("start", goal.subject());
+        assertEquals(2, goal.beginLine());
+        assertEquals(2, goal.endLine());
+
+        AslSourceLocation plan = result.sourceLocations().get(2);
+        assertEquals(AslSourceElement.PLAN, plan.element());
+        assertEquals("+!start", plan.subject());
+        assertEquals(4, plan.beginLine());
+        assertEquals(5, plan.endLine());
+        assertTrue(plan.hasSourcePosition());
+        assertThrows(UnsupportedOperationException.class, () -> result.sourceLocations().clear());
     }
 
     @Test

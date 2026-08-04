@@ -30,7 +30,7 @@
 - [x] Bắt syntax error.
 - [x] Multi-file import.
 - [x] Partial success policy.
-- [ ] Source location extraction.
+- [x] Source location extraction.
 - [ ] Parser version in report.
 
 ## 3. Intermediate representation
@@ -282,3 +282,19 @@
 - `use-bdi-plugin/scripts/smoke.ps1` validates the same partial result through
   the shaded plugin JAR in the assembled distribution and passes the USE GUI
   menu smoke.
+
+## Phase 1 source-location extraction slice evidence - 2026-08-04
+
+- Jason 3.3.0 `Term.getSrcInfo()` and `SourceInfo` provide the source file plus
+  begin/end lines for parsed terms; declaration columns are not available from
+  this metadata and are not synthesized.
+- `JasonAslParserAdapter` extracts immutable Java-only locations for initial
+  beliefs, initial goals, and plans, normalizes the source path, and orders the
+  locations by source line. Missing metadata is retained as an explicit `0/0`
+  location instead of being silently dropped.
+- `minimal.asl` is protected by assertions for `ready` at line `1`, `start` at
+  line `2`, and `+!start` spanning lines `4-5`; the location list is immutable.
+- `mvn -pl use-bdi-plugin test` passed with nine tests, and the packaged smoke
+  verifies the same line locations through the shaded plugin JAR.
+- The full normalized IR `SourceSpan` model and parser-version report remain
+  separate open tasks.

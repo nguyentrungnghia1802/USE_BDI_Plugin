@@ -344,3 +344,57 @@ selection.
   diagnostics, missing-file conversion, and the existing parser contracts.
 - `use-bdi-plugin/scripts/smoke.ps1` verifies the partial result and `ASL-001`
   location through the shaded plugin JAR in the assembled distribution.
+
+## ADR-0007 - Source locations at the Jason adapter boundary
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Phase 1 source-location extraction
+
+### Context
+
+The Phase 1 importer must preserve source evidence for the future BDI tree and
+Problems/report views. The full normalized IR and its `SourceSpan` model are not
+implemented yet, so this slice needs a small Java-only boundary without leaking
+Jason AST types.
+
+### Verified findings
+
+- Jason 3.3.0 exposes `Term.getSrcInfo()` and `SourceInfo.getSrcFile()`,
+  `getBeginSrcLine()`, and `getEndSrcLine()`.
+- The Jason parser source attaches `SourceInfo` to parsed literals and plans;
+  plans use a begin/end line range while literals use their declaration line.
+- `SourceInfo` has no column fields. Declaration columns therefore cannot be
+  reported from this API without inventing data; parser diagnostics remain the
+  separate source of one-based columns for syntax errors.
+
+### Decision
+
+- Add Java-only `AslSourceElement` and `AslSourceLocation` values for initial
+  beliefs, initial goals, and plans. Each value carries normalized source path,
+  a stable text subject, and begin/end line values.
+- Add an immutable `sourceLocations` list to `AslParseSummary`; order it by
+  begin line, end line, and element kind so callers get deterministic source
+  order across the separate Jason collections.
+- Represent unavailable declaration positions as `0/0` and retain the location
+  entry rather than silently dropping source evidence.
+- Keep Jason classes confined to `JasonAslParserAdapter`. Do not mark the future
+  normalized IR `SourceSpan`, column extraction, or golden IR serialization as
+  complete in this slice.
+
+### Consequences
+
+- The future UI and IR transformer can link the first importer-level summaries
+  to source lines without depending on Jason types.
+- Line ranges are available for top-level declarations; token-level columns and
+  nested-step spans require a later adapter/IR slice.
+- Existing five-argument `AslParseSummary` construction remains source
+  compatible through an empty-location overload.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with nine tests, including the minimal
+  fixture line-range and immutable-list assertions.
+- `use-bdi-plugin/scripts/smoke.ps1`: packaged smoke passed source locations at
+  lines `1`, `2`, and `4-5` through the shaded plugin JAR, alongside the partial
+  import, diagnostic, and GUI menu gates.
