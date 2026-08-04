@@ -82,7 +82,7 @@ interface ConsistencyRule {
 ## 5. Proposed services
 
 - `JasonAslImporter`
-- `JasonAstNormalizer`
+- `JasonAstToIrNormalizer`
 - `BdiProjectRepository`
 - `BdiIndexBuilder`
 - `UseUmlModelFacade`

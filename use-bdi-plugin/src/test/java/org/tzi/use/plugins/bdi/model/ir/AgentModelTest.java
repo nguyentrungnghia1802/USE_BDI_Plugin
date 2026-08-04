@@ -2,6 +2,7 @@ package org.tzi.use.plugins.bdi.model.ir;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -42,6 +43,44 @@ class AgentModelTest {
         assertEquals(List.of(first.source(), second.source()), models.stream().map(AgentModel::source).toList());
         assertEquals(2, models.size());
         assertThrows(UnsupportedOperationException.class, () -> models.clear());
+    }
+
+    @Test
+    void materializesJasonAstIntoBeliefGoalPlanTree() throws Exception {
+        Path source = fixture("fixtures/asl/valid/minimal.asl");
+
+        AgentModel model = parser.parseModel(source);
+
+        assertTrue(model.isMaterialized());
+        assertEquals(1, model.beliefs().size());
+        assertEquals("ready", model.beliefs().get(0).literal().render());
+        assertEquals(1, model.goals().size());
+        assertEquals("start", model.goals().get(0).literal().render());
+        assertEquals(1, model.plans().size());
+        PlanModel plan = model.plans().get(0);
+        assertEquals("", plan.label());
+        assertEquals(TriggerModel.TriggerOperator.ADD, plan.trigger().operator());
+        assertEquals(TriggerModel.TriggerType.ACHIEVE, plan.trigger().type());
+        assertEquals("start", plan.trigger().term().render());
+        assertTrue(plan.context().isPresent());
+        assertEquals("ready", ((ContextLiteral) plan.context().orElseThrow()).literal().render());
+        assertEquals(1, plan.steps().size());
+        assertTrue(plan.steps().get(0) instanceof InternalActionStepModel);
+        assertEquals(4, plan.sourceSpan().beginLine());
+        assertEquals(5, plan.sourceSpan().endLine());
+        assertTrue(model.unsupportedFeatures().isEmpty());
+    }
+
+    @Test
+    void materializesSmartQueueFixtureWithoutUnsupportedNodes() throws Exception {
+        AgentModel model = parser.parseModel(fixture("fixtures/smartqueue/Smart_manager_agent.asl"));
+
+        assertTrue(model.isMaterialized());
+        assertEquals(9, model.beliefCount());
+        assertEquals(1, model.goalCount());
+        assertEquals(5, model.planCount());
+        assertEquals(List.of(3, 3, 2, 9, 2), model.plans().stream().map(plan -> plan.steps().size()).toList());
+        assertTrue(model.unsupportedFeatures().isEmpty());
     }
 
     private static Path fixture(String name) throws URISyntaxException {

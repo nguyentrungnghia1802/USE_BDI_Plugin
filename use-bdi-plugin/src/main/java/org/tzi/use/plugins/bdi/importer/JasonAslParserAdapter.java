@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.tzi.use.plugins.bdi.model.ir.AgentModel;
+
 import jason.asSemantics.Agent;
 import jason.asSyntax.Literal;
 import jason.asSyntax.Plan;
@@ -23,6 +25,25 @@ public final class JasonAslParserAdapter {
     private static final String JASON_VERSION = loadJasonVersion();
 
     public AslParseSummary parse(Path source) throws AslParseException {
+        ParsedAgent parsed = parseAgent(source);
+        Agent agent = parsed.agent();
+        Path normalizedSource = parsed.source();
+        List<AslSourceLocation> sourceLocations = extractSourceLocations(agent, normalizedSource);
+        return new AslParseSummary(
+                normalizedSource,
+                JASON_VERSION,
+                agent.getInitialBels().size(),
+                agent.getInitialGoals().size(),
+                agent.getPL().size(),
+                sourceLocations);
+    }
+
+    public AgentModel parseModel(Path source) throws AslParseException {
+        ParsedAgent parsed = parseAgent(source);
+        return new JasonAstToIrNormalizer(parsed.source(), JASON_VERSION).normalize(parsed.agent());
+    }
+
+    private ParsedAgent parseAgent(Path source) throws AslParseException {
         Objects.requireNonNull(source, "source");
         Path normalizedSource = source.toAbsolutePath().normalize();
         if (!Files.isRegularFile(normalizedSource)) {
@@ -39,15 +60,7 @@ public final class JasonAslParserAdapter {
         } catch (Exception error) {
             throw new AslParseException("Could not parse AgentSpeak source: " + normalizedSource, error);
         }
-
-        List<AslSourceLocation> sourceLocations = extractSourceLocations(agent, normalizedSource);
-        return new AslParseSummary(
-                normalizedSource,
-                JASON_VERSION,
-                agent.getInitialBels().size(),
-                agent.getInitialGoals().size(),
-                agent.getPL().size(),
-                sourceLocations);
+        return new ParsedAgent(normalizedSource, agent);
     }
 
     private static List<AslSourceLocation> extractSourceLocations(Agent agent, Path source) {
@@ -115,5 +128,8 @@ public final class JasonAslParserAdapter {
             throw new IllegalStateException("Jason parser version is not configured");
         }
         return version;
+    }
+
+    private record ParsedAgent(Path source, Agent agent) {
     }
 }

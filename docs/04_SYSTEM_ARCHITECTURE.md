@@ -53,7 +53,7 @@ Domain <- không phụ thuộc UI/Jason/USE concrete classes
 2. Plugin tạo `UseProjectContext` từ model và system state hiện tại.
 3. Người dùng import `.asl`.
 4. `JasonAslParserAdapter` parse từng file.
-5. `AstToIrTransformer` tạo `AgentModel` và `SourceSpan`.
+5. `JasonAstToIrNormalizer` tạo `AgentModel`, child IR nodes và `SourceSpan`.
 6. `BdiIndexBuilder` tạo index goal/plan/action/reference.
 7. `MappingSuggestionService` tạo candidate mapping.
 8. Người dùng xác nhận hoặc chỉnh mapping.

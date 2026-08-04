@@ -483,3 +483,70 @@ models tracked separately in the completion checklist.
 - `mvn -pl use-bdi-plugin clean package`: passed and shaded Jason `3.3.0`.
 - `use-bdi-plugin/scripts/smoke.ps1`: passed `AGENT_MODEL_SMOKE_OK` through the
   assembled distribution and also passed the existing USE GUI menu smoke.
+
+## ADR-0010 - Jason AST to normalized IR tree
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Phase 1 IR completion slice
+
+### Context
+
+The metadata-only `AgentModel` root was not sufficient for the planned BDI
+tree, mapping, or consistency layers. The next coherent boundary is to map the
+verified Jason 3.3.0 AST into immutable domain nodes while keeping Jason out of
+the domain package and preserving evidence for constructs not normalized yet.
+
+### Verified findings
+
+- Jason 3.3.0 exposes the exact parser-side accessors used here:
+  `Agent.getInitialBels()`, `Agent.getInitialGoals()`, `Agent.getPL()`,
+  `Plan.getTrigger()`, `Plan.getContext()`, `Plan.getBody()`,
+  `PlanBody.getBodyType()`, `getBodyTerm()`, `getBodyNext()`,
+  `Trigger.getOperator()`, `getType()`, `getLiteral()`, and
+  `Term.getSrcInfo()`.
+- `PlanBody.BodyType` includes action, internalAction, achieve, achieveNF,
+  test, constraint, add/delete belief variants, and delAddBel; these are mapped
+  explicitly. Unknown/null branches create `UnsupportedFeature` evidence.
+- Jason generates process-dependent labels such as `p__13[source(self),...]`
+  for unlabeled plans. Those labels are not source identity and are omitted.
+
+### Decision
+
+- Add immutable Java-only IR records for beliefs, goals, plans, triggers,
+  context expressions, plan steps, terms, source spans, and unsupported
+  features. Use sealed interfaces for `TermModel`, `ContextExpr`, and
+  `PlanStepModel` so new variants are explicit at compile time.
+- Keep Jason-dependent traversal in package-private
+  `JasonAstToIrNormalizer` under the importer boundary. Expose only
+  `JasonAslParserAdapter.parseModel(Path)` to callers.
+- Materialize source spans from Jason line ranges with `0/0` columns when
+  unavailable. Do not synthesize columns or process-dependent plan labels.
+- Represent unnormalized constructs as `ASL-002` `UnsupportedFeature` values in
+  `AgentModel`; do not silently discard terms or body nodes. The future
+  Problems/rule integration remains a separate analysis task.
+- Serialize with `AgentModelJsonSerializer`, using an optional source root for
+  portable relative paths. Golden tests compare canonical JSON, not absolute
+  checkout paths.
+
+### Consequences
+
+- The importer now produces a usable BDI tree for the minimal and migrated Smart
+  Queue fixtures without a Jason type crossing into `model/ir`.
+- The tree supports later indexing and mapping work, while unsupported syntax,
+  full diagnostics orchestration, and analysis rules remain explicit follow-up
+  tasks.
+- The current root keeps summary counts alongside materialized lists so partial
+  or summary-only callers remain source-compatible; `isMaterialized()` exposes
+  whether all child lists are present.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with eighteen tests, including full
+  minimal-tree, Smart Queue-tree, hierarchy, source-span, and golden JSON tests.
+- `mvn -pl use-bdi-plugin clean package`: passed and shaded Jason `3.3.0`.
+- `use-bdi-plugin/scripts/smoke.ps1`: first attempt hit a transient Windows
+  output-directory error while compiling unchanged `use-core`; the immediate
+  rerun passed the complete assembly and printed `IR_TREE_SMOKE_OK`, importer
+  diagnostics, third-party notices, and GUI menu smoke. Cleanup warned that the
+  temporary directory was still locked by Windows.

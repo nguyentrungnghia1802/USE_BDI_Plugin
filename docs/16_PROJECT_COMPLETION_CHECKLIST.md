@@ -36,16 +36,16 @@
 ## 3. Intermediate representation
 
 - [x] `AgentModel`.
-- [ ] `BeliefModel`.
-- [ ] `GoalModel`.
-- [ ] `PlanModel`.
-- [ ] `TriggerModel`.
-- [ ] `ContextExpr` tree.
-- [ ] `PlanStepModel` hierarchy.
-- [ ] `TermModel` hierarchy.
-- [ ] `SourceSpan`.
-- [ ] `UnsupportedFeature`.
-- [ ] Golden serialization tests.
+- [x] `BeliefModel`.
+- [x] `GoalModel`.
+- [x] `PlanModel`.
+- [x] `TriggerModel`.
+- [x] `ContextExpr` tree.
+- [x] `PlanStepModel` hierarchy.
+- [x] `TermModel` hierarchy.
+- [x] `SourceSpan`.
+- [x] `UnsupportedFeature`.
+- [x] Golden serialization tests.
 
 ## 4. BDI index and metamodel
 
@@ -326,6 +326,33 @@
 - `use-bdi-plugin/scripts/smoke.ps1` passed `AGENT_MODEL_SMOKE_OK` from the
   shaded plugin JAR in the assembled USE distribution, alongside the existing
   importer, diagnostic, and GUI menu gates.
-- This is a metadata-only root slice. `BeliefModel`, `GoalModel`, `PlanModel`,
-  `TriggerModel`, `ContextExpr`, `PlanStepModel`, `TermModel`, `SourceSpan`,
-  unsupported-feature diagnostics, and golden serialization remain open.
+- This entry records the earlier metadata-only root boundary; the following IR
+  tree slice supersedes its open-item status with implementation evidence.
+
+## Phase 1 normalized IR tree slice evidence - 2026-08-04
+
+- The `model/ir` package now contains immutable `BeliefModel`, `GoalModel`,
+  `PlanModel`, `TriggerModel`, `ContextExpr`, `PlanStepModel`, and `TermModel`
+  hierarchies. Lists and optionals are defensively copied.
+- `SourceSpan` preserves normalized source path and begin/end lines. Jason does
+  not expose declaration columns through `SourceInfo`, so columns remain an
+  explicit `0` rather than invented data.
+- `JasonAslParserAdapter.parseModel` uses package-private
+  `JasonAstToIrNormalizer` to materialize the tree. Domain IR classes do not
+  import Jason classes. Generated Jason labels such as `p__N[...]` are omitted
+  because their counter is process-dependent and they are not source labels.
+- `UnsupportedFeature` records `ASL-002`, kind, subject, and source span in the
+  root model instead of dropping an unknown term or plan step. The ASL-002
+  rule/Problems integration and unsupported fixture remain separate open
+  testing/analysis tasks.
+- `AgentModelJsonSerializer` emits deterministic JSON and relativizes source
+  paths when a source root is supplied. `minimal-agent-model.json` is a golden
+  fixture covering belief, goal, trigger, context, internal action, strings,
+  and source spans.
+- `mvn -pl use-bdi-plugin test` passed with eighteen tests; the Smart Queue
+  fixture materialized 9 beliefs, 1 goal, 5 plans, and no unsupported nodes.
+- `mvn -pl use-bdi-plugin clean package` passed with Jason `3.3.0` shaded.
+- `use-bdi-plugin/scripts/smoke.ps1` passed the full assembly, including
+  `IR_TREE_SMOKE_OK`, partial import, diagnostics, third-party notices, and
+  `Plugins > AgentSpeak > Hello BDI Plugin`. Windows left the temporary smoke
+  directory locked during cleanup, but all gates completed successfully.
