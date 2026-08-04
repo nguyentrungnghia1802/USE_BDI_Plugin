@@ -14,6 +14,15 @@ try {
         throw "Maven package failed with exit code $LASTEXITCODE."
     }
 
+    $rootPrototype = Join-Path $repoRoot 'Smart_manager_agent.asl'
+    $migratedPrototype = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\smartqueue\Smart_manager_agent.asl'
+    if (Test-Path -LiteralPath $rootPrototype) {
+        throw "Prototype remains at repository root: $rootPrototype"
+    }
+    if (-not (Test-Path -LiteralPath $migratedPrototype)) {
+        throw "Migrated prototype fixture is missing: $migratedPrototype"
+    }
+
     New-Item -ItemType Directory -Path $smokeRoot | Out-Null
     Expand-Archive -LiteralPath $distributionZip -DestinationPath $smokeRoot
 

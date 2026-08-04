@@ -134,16 +134,13 @@ Không ghi absolute path nếu có thể; dùng path tương đối so với pro
 
 ## 10. Quản lý file prototype hiện tại
 
-Các file `SmartQueue.use`, `.cmd`, `.asl`, `.clt` đang ở root nên chuyển vào:
+Inventory ngày 04/08/2026 chỉ tìm thấy prototype
+`Smart_manager_agent.asl` ở root. File này đã được chuyển vào:
 
 ```text
-use-bdi-plugin/src/test/resources/fixtures/smartqueue/
+use-bdi-plugin/src/test/resources/fixtures/smartqueue/Smart_manager_agent.asl
 ```
 
-hoặc:
-
-```text
-case-studies/smartqueue/
-```
-
-Root repository chỉ nên giữ module và tài liệu cấp project.
+Các tên `SmartQueue.use`, `.cmd` và `.clt` trong ghi chú cũ không có trong
+checkout hiện tại; không tạo placeholder và không coi chúng là đã di chuyển.
+Root repository chỉ nên giữ module, mã nguồn chính và tài liệu cấp project.

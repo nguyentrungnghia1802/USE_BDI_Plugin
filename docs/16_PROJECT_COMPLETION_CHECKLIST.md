@@ -9,7 +9,7 @@
 - [x] Chạy USE GUI từ clean build.
 - [x] Ghi USE commit hash và version.
 - [x] Tạo branch `thesis/bdi-plugin`.
-- [ ] Di chuyển prototype files khỏi root vào case study/fixtures.
+- [x] Di chuyển prototype files khỏi root vào case study/fixtures.
 - [x] Tạo module `use-bdi-plugin`.
 
 ## 1. Plugin spike
@@ -248,3 +248,20 @@
 - `use-bdi-plugin/scripts/smoke.ps1` rebuilt the distribution, imported both
   valid fixtures through the shaded JAR with the expected aggregate counts,
   preserved the `ASL-001` regression check, and passed the USE GUI menu smoke.
+
+## Phase 0 repository fixture boundary evidence - 2026-08-04
+
+- Repository inventory found one actual root prototype, `Smart_manager_agent.asl`;
+  it is now tracked at
+  `use-bdi-plugin/src/test/resources/fixtures/smartqueue/Smart_manager_agent.asl`.
+- The migrated prototype parses through Jason 3.3.0 with nine beliefs, one
+  initial goal, and five plans. `JasonAslParserAdapterTest` protects this
+  fixture path and parse contract.
+- `use-bdi-plugin/scripts/smoke.ps1` fails if the prototype returns to root or
+  the migrated fixture disappears. The SmartQueue `.use/.cmd/.clt` names
+  referenced by older technical notes are absent from this checkout and were
+  not invented or marked as migrated.
+- `mvn -pl use-bdi-plugin test` passed with eight tests.
+- `use-bdi-plugin/scripts/smoke.ps1` confirmed root absence and fixture presence,
+  then passed the package, multi-file, diagnostic, third-party-notice, and USE
+  GUI menu gates.

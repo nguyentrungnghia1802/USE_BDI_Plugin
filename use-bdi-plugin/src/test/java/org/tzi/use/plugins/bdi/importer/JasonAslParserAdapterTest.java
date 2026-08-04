@@ -27,6 +27,19 @@ class JasonAslParserAdapterTest {
     }
 
     @Test
+    void parsesMigratedSmartQueuePrototypeFixture() throws Exception {
+        Path source = fixture("fixtures/smartqueue/Smart_manager_agent.asl");
+
+        AslParseSummary result = parser.parse(source);
+
+        assertEquals(source.toAbsolutePath().normalize(), result.source());
+        assertEquals("3.3.0", result.parserVersion());
+        assertEquals(9, result.beliefCount());
+        assertEquals(1, result.goalCount());
+        assertEquals(5, result.planCount());
+    }
+
+    @Test
     void rejectsMissingSource() {
         Path missing = Path.of("target", "missing-agent.asl");
 

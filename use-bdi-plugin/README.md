@@ -22,6 +22,10 @@ optional web mind inspector before initializing the parser so an offline import
 does not open a background HTTP server. Multi-file imports preserve input order,
 return immutable per-file summaries, and currently fail fast on the first error.
 
+The Smart Queue prototype is kept as a test fixture at
+`src/test/resources/fixtures/smartqueue/Smart_manager_agent.asl`; the smoke
+script checks that it is not reintroduced at repository root.
+
 ## Build and automated smoke
 
 From the repository root:

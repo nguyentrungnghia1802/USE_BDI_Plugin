@@ -262,3 +262,42 @@ file before the project defines a complete partial-success policy.
   counts, and propagation of the invalid file's structured diagnostic.
 - `use-bdi-plugin/scripts/smoke.ps1` passed multi-file import through the shaded
   distribution JAR, the existing diagnostic check, and the USE GUI menu smoke.
+
+## ADR-0005 - Prototype files belong to fixture or case-study boundaries
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Repository baseline cleanup
+
+### Context
+
+The checklist requires prototype artifacts to stay out of the repository root,
+but the technical notes named several SmartQueue files that were not present in
+the checked-out worktree. The only actual root prototype was
+`Smart_manager_agent.asl`.
+
+### Verified findings
+
+- Root inventory before the change contained `Smart_manager_agent.asl` and no
+  `SmartQueue.use`, `.cmd`, `.clt`, or additional prototype artifact matching
+  those notes.
+- The AgentSpeak file is valid Jason 3.3.0 input and parses to nine beliefs, one
+  initial goal, and five plans.
+
+### Decision
+
+- Move the actual prototype to
+  `use-bdi-plugin/src/test/resources/fixtures/smartqueue/` while preserving its
+  filename and Git history.
+- Protect both the fixture path and root absence with a parser unit test and
+  the repository smoke script.
+- Do not create placeholder files for artifacts absent from this checkout.
+  Restore or migrate those artifacts only when they are supplied.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with eight tests, including the migrated
+  prototype parse.
+- `use-bdi-plugin/scripts/smoke.ps1` checks the root/fixture boundary before
+  running the package, parser, diagnostic, third-party-notice, and GUI gates;
+  it passed on 2026-08-04.
