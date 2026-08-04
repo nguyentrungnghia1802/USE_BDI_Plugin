@@ -11,6 +11,7 @@ public record AslDiagnostic(
         int column,
         String message) {
     public static final String SYNTAX_ERROR_CODE = "ASL-001";
+    public static final String IMPORT_ERROR_CODE = "ASL-IMPORT-001";
     public static final int UNKNOWN_POSITION = 0;
 
     public AslDiagnostic {

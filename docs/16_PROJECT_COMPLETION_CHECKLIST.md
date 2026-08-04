@@ -29,7 +29,7 @@
 - [x] Parse `.asl` hợp lệ.
 - [x] Bắt syntax error.
 - [x] Multi-file import.
-- [ ] Partial success policy.
+- [x] Partial success policy.
 - [ ] Source location extraction.
 - [ ] Parser version in report.
 
@@ -241,9 +241,9 @@
 - `review-agent.asl` provides a second valid fixture. Together with
   `minimal.asl`, the importer reports two files, three beliefs, two goals, and
   two plans.
-- The current multi-file API fails fast and propagates the first structured
-  diagnostic without exposing partial summaries. `Partial success policy`
-  remains deliberately unchecked for the next slice.
+- The initial multi-file slice used fail-fast behavior as an interim boundary;
+  ADR-0006 supersedes that behavior with a partial result containing successful
+  summaries and per-file diagnostics.
 - `mvn -pl use-bdi-plugin test` passed with seven tests.
 - `use-bdi-plugin/scripts/smoke.ps1` rebuilt the distribution, imported both
   valid fixtures through the shaded JAR with the expected aggregate counts,
@@ -265,3 +265,20 @@
 - `use-bdi-plugin/scripts/smoke.ps1` confirmed root absence and fixture presence,
   then passed the package, multi-file, diagnostic, third-party-notice, and USE
   GUI menu gates.
+
+## Phase 1 partial-success importer slice evidence - 2026-08-04
+
+- `AslImportResult` now carries immutable ordered successful summaries and
+  immutable per-file diagnostics; aggregate counts still derive only from
+  successful summaries.
+- `JasonAslImporter` attempts every source in the input order. A valid-invalid-
+  valid sequence keeps both valid summaries and reports the invalid file's
+  `ASL-001` diagnostic without dropping later input.
+- Missing or otherwise non-parser import failures are reported as
+  `ASL-IMPORT-001` with normalized source and unknown position `0/0`.
+- `mvn -pl use-bdi-plugin test` covers empty input, all-valid multi-file input,
+  syntax partial success, missing-file partial success, parser diagnostics, and
+  the migrated Smart Queue fixture.
+- `use-bdi-plugin/scripts/smoke.ps1` validates the same partial result through
+  the shaded plugin JAR in the assembled distribution and passes the USE GUI
+  menu smoke.

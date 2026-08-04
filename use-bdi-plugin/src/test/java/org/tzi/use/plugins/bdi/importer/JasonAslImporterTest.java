@@ -1,7 +1,9 @@
 package org.tzi.use.plugins.bdi.importer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -21,6 +23,8 @@ class JasonAslImporterTest {
         assertEquals(0, result.totalBeliefCount());
         assertEquals(0, result.totalGoalCount());
         assertEquals(0, result.totalPlanCount());
+        assertTrue(result.diagnostics().isEmpty());
+        assertFalse(result.hasErrors());
     }
 
     @Test
@@ -36,21 +40,51 @@ class JasonAslImporterTest {
         assertEquals(3, result.totalBeliefCount());
         assertEquals(2, result.totalGoalCount());
         assertEquals(2, result.totalPlanCount());
+        assertTrue(result.diagnostics().isEmpty());
+        assertFalse(result.hasErrors());
         assertThrows(UnsupportedOperationException.class, () -> result.fileSummaries().clear());
     }
 
     @Test
-    void propagatesFirstSyntaxDiagnosticWithoutPartialResult() throws Exception {
-        Path valid = fixture("fixtures/asl/valid/minimal.asl");
+    void keepsSuccessfulFilesAndReportsSyntaxDiagnostic() throws Exception {
+        Path firstValid = fixture("fixtures/asl/valid/minimal.asl");
         Path invalid = fixture("fixtures/asl/invalid/missing-plan-body.asl");
+        Path secondValid = fixture("fixtures/asl/valid/review-agent.asl");
 
-        AslParseException error = assertThrows(
-                AslParseException.class,
-                () -> importer.importFiles(List.of(valid, invalid)));
+        AslImportResult result = importer.importFiles(List.of(firstValid, invalid, secondValid));
 
-        AslDiagnostic diagnostic = error.diagnostic().orElseThrow();
+        assertEquals(2, result.fileCount());
+        assertEquals(firstValid.toAbsolutePath().normalize(), result.fileSummaries().get(0).source());
+        assertEquals(secondValid.toAbsolutePath().normalize(), result.fileSummaries().get(1).source());
+        assertEquals(3, result.totalBeliefCount());
+        assertEquals(2, result.totalGoalCount());
+        assertEquals(2, result.totalPlanCount());
+        assertEquals(1, result.diagnostics().size());
+        AslDiagnostic diagnostic = result.diagnostics().get(0);
         assertEquals(AslDiagnostic.SYNTAX_ERROR_CODE, diagnostic.code());
         assertEquals(invalid.toAbsolutePath().normalize(), diagnostic.source());
+        assertTrue(result.hasErrors());
+        assertThrows(UnsupportedOperationException.class, () -> result.diagnostics().clear());
+    }
+
+    @Test
+    void continuesAfterMissingFileAndReportsImportDiagnostic() throws Exception {
+        Path firstValid = fixture("fixtures/asl/valid/minimal.asl");
+        Path missing = firstValid.resolveSibling("does-not-exist.asl");
+        Path secondValid = fixture("fixtures/asl/valid/review-agent.asl");
+
+        AslImportResult result = importer.importFiles(List.of(firstValid, missing, secondValid));
+
+        assertEquals(2, result.fileCount());
+        assertEquals(1, result.diagnostics().size());
+        AslDiagnostic diagnostic = result.diagnostics().get(0);
+        assertEquals(AslDiagnostic.IMPORT_ERROR_CODE, diagnostic.code());
+        assertEquals(AslDiagnosticSeverity.ERROR, diagnostic.severity());
+        assertEquals(missing.toAbsolutePath().normalize(), diagnostic.source());
+        assertEquals(AslDiagnostic.UNKNOWN_POSITION, diagnostic.line());
+        assertEquals(AslDiagnostic.UNKNOWN_POSITION, diagnostic.column());
+        assertFalse(diagnostic.hasSourcePosition());
+        assertTrue(result.hasErrors());
     }
 
     private static Path fixture(String name) throws URISyntaxException {

@@ -9,38 +9,37 @@ public final class PackagedParserSmoke {
 
     public static void main(String[] args) throws Exception {
         if (args.length != 3) {
-            System.err.println("Expected paths to two valid and one invalid AgentSpeak fixtures.");
+            System.err.println("Expected paths to a valid, invalid, and second valid AgentSpeak fixture.");
             System.exit(2);
         }
 
+        Path firstValid = Path.of(args[0]).toAbsolutePath().normalize();
+        Path invalid = Path.of(args[1]).toAbsolutePath().normalize();
+        Path secondValid = Path.of(args[2]).toAbsolutePath().normalize();
         AslImportResult result = new JasonAslImporter().importFiles(
-                List.of(Path.of(args[0]), Path.of(args[1])));
+                List.of(firstValid, invalid, secondValid));
         if (result.fileCount() != 2
+                || !firstValid.equals(result.fileSummaries().get(0).source())
+                || !secondValid.equals(result.fileSummaries().get(1).source())
                 || result.fileSummaries().stream()
                         .anyMatch(summary -> !"3.3.0".equals(summary.parserVersion()))
                 || result.totalBeliefCount() != 3
                 || result.totalGoalCount() != 2
-                || result.totalPlanCount() != 2) {
+                || result.totalPlanCount() != 2
+                || result.diagnostics().size() != 1) {
             throw new IllegalStateException("Unexpected packaged importer result: " + result);
         }
 
-        System.out.println("MULTI_FILE_SMOKE_OK: parsed 2 files, 3 beliefs, 2 goals, 2 plans");
-
-        JasonAslParserAdapter parser = new JasonAslParserAdapter();
-        try {
-            parser.parse(Path.of(args[2]));
-            throw new IllegalStateException("Invalid fixture unexpectedly parsed successfully");
-        } catch (AslParseException error) {
-            AslDiagnostic diagnostic = error.diagnostic().orElseThrow(
-                    () -> new IllegalStateException("Invalid fixture did not produce a diagnostic", error));
-            if (!AslDiagnostic.SYNTAX_ERROR_CODE.equals(diagnostic.code())
-                    || diagnostic.severity() != AslDiagnosticSeverity.ERROR
-                    || diagnostic.line() != 3
-                    || diagnostic.column() != 8) {
-                throw new IllegalStateException("Unexpected packaged parser diagnostic: " + diagnostic);
-            }
+        AslDiagnostic diagnostic = result.diagnostics().get(0);
+        if (!AslDiagnostic.SYNTAX_ERROR_CODE.equals(diagnostic.code())
+                || diagnostic.severity() != AslDiagnosticSeverity.ERROR
+                || !invalid.equals(diagnostic.source())
+                || diagnostic.line() != 3
+                || diagnostic.column() != 8) {
+            throw new IllegalStateException("Unexpected packaged importer diagnostic: " + diagnostic);
         }
 
+        System.out.println("PARTIAL_IMPORT_SMOKE_OK: preserved 2 successful summaries and 1 diagnostic");
         System.out.println("DIAGNOSTIC_SMOKE_OK: ASL-001 at line 3, column 8");
     }
 }

@@ -46,7 +46,7 @@ try {
     $secondValidFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\valid\review-agent.asl'
     $invalidFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\invalid\missing-plan-body.asl'
     & java -cp "$pluginJar;$testJar" org.tzi.use.plugins.bdi.importer.PackagedParserSmoke `
-        $validFixture $secondValidFixture $invalidFixture
+        $validFixture $invalidFixture $secondValidFixture
     if ($LASTEXITCODE -ne 0) {
         throw "Packaged parser smoke failed with exit code $LASTEXITCODE."
     }

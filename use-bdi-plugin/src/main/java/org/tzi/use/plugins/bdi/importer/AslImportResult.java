@@ -3,9 +3,16 @@ package org.tzi.use.plugins.bdi.importer;
 import java.util.List;
 import java.util.Objects;
 
-public record AslImportResult(List<AslParseSummary> fileSummaries) {
+public record AslImportResult(
+        List<AslParseSummary> fileSummaries,
+        List<AslDiagnostic> diagnostics) {
     public AslImportResult {
         fileSummaries = List.copyOf(Objects.requireNonNull(fileSummaries, "fileSummaries"));
+        diagnostics = List.copyOf(Objects.requireNonNull(diagnostics, "diagnostics"));
+    }
+
+    public AslImportResult(List<AslParseSummary> fileSummaries) {
+        this(fileSummaries, List.of());
     }
 
     public int fileCount() {
@@ -22,5 +29,10 @@ public record AslImportResult(List<AslParseSummary> fileSummaries) {
 
     public int totalPlanCount() {
         return fileSummaries.stream().mapToInt(AslParseSummary::planCount).sum();
+    }
+
+    public boolean hasErrors() {
+        return diagnostics.stream()
+                .anyMatch(diagnostic -> diagnostic.severity() == AslDiagnosticSeverity.ERROR);
     }
 }

@@ -3,8 +3,8 @@
 This module contains the verified USE plugin shell for the thesis project. It
 adds `Plugins > AgentSpeak > Hello BDI Plugin` and includes the first importer
 slice: a Jason 3.3.0 adapter that parses multiple AgentSpeak files into ordered,
-immutable, Jason-independent summaries. File selection, partial-success import,
-the full BDI IR, and consistency checking are not implemented yet.
+immutable, Jason-independent summaries. File selection, the full BDI IR, and
+consistency checking are not implemented yet.
 
 ## Parser test
 
@@ -20,7 +20,9 @@ syntax. Diagnostics carry severity, source file, message, and a one-based line
 and column when Jason provides an error token. The adapter disables Jason's
 optional web mind inspector before initializing the parser so an offline import
 does not open a background HTTP server. Multi-file imports preserve input order,
-return immutable per-file summaries, and currently fail fast on the first error.
+return immutable per-file summaries, continue after per-file failures, and return
+immutable diagnostics. Syntax failures use `ASL-001`; file/import failures
+without a parser location use `ASL-IMPORT-001` with position `0/0`.
 
 The Smart Queue prototype is kept as a test fixture at
 `src/test/resources/fixtures/smartqueue/Smart_manager_agent.asl`; the smoke
@@ -34,9 +36,10 @@ From the repository root:
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1
 ```
 
-The script builds the reactor through `package`, imports two valid fixtures and
-checks one invalid fixture using the shaded plugin JAR from the distribution,
-starts the GUI briefly, and verifies the menu hierarchy.
+The script builds the reactor through `package`, imports a valid-invalid-valid
+fixture sequence using the shaded plugin JAR from the distribution, checks the
+partial result and syntax diagnostic, starts the GUI briefly, and verifies the
+menu hierarchy.
 
 ## Manual GUI run
 

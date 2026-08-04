@@ -224,7 +224,7 @@ which lost structured source position and severity.
 
 ## ADR-0004 - Multi-file importer result and interim failure behavior
 
-- Status: Accepted
+- Status: Superseded by ADR-0006
 - Date: 2026-08-04
 - Scope: Phase 1 multi-file valid-import slice
 
@@ -301,3 +301,46 @@ the checked-out worktree. The only actual root prototype was
 - `use-bdi-plugin/scripts/smoke.ps1` checks the root/fixture boundary before
   running the package, parser, diagnostic, third-party-notice, and GUI gates;
   it passed on 2026-08-04.
+
+## ADR-0006 - Multi-file partial-success import result
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Phase 1 importer diagnostics
+
+### Context
+
+ADR-0004 intentionally used fail-fast behavior while the result model could
+only expose successful summaries. That behavior loses successful files when a
+later source is invalid and leaves callers without one report for the complete
+selection.
+
+### Decision
+
+- Supersede the interim fail-fast behavior. `AslImporter.importFiles` attempts
+  every validated source and returns one `AslImportResult`.
+- Keep successful `AslParseSummary` values in input order. Failed files do not
+  create summaries; they create immutable `AslDiagnostic` values in encounter
+  order.
+- Preserve parser syntax diagnostics as `ASL-001`. Convert missing-file and
+  other `AslParseException` failures without a diagnostic into
+  `ASL-IMPORT-001` with normalized source and position `0/0`.
+- Keep input validation strict: a null input list or null source is rejected
+  before parsing rather than silently converted into a diagnostic.
+- Keep the result Java-only and derive aggregate counts from successful
+  summaries. Expose `hasErrors()` for callers that need a simple gate.
+
+### Consequences
+
+- UI/reporting code can show successful imports and actionable file errors in a
+  single result without losing later valid files.
+- Empty input still returns an empty result with no diagnostics.
+- Unsupported AgentSpeak syntax remains a future diagnostic/catalog slice and
+  is not silently ignored by this policy.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test` verifies valid-invalid-valid ordering, immutable
+  diagnostics, missing-file conversion, and the existing parser contracts.
+- `use-bdi-plugin/scripts/smoke.ps1` verifies the partial result and `ASL-001`
+  location through the shaded plugin JAR in the assembled distribution.
