@@ -89,19 +89,19 @@
 - [x] Suggestion scoring.
 - [x] Manual editor.
 - [x] Save/load.
-- [ ] Stale mapping detection.
+- [x] Stale mapping detection.
 
 ## 8. Consistency engine
 
-- [ ] Rule SPI/interface.
-- [ ] Phase orchestration.
-- [ ] Issue/evidence model.
-- [ ] ASL-001/002.
-- [ ] BDI-001/002/003/004.
-- [ ] REF-001/002.
-- [ ] MAP-001/002/003.
-- [ ] SIG-001/002/003.
-- [ ] OWN-001.
+- [x] Rule SPI/interface.
+- [x] Phase orchestration.
+- [x] Issue/evidence model.
+- [x] ASL-001/002.
+- [x] BDI-001/002/003/004.
+- [x] REF-001/002.
+- [x] MAP-001/002/003.
+- [x] SIG-001/002/003.
+- [x] OWN-001.
 - [ ] BEL-001.
 - [ ] MSG-001.
 - [ ] OCL-001/002/003/004.
@@ -135,9 +135,9 @@
 - [x] Invalid ASL fixtures.
 - [ ] Unsupported fixtures.
 - [ ] Golden IR tests.
-- [ ] Rule tests.
+- [x] Rule tests.
 - [x] Mapping persistence tests.
-- [ ] USE model integration tests.
+- [x] USE model integration tests.
 - [ ] OCL tests.
 - [x] UI smoke test.
 - [ ] Performance benchmark.
@@ -436,5 +436,7 @@
   scoring, BDI/USE-to-editor wiring, binding replacement, JSON round
   trip/rejection, and Swing apply/save/load coverage. The plugin compile/package
   path remains shaded and plugin-first; no USE core source was modified.
-- Stale mapping detection, semantic resolution beyond the conservative
-  candidate policy, consistency rules, and project-wide OCL checks remain open.
+- At this mapping milestone, stale detection, semantic resolution beyond the
+  conservative candidate policy, consistency rules, and project-wide OCL checks
+  were intentionally deferred; ADR-0014 records the subsequent static-rule
+  implementation and its remaining limits.

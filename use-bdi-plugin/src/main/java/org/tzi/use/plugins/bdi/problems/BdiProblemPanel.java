@@ -74,6 +74,11 @@ public final class BdiProblemPanel extends JPanel {
         return tableModel.allProblems().size();
     }
 
+    public boolean hasProblemCode(String code) {
+        return tableModel.allProblems().stream()
+                .anyMatch(problem -> problem.code().equals(code));
+    }
+
     JTable tableForTest() {
         return table;
     }

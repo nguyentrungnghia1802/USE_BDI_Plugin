@@ -80,8 +80,20 @@ Domain <- không phụ thuộc UI/Jason/USE concrete classes
   `MappingEditorPanel` is the Swing confirmation boundary and is exposed as a
   `Mapping` tab in the explorer.
 - `MappingFileRepository` persists confirmed bindings as versioned
-  `.bdimap.json`. Stale mapping detection and consistency orchestration remain
-  later pipeline stages.
+  `.bdimap.json`.
+
+### Phase 3 static consistency slice implemented
+
+- `MappingSourceId` centralizes stable BDI source identities used by both
+  suggestions and rule evaluation. `MappingStalenessDetector` reports missing
+  mapping sources/targets and model fingerprint changes without mutating USE.
+- `ValidationOrchestrator` executes `ConsistencyRule` implementations in stable
+  parse, IR, reference, mapping, and signature phases. It consumes only the
+  normalized BDI snapshot, confirmed mapping document, and immutable USE model
+  projection.
+- The existing Problems tab projects immutable `ConsistencyIssue` records.
+  Applying a user-confirmed mapping refreshes the results immediately; it does
+  not execute OCL or modify USE state.
 
 ## 5. OCL integration levels
 

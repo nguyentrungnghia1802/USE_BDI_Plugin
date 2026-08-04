@@ -65,7 +65,7 @@ public final class MappingSuggestionService {
         Objects.requireNonNull(uml, "uml");
         List<MappingSuggestion> suggestions = new ArrayList<>();
         for (AgentModel agent : agents) {
-            String source = agentSource(agent);
+            String source = MappingSourceId.agent(agent);
             String stem = sourceStem(agent.source());
             for (UmlClassRef target : uml.classes()) {
                 double score = nameScore(stem, target.name());
@@ -89,7 +89,7 @@ public final class MappingSuggestionService {
         Objects.requireNonNull(uml, "uml");
         List<MappingSuggestion> suggestions = new ArrayList<>();
         for (AgentModel agent : agents) {
-            String source = agentSource(agent);
+            String source = MappingSourceId.agent(agent);
             String stem = sourceStem(agent.source());
             for (UmlObjectRef target : uml.objects()) {
                 double score = nameScore(stem, target.name());
@@ -129,7 +129,7 @@ public final class MappingSuggestionService {
             double score = argumentCount == operation.parameters().size() ? 1.0 : 0.65;
             suggestions.add(new MappingSuggestion(
                     MappingKind.PARAMETER,
-                    actionSource(action) + "/argument/" + index,
+                    MappingSourceId.argument(action, index),
                     operation.reference() + "#parameter:" + parameter.name(),
                     score,
                     List.of("Argument position " + index + " matches UML parameter order"),
@@ -150,7 +150,7 @@ public final class MappingSuggestionService {
                 if (score >= 0.2) {
                     suggestions.add(new MappingSuggestion(
                             MappingKind.RECEIVER_OBJECT,
-                            receiverSource(reference),
+                            MappingSourceId.receiver(reference),
                             object.reference(),
                             score,
                             reasons(reference.name(), object.name(), "Agent receiver reference")));
@@ -180,7 +180,7 @@ public final class MappingSuggestionService {
                 if (score >= 0.2) {
                     suggestions.add(new MappingSuggestion(
                             MappingKind.BELIEF_ATTRIBUTE,
-                            belief.toString(),
+                            MappingSourceId.belief(belief),
                             attribute.reference(),
                             score,
                             reasons(belief.functor(), attribute.name(),
@@ -189,23 +189,6 @@ public final class MappingSuggestionService {
             }
         }
         return distinctAndSorted(suggestions);
-    }
-
-    static String agentSource(AgentModel agent) {
-        return normalizePath(agent.source());
-    }
-
-    static String actionSource(ActionCallSite action) {
-        return normalizePath(action.sourceSpan().source())
-                + "#plan:" + action.planLabel()
-                + "#step:" + action.stepIndex();
-    }
-
-    private static String receiverSource(AgentObjectReference reference) {
-        return normalizePath(reference.sourceSpan().source())
-                + "#receiver:" + reference.name()
-                + "#line:" + reference.sourceSpan().beginLine()
-                + "#column:" + reference.sourceSpan().beginColumn();
     }
 
     private static List<MappingSuggestion> suggestActionOperations(
@@ -230,7 +213,7 @@ public final class MappingSuggestionService {
                         : "Argument arity differs or is unavailable");
                 suggestions.add(new MappingSuggestion(
                         MappingKind.ACTION_OPERATION,
-                        actionSource(action),
+                        MappingSourceId.action(action),
                         operation.reference(),
                         score,
                         reasons));
@@ -250,7 +233,8 @@ public final class MappingSuggestionService {
                 .flatMap(Collection::stream)
                 .filter(reference -> reference.kind() == AgentObjectReference.ReferenceKind.AGENT)
                 .sorted(Comparator
-                        .comparing((AgentObjectReference reference) -> normalizePath(reference.sourceSpan().source()))
+                        .comparing((AgentObjectReference reference) -> MappingSourceId.sourcePath(
+                                MappingSourceId.receiver(reference)).orElseThrow().toString())
                         .thenComparing(AgentObjectReference::name)
                         .thenComparing(AgentObjectReference::origin)
                         .thenComparingInt(reference -> reference.sourceSpan().beginLine()))
@@ -336,7 +320,4 @@ public final class MappingSuggestionService {
         return extension > 0 ? filename.substring(0, extension) : filename;
     }
 
-    private static String normalizePath(Path source) {
-        return source.toAbsolutePath().normalize().toString().replace('\\', '/');
-    }
 }

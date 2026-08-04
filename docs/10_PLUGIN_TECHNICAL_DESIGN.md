@@ -75,7 +75,7 @@ interface UmlModelFacade {
 interface ConsistencyRule {
     String id();
     RulePhase phase();
-    List<Issue> evaluate(ValidationContext context);
+    List<ConsistencyIssue> evaluate(ValidationContext context);
 }
 ```
 
@@ -146,8 +146,26 @@ resolution task beyond the first mapping slice.
   keys, and malformed JSON; persistence is intentionally outside the domain
   records.
 
-The slice intentionally leaves stale mapping detection and semantic
-resolution/consistency validation open for the next phase.
+### Implemented static consistency slice
+
+- `MappingSourceId` defines the shared source-key contract for agents, actions,
+  arguments, receivers, beliefs, and source paths. The detector treats missing
+  BDI sources and missing USE targets as stale errors. A USE fingerprint change
+  is retained as a staleness signal for review, not emitted as a false error by
+  the current rule catalog.
+- `ConsistencyRule`, `RulePhase`, `ValidationContext`,
+  `ValidationOrchestrator`, and immutable `ConsistencyIssue` provide the
+  plugin-owned static rule boundary. Issues retain severity, status, certainty,
+  source span, UML reference, evidence, and suggested fix.
+- The initial catalog implements `ASL-001/002`, `BDI-001/002/003/004`,
+  `REF-001/002`, `MAP-001/002/003`, `SIG-001/002/003`, and `OWN-001`.
+  Literal type inference is intentionally limited to String, Integer, Real,
+  and Boolean; unknown terms result in `SIG-003` WARNING rather than an
+  invented type claim.
+- `BdiExplorerView` reruns the static rules after import and after an editor
+  mapping change, then renders the result through the existing Problems tab.
+  The slice is read-only with respect to USE and has no OCL evaluation,
+  suppression, message, belief, or state-transition rules.
 
 ## 6. Dependency packaging
 

@@ -45,9 +45,12 @@ import org.tzi.use.plugins.bdi.model.ir.PlanStepModel;
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.model.ir.TestStepModel;
 import org.tzi.use.plugins.bdi.model.mapping.MappingSuggestionService;
+import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
 import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
 import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
+import org.tzi.use.plugins.bdi.validation.ValidationContext;
+import org.tzi.use.plugins.bdi.validation.ValidationOrchestrator;
 
 /** Minimal BDI tree and source detail view for the first explorer slice. */
 @SuppressWarnings("serial")
@@ -59,6 +62,7 @@ public final class BdiExplorerView extends JPanel implements View {
     private final BdiProblemPanel problems;
     private final MappingEditorPanel mapping;
     private final MappingSuggestionService mappingSuggestionService;
+    private final ValidationOrchestrator validationOrchestrator;
     private final Optional<UseModelSnapshot> useModel;
     private final JButton reimportButton;
     private final BdiSourceTracker sourceTracker;
@@ -98,6 +102,7 @@ public final class BdiExplorerView extends JPanel implements View {
         this.sourceTracker = Objects.requireNonNull(sourceTracker, "sourceTracker");
         this.useModel = Objects.requireNonNull(useModel, "useModel");
         this.mappingSuggestionService = new MappingSuggestionService();
+        this.validationOrchestrator = new ValidationOrchestrator();
         this.snapshot = new BdiImportSnapshot(List.of(), List.of(), BdiIndex.empty());
 
         JButton importButton = new JButton("Import .asl...");
@@ -135,6 +140,7 @@ public final class BdiExplorerView extends JPanel implements View {
         split.setPreferredSize(new Dimension(900, 520));
         problems = new BdiProblemPanel();
         mapping = new MappingEditorPanel();
+        mapping.setDocumentChangeListener(ignored -> refreshProblems());
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Explorer", split);
         tabs.addTab("Problems", problems);
@@ -205,6 +211,10 @@ public final class BdiExplorerView extends JPanel implements View {
         return problems;
     }
 
+    boolean hasProblemCodeForTest(String code) {
+        return problems.hasProblemCode(code);
+    }
+
     MappingEditorPanel mappingForTest() {
         return mapping;
     }
@@ -221,10 +231,12 @@ public final class BdiExplorerView extends JPanel implements View {
         Runnable update = () -> {
             snapshot = imported;
             sourceTracker.markImported();
-            problems.setProblems(BdiProblemCollector.collect(imported));
+            useModel.filter(model -> mapping.document().useFingerprint().equals("unknown"))
+                    .ifPresent(model -> mapping.setDocument(MappingDocument.empty(model.fingerprint())));
             mapping.setSuggestions(useModel
                     .map(model -> mappingSuggestionService.suggest(imported.models(), imported.index(), model))
                     .orElse(List.of()));
+            refreshProblems();
             reimportButton.setEnabled(!sourceTracker.sources().isEmpty());
             tree.setModel(new DefaultTreeModel(createTree(imported)));
             String message = imported.fileCount() + " file(s), "
@@ -245,6 +257,11 @@ public final class BdiExplorerView extends JPanel implements View {
 
     private void showFailure(Throwable failure) {
         status.setText("Import failed: " + failure.getMessage());
+    }
+
+    private void refreshProblems() {
+        problems.setProblems(BdiProblemCollector.collectConsistencyIssues(
+                validationOrchestrator.evaluate(ValidationContext.from(snapshot, mapping.document(), useModel))));
     }
 
     private DefaultMutableTreeNode createTree(BdiImportSnapshot imported) {

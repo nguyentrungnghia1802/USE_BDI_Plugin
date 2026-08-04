@@ -11,6 +11,7 @@ import org.tzi.use.plugins.bdi.index.DuplicatePlanLabel;
 import org.tzi.use.plugins.bdi.model.ir.AgentModel;
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.model.ir.UnsupportedFeature;
+import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
 
 /** Converts all retained import evidence into one deterministic problem list. */
 public final class BdiProblemCollector {
@@ -55,6 +56,33 @@ public final class BdiProblemCollector {
                     "Duplicate plan label '" + duplicate.label() + "' ("
                             + duplicate.occurrences().size() + " occurrences)",
                     "Index validation"));
+        }
+        problems.sort(Comparator
+                .comparing(BdiProblem::source)
+                .thenComparingInt(problem -> problem.line() == 0 ? Integer.MAX_VALUE : problem.line())
+                .thenComparing(BdiProblem::code)
+                .thenComparing(BdiProblem::message));
+        return List.copyOf(problems);
+    }
+
+    /** Projects domain consistency issues into the existing filterable Swing table. */
+    public static List<BdiProblem> collectConsistencyIssues(List<ConsistencyIssue> issues) {
+        List<BdiProblem> problems = new ArrayList<>();
+        for (ConsistencyIssue issue : issues) {
+            SourceSpan span = issue.sourceSpan().orElseGet(() -> SourceSpan.unknown(
+                    java.nio.file.Path.of("consistency.bdimap.json")));
+            problems.add(new BdiProblem(
+                    issue.ruleId(),
+                    switch (issue.severity()) {
+                        case ERROR -> BdiProblemSeverity.ERROR;
+                        case WARNING -> BdiProblemSeverity.WARNING;
+                        case INFO -> BdiProblemSeverity.INFO;
+                    },
+                    span.source(),
+                    span.hasLinePosition() ? span.beginLine() : 0,
+                    span.hasColumnPosition() ? span.beginColumn() : 0,
+                    issue.message(),
+                    issue.ruleId().substring(0, issue.ruleId().indexOf('-')) + " validation"));
         }
         problems.sort(Comparator
                 .comparing(BdiProblem::source)

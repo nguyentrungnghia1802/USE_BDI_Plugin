@@ -774,3 +774,66 @@ not make the domain depend on Swing, Jason AST classes, or USE core objects.
   malformed/duplicate JSON rejection, and Swing apply/save/load.
 - `mvn -pl use-bdi-plugin package` and the packaged distribution smoke script
   passed after this slice. No USE core source was changed.
+
+## ADR-0014 - Static consistency rules and stale mapping policy
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Section 7 stale mapping plus the first nine Section 8 checklist rows
+
+### Context
+
+The mapping slice had confirmed, versioned bindings but no verified way to
+detect obsolete links or evaluate the documented static rule catalog. The next
+vertical slice must remain plugin-first, preserve source evidence, and avoid
+making claims that require executing OCL or mutating the active USE system.
+
+### Verified implementation evidence
+
+- `model/mapping/MappingSourceId.java` supplies the same stable source IDs to
+  `MappingSuggestionService`, persistence bindings, and validation. This avoids
+  duplicating an unverified key convention in multiple layers.
+- `MappingStalenessDetector` checks the document metamodel version, USE
+  fingerprint, retained BDI sources, and immutable `UseModelSnapshot` targets.
+  It emits `SOURCE_MISSING` or `TARGET_MISSING` for obsolete bindings and keeps
+  version/fingerprint mismatch as review evidence.
+- `validation/ConsistencyRule.java` is the actual SPI with `id`, `phase`, and
+  `evaluate(ValidationContext)`. `ValidationOrchestrator` sorts phases and
+  issues deterministically; it receives only import snapshot values, mapping
+  values, and an optional immutable USE projection.
+- `StandardConsistencyRules` implements exactly `ASL-001/002`,
+  `BDI-001/002/003/004`, `REF-001/002`, `MAP-001/002/003`,
+  `SIG-001/002/003`, and `OWN-001`. It reports evidence, source span, UML ref,
+  suggested fix, severity, status, and certainty in `ConsistencyIssue`.
+- `BdiExplorerView` refreshes Problems after import and after a mapping-editor
+  document change. The flow only reads the snapshot; it does not compile OCL,
+  invoke USE operations, or change the system state.
+
+### Decision
+
+- Report only missing BDI source and missing USE target as `MAP-003` errors.
+  A fingerprint or BDI metamodel mismatch is a stale-review signal because a
+  changed state fingerprint alone is insufficient evidence that a binding is
+  invalid.
+- Keep unresolved named object references and test predicates conservative:
+  `REF-001`/`REF-002` use POTENTIAL certainty where current static information
+  cannot prove runtime absence.
+- Infer signature types only for literal String, Integer, Real, and Boolean
+  terms. Unknown values yield `SIG-003` WARNING, not a guessed mismatch.
+- Preserve manual mapping confirmation as the UI boundary. Rule evaluation is
+  rerun automatically after confirmation but cannot write to USE.
+
+### Consequences and limits
+
+- The next ten prioritized checklist entries are complete without USE core
+  changes. Rule/UI tests cover the 15 static rule IDs, stale source/target
+  detection, USE projection use, and Problems refresh after mapping apply.
+- `BEL-001`, `MSG-001`, OCL/CTX rules, suppression, reporting, and runtime
+  behavior remain open. `docs/00_PROJECT_CONTEXT.md` is still absent from the
+  repository and remains the existing documentation blocker.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin -am test` passed with 44 plugin tests on the full
+  reactor, including `ValidationOrchestratorTest`,
+  `MappingStalenessDetectorTest`, and the mapping-to-Problems UI regression.

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -41,6 +42,8 @@ public final class MappingEditorPanel extends JPanel {
     private final JTextField target = new JTextField(24);
     private final JLabel status = new JLabel("No mapping document loaded");
     private MappingDocument document = MappingDocument.empty("unknown");
+    private Consumer<MappingDocument> documentChangeListener = ignored -> {
+    };
 
     public MappingEditorPanel() {
         this(new MappingFileRepository());
@@ -103,6 +106,11 @@ public final class MappingEditorPanel extends JPanel {
         this.document = Objects.requireNonNull(document, "document");
         tableModel.setBindings(document.bindings());
         status.setText(document.bindings().size() + " binding(s)");
+        documentChangeListener.accept(document);
+    }
+
+    public void setDocumentChangeListener(Consumer<MappingDocument> listener) {
+        documentChangeListener = Objects.requireNonNull(listener, "listener");
     }
 
     public MappingDocument document() {

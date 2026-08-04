@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
 import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
+import org.tzi.use.plugins.bdi.model.mapping.MappingKind;
 import org.tzi.use.plugins.bdi.use.UmlClassRef;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
 
@@ -90,6 +91,41 @@ class BdiExplorerViewTest {
         assertTrue(view.mappingForTest().suggestionsForTest().getModel().getSize() > 0);
         assertTrue(view.mappingForTest().suggestionsForTest().getModel().getElementAt(0).toString()
                 .contains("Minimal"));
+    }
+
+    @Test
+    void refreshesProblemsWhenTheUserAppliesAnAgentMappingSuggestion() throws Exception {
+        UseModelSnapshot useModel = new UseModelSnapshot(
+                "fixture",
+                "fixture.use",
+                List.of(new UmlClassRef("Minimal", false, List.of())),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                "fingerprint");
+        BdiExplorerView view = new BdiExplorerView(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                useModel);
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+
+        assertTrue(view.hasProblemCodeForTest("MAP-001"));
+        for (int index = 0; index < view.mappingForTest().suggestionsForTest().getModel().getSize(); index++) {
+            if (view.mappingForTest().suggestionsForTest().getModel().getElementAt(index).kind()
+                    == MappingKind.AGENT_CLASS) {
+                view.mappingForTest().suggestionsForTest().setSelectedIndex(index);
+                break;
+            }
+        }
+        view.mappingForTest().applySelectedSuggestionForTest();
+
+        assertTrue(view.mappingForTest().document().bindings().stream()
+                .anyMatch(binding -> binding.kind() == MappingKind.AGENT_CLASS));
+        assertTrue(!view.hasProblemCodeForTest("MAP-001"));
     }
 
     private static void waitForImport(BdiExplorerView view) throws Exception {
