@@ -3,6 +3,9 @@ package org.tzi.use.plugins.bdi.importer;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.tzi.use.plugins.bdi.model.ir.AgentModel;
+import org.tzi.use.plugins.bdi.model.ir.AslAgentModelNormalizer;
+
 public final class PackagedParserSmoke {
     private PackagedParserSmoke() {
     }
@@ -19,9 +22,17 @@ public final class PackagedParserSmoke {
         AslImportResult result = new JasonAslImporter().importFiles(
                 List.of(firstValid, invalid, secondValid));
         AslImportReport report = result.toReport();
+        List<AgentModel> agentModels = new AslAgentModelNormalizer().normalize(result);
         if (result.fileCount() != 2
+                || agentModels.size() != 2
                 || !firstValid.equals(result.fileSummaries().get(0).source())
                 || !secondValid.equals(result.fileSummaries().get(1).source())
+                || !firstValid.equals(agentModels.get(0).source())
+                || !secondValid.equals(agentModels.get(1).source())
+                || agentModels.get(0).beliefCount() != 1
+                || agentModels.get(0).goalCount() != 1
+                || agentModels.get(0).planCount() != 1
+                || agentModels.get(0).elementCount() != 3
                 || !List.of("3.3.0").equals(report.parserVersions())
                 || result.fileSummaries().stream()
                         .anyMatch(summary -> !"3.3.0".equals(summary.parserVersion()))
@@ -48,6 +59,7 @@ public final class PackagedParserSmoke {
         System.out.println("PARTIAL_IMPORT_SMOKE_OK: preserved 2 successful summaries and 1 diagnostic");
         System.out.println("SOURCE_LOCATION_SMOKE_OK: minimal.asl locations at lines 1, 2, and 4-5");
         System.out.println("REPORT_VERSION_SMOKE_OK: parser version 3.3.0");
+        System.out.println("AGENT_MODEL_SMOKE_OK: normalized 2 successful files into root IR models");
         System.out.println("DIAGNOSTIC_SMOKE_OK: ASL-001 at line 3, column 8");
     }
 }

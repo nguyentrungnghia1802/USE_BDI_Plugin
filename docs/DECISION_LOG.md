@@ -438,3 +438,48 @@ the full JSON/HTML report contract.
 - `use-bdi-plugin/scripts/smoke.ps1`: packaged smoke found parser version
   `3.3.0` through the shaded plugin JAR and passed the existing partial-import,
   source-location, diagnostic, and GUI menu gates.
+
+## ADR-0009 - Metadata-only AgentModel root
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: Phase 1 first IR vertical slice
+
+### Context
+
+The Jason adapter now exposes immutable Java-only `AslParseSummary` values, but
+the project still had no IR root connecting successful imports to later BDI
+nodes. The next slice must establish that boundary without introducing Jason
+AST types, inventing source semantics, or prematurely defining the child IR
+models tracked separately in the completion checklist.
+
+### Decision
+
+- Add immutable `AgentModel` as a metadata-only root with normalized source
+  path, parser version, and non-negative belief, goal, and plan counts.
+- Use the source path as the available file identity. Do not synthesize an
+  AgentSpeak agent name because the current importer summary has no declared
+  agent identity field.
+- Add `AslAgentModelNormalizer` as the importer-to-IR mapping boundary. It
+  accepts one summary or an import result, preserves successful-file order, and
+  returns no model for failed files because those remain diagnostics.
+- Keep the root free of Jason classes. Child models, `SourceSpan`, unsupported
+  feature representation, source-location-to-IR mapping, and serialization
+  remain separate slices.
+
+### Consequences
+
+- Import/report and future UI code can identify each successful source and show
+  its first structural counts through a stable IR value.
+- The root is intentionally not a semantic BDI tree; no child-model checklist
+  item is marked complete by this ADR.
+- The normalizer currently consumes importer DTOs. A later IR consolidation can
+  move shared source evidence types without changing the Jason adapter contract.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test`: passed with thirteen tests, including two
+  `AgentModel` normalization tests.
+- `mvn -pl use-bdi-plugin clean package`: passed and shaded Jason `3.3.0`.
+- `use-bdi-plugin/scripts/smoke.ps1`: passed `AGENT_MODEL_SMOKE_OK` through the
+  assembled distribution and also passed the existing USE GUI menu smoke.

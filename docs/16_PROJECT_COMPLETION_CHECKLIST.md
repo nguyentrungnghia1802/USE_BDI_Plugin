@@ -35,7 +35,7 @@
 
 ## 3. Intermediate representation
 
-- [ ] `AgentModel`.
+- [x] `AgentModel`.
 - [ ] `BeliefModel`.
 - [ ] `GoalModel`.
 - [ ] `PlanModel`.
@@ -312,3 +312,20 @@
   `3.3.0` through the shaded Jason plugin JAR.
 - This slice does not claim JSON/HTML export, plugin/USE version metadata, model
   hashes, or report persistence; those remain in the reporting checklist.
+
+## Phase 1 AgentModel root IR slice evidence - 2026-08-04
+
+- `AgentModel` is an immutable Java-only root IR value containing the normalized
+  source path, parser version, and belief, goal, and plan counts. It does not
+  invent an AgentSpeak agent name when the source has no such identity field.
+- `AslAgentModelNormalizer` maps one `AslParseSummary` or the ordered successful
+  summaries in `AslImportResult` into root models; failed files remain
+  diagnostics and do not produce an `AgentModel`.
+- `mvn -pl use-bdi-plugin test` passed with thirteen tests, including the two
+  root-model normalization and immutable-order assertions.
+- `use-bdi-plugin/scripts/smoke.ps1` passed `AGENT_MODEL_SMOKE_OK` from the
+  shaded plugin JAR in the assembled USE distribution, alongside the existing
+  importer, diagnostic, and GUI menu gates.
+- This is a metadata-only root slice. `BeliefModel`, `GoalModel`, `PlanModel`,
+  `TriggerModel`, `ContextExpr`, `PlanStepModel`, `TermModel`, `SourceSpan`,
+  unsupported-feature diagnostics, and golden serialization remain open.
