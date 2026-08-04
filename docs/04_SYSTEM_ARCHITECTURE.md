@@ -71,6 +71,18 @@ Domain <- không phụ thuộc UI/Jason/USE concrete classes
   `BdiExplorerView` displays source files, beliefs, goals, plans, ordered
   steps, and a detail pane with source spans/excerpts.
 
+### Phase 2 mapping slice implemented
+
+- `MappingSuggestionService` consumes the normalized BDI index and immutable
+  USE projection to create explainable candidates for agent/class/object,
+  action/operation, parameter, receiver, and belief/attribute links.
+- `MappingDocument` and `MappingBinding` remain domain-only immutable values;
+  `MappingEditorPanel` is the Swing confirmation boundary and is exposed as a
+  `Mapping` tab in the explorer.
+- `MappingFileRepository` persists confirmed bindings as versioned
+  `.bdimap.json`. Stale mapping detection and consistency orchestration remain
+  later pipeline stages.
+
 ## 5. OCL integration levels
 
 ### Level 0 — Model presence

@@ -12,6 +12,7 @@ import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.runtime.gui.IPluginAction;
 import org.tzi.use.runtime.gui.IPluginActionDelegate;
 import org.tzi.use.plugins.bdi.ui.BdiExplorerView;
+import org.tzi.use.plugins.bdi.use.UseUmlModelFacade;
 
 /** Opens the BDI explorer and starts a multi-file AgentSpeak import. */
 public final class ImportBdiAction implements IPluginActionDelegate {
@@ -49,7 +50,9 @@ public final class ImportBdiAction implements IPluginActionDelegate {
     }
 
     static void openView(IPluginAction pluginAction, List<Path> sources) {
-        BdiExplorerView view = new BdiExplorerView();
+        BdiExplorerView view = pluginAction.getSession().hasSystem()
+                ? new BdiExplorerView(new UseUmlModelFacade().snapshot(pluginAction.getSession().system()))
+                : new BdiExplorerView();
         ViewFrame frame = new ViewFrame("BDI Explorer", view, "New.gif");
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(view, BorderLayout.CENTER);

@@ -44,8 +44,10 @@ import org.tzi.use.plugins.bdi.model.ir.PlanModel;
 import org.tzi.use.plugins.bdi.model.ir.PlanStepModel;
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.model.ir.TestStepModel;
+import org.tzi.use.plugins.bdi.model.mapping.MappingSuggestionService;
 import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
 import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
+import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
 
 /** Minimal BDI tree and source detail view for the first explorer slice. */
 @SuppressWarnings("serial")
@@ -55,6 +57,9 @@ public final class BdiExplorerView extends JPanel implements View {
     private final JTextArea detail;
     private final JLabel status;
     private final BdiProblemPanel problems;
+    private final MappingEditorPanel mapping;
+    private final MappingSuggestionService mappingSuggestionService;
+    private final Optional<UseModelSnapshot> useModel;
     private final JButton reimportButton;
     private final BdiSourceTracker sourceTracker;
     private BdiImportSnapshot snapshot;
@@ -62,17 +67,37 @@ public final class BdiExplorerView extends JPanel implements View {
     private long importGeneration;
 
     public BdiExplorerView() {
-        this(new BdiImportService());
+        this(new BdiImportService(), new BdiSourceTracker(), Optional.empty());
+    }
+
+    public BdiExplorerView(UseModelSnapshot useModel) {
+        this(new BdiImportService(), new BdiSourceTracker(), Optional.of(Objects.requireNonNull(useModel, "useModel")));
     }
 
     BdiExplorerView(BdiImportService importService) {
-        this(importService, new BdiSourceTracker());
+        this(importService, new BdiSourceTracker(), Optional.empty());
     }
 
     BdiExplorerView(BdiImportService importService, BdiSourceTracker sourceTracker) {
+        this(importService, sourceTracker, Optional.empty());
+    }
+
+    BdiExplorerView(
+            BdiImportService importService,
+            BdiSourceTracker sourceTracker,
+            UseModelSnapshot useModel) {
+        this(importService, sourceTracker, Optional.of(Objects.requireNonNull(useModel, "useModel")));
+    }
+
+    private BdiExplorerView(
+            BdiImportService importService,
+            BdiSourceTracker sourceTracker,
+            Optional<UseModelSnapshot> useModel) {
         super(new BorderLayout(6, 6));
         this.importService = Objects.requireNonNull(importService, "importService");
         this.sourceTracker = Objects.requireNonNull(sourceTracker, "sourceTracker");
+        this.useModel = Objects.requireNonNull(useModel, "useModel");
+        this.mappingSuggestionService = new MappingSuggestionService();
         this.snapshot = new BdiImportSnapshot(List.of(), List.of(), BdiIndex.empty());
 
         JButton importButton = new JButton("Import .asl...");
@@ -109,9 +134,11 @@ public final class BdiExplorerView extends JPanel implements View {
         split.setResizeWeight(0.42);
         split.setPreferredSize(new Dimension(900, 520));
         problems = new BdiProblemPanel();
+        mapping = new MappingEditorPanel();
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Explorer", split);
         tabs.addTab("Problems", problems);
+        tabs.addTab("Mapping", mapping);
         add(tabs, BorderLayout.CENTER);
         detail.setText("Select a BDI node to inspect its details and source span.");
     }
@@ -178,6 +205,10 @@ public final class BdiExplorerView extends JPanel implements View {
         return problems;
     }
 
+    MappingEditorPanel mappingForTest() {
+        return mapping;
+    }
+
     JButton reimportButtonForTest() {
         return reimportButton;
     }
@@ -191,6 +222,9 @@ public final class BdiExplorerView extends JPanel implements View {
             snapshot = imported;
             sourceTracker.markImported();
             problems.setProblems(BdiProblemCollector.collect(imported));
+            mapping.setSuggestions(useModel
+                    .map(model -> mappingSuggestionService.suggest(imported.models(), imported.index(), model))
+                    .orElse(List.of()));
             reimportButton.setEnabled(!sourceTracker.sources().isEmpty());
             tree.setModel(new DefaultTreeModel(createTree(imported)));
             String message = imported.fileCount() + " file(s), "

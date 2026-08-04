@@ -701,3 +701,76 @@ guessing APIs.
   `use-gui`, and `use-bdi-plugin`. A reactor test attempt was separately blocked
   in `use-gui` by a Windows file lock on its existing `target/test-classes`
   fixture; the plugin-only test gate passed afterward.
+
+## ADR-0013 - Conservative mapping domain, suggestions, editor, and persistence
+
+- Status: Accepted
+- Date: 2026-08-04
+- Scope: First ten Section 7 mapping checklist items
+
+### Context
+
+The repository now has normalized AgentSpeak IR/index values and a read-only
+USE projection, but no way to represent, suggest, manually confirm, or persist
+cross-model links. The mapping implementation must stay plugin-first and must
+not make the domain depend on Swing, Jason AST classes, or USE core objects.
+
+### Verified implementation evidence
+
+- `use-bdi-plugin/src/main/java/org/tzi/use/plugins/bdi/model/ir/AgentModel.java`
+  and `index/BdiIndex.java` are Java-only immutable inputs. The USE-side
+  `use/UseModelSnapshot.java` and `Uml*Ref` records are also plugin-owned
+  immutable projections established by ADR-0012.
+- `model/mapping/MappingBinding.java` and `MappingDocument.java` define the
+  binding schema and replacement identity. A binding key is the mapping kind
+  plus source identity; `MappingDocument.upsert(...)` replaces that source's
+  target without mutating an existing document.
+- `model/mapping/MappingSuggestionService.java` generates candidates using
+  normalized names, signature/arity, and explicit reason strings. Source IDs
+  include normalized paths and plan-step/receiver locations; these are stable
+  within the imported source snapshot and are not semantic claims.
+- `persistence/MappingFileRepository.java` and `MappingJsonCodec.java` write
+  and read deterministic UTF-8 JSON with schema/metamodel/fingerprint metadata,
+  optional expressions, evidence, duplicate-key checks, and malformed-input
+  errors. No new JSON dependency was introduced.
+- `ui/MappingEditorPanel.java` provides Add/update, Apply, Remove, Save, and
+  Load controls. `BdiExplorerView.java` mounts it as the `Mapping` tab; Swing
+  does not enter the mapping domain classes.
+- `ImportBdiAction.java` uses the verified `Session.hasSystem()` /
+  `Session.system()` chain to snapshot the current USE model before opening the
+  explorer. After import, `BdiExplorerView` passes that immutable snapshot and
+  the imported BDI index to `MappingSuggestionService`; a no-model fallback
+  keeps the manual editor usable without a loaded `.use` model.
+
+### Decision
+
+- Use a generic versioned binding document with six initial kinds:
+  Agent->Class, Agent->Object, Action->Operation, Parameter,
+  Receiver->Object, and Belief->Attribute.
+- Keep suggestions deterministic and explainable. Exact normalized names and
+  matching operation arity receive the strongest score; weaker name/token
+  matches are presented as candidates and require manual confirmation.
+- Treat `.send` receiver links and initial-belief attribute links as the first
+  conservative policies. Do not infer runtime ownership, execute OCL, or mutate
+  the current USE state in this slice.
+- Keep persistence and editor concerns outside the immutable domain records and
+  use `kind + source` replacement semantics so the editor can correct a prior
+  target without duplicate bindings.
+
+### Consequences and limits
+
+- The first ten mapping checklist items are implemented and testable without
+  USE core changes. The same document can carry a USE fingerprint for a later
+  stale-mapping check.
+- Mapping candidates are suggestions, not proof of semantic consistency. Stale
+  mapping detection, richer expressions, semantic resolution, and consistency
+  rules remain open tasks.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin -am test` passed with 41 tests, including
+  AgentSpeak/USE suggestion scoring, BDI-to-editor wiring,
+  parameter/receiver/belief candidates, immutable binding replacement,
+  malformed/duplicate JSON rejection, and Swing apply/save/load.
+- `mvn -pl use-bdi-plugin package` and the packaged distribution smoke script
+  passed after this slice. No USE core source was changed.

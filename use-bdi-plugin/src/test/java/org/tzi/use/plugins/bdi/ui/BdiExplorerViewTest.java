@@ -18,6 +18,9 @@ import javax.swing.tree.TreeModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
+import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
+import org.tzi.use.plugins.bdi.use.UmlClassRef;
+import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
 
 class BdiExplorerViewTest {
     @Test
@@ -62,6 +65,31 @@ class BdiExplorerViewTest {
         }
         flushEdt();
         assertTrue(view.statusForTest().getText().startsWith("1 file(s)"));
+    }
+
+    @Test
+    void populatesMappingSuggestionsFromImportedBdiAndUseSnapshot() throws Exception {
+        UseModelSnapshot useModel = new UseModelSnapshot(
+                "fixture",
+                "fixture.use",
+                List.of(new UmlClassRef("Minimal", false, List.of())),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                "fingerprint");
+        BdiExplorerView view = new BdiExplorerView(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                useModel);
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+
+        assertTrue(view.mappingForTest().suggestionsForTest().getModel().getSize() > 0);
+        assertTrue(view.mappingForTest().suggestionsForTest().getModel().getElementAt(0).toString()
+                .contains("Minimal"));
     }
 
     private static void waitForImport(BdiExplorerView view) throws Exception {

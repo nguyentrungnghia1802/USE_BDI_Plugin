@@ -79,16 +79,16 @@
 
 ## 7. Mapping
 
-- [ ] Mapping entity/schema.
-- [ ] Agent -> Class.
-- [ ] Agent -> Object.
-- [ ] Action -> Operation.
-- [ ] Parameter bindings.
-- [ ] Receiver binding.
-- [ ] Belief mapping model.
-- [ ] Suggestion scoring.
-- [ ] Manual editor.
-- [ ] Save/load.
+- [x] Mapping entity/schema.
+- [x] Agent -> Class.
+- [x] Agent -> Object.
+- [x] Action -> Operation.
+- [x] Parameter bindings.
+- [x] Receiver binding.
+- [x] Belief mapping model.
+- [x] Suggestion scoring.
+- [x] Manual editor.
+- [x] Save/load.
 - [ ] Stale mapping detection.
 
 ## 8. Consistency engine
@@ -136,7 +136,7 @@
 - [ ] Unsupported fixtures.
 - [ ] Golden IR tests.
 - [ ] Rule tests.
-- [ ] Mapping persistence tests.
+- [x] Mapping persistence tests.
 - [ ] USE model integration tests.
 - [ ] OCL tests.
 - [x] UI smoke test.
@@ -413,3 +413,28 @@
   consistency-rule orchestration, or project-wide OCL checks; those remain the
   next open checklist tasks. The repository still lacks the requested
   `docs/00_PROJECT_CONTEXT.md` authoritative file.
+
+## Phase 2 mapping slice evidence - 2026-08-04
+
+- `model/mapping/MappingDocument` is the immutable schema root. It records
+  schema version `0.1.0`, BDI metamodel version, USE fingerprint, and binding
+  values keyed by mapping kind plus normalized source identity. `MappingBinding`
+  supports optional expressions and evidence without depending on Swing, Jason,
+  or USE concrete classes.
+- `MappingSuggestionService` produces deterministic, explainable candidates for
+  Agent -> Class/Object, Action -> Operation, positional parameter bindings,
+  `.send` receiver -> USE object, and initial belief -> UML attribute. It uses
+  normalized names, operation arity, signatures, and evidence reasons; it does
+  not claim semantic resolution or mutate the USE state.
+- `MappingEditorPanel` is available as the `Mapping` tab beside `Explorer` and
+  `Problems`. It supports Add/update, Apply selected suggestion, Remove, and
+  exposes Save/Load actions for the mapping document.
+- `MappingFileRepository` and the dependency-free `MappingJsonCodec` provide
+  deterministic UTF-8 `.bdimap.json` round trips with schema validation and
+  explicit malformed/unknown-enum errors.
+- `mvn -pl use-bdi-plugin -am test` passed with 41 tests, including suggestion
+  scoring, BDI/USE-to-editor wiring, binding replacement, JSON round
+  trip/rejection, and Swing apply/save/load coverage. The plugin compile/package
+  path remains shaded and plugin-first; no USE core source was modified.
+- Stale mapping detection, semantic resolution beyond the conservative
+  candidate policy, consistency rules, and project-wide OCL checks remain open.

@@ -124,8 +124,30 @@ interface ConsistencyRule {
 The current syntactic reference policy is deliberately conservative: `.send`
 receivers are agent references and named terms in arguments are object
 references. `UseUmlModelFacade` now exposes the USE-side symbols, but resolving
-those syntactic references to mapped USE classes/objects remains part of the
-future mapping slice.
+those syntactic references to mapped USE classes/objects remains a semantic
+resolution task beyond the first mapping slice.
+
+### Implemented mapping slice
+
+- `model/mapping/MappingKind`, `MappingBinding`, `MappingDocument`, and
+  `MappingSuggestion` are immutable Java-only domain values. The document schema
+  is `0.1.0`, includes the BDI metamodel version and USE fingerprint, and uses
+  `kind + source` as the replacement key for manual edits.
+- `MappingSuggestionService` accepts normalized `AgentModel`, `BdiIndex`, and
+  `UseModelSnapshot` values. It creates deterministic candidates for agent
+  classes/objects, action operations, positional parameters, `.send` receiver
+  objects, and initial-belief attributes. Name/arity scores include human-
+  readable evidence; candidates are not treated as confirmed mappings.
+- `MappingEditorPanel` is a Swing-only confirmation surface. It is mounted as
+  the `Mapping` tab in `BdiExplorerView` and can add/update, apply, remove, and
+  inspect bindings without changing the USE system.
+- `MappingFileRepository` stores the document as dependency-free UTF-8
+  `.bdimap.json`. The codec validates required fields, mapping kinds, duplicate
+  keys, and malformed JSON; persistence is intentionally outside the domain
+  records.
+
+The slice intentionally leaves stale mapping detection and semantic
+resolution/consistency validation open for the next phase.
 
 ## 6. Dependency packaging
 
