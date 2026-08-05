@@ -9,13 +9,21 @@ import org.tzi.use.parser.ocl.OCLCompiler;
 import org.tzi.use.uml.ocl.expr.Evaluator;
 import org.tzi.use.uml.ocl.expr.Expression;
 import org.tzi.use.uml.ocl.value.Value;
+import org.tzi.use.uml.ocl.value.VarBindings;
 import org.tzi.use.uml.sys.MSystem;
 
 /** Read-only bridge around USE's compiler and evaluator. */
 public final class UseOclEvaluator {
     public OclEvaluationResult evaluate(MSystem system, String expression) {
+        return evaluate(system, expression, system == null ? null : system.varBindings());
+    }
+
+    public OclEvaluationResult evaluate(MSystem system, String expression, VarBindings bindings) {
         if (system == null) {
             throw new NullPointerException("system");
+        }
+        if (bindings == null) {
+            throw new NullPointerException("bindings");
         }
         if (expression == null || expression.isBlank()) {
             return new OclEvaluationResult(
@@ -34,7 +42,7 @@ public final class UseOclEvaluator {
                 expression,
                 "BDI plugin expression",
                 errorWriter,
-                system.varBindings());
+                bindings);
         errorWriter.flush();
         if (compiled == null) {
             return new OclEvaluationResult(
@@ -46,7 +54,7 @@ public final class UseOclEvaluator {
         }
 
         try {
-            Value result = new Evaluator(false).eval(compiled, system.state(), system.varBindings());
+            Value result = new Evaluator(false).eval(compiled, system.state(), bindings);
             return new OclEvaluationResult(
                     expression,
                     OclEvaluationStatus.EVALUATED,

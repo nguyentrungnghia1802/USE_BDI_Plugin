@@ -25,5 +25,8 @@ context Queue::enqueue(item : String)
   pre: item <> ''
   post: self.size >= 0
 
+context Queue
+  inv NonNegativeSize: self.size >= 0
+
 context Customer
   inv: self.name <> ''

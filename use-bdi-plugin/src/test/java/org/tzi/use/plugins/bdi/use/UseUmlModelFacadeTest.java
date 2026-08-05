@@ -31,7 +31,7 @@ class UseUmlModelFacadeTest {
         assertEquals(2, empty.attributes().size());
         assertEquals(1, empty.associations().size());
         assertEquals(2, empty.operations().size());
-        assertEquals(1, empty.classInvariants().size());
+        assertEquals(2, empty.classInvariants().size());
         assertEquals(0, empty.objects().size());
         assertEquals(1, empty.operations().get(0).preconditions().size()
                 + empty.operations().get(1).preconditions().size());

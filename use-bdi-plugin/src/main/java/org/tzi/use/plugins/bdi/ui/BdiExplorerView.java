@@ -49,8 +49,12 @@ import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
 import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
 import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
+import org.tzi.use.plugins.bdi.use.UseSnapshotOclEvaluator;
+import org.tzi.use.plugins.bdi.use.UseUmlModelFacade;
+import org.tzi.use.plugins.bdi.validation.SnapshotOclEvaluator;
 import org.tzi.use.plugins.bdi.validation.ValidationContext;
 import org.tzi.use.plugins.bdi.validation.ValidationOrchestrator;
+import org.tzi.use.uml.sys.MSystem;
 
 /** Minimal BDI tree and source detail view for the first explorer slice. */
 @SuppressWarnings("serial")
@@ -64,6 +68,7 @@ public final class BdiExplorerView extends JPanel implements View {
     private final MappingSuggestionService mappingSuggestionService;
     private final ValidationOrchestrator validationOrchestrator;
     private final Optional<UseModelSnapshot> useModel;
+    private final Optional<SnapshotOclEvaluator> oclEvaluator;
     private final JButton reimportButton;
     private final BdiSourceTracker sourceTracker;
     private BdiImportSnapshot snapshot;
@@ -71,36 +76,46 @@ public final class BdiExplorerView extends JPanel implements View {
     private long importGeneration;
 
     public BdiExplorerView() {
-        this(new BdiImportService(), new BdiSourceTracker(), Optional.empty());
+        this(new BdiImportService(), new BdiSourceTracker(), Optional.empty(), Optional.empty());
     }
 
     public BdiExplorerView(UseModelSnapshot useModel) {
-        this(new BdiImportService(), new BdiSourceTracker(), Optional.of(Objects.requireNonNull(useModel, "useModel")));
+        this(new BdiImportService(), new BdiSourceTracker(), Optional.of(Objects.requireNonNull(useModel, "useModel")), Optional.empty());
+    }
+
+    public BdiExplorerView(MSystem system) {
+        this(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                Optional.of(new UseUmlModelFacade().snapshot(Objects.requireNonNull(system, "system"))),
+                Optional.of(new UseSnapshotOclEvaluator(system)));
     }
 
     BdiExplorerView(BdiImportService importService) {
-        this(importService, new BdiSourceTracker(), Optional.empty());
+        this(importService, new BdiSourceTracker(), Optional.empty(), Optional.empty());
     }
 
     BdiExplorerView(BdiImportService importService, BdiSourceTracker sourceTracker) {
-        this(importService, sourceTracker, Optional.empty());
+        this(importService, sourceTracker, Optional.empty(), Optional.empty());
     }
 
     BdiExplorerView(
             BdiImportService importService,
             BdiSourceTracker sourceTracker,
             UseModelSnapshot useModel) {
-        this(importService, sourceTracker, Optional.of(Objects.requireNonNull(useModel, "useModel")));
+        this(importService, sourceTracker, Optional.of(Objects.requireNonNull(useModel, "useModel")), Optional.empty());
     }
 
     private BdiExplorerView(
             BdiImportService importService,
             BdiSourceTracker sourceTracker,
-            Optional<UseModelSnapshot> useModel) {
+            Optional<UseModelSnapshot> useModel,
+            Optional<SnapshotOclEvaluator> oclEvaluator) {
         super(new BorderLayout(6, 6));
         this.importService = Objects.requireNonNull(importService, "importService");
         this.sourceTracker = Objects.requireNonNull(sourceTracker, "sourceTracker");
         this.useModel = Objects.requireNonNull(useModel, "useModel");
+        this.oclEvaluator = Objects.requireNonNull(oclEvaluator, "oclEvaluator");
         this.mappingSuggestionService = new MappingSuggestionService();
         this.validationOrchestrator = new ValidationOrchestrator();
         this.snapshot = new BdiImportSnapshot(List.of(), List.of(), BdiIndex.empty());
@@ -261,7 +276,7 @@ public final class BdiExplorerView extends JPanel implements View {
 
     private void refreshProblems() {
         problems.setProblems(BdiProblemCollector.collectConsistencyIssues(
-                validationOrchestrator.evaluate(ValidationContext.from(snapshot, mapping.document(), useModel))));
+                validationOrchestrator.evaluate(ValidationContext.from(snapshot, mapping.document(), useModel, oclEvaluator))));
     }
 
     private DefaultMutableTreeNode createTree(BdiImportSnapshot imported) {

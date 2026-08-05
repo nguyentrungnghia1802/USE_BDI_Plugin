@@ -6,5 +6,7 @@ public enum RulePhase {
     IR_WELL_FORMEDNESS,
     REFERENCE,
     MAPPING,
-    SIGNATURE
+    SIGNATURE,
+    SNAPSHOT_OCL,
+    BOUNDED_SIMULATION
 }

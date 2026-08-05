@@ -18,6 +18,10 @@ import org.tzi.use.plugins.bdi.index.PredicateReference;
 import org.tzi.use.plugins.bdi.index.PredicateSignature;
 import org.tzi.use.plugins.bdi.model.ir.AgentModel;
 import org.tzi.use.plugins.bdi.model.ir.CompoundTermModel;
+import org.tzi.use.plugins.bdi.model.ir.ContextBinary;
+import org.tzi.use.plugins.bdi.model.ir.ContextExpr;
+import org.tzi.use.plugins.bdi.model.ir.ContextLiteral;
+import org.tzi.use.plugins.bdi.model.ir.ContextUnary;
 import org.tzi.use.plugins.bdi.model.ir.LiteralTermModel;
 import org.tzi.use.plugins.bdi.model.ir.NumberTermModel;
 import org.tzi.use.plugins.bdi.model.ir.PlanModel;
@@ -57,7 +61,14 @@ final class StandardConsistencyRules {
                 rule("SIG-001", RulePhase.SIGNATURE, StandardConsistencyRules::arityMismatches),
                 rule("SIG-002", RulePhase.SIGNATURE, StandardConsistencyRules::typeMismatches),
                 rule("SIG-003", RulePhase.SIGNATURE, StandardConsistencyRules::unknownTypes),
-                rule("OWN-001", RulePhase.SIGNATURE, StandardConsistencyRules::wrongOwners));
+                rule("OWN-001", RulePhase.SIGNATURE, StandardConsistencyRules::wrongOwners),
+                rule("BEL-001", RulePhase.MAPPING, StandardConsistencyRules::unmappedBeliefs),
+                rule("MSG-001", RulePhase.REFERENCE, StandardConsistencyRules::unknownMessageReceivers),
+                rule("OCL-001", RulePhase.SNAPSHOT_OCL, StandardConsistencyRules::failedPreconditions),
+                rule("OCL-002", RulePhase.SNAPSHOT_OCL, StandardConsistencyRules::unknownPreconditions),
+                rule("CTX-001", RulePhase.SNAPSHOT_OCL, StandardConsistencyRules::contradictingContexts),
+                rule("OCL-003", RulePhase.BOUNDED_SIMULATION, StandardConsistencyRules::violatedBoundedEffects),
+                rule("OCL-004", RulePhase.BOUNDED_SIMULATION, StandardConsistencyRules::skippedBoundedEffects));
     }
 
     private static List<ConsistencyIssue> parseErrors(ValidationContext context) {
@@ -441,6 +452,332 @@ final class StandardConsistencyRules {
                 .toList();
     }
 
+    private static List<ConsistencyIssue> unmappedBeliefs(ValidationContext context) {
+        return context.agents().stream()
+                .flatMap(agent -> agent.beliefs().stream().map(belief -> new BeliefLocation(agent, belief)))
+                .filter(location -> context.mapping()
+                        .find(MappingKind.BELIEF_ATTRIBUTE, beliefSource(location.belief().literal()))
+                        .isEmpty())
+                .map(location -> issue(
+                        "BEL-001",
+                        IssueSeverity.WARNING,
+                        "Initial belief has no UML attribute mapping for cross-model checks",
+                        location.belief().sourceSpan(),
+                        Optional.of(MappingSourceId.agent(location.agent())),
+                        Optional.empty(),
+                        Optional.empty(),
+                        List.of("Belief: " + location.belief().literal().render(),
+                                "Expected mapping key: " + beliefSource(location.belief().literal())),
+                        "Map the belief predicate to a UML attribute when it is used in a cross-model check.",
+                        IssueCertainty.POTENTIAL))
+                .toList();
+    }
+
+    private static List<ConsistencyIssue> unknownMessageReceivers(ValidationContext context) {
+        if (context.uml().isEmpty()) {
+            return List.of();
+        }
+        Set<String> objects = context.uml().orElseThrow().objects().stream()
+                .map(UmlObjectRef::reference)
+                .collect(Collectors.toSet());
+        List<ConsistencyIssue> issues = new ArrayList<>();
+        for (ActionCallSite action : context.index().allActionCallSites()) {
+            if (action.kind() != ActionCallSite.ActionKind.INTERNAL_ACTION
+                    || action.signature().filter(signature -> signature.functor().equals(".send")).isEmpty()) {
+                continue;
+            }
+            Optional<TermModel> term = context.actionTerm(action);
+            List<TermModel> arguments = term.map(StandardConsistencyRules::arguments).orElse(List.of());
+            if (arguments.isEmpty()) {
+                issues.add(messageReceiverIssue(context, action, "The .send action has no receiver argument", List.of()));
+                continue;
+            }
+            Optional<String> source = receiverMappingSource(context, action, arguments.get(0));
+            Optional<String> target = source.flatMap(key -> context.mapping()
+                    .find(MappingKind.RECEIVER_OBJECT, key)
+                    .map(MappingBinding::target));
+            if (target.filter(objects::contains).isEmpty()) {
+                issues.add(messageReceiverIssue(
+                        context,
+                        action,
+                        "Message receiver does not resolve to a current USE object",
+                        List.of("Receiver term: " + arguments.get(0).render(),
+                                "Expected mapping key: " + source.orElse("<unindexed receiver>"))));
+            }
+        }
+        return List.copyOf(issues);
+    }
+
+    private static ConsistencyIssue messageReceiverIssue(
+            ValidationContext context,
+            ActionCallSite action,
+            String message,
+            List<String> evidence) {
+        return issue(
+                "MSG-001",
+                IssueSeverity.ERROR,
+                message,
+                action.sourceSpan(),
+                Optional.of(context.agentSource(action)),
+                optionalText(action.planLabel()),
+                Optional.empty(),
+                evidence.isEmpty() ? List.of("Action: " + action.rendered()) : evidence,
+                "Map the .send receiver to an existing USE object or correct the receiver term.",
+                IssueCertainty.CONFIRMED);
+    }
+
+    private static Optional<String> receiverMappingSource(
+            ValidationContext context,
+            ActionCallSite action,
+            TermModel receiver) {
+        return allReferences(context.index().agentReferencesByName().values()).stream()
+                .filter(reference -> reference.sourceSpan().source().equals(action.sourceSpan().source()))
+                .filter(reference -> reference.sourceSpan().beginLine() == action.sourceSpan().beginLine())
+                .filter(reference -> reference.rendered().equals(receiver.render()))
+                .findFirst()
+                .map(MappingSourceId::receiver);
+    }
+
+    private static List<ConsistencyIssue> failedPreconditions(ValidationContext context) {
+        return preconditionResults(context, OclSnapshotStatus.FAIL).stream()
+                .map(result -> issue(
+                        "OCL-001",
+                        IssueSeverity.ERROR,
+                        "Mapped operation precondition is false on the current USE snapshot",
+                        result.action().sourceSpan(),
+                        Optional.of(context.agentSource(result.action())),
+                        optionalText(result.action().planLabel()),
+                        Optional.of(result.operation().reference()),
+                        result.result().evidence(),
+                        "Change the action arguments/state or select an operation whose precondition holds.",
+                        IssueCertainty.CONFIRMED))
+                .toList();
+    }
+
+    private static List<ConsistencyIssue> unknownPreconditions(ValidationContext context) {
+        List<ConsistencyIssue> issues = new ArrayList<>();
+        for (ActionOperation pair : mappedActionsWithPreconditions(context)) {
+            Optional<String> receiver = receiverObject(context, pair.action());
+            if (context.ocl().isEmpty() || receiver.isEmpty()) {
+                issues.add(issue(
+                        "OCL-002",
+                        IssueSeverity.WARNING,
+                        "Mapped operation preconditions cannot be evaluated without a live snapshot receiver binding",
+                        pair.action().sourceSpan(),
+                        Optional.of(context.agentSource(pair.action())),
+                        optionalText(pair.action().planLabel()),
+                        Optional.of(pair.operation().reference()),
+                        List.of("Expected Agent->Object mapping for: " + context.agentSource(pair.action())),
+                        "Map the executing agent to a current USE object and keep the USE session open.",
+                        IssueCertainty.UNKNOWN));
+            }
+        }
+        preconditionResults(context, OclSnapshotStatus.UNKNOWN).forEach(result -> issues.add(issue(
+                "OCL-002",
+                IssueSeverity.WARNING,
+                "Mapped operation precondition cannot be decided on the current snapshot",
+                result.action().sourceSpan(),
+                Optional.of(context.agentSource(result.action())),
+                optionalText(result.action().planLabel()),
+                Optional.of(result.operation().reference()),
+                result.result().evidence(),
+                "Provide a concrete receiver/argument binding and a valid current USE snapshot.",
+                IssueCertainty.UNKNOWN)));
+        return List.copyOf(issues);
+    }
+
+    private static List<PreconditionResult> preconditionResults(ValidationContext context, OclSnapshotStatus expected) {
+        if (context.ocl().isEmpty()) {
+            return List.of();
+        }
+        List<PreconditionResult> results = new ArrayList<>();
+        for (ActionOperation pair : mappedActionsWithPreconditions(context)) {
+            Optional<String> receiver = receiverObject(context, pair.action());
+            Optional<TermModel> term = context.actionTerm(pair.action());
+            if (receiver.isEmpty() || term.isEmpty()) {
+                continue;
+            }
+            context.ocl().orElseThrow()
+                    .evaluatePreconditions(pair.operation(), receiver.orElseThrow(), arguments(term.orElseThrow()))
+                    .stream()
+                    .filter(result -> result.status() == expected)
+                    .forEach(result -> results.add(new PreconditionResult(pair.action(), pair.operation(), result)));
+        }
+        return List.copyOf(results);
+    }
+
+    private static List<ConsistencyIssue> contradictingContexts(ValidationContext context) {
+        if (context.ocl().isEmpty()) {
+            return List.of();
+        }
+        List<ConsistencyIssue> issues = new ArrayList<>();
+        for (AgentModel agent : context.agents()) {
+            Optional<String> receiver = context.mapping()
+                    .find(MappingKind.AGENT_OBJECT, MappingSourceId.agent(agent))
+                    .map(MappingBinding::target);
+            if (receiver.isEmpty()) {
+                continue;
+            }
+            for (PlanModel plan : agent.plans()) {
+                Optional<String> expression = plan.context().flatMap(value -> contextExpression(context, value, receiver.orElseThrow()));
+                if (expression.isEmpty()) {
+                    continue;
+                }
+                OclSnapshotResult result = context.ocl().orElseThrow()
+                        .evaluateExpression(expression.orElseThrow(), "Context " + plan.label());
+                if (result.status() == OclSnapshotStatus.FAIL) {
+                    issues.add(issue(
+                            "CTX-001",
+                            IssueSeverity.WARNING,
+                            "Plan context is false on the current USE snapshot",
+                            plan.context().orElseThrow().sourceSpan(),
+                            Optional.of(MappingSourceId.agent(agent)),
+                            optionalText(plan.label()),
+                            Optional.empty(),
+                            result.evidence(),
+                            "Update the snapshot/belief mapping or choose a plan whose context holds.",
+                            IssueCertainty.CONFIRMED));
+                }
+            }
+        }
+        return List.copyOf(issues);
+    }
+
+    private static Optional<String> contextExpression(ValidationContext context, ContextExpr contextExpr, String receiver) {
+        if (contextExpr instanceof ContextLiteral literal) {
+            return context.mapping()
+                    .find(MappingKind.BELIEF_ATTRIBUTE, MappingSourceId.belief(
+                            new PredicateSignature(literal.literal().functor(), literal.literal().arguments().size())))
+                    .map(MappingBinding::target)
+                    .flatMap(StandardConsistencyRules::attributeName)
+                    .map(attribute -> receiver + "." + attribute);
+        }
+        if (contextExpr instanceof ContextUnary unary && unary.operator().equals("not")) {
+            return contextExpression(context, unary.operand(), receiver).map(expression -> "not (" + expression + ")");
+        }
+        if (contextExpr instanceof ContextBinary binary) {
+            Optional<String> left = contextExpression(context, binary.left(), receiver);
+            Optional<String> right = contextExpression(context, binary.right(), receiver);
+            String operator = switch (binary.operator()) {
+                case "&", "and" -> "and";
+                case "|", "or" -> "or";
+                default -> "";
+            };
+            return left.isPresent() && right.isPresent() && !operator.isEmpty()
+                    ? Optional.of("(" + left.orElseThrow() + ") " + operator + " (" + right.orElseThrow() + ")")
+                    : Optional.empty();
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<String> attributeName(String reference) {
+        int separator = reference.lastIndexOf("::");
+        return separator < 1 || separator + 2 >= reference.length()
+                ? Optional.empty()
+                : Optional.of(reference.substring(separator + 2));
+    }
+
+    private static String beliefSource(LiteralTermModel belief) {
+        return MappingSourceId.belief(new PredicateSignature(belief.functor(), belief.arguments().size()));
+    }
+
+    private static List<ConsistencyIssue> violatedBoundedEffects(ValidationContext context) {
+        if (context.ocl().isEmpty()) {
+            return List.of();
+        }
+        List<ConsistencyIssue> issues = new ArrayList<>();
+        for (ActionOperation pair : mappedActionsWithPreconditionsOrOperations(context)) {
+            Optional<String> effect = effectSource(context, pair.action());
+            if (effect.isEmpty()) {
+                continue;
+            }
+            BoundedEffectResult result = context.ocl().orElseThrow().simulateSoilEffect(effect.orElseThrow());
+            if (result.status() == BoundedEffectStatus.INVARIANT_VIOLATED) {
+                issues.add(effectIssue("OCL-003", IssueSeverity.ERROR, "Bounded SOIL effect violates a USE invariant", context, pair, result));
+            }
+        }
+        return List.copyOf(issues);
+    }
+
+    private static List<ConsistencyIssue> skippedBoundedEffects(ValidationContext context) {
+        List<ConsistencyIssue> issues = new ArrayList<>();
+        for (ActionOperation pair : mappedActionsWithPreconditionsOrOperations(context)) {
+            Optional<String> effect = effectSource(context, pair.action());
+            if (effect.isEmpty()) {
+                issues.add(issue(
+                        "OCL-004",
+                        IssueSeverity.INFO,
+                        "No bounded effect is specified; invariant check is skipped",
+                        pair.action().sourceSpan(),
+                        Optional.of(context.agentSource(pair.action())),
+                        optionalText(pair.action().planLabel()),
+                        Optional.of(pair.operation().reference()),
+                        List.of("Add an ACTION_OPERATION mapping expression beginning with soil: to enable bounded simulation."),
+                        "Specify a small SOIL effect or keep this action in static-only validation.",
+                        IssueCertainty.UNKNOWN));
+                continue;
+            }
+            if (context.ocl().isPresent()) {
+                BoundedEffectResult result = context.ocl().orElseThrow().simulateSoilEffect(effect.orElseThrow());
+                if (result.status() == BoundedEffectStatus.UNKNOWN) {
+                    issues.add(effectIssue(
+                            "OCL-004",
+                            IssueSeverity.INFO,
+                            "Bounded effect could not be simulated; invariant check is skipped",
+                            context,
+                            pair,
+                            result));
+                }
+            }
+        }
+        return List.copyOf(issues);
+    }
+
+    private static ConsistencyIssue effectIssue(
+            String ruleId,
+            IssueSeverity severity,
+            String message,
+            ValidationContext context,
+            ActionOperation pair,
+            BoundedEffectResult result) {
+        return issue(
+                ruleId,
+                severity,
+                message,
+                pair.action().sourceSpan(),
+                Optional.of(context.agentSource(pair.action())),
+                optionalText(pair.action().planLabel()),
+                Optional.of(pair.operation().reference()),
+                result.evidence(),
+                "Review the soil: effect and the violated invariant before treating this action as executable.",
+                ruleId.equals("OCL-003") ? IssueCertainty.CONFIRMED : IssueCertainty.UNKNOWN);
+    }
+
+    private static List<ActionOperation> mappedActionsWithPreconditions(ValidationContext context) {
+        return mappedActionsWithPreconditionsOrOperations(context).stream()
+                .filter(pair -> !pair.operation().preconditions().isEmpty())
+                .toList();
+    }
+
+    private static List<ActionOperation> mappedActionsWithPreconditionsOrOperations(ValidationContext context) {
+        if (context.uml().isEmpty()) {
+            return List.of();
+        }
+        return externalActions(context).stream()
+                .flatMap(action -> operationFor(context, action).stream().map(operation -> new ActionOperation(action, operation)))
+                .toList();
+    }
+
+    private static Optional<String> receiverObject(ValidationContext context, ActionCallSite action) {
+        return context.mapping().find(MappingKind.AGENT_OBJECT, context.agentSource(action)).map(MappingBinding::target);
+    }
+
+    private static Optional<String> effectSource(ValidationContext context, ActionCallSite action) {
+        return context.mapping().find(MappingKind.ACTION_OPERATION, MappingSourceId.action(action))
+                .flatMap(MappingBinding::expression)
+                .filter(expression -> expression.startsWith("soil:"));
+    }
+
     private static Optional<UmlOperationRef> operationFor(ValidationContext context, ActionCallSite action) {
         return context.uml().flatMap(uml -> context.mapping()
                 .find(MappingKind.ACTION_OPERATION, MappingSourceId.action(action))
@@ -558,6 +895,9 @@ final class StandardConsistencyRules {
             List<String> evidence,
             String suggestedFix,
             IssueCertainty certainty) {
+        List<String> normalizedEvidence = evidence == null || evidence.isEmpty()
+                ? List.of("Rule generated no structured evidence; message: " + message)
+                : evidence;
         return new ConsistencyIssue(
                 ruleId,
                 severity,
@@ -567,7 +907,7 @@ final class StandardConsistencyRules {
                 planId,
                 Optional.of(sourceSpan),
                 umlElementRef,
-                evidence,
+                normalizedEvidence,
                 Optional.of(suggestedFix),
                 certainty);
     }
@@ -589,7 +929,16 @@ final class StandardConsistencyRules {
     private record PlanLocation(AgentModel agent, PlanModel plan) {
     }
 
+    private record BeliefLocation(AgentModel agent, org.tzi.use.plugins.bdi.model.ir.BeliefModel belief) {
+    }
+
     private record ActionOperation(ActionCallSite action, UmlOperationRef operation) {
+    }
+
+    private record PreconditionResult(
+            ActionCallSite action,
+            UmlOperationRef operation,
+            OclSnapshotResult result) {
     }
 
     private record ActionOwner(ActionOperation operation, String owner) {

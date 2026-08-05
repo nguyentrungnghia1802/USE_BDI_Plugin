@@ -25,13 +25,24 @@ public record ValidationContext(
         List<AslDiagnostic> diagnostics,
         BdiIndex index,
         MappingDocument mapping,
-        Optional<UseModelSnapshot> uml) {
+        Optional<UseModelSnapshot> uml,
+        Optional<SnapshotOclEvaluator> ocl) {
     public ValidationContext {
         agents = List.copyOf(Objects.requireNonNull(agents, "agents"));
         diagnostics = List.copyOf(Objects.requireNonNull(diagnostics, "diagnostics"));
         index = Objects.requireNonNull(index, "index");
         mapping = Objects.requireNonNull(mapping, "mapping");
         uml = Objects.requireNonNull(uml, "uml");
+        ocl = Objects.requireNonNull(ocl, "ocl");
+    }
+
+    public ValidationContext(
+            List<AgentModel> agents,
+            List<AslDiagnostic> diagnostics,
+            BdiIndex index,
+            MappingDocument mapping,
+            Optional<UseModelSnapshot> uml) {
+        this(agents, diagnostics, index, mapping, uml, Optional.empty());
     }
 
     public static ValidationContext from(
@@ -39,7 +50,16 @@ public record ValidationContext(
             MappingDocument mapping,
             Optional<UseModelSnapshot> uml) {
         Objects.requireNonNull(snapshot, "snapshot");
-        return new ValidationContext(snapshot.models(), snapshot.diagnostics(), snapshot.index(), mapping, uml);
+        return new ValidationContext(snapshot.models(), snapshot.diagnostics(), snapshot.index(), mapping, uml, Optional.empty());
+    }
+
+    public static ValidationContext from(
+            BdiImportSnapshot snapshot,
+            MappingDocument mapping,
+            Optional<UseModelSnapshot> uml,
+            Optional<SnapshotOclEvaluator> ocl) {
+        Objects.requireNonNull(snapshot, "snapshot");
+        return new ValidationContext(snapshot.models(), snapshot.diagnostics(), snapshot.index(), mapping, uml, ocl);
     }
 
     public Optional<AgentModel> agentFor(Path source) {
