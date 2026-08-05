@@ -1,0 +1,32 @@
+model QueueModel
+
+class Customer
+attributes
+  name : String
+operations
+  greet(prefix : String) : String
+end
+
+class Queue
+attributes
+  size : Integer
+operations
+  enqueue(item : String)
+end
+
+association QueueCustomers between
+  Queue[1] role queue
+  Customer[*] role customers
+end
+
+constraints
+
+context Queue::enqueue(item : String)
+  pre: item <> ''
+  post: self.size >= 0
+
+context Queue
+  inv NonNegativeSize: self.size >= 0
+
+context Customer
+  inv: self.name <> ''

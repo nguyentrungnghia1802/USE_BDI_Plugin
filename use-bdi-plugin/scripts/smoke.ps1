@@ -14,6 +14,15 @@ try {
         throw "Maven package failed with exit code $LASTEXITCODE."
     }
 
+    $rootPrototype = Join-Path $repoRoot 'Smart_manager_agent.asl'
+    $migratedPrototype = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\smartqueue\Smart_manager_agent.asl'
+    if (Test-Path -LiteralPath $rootPrototype) {
+        throw "Prototype remains at repository root: $rootPrototype"
+    }
+    if (-not (Test-Path -LiteralPath $migratedPrototype)) {
+        throw "Migrated prototype fixture is missing: $migratedPrototype"
+    }
+
     New-Item -ItemType Directory -Path $smokeRoot | Out-Null
     Expand-Archive -LiteralPath $distributionZip -DestinationPath $smokeRoot
 
@@ -34,7 +43,10 @@ try {
     }
 
     $validFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\valid\minimal.asl'
-    & java -cp "$pluginJar;$testJar" org.tzi.use.plugins.bdi.importer.PackagedParserSmoke $validFixture
+    $secondValidFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\valid\review-agent.asl'
+    $invalidFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\invalid\missing-plan-body.asl'
+    & java -cp "$pluginJar;$testJar" org.tzi.use.plugins.bdi.importer.PackagedParserSmoke `
+        $validFixture $invalidFixture $secondValidFixture
     if ($LASTEXITCODE -ne 0) {
         throw "Packaged parser smoke failed with exit code $LASTEXITCODE."
     }

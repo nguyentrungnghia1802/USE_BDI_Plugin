@@ -12,5 +12,14 @@
                 menuitem="Hello BDI Plugin"
                 toolbaritem="plugins">
         </action>
+        <action id="org.tzi.use.plugins.bdi.import"
+                label="Import AgentSpeak..."
+                icon="images/New.gif"
+                class="org.tzi.use.plugins.bdi.ImportBdiAction"
+                tooltip="Import AgentSpeak sources into the BDI explorer"
+                menu="AgentSpeak"
+                menuitem="Import AgentSpeak..."
+                toolbaritem="plugins">
+        </action>
     </actions>
 </plugin>

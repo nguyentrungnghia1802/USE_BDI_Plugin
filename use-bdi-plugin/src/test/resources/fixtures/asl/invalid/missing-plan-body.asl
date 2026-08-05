@@ -1,0 +1,3 @@
+ready.
++!start : ready
+    <- ;
