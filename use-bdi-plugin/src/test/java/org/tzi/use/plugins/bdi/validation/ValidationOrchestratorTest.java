@@ -47,13 +47,14 @@ class ValidationOrchestratorTest {
         ValidationOrchestrator orchestrator = new ValidationOrchestrator();
 
         List<ConsistencyIssue> issues = orchestrator.evaluate(context);
-        Set<String> ids = issues.stream().map(ConsistencyIssue::ruleId).collect(Collectors.toSet());
+        Set<String> ruleIds = orchestrator.rules().stream().map(ConsistencyRule::id).collect(Collectors.toSet());
 
-        assertEquals(15, orchestrator.rules().size());
-        assertTrue(ids.containsAll(Set.of(
+        assertEquals(22, orchestrator.rules().size());
+        assertTrue(ruleIds.containsAll(Set.of(
                 "ASL-001", "ASL-002", "BDI-001", "BDI-002", "BDI-003", "BDI-004",
                 "REF-001", "REF-002", "MAP-001", "MAP-002", "MAP-003", "SIG-001",
-                "SIG-002", "SIG-003", "OWN-001")));
+                "SIG-002", "SIG-003", "OWN-001", "BEL-001", "MSG-001",
+                "OCL-001", "OCL-002", "CTX-001", "OCL-003", "OCL-004")));
         assertTrue(issues.stream().allMatch(issue -> issue.status() == IssueStatus.OPEN));
         assertTrue(issues.stream().allMatch(issue -> !issue.evidence().isEmpty()));
         assertTrue(issues.stream().anyMatch(issue -> issue.ruleId().equals("SIG-003")

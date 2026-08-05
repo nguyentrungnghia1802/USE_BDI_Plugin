@@ -102,22 +102,22 @@
 - [x] MAP-001/002/003.
 - [x] SIG-001/002/003.
 - [x] OWN-001.
-- [ ] BEL-001.
-- [ ] MSG-001.
-- [ ] OCL-001/002/003/004.
-- [ ] CTX-001.
-- [ ] Suppression.
+- [x] BEL-001.
+- [x] MSG-001.
+- [x] OCL-001/002/003/004.
+- [x] CTX-001.
+- [x] Suppression.
 
 ## 9. OCL integration
 
-- [ ] Bind receiver.
-- [ ] Bind operation arguments.
-- [ ] Evaluate precondition on snapshot.
-- [ ] PASS/FAIL/UNKNOWN result.
-- [ ] Isolated/safe state mutation strategy.
-- [ ] One bounded effect adapter.
-- [ ] Re-check invariant.
-- [ ] Restore/avoid corrupting user state.
+- [x] Bind receiver.
+- [x] Bind operation arguments.
+- [x] Evaluate precondition on snapshot.
+- [x] PASS/FAIL/UNKNOWN result.
+- [x] Isolated/safe state mutation strategy.
+- [x] One bounded effect adapter.
+- [x] Re-check invariant.
+- [x] Restore/avoid corrupting user state.
 
 ## 10. Reporting
 
@@ -138,7 +138,7 @@
 - [x] Rule tests.
 - [x] Mapping persistence tests.
 - [x] USE model integration tests.
-- [ ] OCL tests.
+- [x] OCL tests.
 - [x] UI smoke test.
 - [ ] Performance benchmark.
 - [ ] Clean-clone reproducibility test.

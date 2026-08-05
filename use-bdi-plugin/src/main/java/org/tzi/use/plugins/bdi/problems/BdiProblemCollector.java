@@ -28,7 +28,7 @@ public final class BdiProblemCollector {
                             : BdiProblemSeverity.WARNING,
                     diagnostic.source(),
                     diagnostic.line(),
-                    diagnostic.column(),
+                    diagnostic.column() > 0 ? diagnostic.column() : 1,
                     diagnostic.message(),
                     "Import"));
         }
@@ -40,7 +40,7 @@ public final class BdiProblemCollector {
                         BdiProblemSeverity.WARNING,
                         span.source(),
                         span.hasLinePosition() ? span.beginLine() : 0,
-                        span.hasColumnPosition() ? span.beginColumn() : 0,
+                        span.hasColumnPosition() ? span.beginColumn() : 1,
                         unsupported.message(),
                         "Unsupported feature"));
             }
@@ -52,7 +52,7 @@ public final class BdiProblemCollector {
                     BdiProblemSeverity.WARNING,
                     duplicate.source(),
                     first.hasLinePosition() ? first.beginLine() : 0,
-                    first.hasColumnPosition() ? first.beginColumn() : 0,
+                    first.hasColumnPosition() ? first.beginColumn() : 1,
                     "Duplicate plan label '" + duplicate.label() + "' ("
                             + duplicate.occurrences().size() + " occurrences)",
                     "Index validation"));
@@ -80,7 +80,7 @@ public final class BdiProblemCollector {
                     },
                     span.source(),
                     span.hasLinePosition() ? span.beginLine() : 0,
-                    span.hasColumnPosition() ? span.beginColumn() : 0,
+                    span.hasColumnPosition() ? span.beginColumn() : (span.hasLinePosition() ? 1 : 0),
                     issue.message(),
                     issue.ruleId().substring(0, issue.ruleId().indexOf('-')) + " validation"));
         }
