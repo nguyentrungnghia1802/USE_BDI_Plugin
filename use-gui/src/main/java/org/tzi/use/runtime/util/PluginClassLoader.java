@@ -2,6 +2,7 @@ package org.tzi.use.runtime.util;
 
 import java.io.IOException;
 import java.net.JarURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -53,7 +54,7 @@ public class PluginClassLoader implements IPluginClassLoader {
 	}
 
 	public String getMainClassName() throws IOException {
-		URL url = new URL("jar:" + this.url + "!/");
+		URL url = URI.create("jar:" + this.url + "!/").toURL();
 		JarURLConnection uc = (JarURLConnection) url.openConnection();
 		Attributes attr = uc.getMainAttributes();
 		return attr != null ? attr.getValue(Attributes.Name.MAIN_CLASS) : null;

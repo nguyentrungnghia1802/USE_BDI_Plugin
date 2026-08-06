@@ -103,3 +103,5 @@ mvn -pl use-bdi-plugin exec:java -Dexec.mainClass=org.tzi.use.plugins.bdi.report
 ```
 
 The smoke script `use-bdi-plugin\scripts\smoke.ps1` now runs this step and validates the generated file as part of the smoke checks.
+
+Note: The report generator now also produces an HTML view at `docs/bdi-report.html` for quick human inspection. Suppressions configuration placeholder added at `use-bdi-plugin/.bdi-plugin/suppressions.json`.
