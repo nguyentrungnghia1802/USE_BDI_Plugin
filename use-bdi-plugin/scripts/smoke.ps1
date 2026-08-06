@@ -51,6 +51,18 @@ try {
         throw "Packaged parser smoke failed with exit code $LASTEXITCODE."
     }
 
+    # Run the lightweight report generator via Maven exec to produce docs/bdi-report.json
+    Write-Host 'Running report generator (exec:java)...'
+    & mvn -pl use-bdi-plugin exec:java -Dexec.mainClass=org.tzi.use.plugins.bdi.report.ReportMain -q
+    if ($LASTEXITCODE -ne 0) {
+        throw "Report generator failed with exit code $LASTEXITCODE."
+    }
+
+    $generatedReport = Join-Path $repoRoot 'docs\bdi-report.json'
+    if (-not (Test-Path -LiteralPath $generatedReport)) {
+        throw "Generated report not found: $generatedReport"
+    }
+
     $useGuiJar = Join-Path $useHome.FullName 'lib\use-gui.jar'
     & java -cp "$useGuiJar;$testJar" org.tzi.use.plugins.bdi.PluginGuiSmoke $useHome.FullName
     if ($LASTEXITCODE -ne 0) {
