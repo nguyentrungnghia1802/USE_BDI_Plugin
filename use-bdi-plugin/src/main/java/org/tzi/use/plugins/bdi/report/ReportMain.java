@@ -19,6 +19,10 @@ public final class ReportMain {
 
             ReportExporter.exportJson(data, out);
             System.out.println("Wrote report to: " + out.toAbsolutePath());
+
+            Path outHtml = Path.of(System.getProperty("user.dir"), "docs", "bdi-report.html");
+            HtmlReportExporter.exportHtml(data, outHtml);
+            System.out.println("Wrote HTML report to: " + outHtml.toAbsolutePath());
             System.exit(0);
         } catch (Exception e) {
             e.printStackTrace(System.err);

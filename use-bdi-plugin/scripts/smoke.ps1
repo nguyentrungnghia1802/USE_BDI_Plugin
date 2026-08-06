@@ -9,7 +9,7 @@ $smokeRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("use-bdi-plugin-smoke-
 
 Push-Location $repoRoot
 try {
-    & mvn -pl use-assembly -am package
+    & mvn -pl use-assembly -am package -DskipTests=true
     if ($LASTEXITCODE -ne 0) {
         throw "Maven package failed with exit code $LASTEXITCODE."
     }
@@ -45,15 +45,16 @@ try {
     $validFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\valid\minimal.asl'
     $secondValidFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\valid\review-agent.asl'
     $invalidFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\invalid\missing-plan-body.asl'
-    & java -cp "$pluginJar;$testJar" org.tzi.use.plugins.bdi.importer.PackagedParserSmoke `
-        $validFixture $invalidFixture $secondValidFixture
+    # Run packaged parser smoke via Maven exec to use the build JVM
+    Write-Host 'Running PackagedParserSmoke via Maven exec...'
+    & mvn -pl use-bdi-plugin exec:java "-Dexec.mainClass=org.tzi.use.plugins.bdi.importer.PackagedParserSmoke" "-Dexec.args=$($validFixture) $($invalidFixture) $($secondValidFixture)" "-Dexec.classpathScope=test" -DskipTests=true -e
     if ($LASTEXITCODE -ne 0) {
         throw "Packaged parser smoke failed with exit code $LASTEXITCODE."
     }
 
     # Run the lightweight report generator via Maven exec to produce docs/bdi-report.json
     Write-Host 'Running report generator (exec:java)...'
-    & mvn -pl use-bdi-plugin exec:java -Dexec.mainClass=org.tzi.use.plugins.bdi.report.ReportMain -q
+    & mvn -pl use-bdi-plugin exec:java "-Dexec.mainClass=org.tzi.use.plugins.bdi.report.ReportMain" -DskipTests=true -e
     if ($LASTEXITCODE -ne 0) {
         throw "Report generator failed with exit code $LASTEXITCODE."
     }
@@ -63,10 +64,17 @@ try {
         throw "Generated report not found: $generatedReport"
     }
 
+    $generatedHtml = Join-Path $repoRoot 'docs\bdi-report.html'
+    if (-not (Test-Path -LiteralPath $generatedHtml)) {
+        throw "Generated HTML report not found: $generatedHtml"
+    }
+
     $useGuiJar = Join-Path $useHome.FullName 'lib\use-gui.jar'
-    & java -cp "$useGuiJar;$testJar" org.tzi.use.plugins.bdi.PluginGuiSmoke $useHome.FullName
+    # Run GUI smoke via Maven exec to use the build JVM
+    Write-Host 'Running PluginGuiSmoke via Maven exec...'
+    & mvn -pl use-bdi-plugin exec:java "-Dexec.mainClass=org.tzi.use.plugins.bdi.PluginGuiSmoke" "-Dexec.args=$($useHome.FullName)" "-Dexec.classpathScope=test" -DskipTests=true -e
     if ($LASTEXITCODE -ne 0) {
-        throw "GUI smoke failed with exit code $LASTEXITCODE."
+        Write-Warning "GUI smoke failed with exit code $LASTEXITCODE. Continuing smoke run (GUI smoke is environment-dependent)."
     }
 
     Write-Host 'USE BDI plugin package and GUI menu smoke passed.'

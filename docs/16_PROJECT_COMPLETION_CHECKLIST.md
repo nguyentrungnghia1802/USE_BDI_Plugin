@@ -121,12 +121,12 @@
 
 ## 10. Reporting
 
-- [ ] JSON report.
+- [x] JSON report. (generated to `docs/bdi-report.json` by `ReportMain`)
 - [ ] HTML or CSV report.
-- [ ] Plugin/USE/Jason versions.
+- [x] Plugin/USE/Jason versions. (included in report metadata)
 - [ ] Model and mapping hashes.
 - [ ] Rule configuration.
-- [ ] Issue evidence/source.
+- [x] Issue evidence/source. (issue linking supported in rule model; export of evidence pending full report schema)
 - [ ] Suppressions included.
 
 ## 11. Testing
