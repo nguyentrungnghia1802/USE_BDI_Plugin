@@ -116,3 +116,5 @@ fabric.properties
 .project
 
 target/
+lib/
+use-gui/lib/
