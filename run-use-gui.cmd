@@ -1,3 +1,7 @@
 @echo off
 cd /d "%~dp0"
-java -jar "use-assembly\target\use-7.1.1\use-7.1.1\lib\use-gui.jar" -nr -H=D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-assembly\target\use-7.1.1\use-7.1.1
+if defined JAVA_HOME (
+    "%JAVA_HOME%\bin\java.exe" -jar "use-gui\target\use-gui.jar" -nr
+) else (
+    java -jar "use-gui\target\use-gui.jar" -nr
+)

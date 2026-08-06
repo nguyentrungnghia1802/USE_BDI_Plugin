@@ -1,2 +1,3 @@
 Set-Location $PSScriptRoot
-java -jar 'use-assembly\target\use-7.1.1\use-7.1.1\lib\use-gui.jar' -nr -H=D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-assembly\target\use-7.1.1\use-7.1.1
+$javaCmd = if ($env:JAVA_HOME) { "$env:JAVA_HOME\bin\java.exe" } else { "java" }
+& $javaCmd -jar "use-gui\target\use-gui.jar" -nr
