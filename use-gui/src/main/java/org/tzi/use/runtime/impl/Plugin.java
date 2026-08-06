@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import org.tzi.use.runtime.IPlugin;
@@ -71,7 +72,7 @@ public abstract class Plugin implements IPlugin {
 		String urlString = "jar:" + desc.getPluginLocation() + "!/" + name;
 		
 		try {	
-			resourceUrl = new URL(urlString);
+			resourceUrl = URI.create(urlString).toURL();
 		} catch (MalformedURLException e) {
 			Log.error("The URL to the image ["
 					+ urlString

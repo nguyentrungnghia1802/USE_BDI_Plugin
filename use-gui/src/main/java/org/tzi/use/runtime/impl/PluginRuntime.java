@@ -2,6 +2,7 @@ package org.tzi.use.runtime.impl;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +90,7 @@ public class PluginRuntime implements IPluginRuntime {
 		Log.debug("Current plugin Information [" + pluginFilename + ","
 				+ pluginURL + "]");
 		try {
-			newPluginURL = new URL(pluginURL + pluginFilename);
+			newPluginURL = URI.create(pluginURL + pluginFilename).toURL();
 			Log.debug("Current pluginURL [" + newPluginURL + "]");
 			PluginRegistry pluginRegistry = PluginRegistry.getInstance();
 			IPluginDescriptor currentPluginDescriptor = pluginRegistry

@@ -9,6 +9,7 @@ import org.tzi.use.util.Log;
 import javax.swing.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -42,7 +43,7 @@ public class PluginActionProxy extends PluginAction {
 			+ pluginActionDescriptor.getPluginActionModel().getIcon();
 		
 		try {	
-			imageUrl = new URL(urlString);
+			imageUrl = URI.create(urlString).toURL();
 		} catch (MalformedURLException e) {
 			Log.error("The URL to the image ["
 					+ urlString

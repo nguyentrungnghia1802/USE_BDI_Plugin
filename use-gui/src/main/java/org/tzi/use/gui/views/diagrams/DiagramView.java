@@ -22,8 +22,6 @@
 package org.tzi.use.gui.views.diagrams;
 
 import com.ximpleware.ParseException;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
 import org.tzi.use.config.Options;
 import org.tzi.use.gui.graphlayout.AllLayoutTypes;
 import org.tzi.use.gui.graphlayout.SpringLayout;
@@ -69,6 +67,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.NumberFormat;
 import java.util.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  * Combines everything that the class and object diagram have in common.
@@ -1073,20 +1076,18 @@ public abstract class DiagramView extends JPanel
             // layout can not be saved
             return null;
         }
-        // use specific Xerces class to write DOM-data to a file:
-
-        OutputFormat format = new OutputFormat();
-        format.setLineWidth(65);
-        format.setIndenting(true);
-        format.setIndent(2);
-        StringWriter stringOut = new StringWriter();
-        XMLSerializer serializer = new XMLSerializer(stringOut, format);
+        // use javax.xml.transform to write DOM-data to a string:
         try {
-            serializer.serialize(doc);
-        } catch (IOException e1) {
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            StringWriter stringOut = new StringWriter();
+            transformer.transform(new DOMSource(doc), new StreamResult(stringOut));
+            return stringOut.toString();
+        } catch (Exception e1) {
             return "";
         }
-        return stringOut.toString();
     }
 
     public void saveLayout(Path layoutFile) {
