@@ -70,9 +70,23 @@ try {
     }
 
     $useGuiJar = Join-Path $useHome.FullName 'lib\use-gui.jar'
-    # Run GUI smoke via Maven exec to use the build JVM
-    Write-Host 'Running PluginGuiSmoke via Maven exec...'
-    & mvn -pl use-bdi-plugin exec:java "-Dexec.mainClass=org.tzi.use.plugins.bdi.PluginGuiSmoke" "-Dexec.args=$($useHome.FullName)" "-Dexec.classpathScope=test" -DskipTests=true -e
+    $javaExecutable = if (-not [string]::IsNullOrWhiteSpace($env:JAVA_HOME)) {
+        Join-Path $env:JAVA_HOME 'bin\java.exe'
+    } else {
+        (Get-Command java -ErrorAction Stop).Source
+    }
+    if (-not (Test-Path -LiteralPath $javaExecutable)) {
+        throw "Java executable was not found: $javaExecutable"
+    }
+    $guiSmokeClasspath = @(
+        (Join-Path $repoRoot 'use-bdi-plugin\target\test-classes'),
+        (Join-Path $repoRoot 'use-bdi-plugin\target\classes'),
+        $useGuiJar
+    ) -join [System.IO.Path]::PathSeparator
+    # Use the extracted use-gui.jar as the parent classpath. Maven exec's
+    # isolated classloader cannot resolve USE runtime classes from plugins.
+    Write-Host 'Running PluginGuiSmoke against the extracted distribution...'
+    & $javaExecutable '-cp' $guiSmokeClasspath 'org.tzi.use.plugins.bdi.PluginGuiSmoke' $useHome.FullName
     if ($LASTEXITCODE -ne 0) {
         Write-Warning "GUI smoke failed with exit code $LASTEXITCODE. Continuing smoke run (GUI smoke is environment-dependent)."
     }

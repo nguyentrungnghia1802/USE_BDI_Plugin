@@ -246,8 +246,10 @@ resolution task beyond the first mapping slice.
   machine-readable report to `target/performance/bdi-import-index.json`.
 - The companion `scripts/performance.ps1` command provides a repeatable local
   entry point. It intentionally has no hard duration threshold; benchmark
-  values are environment-dependent until the Auction case-study workload and
-  experiment protocol exist.
+  values are environment-dependent. The Smart Queue sample and the Auction
+  experiment protocol are documented in
+  `docs/project/evidence/performance-baseline.md` and
+  `docs/project/evidence/auction-experiment-protocol.md`.
 
 ### Implemented clean-clone reproducibility slice
 
@@ -359,6 +361,20 @@ resolution task beyond the first mapping slice.
 - No new ADR was required. The bundle consumes the accepted normalized-IR
   rule boundary, read-only USE snapshot policy, OCL PASS/FAIL/UNKNOWN contract,
   and existing ADR-0015/0016 report identity rules.
+
+### Completed thesis evidence package
+
+- The final current-MVP rule catalog is in
+  `docs/project/08_CONSISTENCY_RULE_CATALOG.md` and is checked against the
+  22-rule source registry by `RuleCatalogCompletenessTest`.
+- UI screenshots, the Auction protocol, scoped mutation metrics, benchmark
+  chart/table, threats to validity, limitations, and future work are indexed
+  under `docs/project/evidence/`. The interpretation boundary remains part of
+  each evidence document; no broad accuracy claim is inferred from four
+  mutants.
+- `docs/project/PLUGIN_INSTALL_GUIDE.md` is the source-build and extracted
+  distribution launch guide. It uses the existing shaded plugin packaging and
+  does not require a USE core change.
 
 ## 6. Dependency packaging
 

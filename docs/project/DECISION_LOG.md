@@ -1229,3 +1229,50 @@ not hide a finding silently or mutate the USE model.
   needed: this is case-study evidence built on ADR-0014's rule boundary,
   read-only USE projection, OCL status contract, and ADR-0015/0016 reporting
   identities. Precision/recall/F1 and a larger labeled corpus remain open.
+
+## Thesis evidence and install-guide bundle - 2026-08-09
+
+- The rule catalog is now traceable to the actual `StandardConsistencyRules`
+  factory: 22 IDs, seven ordered phases, evaluator names, default
+  severity/certainty, and test/evidence references are recorded in
+  `08_CONSISTENCY_RULE_CATALOG.md`. `RuleCatalogCompletenessTest` protects the
+  source/document agreement.
+- The tracked UI screenshots are indexed in `evidence/ui-screenshots.md` with
+  the exact `Plugins > AgentSpeak > Hello BDI Plugin` and `Import AgentSpeak...`
+  path. `PluginGuiSmoke` remains the executable menu-label check; images are
+  presentation evidence and are not treated as a runtime test.
+- `evidence/auction-experiment-protocol.md` and
+  `evidence/auction-classification-metrics.md` make the four-mutant procedure
+  and formulas reproducible. The resulting TP=4, FP=0, FN=0 values give
+  precision/recall/F1 of 1.000 only for mutant-instance detection in this
+  labeled corpus. No TN or full rule-level accuracy claim is made.
+- `evidence/performance-baseline.md` records the benchmark artifact produced
+  on this run: minimum `3.1334 ms`, median `6.1485 ms`, p95 `7.7725 ms` for the
+  seven-sample Smart Queue import/index workload. These are comparison values,
+  not a hard build threshold.
+- `evidence/threats-to-validity.md`, `limitations.md`, `future-work.md`, and
+  `PLUGIN_INSTALL_GUIDE.md` capture the evaluation boundary and runnable
+  distribution path. `ThesisEvidenceArtifactTest` verifies their presence and
+  the required screenshot files.
+- `scripts/smoke.ps1` now launches `PluginGuiSmoke` with the extracted
+  `use-gui.jar` on the parent classpath. The package/parser/report checks and
+  the direct GUI probe passed with `GUI_SMOKE_OK`; the previous Maven exec
+  classloader warning is no longer the evidence path.
+- The final plugin reactor test command `mvn --batch-mode
+  --no-transfer-progress -pl use-bdi-plugin -am test` passed with 73 tests,
+  including the new catalog, metrics, and thesis-artifact tests.
+- No new ADR was needed: this bundle adds documentation/tests around accepted
+  plugin, read-only USE snapshot, OCL certainty, packaging, and reporting
+  boundaries; it does not modify USE core.
+
+## Root verify recheck - 2026-08-09
+
+- Command: `mvn --batch-mode --no-transfer-progress clean verify`.
+- `use-core` passed, but `use-gui` failed in the existing `ShellIT` Failsafe
+  fork before a handshake: `The forked VM terminated without properly saying
+  goodbye`, with `Tests run: 0` and process exit code `1`. The reactor skipped
+  `use-bdi-plugin` and `use-assembly` after that failure.
+- This confirms the previously recorded Phase 0 limitation rather than a
+  plugin regression. The root release checkbox remains unchecked. A future
+  fix must be handled as a separately reviewed build/test ADR; this slice does
+  not change USE core or suppress the integration test.

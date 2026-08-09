@@ -44,6 +44,59 @@ Issue
 | OCL-004 | Effect not specified; invariant check skipped | Info | không có effect model |
 | CTX-001 | Plan context contradicts current snapshot | Warning | context evaluate false trên snapshot hiện tại |
 
+## 2.1. Implementation matrix
+
+This is the final catalog for the currently implemented MVP. The source of
+truth for registration and execution is the `StandardConsistencyRules` factory
+in `use-bdi-plugin`; this table is deliberately checked against that factory
+by `RuleCatalogCompletenessTest`. "Implemented" means that the rule is
+registered, deterministic, emits structured evidence, and is exercised by the
+aggregate validation test or a targeted case-study test. It does not mean that
+the rule is complete for every AgentSpeak/Jason construct or every UML/OCL
+semantics.
+
+| Rule ID | Phase | Source evaluator | Default result | Test/evidence trace |
+|---|---|---|---|---|
+| ASL-001 | PARSE | `parseErrors` | ERROR / CONFIRMED | `JasonAslParserAdapterTest`, `ValidationOrchestratorTest` |
+| ASL-002 | PARSE | `unsupportedSyntax` | WARNING / CONFIRMED | `UnsupportedFixtureTest`, golden IR evidence |
+| BDI-001 | IR_WELL_FORMEDNESS | `duplicatePlanLabels` | ERROR / CONFIRMED | `ValidationOrchestratorTest` |
+| BDI-002 | IR_WELL_FORMEDNESS | `unsupportedGoals` | ERROR / CONFIRMED | `ValidationOrchestratorTest` |
+| BDI-003 | IR_WELL_FORMEDNESS | `invalidTriggers` | ERROR / CONFIRMED | `ValidationOrchestratorTest` |
+| BDI-004 | IR_WELL_FORMEDNESS | `invalidStepOrder` | ERROR / CONFIRMED | `ValidationOrchestratorTest` |
+| REF-001 | REFERENCE | `unresolvedReferences` | ERROR / CONFIRMED or POTENTIAL | `ValidationOrchestratorTest`, `AuctionFaultInjectionTest` |
+| REF-002 | REFERENCE | `unresolvedTestReferences` | WARNING / POTENTIAL | `ValidationOrchestratorTest` |
+| MAP-001 | MAPPING | `unmappedAgents` | ERROR / CONFIRMED | `ValidationOrchestratorTest`, `AuctionMappingFixtureTest` |
+| MAP-002 | MAPPING | `unmappedActions` | ERROR / CONFIRMED | `ValidationOrchestratorTest`, `AuctionMappingFixtureTest` |
+| MAP-003 | MAPPING | `staleMappings` | ERROR / CONFIRMED | `AuctionStructuralMutantTest` |
+| SIG-001 | SIGNATURE | `arityMismatches` | ERROR / CONFIRMED | `ValidationOrchestratorTest`, `AuctionFaultInjectionTest` |
+| SIG-002 | SIGNATURE | `typeMismatches` | ERROR / CONFIRMED | `ValidationOrchestratorTest`, Auction baseline |
+| SIG-003 | SIGNATURE | `unknownTypes` | WARNING / UNKNOWN | `ValidationOrchestratorTest`, Auction baseline |
+| OWN-001 | SIGNATURE | `wrongOwners` | ERROR / CONFIRMED | `ValidationOrchestratorTest`, Auction baseline |
+| BEL-001 | MAPPING | `unmappedBeliefs` | WARNING / POTENTIAL | `ValidationOrchestratorTest`, Auction baseline |
+| MSG-001 | REFERENCE | `unknownMessageReceivers` | ERROR / CONFIRMED | `ValidationOrchestratorTest` |
+| OCL-001 | SNAPSHOT_OCL | `failedPreconditions` | ERROR / CONFIRMED | `AuctionFaultInjectionTest` |
+| OCL-002 | SNAPSHOT_OCL | `unknownPreconditions` | WARNING / UNKNOWN | `ValidationOrchestratorTest`, Auction baseline |
+| CTX-001 | SNAPSHOT_OCL | `contradictingContexts` | WARNING / CONFIRMED | `ValidationOrchestratorTest` |
+| OCL-003 | BOUNDED_SIMULATION | `violatedBoundedEffects` | ERROR / CONFIRMED | `ValidationOrchestratorTest` |
+| OCL-004 | BOUNDED_SIMULATION | `skippedBoundedEffects` | INFO / UNKNOWN | `ValidationOrchestratorTest`, Auction baseline |
+
+The execution skeleton is:
+
+```text
+ValidationContext
+  -> parse/IR/index checks
+  -> mapping/reference/signature checks
+  -> read-only USE snapshot OCL checks
+  -> bounded SOIL simulation when an explicit effect is available
+  -> ConsistencyIssue(ruleId, severity, status, certainty, evidence)
+```
+
+The current test boundary is intentionally explicit. `ValidationOrchestratorTest`
+checks that all 22 rules are registered and that every emitted issue carries
+evidence. The Auction suite supplies targeted mutation evidence for `MAP-003`,
+`SIG-001`, `REF-001`, and `OCL-001`; the other rules still require additional
+domain-specific fixtures before they can support a broader research claim.
+
 ## 3. Goal support semantics
 
 Một plan hỗ trợ goal nếu:

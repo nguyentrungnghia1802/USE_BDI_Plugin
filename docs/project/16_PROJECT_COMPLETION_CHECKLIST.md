@@ -164,25 +164,58 @@
 - [x] IR class diagram. (normalized Java-owned IR hierarchy)
 - [x] BDI metamodel diagram. (agent/plan/index domain view)
 - [x] Mapping examples. (Auction confirmed and mutant links)
-- [ ] Rule catalog final.
-- [ ] UI screenshots.
-- [ ] Experiment protocol.
-- [ ] Precision/recall/F1.
-- [ ] Performance chart/table.
-- [ ] Threats to validity.
-- [ ] Limitations.
-- [ ] Future work.
+- [x] Rule catalog final. (22-rule implementation matrix and catalog test)
+- [x] UI screenshots. (tracked USE/BDI Explorer/Problems evidence and smoke path)
+- [x] Experiment protocol. (reproducible Auction baseline/mutant procedure)
+- [x] Precision/recall/F1. (scoped four-mutant detection metrics)
+- [x] Performance chart/table. (Smart Queue import/index benchmark evidence)
+- [x] Threats to validity. (construct, internal, external, and conclusion risks)
+- [x] Limitations. (known subset, mapping, OCL, metrics, and build boundaries)
+- [x] Future work. (reference precision, corpus, integration, evaluation, release)
 
 ## 14. Release
 
 - [ ] `mvn clean verify` pass.
-- [ ] Plugin install guide.
+- [x] Plugin install guide.
 - [ ] User guide.
 - [ ] Developer guide.
 - [ ] Third-party notices/licenses.
 - [ ] Release package tested on clean machine/profile.
 - [ ] Git tag `v1.0.0-thesis-rc`.
 - [ ] Backup source, data, report and slides.
+
+## Thesis evidence and install-guide bundle - 2026-08-09
+
+- `08_CONSISTENCY_RULE_CATALOG.md` now contains the implementation matrix for
+  all 22 registered `StandardConsistencyRules`, including phase, evaluator,
+  default severity/certainty, and test/evidence trace. `RuleCatalogCompletenessTest`
+  checks that the source registry and documented IDs remain aligned.
+- `evidence/ui-screenshots.md` indexes the tracked USE class diagram, import
+  entry point, BDI Explorer, detail panel, and Problems screenshots. It also
+  records the exact `Plugins > AgentSpeak` click path and points to the
+  `PluginGuiSmoke`/`smoke.ps1` verification.
+- `evidence/auction-experiment-protocol.md` defines the four-mutant Auction
+  procedure, oracle, commands, expected markers, and interpretation boundary.
+- `evidence/auction-classification-metrics.md` reports mutation-instance
+  precision `1.000`, recall `1.000`, and F1 `1.000` for TP=4, FP=0, FN=0. This
+  is explicitly scoped to the four labeled mutants and does not estimate TN
+  or rule-level generalization. `AuctionMetricsEvidenceTest` recomputes it
+  from the tracked CSV.
+- `evidence/performance-baseline.md` records the latest seven-iteration
+  Smart Queue import/index sample: minimum `3.1334 ms`, median `6.1485 ms`,
+  p95 `7.7725 ms`, with a Mermaid chart and reproduction command.
+- `evidence/threats-to-validity.md`, `limitations.md`, and `future-work.md`
+  capture the evaluation boundary and next research steps. `PLUGIN_INSTALL_GUIDE.md`
+  documents assembly, runtime launch, plugin placement, UI verification, and
+  clean-clone validation.
+- `mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin "-Dtest=RuleCatalogCompletenessTest,AuctionMetricsEvidenceTest,ThesisEvidenceArtifactTest,AuctionEvidenceArtifactTest" test` passed with 4 tests.
+- `mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test` passed with 73 tests, including the full Auction, UI, OCL, catalog, and metrics suite.
+- `powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\performance.ps1` passed with marker `PERFORMANCE_BENCHMARK_OK`.
+- `powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1` passed the assembled package, shaded Jason parser/report checks, and direct extracted-distribution GUI probe with `GUI_SMOKE_OK`.
+- The root `mvn --batch-mode --no-transfer-progress clean verify` recheck did
+  not pass: `use-core` passed, while `use-gui` `ShellIT` exited before the
+  Failsafe handshake. The release checkbox remains open; see `DECISION_LOG.md`
+  and `evidence/limitations.md`.
 
 ## Reporting evidence - 2026-08-09
 
