@@ -19,6 +19,7 @@ flowchart LR
   MAP --> VAL
   UA --> VAL
   VAL --> SNAP[Immutable current analysis snapshot]
+  SNAP --> TRACE[Derived traceability graph]
   SNAP --> GUI[BDI Explorer and Problems]
   SNAP --> REP[JSON and HTML reports]
 ```
@@ -85,6 +86,7 @@ and verifies the state fingerprint before and after analysis.
 | USE projection | adapter snapshot | immutable/read-only |
 | Mappings/config/suppressions | plugin/user files | versioned and validated |
 | Current analysis/Problems | application snapshot service | immutable, recomputed |
+| Traceability graph | trace builder | immutable, derived per snapshot, never persisted |
 | Reports | GUI or headless caller | atomic serialization of supplied evidence only |
 
 OCL results are `PASS`, `FAIL`, or `UNKNOWN`; compile/evaluation errors cannot
@@ -136,7 +138,16 @@ Workspace, organization, and institution declarations are retained as
 not normalize CArtAgO artifacts, model Moise semantics, start a JaCaMo runtime,
 or consume execution traces. `.jcm` is not wired into the GUI/headless CLI yet.
 
-## 8. Known Architecture Gaps
+## 8. Traceability Boundary
+
+`TraceabilityGraphBuilder` consumes only `CurrentAnalysisSnapshot` plus an
+explicit project root. It derives portable source/BDI, confirmed mapping, UML,
+OCL, gap, and issue nodes with deterministic evidence edges. Issue detail is a
+backward traversal over the immutable graph. Raw Jason plan annotations are
+excluded from IDs and serialized labels because they may contain absolute
+source URLs. A missing mapping is a graph gap, not an inferred UML edge.
+
+## 9. Known Architecture Gaps
 
 - Headless composition of file inputs into the shared current-analysis service.
 - Strict unknown-field policy for mapping JSON.

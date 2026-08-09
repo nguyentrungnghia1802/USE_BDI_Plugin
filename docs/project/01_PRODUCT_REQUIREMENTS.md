@@ -97,7 +97,15 @@ implemented.
 | FR-REP-006 | Compose one immutable current analysis snapshot for Problems, GUI export, and headless gates | Implemented |
 | FR-REP-007 | Run the same analysis headlessly with deterministic reports and distinct CI exit semantics | Implemented |
 
-### 2.7 Case study and release
+### 2.7 Traceability
+
+| ID | Requirement | Status |
+| --- | --- | --- |
+| FR-TRC-001 | Derive an immutable source-to-mapping-to-UML/OCL-to-issue graph from one current-analysis snapshot | Implemented |
+| FR-TRC-002 | Preserve issue status/certainty and represent absent confirmed mappings as explicit gaps | Implemented |
+| FR-TRC-003 | Query one issue chain deterministically without exposing checkout-absolute paths | Implemented |
+
+### 2.8 Case study and release
 
 | ID | Requirement | Status |
 | --- | --- | --- |
@@ -127,6 +135,7 @@ implemented.
 | BR-011 | USE core changes require an accepted ADR and focused regression evidence. |
 | BR-012 | Release completion requires tests, docs, package evidence, tag, and complete artifact backup. |
 | BR-013 | JaCaMo parser/model types stop at the project adapter; static import does not imply runtime support. |
+| BR-014 | The traceability graph is derived evidence, never a mutable or persisted source of truth. |
 
 ## 4. Core acceptance criteria
 

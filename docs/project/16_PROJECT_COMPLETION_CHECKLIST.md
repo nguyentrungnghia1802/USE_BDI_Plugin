@@ -34,6 +34,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Headless gate composes the same snapshot and distinguishes CI outcomes.
 - [x] Official JaCaMo 1.3.0 parses Auction `.jcm` into portable MAS IR.
 - [x] `.jcm` agent import preserves partial success and explicit unsupported resources.
+- [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
 - [x] User, developer, install, license, limitation, and threat guides exist.
@@ -55,7 +56,7 @@ are complete. Do not append per-day implementation diaries.
 Latest validated baseline after the static JaCaMo project-import slice:
 
 - focused CLI/current-snapshot/report tests: 10 pass;
-- plugin tests: 113 pass;
+- plugin tests: 116 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
 - root `mvn clean verify`: all five modules, 121 GUI integration tests, and
@@ -98,6 +99,7 @@ The prioritized development candidates are maintained in
 | --- | --- |
 | Import/IR/index | importer, IR, golden, and index tests |
 | JaCaMo project import | parser spike, MAS golden, diagnostics, relocation, package smoke |
+| Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
 | Plugin GUI | action/Explorer tests and `scripts/smoke.ps1` |
 | Mapping/rules | mapping, orchestrator, catalog, config, suppression tests |
 | USE/OCL safety | facade/evaluator tests and fingerprint assertions |

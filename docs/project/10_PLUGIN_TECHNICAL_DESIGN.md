@@ -36,6 +36,7 @@ use-bdi-plugin/
     persistence/  versioned JSON repositories
     problems/     issue presentation models
     report/       JSON/HTML serialization
+    trace/        snapshot-derived explanatory graph
     ui/           Explorer, mapping, and Problems Swing views
 ```
 
@@ -83,6 +84,14 @@ counts, ADR-0016 model/mapping hashes, and parser/plugin/USE/metamodel versions.
 The constructor rejects count, hash, parser-version, metamodel, and OCL-without-
 USE inconsistencies. Problems reads this aggregate; Swing controls, `MSystem`,
 Jason AST, and mutable lists do not cross into it.
+
+`TraceabilityGraphBuilder` derives typed nodes and edges from that immutable
+snapshot. `ProjectSourceId` v2 identifies source and BDI elements, confirmed
+bindings connect them to qualified UML/OCL targets, and missing bindings create
+explicit gap nodes. `detailForIssue` returns the stable predecessor closure for
+one issue. The debug JSON serializer intentionally excludes raw evidence text
+and absolute source URLs; it is not a replacement analysis report or a
+persistence format.
 
 ## 5. Persistence Contracts
 

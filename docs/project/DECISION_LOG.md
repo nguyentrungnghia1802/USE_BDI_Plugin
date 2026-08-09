@@ -38,6 +38,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0024 | Compose Problems/export/headless inputs through one immutable application-owned `CurrentAnalysisSnapshot`; validation runs once per composition, caller supplies time, and ADR-0016 hashes plus counts/version/config/suppression evidence are constructor-validated | current-analysis Auction/malformed/Explorer tests |
 | ADR-0025 | Headless quality gate requires explicit `.use`, one-or-more `.asl`, and JSON/HTML output paths; mapping/rules/suppressions are optional explicit files, timestamp defaults to epoch, no CWD discovery occurs, and exits are 0 clean, 1 confirmed findings, 2 potential/unknown-only, 3 invalid input/config, 4 infrastructure/output failure | CLI integration/process smoke and deterministic-report tests |
 | ADR-0026 | Use the official JaCaMo 1.3.0 parser/model behind an adapter, paired with Jason 3.3.0; shade only the JaCaMo artifact and exclude its runtime transitives | parser spike, dependency evidence, package smoke |
+| ADR-0027 | Derive an immutable traceability graph from `CurrentAnalysisSnapshot`; use project-relative source and qualified UML identities, preserve issue certainty, and represent missing mappings as explicit gaps | Auction graph/query/portability tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -120,3 +121,21 @@ shaded JAR; no parser classes overlap, and these templates are outside the
 static import contract. Package smoke continues to verify both parser classes.
 `docs/project/evidence/jacamo-parser-spike.md` records the source signatures,
 artifact provenance, dependency result, checksums, and fallback.
+
+## 7. ADR-0027: Snapshot-Derived Traceability Graph
+
+**Status:** Accepted. **Date:** 2026-08-10.
+
+Traceability is an immutable explanatory projection of one
+`CurrentAnalysisSnapshot`, not another persistence model or mutable source of
+truth. `TraceabilityGraphBuilder` receives the explicit project root required
+by ADR-0021, derives stable typed nodes and evidence-bearing edges, and uses
+qualified UML references for model targets. Jason plan labels are not used as
+portable IDs because their source annotations can contain checkout-absolute
+URLs; the portable source span is the BDI element identity.
+
+Missing confirmed mappings create a typed `GAP` node and `MISSING_MAPPING`
+edge. OCL issues retain their `OPEN` lifecycle status and `UNKNOWN` certainty
+through the issue node and chain edges. The deterministic debug serializer
+omits raw evidence text and absolute paths. Graph visualization, persistence,
+CArtAgO, Moise, and runtime traces remain outside this MVP slice.

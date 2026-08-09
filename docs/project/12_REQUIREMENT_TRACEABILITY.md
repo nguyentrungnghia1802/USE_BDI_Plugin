@@ -31,6 +31,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-REP-005 | `ReportMain` zero-state serializer demonstration | report/package smoke tests | requirements, technical/developer guides |
 | FR-REP-006 | `CurrentAnalysisSnapshotService`, immutable aggregate | Auction, malformed, deterministic-time, state-safety, and Explorer parity tests | ADR-0024, architecture, technical design |
 | FR-REP-007 | `BdiQualityGateMain`, `HeadlessAnalysisService`, packaged smoke | Auction, invalid ASL/input/config, review-only, deterministic and process-exit tests | ADR-0025, developer guide |
+| FR-TRC-001..003 | `trace` graph values, builder, query, and serializer | `AuctionTraceabilityGraphTest` complete-chain, gap, deduplication, certainty, and portability tests | ADR-0027, architecture, technical design |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
 | FR-REL-001..002 | Maven POMs, smoke/clean-clone scripts | root verify and script markers | developer/install guides, release evidence |
@@ -52,6 +53,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | BR-011 | ADR policy and focused `IntegrationModeIT`/`ShellIT` evidence |
 | BR-012 | Release checklist, package evidence, backup script/manifest |
 | BR-013 | JaCaMo adapter boundary scan, runtime exclusions, parser/import tests |
+| BR-014 | Immutable graph constructors, snapshot-only builder, and graph portability tests |
 
 ## 3. Evidence traceability
 
@@ -66,6 +68,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | UI availability | screenshot index and `PluginGuiSmoke` |
 | Package reproducibility | release-package evidence and clean-clone marker |
 | Static JaCaMo import | parser-spike evidence and Auction golden MAS project IR |
+| Unified issue trace | Auction traceability graph test and ADR-0027 |
 | Research limitations | threats, limitations, and future-work documents |
 
 ## 4. Known untraced end-to-end gaps
