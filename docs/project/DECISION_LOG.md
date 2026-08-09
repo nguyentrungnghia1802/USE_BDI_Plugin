@@ -1276,3 +1276,30 @@ not hide a finding silently or mutate the USE model.
   plugin regression. The root release checkbox remains unchecked. A future
   fix must be handled as a separately reviewed build/test ADR; this slice does
   not change USE core or suppress the integration test.
+
+## Release documentation and backup evidence - 2026-08-09
+
+- `USER_GUIDE.md` and `DEVELOPER_GUIDE.md` were added as the operator and
+  maintainer paths for the verified USE 7.1.1 plugin distribution. The user
+  guide uses the checked-in Auction fixtures and the exact menu labels exposed
+  by `useplugin.xml` and USE `MainWindow`.
+- `THIRD_PARTY_NOTICES.md` is limited to evidence that was inspected directly:
+  root GPLv2 `COPYING`, the plugin POM/runtime tree, and the embedded notice
+  for Jason `3.3.0`, JADE `4.3`, and GlassFish JSON `1.1.4`. It does not claim a
+  legal audit of every historical USE dependency or external thesis material.
+- `ReleaseArtifactTest` verifies the documentation, package markers, exact
+  dependency coordinates, and backup script contract. The plugin reactor test
+  passed with 74 tests.
+- `backup-thesis-artifacts.ps1` uses `git archive` for committed `HEAD`, keeps
+  uncommitted paths in the manifest, copies present external data/slide
+  directories, and reports missing candidates without deleting anything. Its
+  validation produced `THESIS_BACKUP_OK`; the current checkout has no
+  `data`, `slides`, or `presentation` directory.
+- `mvn --batch-mode --no-transfer-progress -pl use-assembly -am package` and
+  `smoke.ps1` passed, including the shaded Jason classes, embedded notice,
+  distribution entry, parser/report smoke, and `GUI_SMOKE_OK`. Clean-clone
+  verification is intentionally deferred until these files are committed so
+  that the script tests the new `HEAD`.
+- No new ADR was needed: this slice adds release documentation, evidence, and
+  a non-destructive backup procedure around accepted packaging boundaries; it
+  does not modify USE core or change plugin lifecycle behavior.

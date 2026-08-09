@@ -144,3 +144,17 @@ java -jar .\use-assembly\target\bdi-dist\use-7.1.1\lib\use-gui.jar -nr -H=.\use-
 
 Open `Plugins > AgentSpeak > Hello BDI Plugin`. The action is enabled even when
 no UML/OCL model is loaded.
+
+## Project guides and release evidence
+
+- End-user GUI walkthrough: `docs/project/USER_GUIDE.md`
+- Maintainer and extension guide: `docs/project/DEVELOPER_GUIDE.md`
+- Install and distribution guide: `docs/project/PLUGIN_INSTALL_GUIDE.md`
+- Third-party scope and notices: `docs/project/THIRD_PARTY_NOTICES.md`
+- Package and clean-clone evidence: `docs/project/evidence/release-package.md`
+
+Create a committed-source backup and manifest with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\backup-thesis-artifacts.ps1
+```

@@ -177,9 +177,9 @@
 
 - [ ] `mvn clean verify` pass.
 - [x] Plugin install guide.
-- [ ] User guide.
-- [ ] Developer guide.
-- [ ] Third-party notices/licenses.
+- [x] User guide. (`USER_GUIDE.md` covers build, GUI clicks, Auction demo, and troubleshooting)
+- [x] Developer guide. (`DEVELOPER_GUIDE.md` records module/API boundaries, tests, and extension rules)
+- [x] Third-party notices/licenses. (`THIRD_PARTY_NOTICES.md` matches the checked POM/runtime tree and embedded notice)
 - [ ] Release package tested on clean machine/profile.
 - [ ] Git tag `v1.0.0-thesis-rc`.
 - [ ] Backup source, data, report and slides.
@@ -712,3 +712,30 @@
   conservative candidate policy, consistency rules, and project-wide OCL checks
   were intentionally deferred; ADR-0014 records the subsequent static-rule
   implementation and its remaining limits.
+
+## Release documentation and backup slice - 2026-08-09
+
+- `USER_GUIDE.md` documents the exact USE GUI path for loading `Auction.use`,
+  opening `View > Create View > Object diagram`, importing both AgentSpeak
+  fixtures, reviewing `Explorer`/`Problems`/`Mapping`, and reproducing the
+  Auction evidence bundle.
+- `DEVELOPER_GUIDE.md` records the verified plugin package boundaries, Jason
+  runtime tree, read-only USE access policy, test commands, UI lifecycle, and
+  release checks. It does not introduce a USE core change or unverified API.
+- `THIRD_PARTY_NOTICES.md` records USE GPLv2 from the checked-in `COPYING` and
+  the exact Jason 3.3.0, JADE 4.3, and GlassFish JSON 1.1.4 runtime evidence.
+  `ReleaseArtifactTest` protects the three Maven coordinates and the guide
+  markers.
+- `ReleaseArtifactTest` and `mvn --batch-mode --no-transfer-progress
+  -pl use-bdi-plugin -am test` passed with 74 tests. The new test verifies the
+  release guides, package evidence, and backup procedure.
+- `mvn --batch-mode --no-transfer-progress -pl use-assembly -am package`
+  passed. `smoke.ps1` passed parser/report/package checks and the direct GUI
+  probe with `GUI_SMOKE_OK`.
+- `backup-thesis-artifacts.ps1` passed with `THESIS_BACKUP_OK`, creating a ZIP
+  for the committed `HEAD` and a manifest. The manifest records that `data`,
+  `slides`, and `presentation` directories are absent from this checkout;
+  therefore the full source/data/report/slides item remains open.
+- The clean-clone release check and tag remain pending until the documentation
+  commit is on `HEAD`, and the root `mvn clean verify` checkbox remains open
+  because of the existing `use-gui` Failsafe handshake failure.

@@ -1,5 +1,9 @@
 # USE BDI Plugin Install Guide
 
+For the complete presentation walkthrough, see `USER_GUIDE.md`. For extension
+and test conventions, see `DEVELOPER_GUIDE.md`. The release license scope is
+recorded in `THIRD_PARTY_NOTICES.md`.
+
 ## Prerequisites
 
 - Java 21 on `PATH`.
