@@ -195,6 +195,19 @@ resolution task beyond the first mapping slice.
   appends the reason as evidence. `ValidationOrchestrator` applies the service
   after deterministic rule ordering and keeps the original inputs immutable.
 
+### Implemented unsupported-fixture slice
+
+- `fixtures/asl/unsupported/relational-context.asl` is valid Jason 3.3.0 input
+  containing a relational plan context that the current normalized context tree
+  does not claim to support.
+- Jason 3.3.0 exposes `RelExpr` through `Structure`/`Literal`, so
+  `JasonAstToIrNormalizer` checks `RelExpr` before the generic `Literal` branch.
+  The adapter retains a `ContextUnsupported` node and an `ASL-002` feature
+  instead of silently normalizing the relation as a literal.
+- `UnsupportedFixtureTest` verifies successful parsing, source line evidence,
+  `BdiProblemCollector` warning projection, and the absence of an `ASL-001`
+  syntax diagnostic. No USE core source is changed.
+
 ### Implemented report export slice
 
 - `ReportData` accepts immutable `ConsistencyIssue` evidence in addition to the

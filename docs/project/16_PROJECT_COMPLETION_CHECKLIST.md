@@ -133,7 +133,7 @@
 
 - [x] Valid ASL fixtures.
 - [x] Invalid ASL fixtures.
-- [ ] Unsupported fixtures.
+- [x] Unsupported fixtures. (relational-context fixture is retained as ASL-002 evidence)
 - [ ] Golden IR tests.
 - [x] Rule tests.
 - [x] Mapping persistence tests.
@@ -257,6 +257,18 @@
 - Source fingerprints currently include normalized absolute paths because the
   domain does not yet receive a verified project-root context; moving a
   checkout can therefore require regenerating suppression entries.
+
+## Unsupported fixture evidence - 2026-08-09
+
+- `fixtures/asl/unsupported/relational-context.asl` is valid Jason 3.3.0
+  input with `Counter > 0` in a plan context.
+- The normalizer checks Jason `RelExpr` before its `Literal` superclass path,
+  retaining a `ContextUnsupported` node and `ASL-002` source evidence instead
+  of silently treating the relation as a literal.
+- `UnsupportedFixtureTest` verifies successful import, line-4 evidence,
+  `BdiProblemCollector` WARNING projection, and no `ASL-001` syntax problem.
+- `mvn -pl use-bdi-plugin -Dtest=UnsupportedFixtureTest test` passed. No USE
+  core source was changed.
 
 ## Phase 0 evidence - 2026-08-03
 

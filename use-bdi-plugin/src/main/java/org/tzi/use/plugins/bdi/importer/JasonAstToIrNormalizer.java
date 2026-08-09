@@ -49,6 +49,7 @@ import jason.asSyntax.LogicalFormula;
 import jason.asSyntax.NumberTerm;
 import jason.asSyntax.Plan;
 import jason.asSyntax.PlanBody;
+import jason.asSyntax.RelExpr;
 import jason.asSyntax.SetTerm;
 import jason.asSyntax.SourceInfo;
 import jason.asSyntax.StringTerm;
@@ -238,6 +239,9 @@ final class JasonAstToIrNormalizer {
 
     private ContextExpr context(LogicalFormula formula) {
         SourceSpan sourceSpan = span(formula);
+        if (formula instanceof RelExpr relational) {
+            return contextUnsupported("relational-expression", relational.toString(), sourceSpan);
+        }
         if (formula instanceof Literal literal) {
             return new ContextLiteral(literal(literal), sourceSpan);
         }

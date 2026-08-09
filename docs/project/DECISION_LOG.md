@@ -1048,3 +1048,19 @@ not hide a finding silently or mutate the USE model.
 - `mvn -pl use-bdi-plugin test` passed with 58 tests, including suppression
   persistence, malformed/duplicate rejection, matching, orchestrator status,
   and JSON/HTML report serialization. No USE core source was modified.
+
+## Unsupported fixture evidence - 2026-08-09
+
+- `use-bdi-plugin/src/test/resources/fixtures/asl/unsupported/relational-context.asl`
+  is accepted by Jason 3.3.0 and uses `Counter > 0` in a plan context.
+- Bytecode/source inspection confirmed that Jason `RelExpr` implements
+  `LogicalFormula` through `Structure`, which is also a `Literal` subtype.
+  The normalizer therefore checks `RelExpr` before `Literal` and emits a
+  `ContextUnsupported` node plus `UnsupportedFeature` code `ASL-002`.
+- `UnsupportedFixtureTest` imports the real fixture through `BdiImportService`,
+  asserts no parser diagnostic, checks the line-4 source span, and verifies
+  `BdiProblemCollector` produces a WARNING in the `Unsupported feature` group.
+  The test also asserts no `ASL-001` row is created, protecting the distinction
+  between valid-but-unsupported syntax and invalid AgentSpeak.
+- This is an implementation of the existing unsupported-syntax policy in
+  ADR-0010/ADR-0012, not a new USE-core or parser architecture decision.
