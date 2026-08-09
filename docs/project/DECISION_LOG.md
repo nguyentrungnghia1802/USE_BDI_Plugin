@@ -1185,3 +1185,23 @@ not hide a finding silently or mutate the USE model.
   exporter/hash contracts and ADR-0014 rule evidence. Generated reports remain
   under `target/` because source paths are currently absolute and checkout
   specific.
+
+## Auction structural-mutant evidence - 2026-08-09
+
+- `structural-remove-bidder.use` is kept as a test resource rather than
+  mutating `Auction.use`. It removes the `Bidder` class, related associations,
+  constraints, and dependent operations while remaining compilable by the
+  verified `USECompiler` path.
+- `AuctionStructuralMutantTest` reuses the original Auction AgentSpeak files
+  and the confirmed 14-binding mapping. Against the mutant snapshot,
+  `MappingStalenessDetector` finds the expected nine missing targets: one
+  `AGENT_CLASS`, one `AGENT_OBJECT`, two `ACTION_OPERATION`, four `PARAMETER`,
+  and one `BELIEF_ATTRIBUTE` binding.
+- The existing validation pipeline emits nine confirmed `MAP-003` issues and
+  no `ASL-001` issue. The changed USE fingerprint is retained by the
+  staleness detector but is not turned into a false rule error, following
+  ADR-0014.
+- `scripts/auction-structural-mutant.ps1` passed with
+  `AUCTION_STRUCTURAL_MUTANT_OK`. No new ADR was required because this is an
+  Auction fixture realization of the accepted stale-target policy; the
+  separate ground-truth and metrics tasks remain open.

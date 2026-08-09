@@ -1,10 +1,10 @@
 # USE BDI Plugin
 
 This module contains the verified USE plugin shell for the thesis project. It
-adds `Plugins > AgentSpeak > Hello BDI Plugin` and includes the first importer
-slice: a Jason 3.3.0 adapter that parses multiple AgentSpeak files into ordered,
-immutable, Jason-independent summaries. File selection, the full BDI IR, and
-consistency checking are not implemented yet.
+adds `Plugins > AgentSpeak > Hello BDI Plugin` and includes the Jason 3.3.0
+importer, normalized BDI IR, mapping editor, static consistency rules, and
+Auction case-study fixtures. The remaining work is focused on evaluation,
+mutation coverage, and thesis evidence rather than replacing USE core APIs.
 
 ## Parser test
 
@@ -95,6 +95,19 @@ The test-backed baseline contains 14 confirmed mappings and 27 reproducible
 findings across `REF-001`, `BEL-001`, `OCL-002`, `OCL-004`, `OWN-001`,
 `SIG-002`, and `SIG-003`; these are the pre-mutant comparison point, not a
 claim that every cross-model rule is already semantically clean.
+
+Run the first structural mutant slice with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\auction-structural-mutant.ps1
+```
+
+The fixture `structural-remove-bidder.use` removes the `Bidder` UML structure
+and its dependent operations/associations while remaining a valid USE model.
+The test keeps the confirmed baseline mapping, then verifies nine missing
+targets and nine `MAP-003` findings. This is mutation evidence for stale
+mapping detection; the ground-truth manifest and aggregate metrics remain
+separate case-study tasks.
 
 ## Build and automated smoke
 

@@ -149,7 +149,7 @@
 - [x] Auction AgentSpeak files. (auctioneer and bidder fixtures)
 - [x] Valid mapping. (confirmed Auction class/object/action/parameter/belief links)
 - [x] Baseline report. (deterministic JSON/HTML Auction report)
-- [ ] Structural mutants.
+- [x] Structural mutants. (remove-Bidder Auction fixture detects 9 stale mapping targets)
 - [ ] Signature mutants.
 - [ ] Reference mutants.
 - [ ] OCL mutants.
@@ -381,6 +381,26 @@
 - The generated report is intentionally under `target/`, not committed as a
   portable fixture, because source spans and mapping source IDs currently use
   normalized absolute paths.
+
+## Auction structural-mutant evidence - 2026-08-09
+
+- `use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/mutants/structural-remove-bidder.use`
+  is a separate valid USE model. It removes `Bidder`, the dependent
+  `submitBid`/`placeBid` structure, related associations, and Bidder
+  constraints while preserving the original Auction fixture.
+- `AuctionStructuralMutantTest` keeps the original AgentSpeak import and
+  confirmed 14-binding mapping, then loads the mutant with `USECompiler` and
+  projects it through `UseUmlModelFacade`.
+- `MappingStalenessDetector` reports nine `TARGET_MISSING` bindings grouped as
+  `AGENT_CLASS=1`, `AGENT_OBJECT=1`, `ACTION_OPERATION=2`, `PARAMETER=4`, and
+  `BELIEF_ATTRIBUTE=1`; the changed USE fingerprint is retained as review
+  evidence. `ValidationOrchestrator` turns those nine target findings into
+  nine confirmed `MAP-003` issues.
+- `powershell -ExecutionPolicy Bypass -File
+  .\use-bdi-plugin\scripts\auction-structural-mutant.ps1` passed with marker
+  `AUCTION_STRUCTURAL_MUTANT_OK`. The unchanged AgentSpeak files produce no
+  `ASL-001` issue. This evidence covers one structural mutant only; signature,
+  reference, OCL mutants, ground truth, and metrics remain open.
 
 ## Phase 0 evidence - 2026-08-03
 

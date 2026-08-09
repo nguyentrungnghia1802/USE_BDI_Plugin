@@ -320,6 +320,26 @@ resolution task beyond the first mapping slice.
   both generated files. Source locations remain checkout-specific because the
   current source-ID/report contract still uses normalized absolute paths.
 
+### Implemented Auction structural-mutant slice
+
+- `structural-remove-bidder.use` is an independent valid USE fixture that
+  removes the `Bidder` class, its dependent operations/associations, and its
+  constraints without modifying the baseline `Auction.use` source.
+- `AuctionStructuralMutantTest` imports the unchanged AgentSpeak files,
+  creates the confirmed baseline mapping, loads the mutant through
+  `USECompiler`, and compares the new immutable USE snapshot with the saved
+  mapping. The test observes the changed fingerprint and nine missing mapping
+  targets: one class, one object, two operations, four parameters, and one
+  attribute.
+- The existing `MappingStalenessDetector` and `MAP-003` rule produce nine
+  confirmed issues. No parser diagnostic is expected because both AgentSpeak
+  sources remain unchanged. `scripts/auction-structural-mutant.ps1` provides
+  the repeatable smoke command.
+- This slice deliberately does not introduce a new mutation framework or
+  claim a ground-truth/metrics corpus. It is a fixture-level realization of
+  ADR-0014's stale-target policy and leaves signature, reference, and OCL
+  mutant families for subsequent slices.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

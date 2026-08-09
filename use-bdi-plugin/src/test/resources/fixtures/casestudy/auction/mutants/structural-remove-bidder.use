@@ -1,0 +1,53 @@
+model AuctionStructuralRemoveBidder
+
+enum AuctionStatus {draft, open, closed}
+
+class Auctioneer
+attributes
+  name : String
+end
+
+class Auction
+attributes
+  title : String
+  status : AuctionStatus
+  reservePrice : Real
+operations
+  open()
+  close()
+end
+
+class Bid
+attributes
+  amount : Real
+end
+
+association AuctioneerAuctions between
+  Auctioneer[1] role auctioneer
+  Auction[*] role auctions
+end
+
+association AuctionBids between
+  Auction[1] role auction
+  Bid[*] role bids
+end
+
+constraints
+
+context Auction
+  inv NonEmptyTitle: self.title <> ''
+  inv NonNegativeReserve: self.reservePrice >= 0
+
+context Auctioneer
+  inv NonEmptyName: self.name <> ''
+
+context Bid
+  inv PositiveAmount: self.amount > 0
+
+context Auction::open()
+  pre CanOpen: self.status = #draft
+  post IsOpen: self.status = #open
+
+context Auction::close()
+  pre CanClose: self.status = #open
+  post IsClosed: self.status = #closed
