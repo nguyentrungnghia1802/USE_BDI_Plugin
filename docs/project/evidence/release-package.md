@@ -46,7 +46,7 @@ directory and records uncommitted paths separately from the source archive.
 
 ## Verified Run - 2026-08-09
 
-- Commit tested: `3834433d54424a343d4a5359789a1048883f4588`.
+- Commit tested: `594b2b07e2b24e75c7d1473aafcfab235427f382`.
 - `clean-clone.ps1` passed from that committed `HEAD` with
   `CLEAN_CLONE_REPRODUCIBILITY_OK`.
 - The clean clone built the full `use-assembly` package and verified the

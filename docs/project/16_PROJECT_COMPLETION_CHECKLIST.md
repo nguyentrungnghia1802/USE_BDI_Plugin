@@ -180,7 +180,7 @@
 - [x] User guide. (`USER_GUIDE.md` covers build, GUI clicks, Auction demo, and troubleshooting)
 - [x] Developer guide. (`DEVELOPER_GUIDE.md` records module/API boundaries, tests, and extension rules)
 - [x] Third-party notices/licenses. (`THIRD_PARTY_NOTICES.md` matches the checked POM/runtime tree and embedded notice)
-- [x] Release package tested on clean machine/profile. (clean-clone package from committed `3834433d` passed with `CLEAN_CLONE_REPRODUCIBILITY_OK`)
+- [x] Release package tested on clean machine/profile. (clean-clone package from committed `594b2b07` passed with `CLEAN_CLONE_REPRODUCIBILITY_OK`)
 - [ ] Git tag `v1.0.0-thesis-rc`.
 - [ ] Backup source, data, report and slides.
 
@@ -735,7 +735,7 @@
   for the committed `HEAD` and a manifest. The manifest records that `data`,
   `slides`, and `presentation` directories are absent from this checkout;
   therefore the full source/data/report/slides item remains open.
-- The clean-clone release check passed from committed `HEAD` `3834433d` with
+- The clean-clone release check passed from committed `HEAD` `594b2b07` with
   `CLEAN_CLONE_REPRODUCIBILITY_OK`. Root `mvn clean verify` now also passes;
   the tag remains pending because the full backup item lacks external
   slide/data input.
