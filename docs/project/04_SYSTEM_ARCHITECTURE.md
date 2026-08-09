@@ -1,5 +1,8 @@
 # 04. System Architecture
 
+Status: specialized implementation notes. For the canonical current-state
+architecture and limitations, see `02_SYSTEM_ARCHITECTURE.md`.
+
 ## 1. Context diagram
 
 ```mermaid

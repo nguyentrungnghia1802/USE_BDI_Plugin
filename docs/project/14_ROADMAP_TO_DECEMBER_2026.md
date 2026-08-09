@@ -4,6 +4,19 @@
 **Mốc code freeze mục tiêu:** 30/11/2026.  
 **Tháng 12:** buffer, viết luận văn, sửa theo góp ý và chuẩn bị bảo vệ.
 
+## Current verified status - 2026-08-09
+
+The implemented MVP has completed the planned Phase 0 through Phase 7
+capabilities: plugin shell, Jason import/IR, Explorer/index, mapping, 22 rules,
+snapshot OCL/bounded effects, Auction mutants/evidence, guides, packaging, and
+root verification. This document preserves the original schedule and scope
+ordering; current completion truth is `16_PROJECT_COMPLETION_CHECKLIST.md`.
+
+Open items are the optional House Building import, release candidate tag, and
+complete external source/data/report/slides backup. Current product gaps that
+do not invalidate the MVP are tracked in `01_PRODUCT_REQUIREMENTS.md` and
+`09_DECISIONS_AND_RISKS.md`.
+
 ## Phase 0 — Baseline và plugin spike (03/08–09/08)
 
 ### Deliverables

@@ -1,3 +1,9 @@
+# Historical PR Description: Initial Reporting Slice
+
+Status: point-in-time change description. Current reporting and suppression
+behavior is documented in `01_PRODUCT_REQUIREMENTS.md`, `04_DATABASE.md`,
+`05_API.md`, and `16_PROJECT_COMPLETION_CHECKLIST.md`.
+
 Feature: Reporting — JSON + HTML exporter, smoke verification, suppressions placeholder
 
 What I changed

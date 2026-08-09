@@ -5,6 +5,9 @@ The implementation follows the accepted decisions in
 `docs/project/DECISION_LOG.md`; do not infer a new USE API from a convenient
 call site.
 
+The canonical specification and source-of-truth precedence are indexed in
+`docs/project/README.md`.
+
 ## Module And Package Boundaries
 
 `use-bdi-plugin` is an in-repository Maven module. Its important boundaries are:
@@ -120,6 +123,13 @@ distribution.
 - Mapping suggestions are explainable candidates, not semantic proof.
 - Absolute source IDs make generated mapping/report artifacts checkout
   specific.
+- `rules.json` and `suppressions.json` repositories are implemented, but the
+  normal GUI does not auto-load them from a project context.
+- `ReportMain` is a serializer demonstration; the GUI has no live report export
+  action yet.
+- The mapping decoder does not currently reject every unknown JSON field.
+- A BDI Explorer captures a USE projection and does not subscribe to later
+  host model/snapshot changes.
 - Current OCL/effect support is deliberately bounded; unsupported or unknown
   results remain visible.
 - The House Building import is exploratory and optional.

@@ -1363,3 +1363,30 @@ No parser, plugin lifecycle, or runtime USE state policy changes.
   `use-assembly` ZIP was built successfully.
 - No USE CLI exit behavior changes outside `Options.integrationTestMode` were
   introduced, and no plugin or current-model state code was changed.
+
+## Canonical documentation synchronization evidence - 2026-08-09
+
+- The implementation was audited against the structure of a separate detailed
+  project specification and against the current USE/plugin source, Maven POMs,
+  plugin descriptor, JSON codecs, scripts, fixtures, and tests.
+- `docs/project/README.md` and canonical documents `00` through `12` now own
+  context, requirements, architecture, flows, persistence, internal contracts,
+  codebase, testing, operations, risks, synchronization, state safety, and
+  traceability. Existing architecture/design/ADR/evidence files remain
+  specialized records rather than competing sources of truth.
+- The audit records five current gaps without changing runtime architecture:
+  absolute source identity, no GUI auto-load for rules/suppressions, no live
+  GUI report export, no host-state subscription for an open Explorer, and
+  mapping JSON's incomplete unknown-field rejection.
+- Earlier dated evidence that says project context was absent or root verify
+  was blocked remains point-in-time history. The canonical context and
+  ADR-0019 validation are the current status.
+- `docs/agent/` is local-only and ignored; project rules and status now live in
+  canonical documentation, automated drift tests, the completion checklist,
+  and accepted ADRs. This is a repository-documentation decision, not a change
+  to the plugin runtime or USE core.
+- `DocumentationContractTest` passed, followed by the complete plugin reactor
+  test with 75 tests and no failures.
+- Root `mvn --batch-mode --no-transfer-progress clean verify` then passed with
+  1 `use-core` integration test, 121 `use-gui` integration tests, 75 plugin
+  tests, and the assembled distribution.

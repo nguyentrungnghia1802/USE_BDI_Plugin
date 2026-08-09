@@ -1,7 +1,5 @@
 # Current Limitations
 
-- The repository does not contain the authoritative `00_PROJECT_CONTEXT.md`,
-  so automatic project-context discovery is not claimed.
 - Jason support is an explicit supported subset. Valid but unsupported syntax
   is retained as `ASL-002`; it is not silently normalized as a complete model.
 - `REF-001` can still classify some literal-like terms too broadly, producing
@@ -9,13 +7,20 @@
 - Mapping source IDs currently contain normalized absolute paths. Portable
   checked-in case-study mapping files are therefore avoided; temporary mapping
   documents are used in tests.
+- The mapping decoder validates required fields, kinds, duplicate mapping keys,
+  and syntax, but does not reject every unknown JSON field.
+- Rule and suppression repositories are implemented, but the normal GUI does
+  not automatically load `.bdi-plugin/rules.json` or `suppressions.json`.
+- The BDI Explorer captures a USE model/snapshot projection and does not
+  subscribe to later host-state changes.
 - OCL checks are read-only snapshot checks. Bounded simulation is available
   only for the supported `soil:` effect form; missing or unknown effects yield
   `OCL-004`/`UNKNOWN` rather than an optimistic PASS.
+- The GUI has no live report export action. `ReportMain` creates demonstration
+  metadata output; the Auction pipeline composes real analysis reports.
 - The Auction precision/recall/F1 result covers four targeted mutant
   instances, with no TN estimate and no claim for the whole rule catalog.
 - The performance result is a seven-iteration local baseline on the Smart Queue
   fixture, not an Auction-scale or memory benchmark.
-- The root `mvn clean verify` gate may remain blocked by the existing USE GUI
-  Failsafe handshake behavior even when the plugin module and distribution
-  package gates pass.
+- Root `mvn clean verify` currently passes after ADR-0019. The release tag and
+  complete external data/report/slides backup remain open.

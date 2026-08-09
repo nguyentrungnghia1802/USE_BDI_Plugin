@@ -1,5 +1,9 @@
 # 10. Plugin Technical Design
 
+Status: specialized implementation design. Canonical scope, contracts, and
+current gaps are maintained in `00_PROJECT_CONTEXT.md` through
+`12_REQUIREMENT_TRACEABILITY.md`.
+
 ## 1. Baseline kỹ thuật
 
 - Java 21.
@@ -261,9 +265,8 @@ resolution task beyond the first mapping slice.
   third-party notices, then verifies the plugin is present in the distribution
   ZIP and the clone remains clean.
 - Cleanup is restricted to the generated temp path and can be disabled with
-  `-KeepClone` for investigation. This is a reproducibility smoke gate, not a
-  claim that the repository's separate `mvn clean verify` baseline limitation
-  has been resolved.
+  `-KeepClone` for investigation. This remains a separate reproducibility gate;
+  ADR-0019 records the later repair and passing root `mvn clean verify` result.
 
 ### Implemented Auction UML/OCL fixture slice
 

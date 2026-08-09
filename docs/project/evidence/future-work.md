@@ -13,9 +13,12 @@
 
 1. Make project-root and source identity handling portable so confirmed mapping
    documents can be checked in and replayed on a clean machine.
-2. Add a user guide for mapping confirmation, suppression review, and the
-   `UNKNOWN` certainty policy.
-3. Integrate the report/evaluation commands into a CI job that records Java,
+2. Auto-load rule and suppression configuration through an explicit project
+   context and surface the active configuration in the GUI.
+3. Add a live GUI report action composed from the current import snapshot,
+   mapping, USE fingerprint, rule configuration, and suppressions.
+4. Add an explicit refresh/subscription contract for USE model/snapshot changes.
+5. Integrate the report/evaluation commands into a CI job that records Java,
    Maven, USE, Jason, and host metadata.
 
 ## Evaluation
@@ -28,6 +31,7 @@
 
 ## Release quality
 
-Resolve the root USE Failsafe handshake limitation through a separately
-reviewed ADR before claiming a full `mvn clean verify` release gate. Then test
-the assembled ZIP on a clean Java 21 profile and create the thesis release tag.
+Keep ADR-0019's root verification regression covered. Recover and review the
+missing external data/report/slides inputs, run the complete backup and clean
+clone/package gates from the intended release commit, then create the thesis
+release tag.

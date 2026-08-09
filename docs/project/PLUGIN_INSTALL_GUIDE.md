@@ -2,7 +2,8 @@
 
 For the complete presentation walkthrough, see `USER_GUIDE.md`. For extension
 and test conventions, see `DEVELOPER_GUIDE.md`. The release license scope is
-recorded in `THIRD_PARTY_NOTICES.md`.
+recorded in `THIRD_PARTY_NOTICES.md`. Canonical project status and limitations
+are indexed in `README.md`.
 
 ## Prerequisites
 

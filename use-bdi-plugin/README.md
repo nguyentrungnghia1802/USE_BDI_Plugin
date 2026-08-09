@@ -1,10 +1,12 @@
 # USE BDI Plugin
 
-This module contains the verified USE plugin shell for the thesis project. It
-adds `Plugins > AgentSpeak > Hello BDI Plugin` and includes the Jason 3.3.0
-importer, normalized BDI IR, mapping editor, static consistency rules, and
-Auction case-study fixtures. The remaining work is focused on evaluation,
-mutation coverage, and thesis evidence rather than replacing USE core APIs.
+This module contains the verified USE plugin for the thesis project. It adds
+`Plugins > AgentSpeak > Hello BDI Plugin` and includes the Jason 3.3.0
+importer, normalized BDI IR, mapping editor, 22 consistency rules, bounded
+snapshot OCL support, report exporters, and the Auction evaluation bundle.
+Current gaps are the live GUI report/configuration composition, portable source
+identity, optional House Building coverage, and the final tag/full backup gate.
+The canonical status is maintained in `docs/project/README.md`.
 
 ## Parser test
 

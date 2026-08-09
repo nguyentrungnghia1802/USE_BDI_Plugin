@@ -115,6 +115,9 @@ fabric.properties
 .settings/
 .project
 
+# Local AI-agent prompts and instructions are not repository artifacts.
+/docs/agent/
+
 target/
 lib/
-use-gui/lib/
+use-gui/lib/

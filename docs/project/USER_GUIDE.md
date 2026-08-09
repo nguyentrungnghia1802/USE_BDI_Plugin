@@ -93,6 +93,18 @@ the normalized absolute checkout path.
 The tracked screenshots and their exact UI path are indexed in
 `docs/project/evidence/ui-screenshots.md`.
 
+## Current Workflow Limits
+
+- The GUI uses all standard rules by default; it does not automatically load
+  `.bdi-plugin/rules.json` or `.bdi-plugin/suppressions.json`.
+- Mapping files can be selected with Save/Load, but current source IDs contain
+  absolute paths and may become stale after moving the checkout.
+- There is no one-click export of the current live Problems state. The Auction
+  evidence command creates the verified analysis reports; `ReportMain` alone
+  is only a serializer demonstration.
+- Re-open/re-import the Explorer after changing the USE model or snapshot; the
+  current view does not subscribe to later host-state changes.
+
 ## Reproducible Evidence Run
 
 The complete Auction evidence path is non-interactive and is useful before a

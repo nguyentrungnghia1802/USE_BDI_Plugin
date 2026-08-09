@@ -121,7 +121,7 @@
 
 ## 10. Reporting
 
-- [x] JSON report. (generated to `docs/bdi-report.json` by `ReportMain`)
+- [x] JSON report. (exporter is verified with real Auction analysis and report tests; `ReportMain` remains a serializer demo)
 - [x] HTML or CSV report.
 - [x] Plugin/USE/Jason versions. (included in report metadata)
 - [x] Model and mapping hashes. (SHA-256 identities are carried by report metadata)
@@ -175,7 +175,7 @@
 
 ## 14. Release
 
-- [x] `mvn clean verify` pass. (2026-08-09: use-core, use-gui 121 ShellIT/integration tests, plugin 74 tests, and assembly all passed)
+- [x] `mvn clean verify` pass. (2026-08-09: use-core, use-gui 121 ShellIT/integration tests, plugin 75 tests, and assembly all passed)
 - [x] Plugin install guide.
 - [x] User guide. (`USER_GUIDE.md` covers build, GUI clicks, Auction demo, and troubleshooting)
 - [x] Developer guide. (`DEVELOPER_GUIDE.md` records module/API boundaries, tests, and extension rules)
@@ -228,8 +228,7 @@
   for an injection-shaped message; `ReportExporterTest` verifies JSON issue
   serialization and escaped quotes.
 - `mvn -pl use-bdi-plugin test` passed with 47 tests. No USE core source was
-  changed and the user's pre-existing `docs/agent/PROMPT_START_PROJECT.md`
-  change was not staged.
+  changed in that reporting slice.
 
 ## Reporting identity evidence - 2026-08-09
 
@@ -266,8 +265,8 @@
   configuration; `ValidationOrchestratorTest` covers filtering and unknown-ID
   rejection. `mvn -pl use-bdi-plugin test` passed with 53 tests.
 - Automatic discovery of `rules.json` from a project context is not claimed;
-  the repository still lacks the authoritative `00_PROJECT_CONTEXT.md` and
-  the application can inject a loaded configuration explicitly.
+  the canonical context now exists, but the GUI still uses the all-rules
+  default and the application can inject a loaded configuration explicitly.
 
 ## Suppression evidence - 2026-08-09
 
@@ -339,8 +338,9 @@
   plugin JAR is present at `use-7.1.1/lib/plugins/` in the assembled ZIP.
 - The script passed with marker
   `CLEAN_CLONE_REPRODUCIBILITY_OK`. Temporary clone cleanup is path-checked;
-  `-KeepClone` is available for diagnostics. This evidence does not claim the
-  separate root `mvn clean verify`/Failsafe baseline limitation is resolved.
+  `-KeepClone` is available for diagnostics. At that milestone it did not
+  claim root verification; ADR-0019 and the latest release section record the
+  later passing root gate.
 
 ## Auction UML/OCL evidence - 2026-08-09
 
@@ -465,11 +465,12 @@
   test passed.
 - Distribution/UI gate: `use-bdi-plugin/scripts/smoke.ps1` passed and found
   `Plugins > AgentSpeak > Hello BDI Plugin` in a started USE GUI.
-- Known baseline limitation: root `verify` is blocked by the existing
+- Phase 0 known limitation: root `verify` was blocked by the existing
   `use-gui` `ShellIT` fork exiting without a Failsafe handshake. See
   `DECISION_LOG.md` for the command output interpretation and accepted Phase 0
-  gates.
-- Documentation gap: `00_PROJECT_CONTEXT.md` is absent and remains open.
+  gates. ADR-0019 later resolved this limitation.
+- Phase 0 documentation gap: `00_PROJECT_CONTEXT.md` was absent. The canonical
+  project specification set was added on 2026-08-09.
 
 ## Phase 1 importer slice evidence - 2026-08-03
 
@@ -682,8 +683,8 @@
   fingerprint, and OCL status tests.
 - This slice does not claim mapping entities, mapping suggestions/editor,
   consistency-rule orchestration, or project-wide OCL checks; those remain the
-  next open checklist tasks. The repository still lacks the requested
-  `docs/00_PROJECT_CONTEXT.md` authoritative file.
+  next tasks at that milestone. The canonical `docs/project/00_PROJECT_CONTEXT.md`
+  was added in the later documentation synchronization slice.
 
 ## Phase 2 mapping slice evidence - 2026-08-04
 
@@ -754,3 +755,25 @@
 - The change is limited to test-mode error return and test-output portability;
   it does not alter normal USE CLI exit behavior, plugin lifecycle, or USE
   model state semantics.
+
+## Canonical documentation synchronization - 2026-08-09
+
+- [x] Added a source-backed canonical specification set from
+  `docs/project/00_PROJECT_CONTEXT.md` through
+  `12_REQUIREMENT_TRACEABILITY.md`, plus a canonical index.
+- [x] Synchronized current architecture, roadmap, requirements, guides,
+  limitations, future work, persistence/API contracts, safety, and risks.
+- [x] Marked GUI configuration auto-load, live report export, portable source
+  identity, and host-state subscription as Planned instead of overclaiming
+  supporting repositories/adapters as complete workflows.
+- [x] Added `DocumentationContractTest` for canonical inventory, metadata,
+  local links, USE/plugin/Jason versions, menu/schema/script facts, and the
+  `docs/agent` ignore policy.
+- [x] Removed `docs/agent/AGENT.md` and `PROMPT_START_PROJECT.md` from the Git
+  index while preserving both local files under the ignored `/docs/agent/`
+  path.
+- `mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test`
+  passed with 75 tests, including the new documentation contract gate.
+- `mvn --batch-mode --no-transfer-progress clean verify` passed with 1
+  `use-core` integration test, 121 `use-gui` integration tests, 75 plugin
+  tests, and a successful `use-assembly` package.
