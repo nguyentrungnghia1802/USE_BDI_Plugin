@@ -98,6 +98,10 @@ Domain <- không phụ thuộc UI/Jason/USE concrete classes
   dependency-free `rules.json` boundary. `ValidationOrchestrator` validates
   configured IDs and evaluates only enabled rules; the default constructor
   retains all standard rules.
+- `Suppression`, `SuppressionRepository`, and `SuppressionService` provide a
+  source-span fingerprint boundary. Matching open issues become
+  `SUPPRESSED` with reason evidence, while the immutable BDI/USE inputs remain
+  unchanged.
 
 ## 5. OCL integration levels
 

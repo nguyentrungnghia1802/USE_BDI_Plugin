@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
+import org.tzi.use.plugins.bdi.validation.Suppression;
 
 public final class ReportData {
     private final String projectName;
@@ -16,6 +17,7 @@ public final class ReportData {
     private final int mappingsCount;
     private final String notes;
     private final List<ConsistencyIssue> issues;
+    private final List<Suppression> suppressions;
     private final Optional<String> modelHash;
     private final Optional<String> mappingHash;
 
@@ -27,7 +29,7 @@ public final class ReportData {
                       int mappingsCount,
                       String notes) {
         this(projectName, pluginVersion, useVersion, timestamp, issuesCount, mappingsCount, notes,
-                Optional.empty(), Optional.empty(), List.of());
+                Optional.empty(), Optional.empty(), List.of(), List.of());
     }
 
     public ReportData(String projectName,
@@ -39,7 +41,7 @@ public final class ReportData {
                       String notes,
                       List<ConsistencyIssue> issues) {
         this(projectName, pluginVersion, useVersion, timestamp, issuesCount, mappingsCount, notes,
-                Optional.empty(), Optional.empty(), issues);
+                Optional.empty(), Optional.empty(), issues, List.of());
     }
 
     public ReportData(String projectName,
@@ -52,6 +54,21 @@ public final class ReportData {
                       Optional<String> modelHash,
                       Optional<String> mappingHash,
                       List<ConsistencyIssue> issues) {
+        this(projectName, pluginVersion, useVersion, timestamp, issuesCount, mappingsCount, notes,
+                modelHash, mappingHash, issues, List.of());
+    }
+
+    public ReportData(String projectName,
+                      String pluginVersion,
+                      String useVersion,
+                      Instant timestamp,
+                      int issuesCount,
+                      int mappingsCount,
+                      String notes,
+                      Optional<String> modelHash,
+                      Optional<String> mappingHash,
+                      List<ConsistencyIssue> issues,
+                      List<Suppression> suppressions) {
         this.projectName = Objects.requireNonNull(projectName, "projectName");
         this.pluginVersion = Objects.requireNonNull(pluginVersion, "pluginVersion");
         this.useVersion = Objects.requireNonNull(useVersion, "useVersion");
@@ -63,6 +80,7 @@ public final class ReportData {
         this.mappingsCount = mappingsCount;
         this.notes = notes;
         this.issues = List.copyOf(Objects.requireNonNull(issues, "issues"));
+        this.suppressions = List.copyOf(Objects.requireNonNull(suppressions, "suppressions"));
         this.modelHash = validateHash(modelHash, "modelHash");
         this.mappingHash = validateHash(mappingHash, "mappingHash");
     }
@@ -75,6 +93,7 @@ public final class ReportData {
     public int mappingsCount() { return mappingsCount; }
     public String notes() { return notes; }
     public List<ConsistencyIssue> issues() { return issues; }
+    public List<Suppression> suppressions() { return suppressions; }
     public Optional<String> modelHash() { return modelHash; }
     public Optional<String> mappingHash() { return mappingHash; }
 

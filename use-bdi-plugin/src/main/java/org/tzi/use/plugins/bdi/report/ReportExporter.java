@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
+import org.tzi.use.plugins.bdi.validation.Suppression;
 
 public final class ReportExporter {
 
@@ -36,6 +37,8 @@ public final class ReportExporter {
         appendField(sb, "notes", data.notes());
         sb.append(',');
         appendIssues(sb, data);
+        sb.append(',');
+        appendSuppressions(sb, data);
         sb.append('}');
 
         byte[] bytes = sb.toString().getBytes(StandardCharsets.UTF_8);
@@ -64,6 +67,24 @@ public final class ReportExporter {
             appendField(sb, "source", source(issue.sourceSpan()));
             sb.append(',');
             appendField(sb, "evidence", String.join("; ", issue.evidence()));
+            sb.append('}');
+        }
+        sb.append(']');
+    }
+
+    private static void appendSuppressions(StringBuilder sb, ReportData data) {
+        sb.append("\"suppressions\":[");
+        for (int index = 0; index < data.suppressions().size(); index++) {
+            if (index > 0) {
+                sb.append(',');
+            }
+            Suppression suppression = data.suppressions().get(index);
+            sb.append('{');
+            appendField(sb, "ruleId", suppression.ruleId());
+            sb.append(',');
+            appendField(sb, "sourceFingerprint", suppression.sourceFingerprint());
+            sb.append(',');
+            appendField(sb, "reason", suppression.reason());
             sb.append('}');
         }
         sb.append(']');

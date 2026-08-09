@@ -1,7 +1,4 @@
-[
-  {
-    "id": "PLACEHOLDER_SUPPRESSION",
-    "reason": "Placeholder file for suppression configuration. Add real suppressions as needed",
-    "pattern": ""
-  }
-]
+{
+  "schemaVersion":"0.1.0",
+  "suppressions": []
+}

@@ -13,22 +13,35 @@ import java.util.stream.Collectors;
 public final class ValidationOrchestrator {
     private final List<ConsistencyRule> rules;
     private final RuleConfiguration configuration;
+    private final List<Suppression> suppressions;
 
     public ValidationOrchestrator() {
-        this(StandardConsistencyRules.create(), RuleConfiguration.standard());
+        this(StandardConsistencyRules.create(), RuleConfiguration.standard(), List.of());
     }
 
     public ValidationOrchestrator(RuleConfiguration configuration) {
-        this(StandardConsistencyRules.create(), configuration);
+        this(StandardConsistencyRules.create(), configuration, List.of());
+    }
+
+    public ValidationOrchestrator(RuleConfiguration configuration, List<Suppression> suppressions) {
+        this(StandardConsistencyRules.create(), configuration, suppressions);
     }
 
     public ValidationOrchestrator(List<ConsistencyRule> rules) {
-        this(rules, allRules(rules));
+        this(rules, allRules(rules), List.of());
     }
 
     public ValidationOrchestrator(List<ConsistencyRule> rules, RuleConfiguration configuration) {
+        this(rules, configuration, List.of());
+    }
+
+    public ValidationOrchestrator(
+            List<ConsistencyRule> rules,
+            RuleConfiguration configuration,
+            List<Suppression> suppressions) {
         List<ConsistencyRule> candidates = List.copyOf(Objects.requireNonNull(rules, "rules"));
         this.configuration = Objects.requireNonNull(configuration, "configuration");
+        this.suppressions = List.copyOf(Objects.requireNonNull(suppressions, "suppressions"));
         Set<String> available = new HashSet<>();
         for (ConsistencyRule rule : candidates) {
             Objects.requireNonNull(rule, "rule");
@@ -55,13 +68,17 @@ public final class ValidationOrchestrator {
         return configuration;
     }
 
+    public List<Suppression> suppressions() {
+        return suppressions;
+    }
+
     public List<ConsistencyIssue> evaluate(ValidationContext context) {
         Objects.requireNonNull(context, "context");
         List<ConsistencyIssue> issues = new ArrayList<>();
         rules.stream()
                 .sorted(Comparator.comparing(ConsistencyRule::phase).thenComparing(ConsistencyRule::id))
                 .forEach(rule -> issues.addAll(rule.evaluate(context)));
-        return issues.stream()
+        List<ConsistencyIssue> ordered = issues.stream()
                 .sorted(Comparator
                         .comparing((ConsistencyIssue issue) -> issue.sourceSpan()
                                 .map(span -> span.source().toString())
@@ -70,6 +87,7 @@ public final class ValidationOrchestrator {
                         .thenComparing(ConsistencyIssue::ruleId)
                         .thenComparing(ConsistencyIssue::message))
                 .toList();
+        return SuppressionService.apply(ordered, suppressions);
     }
 
     private static RuleConfiguration allRules(List<ConsistencyRule> rules) {

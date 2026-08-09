@@ -181,6 +181,20 @@ resolution task beyond the first mapping slice.
   constructor still selects every standard rule. Configuration is injected at
   the application boundary and does not access or mutate USE state.
 
+### Implemented suppression slice
+
+- `Suppression` stores a rule ID, a 64-character source-span SHA-256
+  fingerprint, and a required reason. `IssueFingerprint` canonicalizes the
+  normalized source path and begin/end positions; it does not read or mutate
+  the source file.
+- `SuppressionRepository` persists schema `0.1.0` `suppressions.json` with
+  deterministic ordering and rejects unknown fields, duplicate keys, malformed
+  entries, and unsupported versions. The tracked project file is an explicit
+  empty configuration rather than a fake placeholder entry.
+- `SuppressionService` applies only matching suppressions to `OPEN` issues and
+  appends the reason as evidence. `ValidationOrchestrator` applies the service
+  after deterministic rule ordering and keeps the original inputs immutable.
+
 ### Implemented report export slice
 
 - `ReportData` accepts immutable `ConsistencyIssue` evidence in addition to the
@@ -196,7 +210,8 @@ resolution task beyond the first mapping slice.
   document whose bindings are sorted by their replacement key and whose
   optional expressions/evidence are explicitly delimited.
 - Exporters do not execute rules or read USE state. They serialize the supplied
-  analysis result only; suppression sections remain a separate reporting task.
+  analysis result only. JSON/HTML include suppression entries, and
+  `ReportMain` loads the project suppression file when it exists.
 
 ## 6. Dependency packaging
 

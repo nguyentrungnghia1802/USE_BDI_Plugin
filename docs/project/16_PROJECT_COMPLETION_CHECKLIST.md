@@ -127,7 +127,7 @@
 - [x] Model and mapping hashes. (SHA-256 identities are carried by report metadata)
 - [x] Rule configuration. (versioned `rules.json` filters enabled rule IDs)
 - [x] Issue evidence/source. (HTML and JSON exports include rule, status, certainty, source, message, and evidence)
-- [ ] Suppressions included.
+- [x] Suppressions included. (persisted, applied, and exported with reasons)
 
 ## 11. Testing
 
@@ -236,6 +236,27 @@
 - Automatic discovery of `rules.json` from a project context is not claimed;
   the repository still lacks the authoritative `00_PROJECT_CONTEXT.md` and
   the application can inject a loaded configuration explicitly.
+
+## Suppression evidence - 2026-08-09
+
+- `use-bdi-plugin/.bdi-plugin/suppressions.json` now uses schema `0.1.0` with
+  an explicit empty `suppressions` array; the old placeholder entry is not
+  treated as a real suppression.
+- `IssueFingerprint` hashes normalized source path and source-span positions.
+  `SuppressionService` matches `ruleId + sourceFingerprint`, changes only
+  matching `OPEN` issues to `SUPPRESSED`, and appends the configured reason to
+  issue evidence.
+- `SuppressionRepository` provides deterministic UTF-8 persistence with
+  duplicate/unknown-field/schema validation. `ReportExporter` and
+  `HtmlReportExporter` include rule, source fingerprint, and reason; `ReportMain`
+  loads the project file when generating reports.
+- `SuppressionRepositoryTest`, `SuppressionServiceTest`,
+  `ValidationOrchestratorTest`, `ReportExporterTest`, and
+  `HtmlReportExporterTest` cover persistence, matching, status/evidence, and
+  JSON/HTML output. `mvn -pl use-bdi-plugin test` passed with 58 tests.
+- Source fingerprints currently include normalized absolute paths because the
+  domain does not yet receive a verified project-root context; moving a
+  checkout can therefore require regenerating suppression entries.
 
 ## Phase 0 evidence - 2026-08-03
 

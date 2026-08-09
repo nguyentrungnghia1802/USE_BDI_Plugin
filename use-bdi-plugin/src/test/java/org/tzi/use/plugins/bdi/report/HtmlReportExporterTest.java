@@ -14,11 +14,13 @@ import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
 import org.tzi.use.plugins.bdi.validation.IssueCertainty;
 import org.tzi.use.plugins.bdi.validation.IssueSeverity;
 import org.tzi.use.plugins.bdi.validation.IssueStatus;
+import org.tzi.use.plugins.bdi.validation.Suppression;
 
 public class HtmlReportExporterTest {
 
     private static final String MODEL_HASH = "c".repeat(64);
     private static final String MAPPING_HASH = "d".repeat(64);
+    private static final String SUPPRESSION_FINGERPRINT = "f".repeat(64);
 
     @Test
     public void exportHtml_writesFileAndContainsProjectName() throws Exception {
@@ -43,7 +45,11 @@ public class HtmlReportExporterTest {
                         Optional.of("Worker"),
                         List.of("source <agent>", "target & absent"),
                         Optional.of("Add mapping"),
-                        IssueCertainty.CONFIRMED))
+                        IssueCertainty.CONFIRMED)),
+                List.of(new Suppression(
+                        "MAP-001",
+                        SUPPRESSION_FINGERPRINT,
+                        "mapping approved for baseline"))
         );
 
         Path tmp = Files.createTempDirectory("bdi-html-report-test");
@@ -62,6 +68,9 @@ public class HtmlReportExporterTest {
         Assertions.assertTrue(content.contains("&lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt;"));
         Assertions.assertTrue(content.contains(MODEL_HASH));
         Assertions.assertTrue(content.contains(MAPPING_HASH));
+        Assertions.assertTrue(content.contains("Suppressions Count"));
+        Assertions.assertTrue(content.contains(SUPPRESSION_FINGERPRINT));
+        Assertions.assertTrue(content.contains("mapping approved for baseline"));
         Assertions.assertFalse(content.contains("<script>alert"));
     }
 }

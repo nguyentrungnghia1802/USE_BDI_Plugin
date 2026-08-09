@@ -66,6 +66,27 @@ class ValidationOrchestratorTest {
     }
 
     @Test
+    void appliesConfiguredSuppressionAfterRuleEvaluation() {
+        Path source = Path.of("worker.asl").toAbsolutePath();
+        Suppression suppression = new Suppression(
+                "ASL-001",
+                IssueFingerprint.forSource(new SourceSpan(source, 40, 3, 40, 3)),
+                "accepted parser fixture");
+        ValidationOrchestrator orchestrator = new ValidationOrchestrator(
+                RuleConfiguration.of(List.of("ASL-001")),
+                List.of(suppression));
+
+        List<ConsistencyIssue> issues = orchestrator.evaluate(mutantContext());
+
+        ConsistencyIssue issue = issues.stream()
+                .filter(value -> value.ruleId().equals("ASL-001"))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(IssueStatus.SUPPRESSED, issue.status());
+        assertTrue(issue.evidence().contains("Suppression reason: accepted parser fixture"));
+    }
+
+    @Test
     void evaluatesEveryFirstSliceRuleWithTraceableEvidence() {
         ValidationContext context = mutantContext();
         ValidationOrchestrator orchestrator = new ValidationOrchestrator();

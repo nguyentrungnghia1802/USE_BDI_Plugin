@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
+import org.tzi.use.plugins.bdi.validation.Suppression;
 
 public final class HtmlReportExporter {
 
@@ -26,12 +27,13 @@ public final class HtmlReportExporter {
         appendRow(sb, "Timestamp", DateTimeFormatter.ISO_INSTANT.format(data.timestamp()));
         appendRow(sb, "Issues Count", Integer.toString(data.issuesCount()));
         appendRow(sb, "Mappings Count", Integer.toString(data.mappingsCount()));
+        appendRow(sb, "Suppressions Count", Integer.toString(data.suppressions().size()));
         appendRow(sb, "Model Hash", data.modelHash().orElse(null));
         appendRow(sb, "Mapping Hash", data.mappingHash().orElse(null));
         appendRow(sb, "Notes", data.notes());
         sb.append("</table>\n</body>\n</html>\n");
 
-        sb.insert(sb.lastIndexOf("</body>"), issuesTable(data));
+        sb.insert(sb.lastIndexOf("</body>"), issuesTable(data) + suppressionsTable(data));
 
         byte[] bytes = sb.toString().getBytes(StandardCharsets.UTF_8);
         Files.createDirectories(output.getParent());
@@ -60,6 +62,29 @@ public final class HtmlReportExporter {
             cell(sb, source(issue.sourceSpan()));
             cell(sb, issue.message());
             cell(sb, String.join("; ", issue.evidence()));
+            sb.append("</tr>\n");
+        }
+        return sb.append("</table>\n").toString();
+    }
+
+    private static String suppressionsTable(ReportData data) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<h2>Suppressions</h2>\n");
+        if (data.suppressions().isEmpty()) {
+            return sb.append("<p>No suppressions were supplied.</p>\n").toString();
+        }
+        sb.append("<table border=\"1\">\n<tr>");
+        for (String heading : new String[] {"Rule", "Source Fingerprint", "Reason"}) {
+            sb.append("<th style=\"text-align:left;padding:6px;\">")
+                    .append(escapeHtml(heading))
+                    .append("</th>");
+        }
+        sb.append("</tr>\n");
+        for (Suppression suppression : data.suppressions()) {
+            sb.append("<tr>");
+            cell(sb, suppression.ruleId());
+            cell(sb, suppression.sourceFingerprint());
+            cell(sb, suppression.reason());
             sb.append("</tr>\n");
         }
         return sb.append("</table>\n").toString();

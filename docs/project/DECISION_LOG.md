@@ -987,3 +987,64 @@ normalized IR and must not make rule execution depend on Swing or USE state.
 - `mvn -pl use-bdi-plugin test` passed with 53 tests, including configuration
   round-trip, malformed-file rejection, rule filtering, and unknown-ID
   rejection. No USE core source was modified.
+
+## ADR-0018 - Source-fingerprint suppression and report transparency
+
+- Status: Accepted
+- Date: 2026-08-09
+- Scope: Section 10 suppression export and application
+
+### Context
+
+The rule catalog and report now expose deterministic issues, but the existing
+`suppressions.json` was only a placeholder and there was no verified way to
+apply a suppression without losing the original evidence. The thesis report
+must show which suppressions were configured and why, while suppression must
+not hide a finding silently or mutate the USE model.
+
+### Verified implementation evidence
+
+- `validation/IssueFingerprint.java` hashes a length-delimited canonical source
+  identity containing normalized path and begin/end positions. It does not
+  read file contents or depend on Jason/USE objects.
+- `validation/Suppression.java` validates rule IDs, SHA-256 fingerprints, and
+  non-blank reasons. `validation/SuppressionService.java` matches rule ID plus
+  source fingerprint, changes only `OPEN` issues to `SUPPRESSED`, and adds the
+  reason to evidence.
+- `persistence/SuppressionRepository.java` and its dependency-free codec read
+  and write schema `0.1.0`, reject unknown fields and duplicate keys, and sort
+  entries deterministically. The tracked project file contains an explicit
+  empty list.
+- `ValidationOrchestrator` applies suppressions after deterministic rule
+  ordering. `ReportData`, JSON/HTML exporters, and `ReportMain` carry/export
+  the configured suppression entries.
+
+### Decision
+
+- Persist suppression entries as `ruleId`, `sourceFingerprint`, and `reason`
+  under a versioned `suppressions` array. A rule ID alone is never sufficient
+  to suppress an issue.
+- Define source fingerprint from normalized absolute path and source span
+  positions for this slice. Require an exact match; do not use a broad pattern
+  or message substring that could suppress unrelated findings.
+- Preserve the original issue message/evidence and add a structured reason
+  evidence line when status changes from `OPEN` to `SUPPRESSED`. Do not alter
+  `RESOLVED` issues.
+- Always export the configured suppression entries in JSON/HTML, including an
+  empty array/table when none are configured. `ReportMain` loads the project
+  file explicitly; UI auto-discovery remains outside this slice.
+
+### Consequences and limits
+
+- Suppressed findings remain auditable through status, reason evidence, and
+  report configuration; current USE state and normalized inputs remain
+  immutable.
+- Absolute-path fingerprints are checkout-location sensitive. A verified
+  project-root abstraction should be introduced before claiming portable
+  suppression files or UI auto-discovery.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test` passed with 58 tests, including suppression
+  persistence, malformed/duplicate rejection, matching, orchestrator status,
+  and JSON/HTML report serialization. No USE core source was modified.
