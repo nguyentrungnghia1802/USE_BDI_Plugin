@@ -1,179 +1,173 @@
-# Development Ideas For USE BDI And JaCaMo
+# Development Ideas After The Static CArtAgO Pilot
 
-Status: prioritized research backlog, not implemented requirements
+Status: prioritized research candidates, not implemented requirements
 
-## Current JaCaMo Assessment
+## Current Baseline
 
-The project has **not** integrated full JaCaMo. Verified source evidence shows:
-
-- `use-bdi-plugin/pom.xml` depends on `jason-interpreter:3.3.0` only;
-- the repository contains `.asl` fixtures but no JaCaMo `.jcm` application;
-- there is no CArtAgO artifact/workspace model or Moise organization model;
-- the plugin parses and analyzes AgentSpeak statically; it does not start or
-  control a JaCaMo multi-agent runtime;
-- no runtime event/trace protocol connects executing agents to USE snapshots.
-
-Jason is one JaCaMo layer, so the current work is a strong foundation, but
-“Jason-compatible AgentSpeak import” and “full JaCaMo integration” are different
-claims. The safest research path is staged interoperability through new adapters
-and plugin-owned IR, not embedding all JaCaMo runtime classes into existing
-rules.
+The project already supports Jason-based AgentSpeak import, immutable BDI IR,
+explicit UML mappings, 22 standard consistency rules, snapshot OCL evaluation,
+JSON/HTML evidence, headless quality gates, static `.jcm` project import,
+portable traceability, and a static CArtAgO/UML consistency pilot. It does not
+yet provide one end-to-end `.jcm` analysis workflow, persisted CArtAgO mappings,
+Moise semantics, or runtime trace conformance.
 
 ## Priority Summary
 
-| Rank | Idea | Research value | Effort | Recommended phase |
+| Rank | Idea | Value | Feasibility | Decision |
 | --- | --- | --- | --- | --- |
-| 1 | Portable project identity and incremental synchronization | High, fixes current validity gap | Medium | next |
-| 2 | JaCaMo `.jcm` project importer | Very high, establishes full-project boundary | Medium | next JaCaMo slice |
-| 3 | CArtAgO artifact-to-UML/OCL consistency | Very high, connects environment with USE | High | after `.jcm` |
-| 4 | Moise organization-to-UML/OCL consistency | Very high, adds social/organizational semantics | High | after `.jcm` |
-| 5 | Unified BDI-organization-environment traceability graph | High, thesis explainability contribution | Medium | after static adapters |
-| 6 | External JaCaMo runtime trace conformance | Very high, bridges design-time and runtime | High | advanced |
-| 7 | Live GUI report and CI quality gate | High practical/reproducibility value | Medium | parallel hardening |
-| 8 | Bounded scenario generation and mutation testing | High evaluation value | High | evaluation extension |
+| 1 | Unified JaCaMo project analysis entry | Very high | High | Selected |
+| 2 | Persisted CArtAgO environment mappings | Very high | High | Selected |
+| 3 | Static Moise organization consistency | Very high | Medium | Selected |
+| 4 | Reproducible mutation and evaluation runner | High | High | Selected |
+| 5 | External runtime trace conformance sidecar | Very high | Medium-low | Later |
+| 6 | Dependency-aware incremental reanalysis | High | Medium | Later |
+| 7 | Automatic USE session change subscription | Medium | Medium | Later |
+| 8 | House Building second evaluation corpus | High | Medium | Later |
 
-## Idea 1 - Portable Project Identity And Incremental Synchronization
+## Idea 1 - Unified JaCaMo Project Analysis Entry
 
-**Problem:** mappings and suppressions currently include absolute source paths;
-moving a checkout causes false staleness. Explorer also captures one USE
-snapshot without a host-state subscription.
+**Function:** let users select one `.jcm` file and run the complete static
+pipeline across its AgentSpeak sources, current USE model/state, mappings,
+rules, traceability, and reports.
 
-**Small vertical slice:** define a project-root-relative `SourceId` v2, migrate
-one mapping/suppression fixture from v1, and add a manual Refresh action that
-reprojects the current `MSystem` before validation.
+**Why it matters:** the `.jcm` importer currently produces project IR, while the
+main GUI and CLI still center on direct `.asl` inputs. Joining these paths turns
+the existing JaCaMo work into a demonstrable user workflow without starting a
+runtime.
 
-**Research question:** how can cross-language trace links remain stable while
-still detecting meaningful source/model changes?
+**Practical slice:** add an application service shared by GUI and CLI, preserve
+partial-success diagnostics, expose resolved agent identities, and make report
+identity project-relative and deterministic.
 
-**Evaluation:** relocation test, migration round trip, stale/non-stale mutants,
-and snapshot fingerprint before/after refresh. This resolves OD-001 and narrows
-OD-005 before broader JaCaMo sources introduce more file identities.
+**Research value:** establishes a clear static JaCaMo project boundary and lets
+the thesis compare direct AgentSpeak analysis with project-level composition.
 
-## Idea 2 - JaCaMo `.jcm` Project Importer
+**Constraints:** official JaCaMo parser remains authoritative; no launcher,
+workspace, Moise, or runtime lifecycle is implied.
 
-**Problem:** users currently select isolated `.asl` files manually, so agent
-membership, environment configuration, organization files, and launch topology
-are absent.
+## Idea 2 - Persisted CArtAgO Environment Mappings
 
-**Small vertical slice:** parse one checked JaCaMo `.jcm` Auction fixture into a
-plugin-owned `MasProjectModel` containing agents, referenced `.asl` files, and
-declared environment/organization resources. Reuse the current AgentSpeak
-importer for each resolved agent source.
+**Function:** save confirmed artifact-operation/UML-operation and observable-
+property/UML-attribute bindings in the versioned mapping document.
 
-**Candidate diagnostics:** missing source, duplicate agent instance, unresolved
-resource, and a `.jcm` declaration whose `.asl` import failed.
+**Why it matters:** the CArtAgO pilot currently uses in-memory mappings, so
+reviewed environment decisions cannot survive restart, relocation, or CI use.
 
-**Boundary:** use the official JaCaMo parser/API after a technical spike; do not
-write a regex replacement and do not expose JaCaMo AST types to rules.
+**Practical slice:** introduce a schema migration, typed mapping kinds, portable
+source identity, strict validation, staleness detection, and deterministic
+round trips. Existing BDI mappings must remain readable and unchanged.
 
-## Idea 3 - CArtAgO Artifact To UML/OCL Consistency
+**Research value:** makes environment consistency reproducible and auditable,
+which is required before live state or larger case studies are credible.
 
-**Problem:** BDI actions often operate on environment artifacts, while current
-mappings jump directly from AgentSpeak actions to UML operations and cannot
-represent workspaces, artifacts, operations, or observable properties.
+**Constraints:** suggestions remain unconfirmed until user action; unknown or
+ambiguous legacy data must fail explicitly rather than broaden a binding.
 
-**Small vertical slice:** normalize one Auction CArtAgO artifact into
-`EnvironmentModel`, map artifact type to UML class, artifact instance to USE
-object, operation to UML operation, and observable property to attribute.
+## Idea 3 - Static Moise Organization Consistency
 
-**Candidate rules:** action targets an existing artifact operation; operation
-arity/types agree; observable property and UML attribute agree; artifact
-instance exists in the selected workspace/snapshot.
+**Function:** normalize Moise roles, groups, missions, goals, and permissions
+into plugin-owned organization IR and compare selected elements with UML/OCL.
 
-**Evaluation:** valid Auction environment plus missing-operation, wrong-arity,
-and wrong-property mutants.
+**Why it matters:** AgentSpeak and CArtAgO cover agent behavior and environment,
+but the organization layer of JaCaMo is still absent. A static adapter is the
+lowest-risk way to broaden JaCaMo coverage.
 
-## Idea 4 - Moise Organization To UML/OCL Consistency
+**Practical slice:** first verify the official parser/API and package boundary;
+then implement a narrow Auction organization fixture and rules for role/class,
+mission/operation, and cardinality/invariant consistency.
 
-**Problem:** roles, groups, missions, goals, norms, and permissions are outside
-the current AgentSpeak-only IR, so organizational constraints cannot be checked
-against UML/OCL structures or current agent-role assignments.
+**Research value:** supports cross-layer claims spanning agent, environment,
+organization, and UML/OCL while retaining deterministic static evaluation.
 
-**Small vertical slice:** import one Moise organizational specification into an
-`OrganizationModel`; map role/group/mission concepts to explicitly chosen UML
-classes, associations, operations, and invariants.
+**Constraints:** no custom XML/parser guesswork, no Moise runtime, and no rule
+may depend on a Moise concrete type outside the adapter.
 
-**Candidate rules:** agent role is declared; mission goals have BDI support;
-role permission matches mapped operation ownership; cardinality and separation-
-of-duty constraints agree with OCL.
+## Idea 4 - Reproducible Mutation And Evaluation Runner
 
-**Evaluation:** baseline plus undeclared-role, unsupported-mission, permission,
-and cardinality mutants. Unknown dynamic enactment must remain UNKNOWN.
+**Function:** declare controlled model/BDI/environment/organization mutants and
+automatically execute the quality gate, collect findings, and compute scoped
+detection metrics.
 
-## Idea 5 - Unified Traceability Graph
+**Why it matters:** individual Auction mutants exist, but running and comparing
+them manually is slow and makes thesis evidence harder to reproduce.
 
-**Problem:** current indexes, mappings, UML references, issues, and future
-JaCaMo layers are separate structures, making multi-hop explanations difficult.
+**Practical slice:** use a manifest with expected rule/status/evidence, isolated
+temporary inputs, deterministic JSON/CSV summaries, and explicit timeout or
+tool-error outcomes.
 
-**Small vertical slice:** build an immutable graph with typed nodes for source
-span, plan/action, agent, role/mission, artifact operation, UML element, OCL
-constraint, and issue; edges retain origin and confidence.
+**Research value:** provides repeatable precision/recall-style evidence and
+clear trace links from each mutation operator to the rules it evaluates.
 
-**User value:** selecting an issue can show the complete chain, for example
-`plan step -> CArtAgO operation -> UML operation -> failed OCL precondition`.
+**Constraints:** generated metrics describe only the declared corpus; they must
+never be presented as proof of general correctness.
 
-**Evaluation:** graph completeness assertions on Auction and explanation-quality
-review against a fixed question set. This graph should be derived, not a second
-mutable source of truth.
+## Idea 5 - External Runtime Trace Conformance Sidecar
 
-## Idea 6 - External JaCaMo Runtime Trace Conformance
+**Function:** consume a versioned event stream exported by an independently
+running JaCaMo application and compare observed actions/artifact changes with
+static mappings and OCL expectations.
 
-**Problem:** static consistency cannot confirm which plans/actions actually run
-or whether runtime artifact/organization state follows the UML/OCL snapshot.
+**Why it matters:** runtime evidence can reveal deviations that static models
+cannot establish, especially for CArtAgO property values and action ordering.
 
-**Small vertical slice:** keep JaCaMo in a separate process, consume a versioned
-JSON event trace for plan selection, action execution, artifact observation, and
-role enactment, and correlate events with static source IDs/mappings.
+**Practical slice:** define an append-only JSONL protocol, correlate portable
+agent/artifact identities, and produce PASS/FAIL/UNKNOWN observations without
+embedding JaCaMo lifecycle control in USE.
 
-**Candidate checks:** unmapped executed action; runtime argument violates mapped
-UML type/precondition; observed state contradicts OCL invariant; trace event has
-no static source; expected bounded transition never occurs.
+**Research value:** bridges design-time and runtime conformance while preserving
+replayability of thesis experiments.
 
-**Safety:** the first slice is read-only/offline replay. USE must not control the
-live MAS until protocol, failure, and cleanup semantics have a separate ADR.
+**Why later:** timestamp ordering, identity correlation, and incomplete traces
+need an ADR and stable static mappings first.
 
-## Idea 7 - Live GUI Report And CI Quality Gate
+## Idea 6 - Dependency-Aware Incremental Reanalysis
 
-**Problem:** exporters are tested, but the current Explorer cannot export its
-live import/mapping/config/snapshot result in one click. Automation also lacks a
-single project-level exit contract.
+**Function:** recompute only affected imports, indexes, rules, traces, and report
+sections when an `.asl`, `.jcm`, mapping, config, or USE snapshot changes.
 
-**Small vertical slice:** add `Export Current Analysis...` to Explorer and a
-headless command that accepts `.use`, `.asl` or `.jcm`, mappings, config, and an
-output path. Define exit codes for confirmed errors versus unknown/potential
-findings and optionally produce SARIF.
+**Why it matters:** full recomputation is acceptable for Auction but will make
+larger projects and live Explorer refreshes less responsive.
 
-**Evaluation:** GUI/headless outputs are semantically identical, deterministic,
-and include version/hash/config/suppression provenance. This resolves OD-003 and
-makes future JaCaMo checks usable in CI.
+**Practical slice:** derive an immutable dependency graph, content hashes, and a
+cache keyed by project-relative identity and analysis configuration.
 
-## Idea 8 - Bounded Scenario Generation And Mutation Testing
+**Research value:** enables performance evaluation and explains exactly why a
+finding was recomputed or reused.
 
-**Problem:** current Auction mutants are hand-authored and cover a small static
-corpus. Broader JaCaMo claims need systematic but bounded fault generation.
+**Why later:** correctness and invalidation evidence are more important than
+speed; a stale cache must never suppress a diagnostic.
 
-**Small vertical slice:** derive mutations from mappings and the traceability
-graph: remove/rename UML or artifact operations, change arity/type, remove role
-permission, alter mission-goal support, and negate one OCL precondition.
+## Idea 7 - Automatic USE Session Change Subscription
 
-**Research question:** which inconsistency classes are detected by static BDI,
-environment, organization, and snapshot checks, and with what certainty?
+**Function:** refresh Explorer analysis when the current USE model or system
+state changes, while preserving the existing manual refresh fallback.
 
-**Evaluation:** versioned mutant manifest, ground truth, TP/FP/FN per rule family,
-runtime cost, and threats-to-validity statement. Generated mutations must use
-disposable fixtures and never modify the baseline model in place.
+**Why it matters:** users can currently view stale data until they press
+`Refresh USE Snapshot`, which weakens the live demonstration experience.
 
-## Recommended Sequence
+**Practical slice:** verify official USE event APIs, debounce events, cancel
+stale workers, and display snapshot identity and refresh status on the EDT.
 
-1. Implement Idea 1 first to stabilize identity and refresh semantics.
-2. Add Idea 2 as the minimum credible JaCaMo project boundary.
-3. Implement Idea 3, then Idea 4 as independent adapters and IRs.
-4. Add Idea 5 to unify explanations before adding dynamic evidence.
-5. Deliver Idea 7 in parallel so every new layer is reproducible from GUI/CI.
-6. Attempt Idea 6 only after stable cross-layer identities exist.
-7. Use Idea 8 to evaluate the combined contribution rather than expanding
-   syntax without a research question.
+**Research value:** improves interactive validation without changing the
+read-only analysis semantics.
 
-This sequence extends the thesis from “AgentSpeak vs UML/OCL consistency” to
-“JaCaMo architecture vs UML/OCL consistency” while preserving a defensible,
-incremental scope.
+**Why later:** host listener lifecycle and plugin unload behavior require
+careful leak, race, and state-fingerprint testing.
+
+## Idea 8 - House Building Second Evaluation Corpus
+
+**Function:** import a second independent AgentSpeak/JaCaMo and UML/OCL corpus,
+define reviewed mappings, and execute the existing consistency pipeline.
+
+**Why it matters:** Auction validates the MVP but cannot demonstrate how much of
+the approach transfers to a structurally different multi-agent system.
+
+**Practical slice:** establish provenance and licensing, freeze a baseline,
+define a small oracle and mutants, and record unsupported constructs explicitly.
+
+**Research value:** strengthens external-validity discussion and identifies
+which normalized IR or rules are accidentally Auction-specific.
+
+**Why later:** it should follow project-level analysis and persisted environment
+mappings so the second corpus exercises the intended workflow rather than a
+temporary harness.
