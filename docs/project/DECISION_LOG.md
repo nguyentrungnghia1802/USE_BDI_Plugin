@@ -1303,3 +1303,17 @@ not hide a finding silently or mutate the USE model.
 - No new ADR was needed: this slice adds release documentation, evidence, and
   a non-destructive backup procedure around accepted packaging boundaries; it
   does not modify USE core or change plugin lifecycle behavior.
+
+## Clean-clone release verification - 2026-08-09
+
+- After commit `3834433d54424a343d4a5359789a1048883f4588`,
+  `use-bdi-plugin/scripts/clean-clone.ps1` cloned the exact `HEAD` into a
+  generated temporary directory and built `use-assembly` successfully.
+- The script verified the shaded plugin JAR, Jason `Agent.class`, embedded
+  third-party notices, distribution ZIP entry, and clean status before and
+  after the build. It ended with
+  `CLEAN_CLONE_REPRODUCIBILITY_OK`.
+- This closes the clean machine/profile package evidence item. It does not
+  close root `mvn clean verify`, the release tag, or the full backup item;
+  those still depend on the known Failsafe issue and missing external
+  slide/data artifacts.

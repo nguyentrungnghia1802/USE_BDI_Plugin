@@ -39,7 +39,7 @@ class ReleaseArtifactTest {
         assertTrue(notices.contains("org.glassfish:javax.json:1.1.4"));
 
         String evidence = read(project.resolve("evidence/release-package.md"));
-        assertTrue(evidence.contains("CLEAN_CLONE_OK"));
+        assertTrue(evidence.contains("CLEAN_CLONE_REPRODUCIBILITY_OK"));
         assertTrue(evidence.contains("THESIS_BACKUP_OK"));
 
         Path backupScript = root.resolve("use-bdi-plugin/scripts/backup-thesis-artifacts.ps1");

@@ -180,7 +180,7 @@
 - [x] User guide. (`USER_GUIDE.md` covers build, GUI clicks, Auction demo, and troubleshooting)
 - [x] Developer guide. (`DEVELOPER_GUIDE.md` records module/API boundaries, tests, and extension rules)
 - [x] Third-party notices/licenses. (`THIRD_PARTY_NOTICES.md` matches the checked POM/runtime tree and embedded notice)
-- [ ] Release package tested on clean machine/profile.
+- [x] Release package tested on clean machine/profile. (clean-clone package from committed `3834433d` passed with `CLEAN_CLONE_REPRODUCIBILITY_OK`)
 - [ ] Git tag `v1.0.0-thesis-rc`.
 - [ ] Backup source, data, report and slides.
 
@@ -736,6 +736,7 @@
   for the committed `HEAD` and a manifest. The manifest records that `data`,
   `slides`, and `presentation` directories are absent from this checkout;
   therefore the full source/data/report/slides item remains open.
-- The clean-clone release check and tag remain pending until the documentation
-  commit is on `HEAD`, and the root `mvn clean verify` checkbox remains open
-  because of the existing `use-gui` Failsafe handshake failure.
+- The clean-clone release check passed from committed `HEAD` `3834433d` with
+  `CLEAN_CLONE_REPRODUCIBILITY_OK`. The tag remains pending because root
+  `mvn clean verify` is still open due to the existing `use-gui` Failsafe
+  handshake failure, and the full backup item lacks external slide/data input.
