@@ -42,12 +42,13 @@ try {
         throw 'Third-party notices are missing from the packaged plugin JAR.'
     }
     if ($pluginEntries -notcontains 'jacamo/project/parser/JaCaMoProjectParser.class' -or
-            $pluginEntries -notcontains 'jason/asSemantics/Agent.class') {
-        throw 'The shaded plugin does not contain the pinned JaCaMo and Jason parsers.'
+            $pluginEntries -notcontains 'jason/asSemantics/Agent.class' -or
+            $pluginEntries -notcontains 'cartago/OPERATION.class' -or
+            $pluginEntries -notcontains 'cartago/Artifact.class') {
+        throw 'The shaded plugin does not contain the pinned JaCaMo, Jason, and CArtAgO APIs.'
     }
-    if ($pluginEntries -contains 'cartago/CartagoService.class' -or
-            $pluginEntries -contains 'ora4mas/nopl/ORA4MASConstants.class') {
-        throw 'The static parser package unexpectedly contains JaCaMo runtime libraries.'
+    if ($pluginEntries -contains 'ora4mas/nopl/ORA4MASConstants.class') {
+        throw 'The static package unexpectedly contains the Moise runtime library.'
     }
 
     $validFixture = Join-Path $repoRoot 'use-bdi-plugin\src\test\resources\fixtures\asl\valid\minimal.asl'

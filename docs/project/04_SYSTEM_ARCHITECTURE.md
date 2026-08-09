@@ -10,6 +10,8 @@ flowchart LR
   JCM[JaCaMo .jcm] --> JP[JaCaMo 1.3.0 adapter]
   JP --> MAS[Portable MAS project IR]
   JP --> ASL
+  CARTAGO[CArtAgO artifact class] --> CA[CArtAgO 3.1 static adapter]
+  CA --> ENV[Immutable environment IR]
   ASL[AgentSpeak .asl] --> JA[Jason 3.3.0 adapter]
   JA --> IR[Immutable normalized BDI IR]
   USE[USE UML/OCL model and snapshot] --> UA[Read-only USE adapter]
@@ -18,6 +20,8 @@ flowchart LR
   IR --> VAL[Consistency orchestrator]
   MAP --> VAL
   UA --> VAL
+  ENV --> EVAL[Environment pilot rules]
+  UA --> EVAL
   VAL --> SNAP[Immutable current analysis snapshot]
   SNAP --> TRACE[Derived traceability graph]
   SNAP --> GUI[BDI Explorer and Problems]
@@ -33,7 +37,7 @@ USE owns UML/OCL and snapshot semantics. Plugin-owned values connect them.
 | --- | --- | --- |
 | Integration/UI | plugin actions, `ui` | application services and USE GUI boundary |
 | Application | `application`, report composition | importer, index, mapping, validation abstractions |
-| Adapters | `importer`, `use` | Jason/JaCaMo or USE concrete APIs, respectively |
+| Adapters | `importer`, `use` | Jason/JaCaMo/CArtAgO or USE concrete APIs, respectively |
 | Domain | `model.ir`, `model.mas`, `model.mapping`, issue values | Java/plugin-owned values only |
 | Analysis | `index`, `validation` | normalized IR, mappings, immutable USE projection |
 | Persistence | `persistence`, report exporters | versioned plugin-owned DTOs |
@@ -42,6 +46,7 @@ Hard rules:
 
 - Jason AST and exceptions stop in the importer/normalizer boundary.
 - JaCaMo project/parser types stop in `JaCaMoProjectParserAdapter`.
+- CArtAgO artifact/annotation types stop in `CArtAgOArtifactAdapter`.
 - Swing and USE concrete classes never enter normalized IR.
 - Rule evaluation consumes normalized IR and immutable projections, not parser
   AST or mutable GUI state.
@@ -134,9 +139,13 @@ AgentSpeak snapshot. Duplicate, missing, invalid, and outside-root sources are
 diagnostic outcomes rather than silent omissions.
 
 Workspace, organization, and institution declarations are retained as
-`MasResourceReference` with `UNSUPPORTED` status and `JCM-005`. The plugin does
-not normalize CArtAgO artifacts, model Moise semantics, start a JaCaMo runtime,
-or consume execution traces. `.jcm` is not wired into the GUI/headless CLI yet.
+`MasResourceReference` with `UNSUPPORTED` status and `JCM-005`; the `.jcm`
+importer does not automatically resolve their implementation classes.
+Separately, `CArtAgOArtifactAdapter` can normalize a supplied artifact class's
+official `@OPERATION` metadata and explicit property descriptors. The plugin
+does not start a JaCaMo/CArtAgO runtime, model Moise semantics, dynamically
+inspect CArtAgO artifacts, or consume execution traces. `.jcm` is not wired
+into the GUI/headless CLI yet.
 
 ## 8. Traceability Boundary
 
@@ -152,4 +161,5 @@ source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 - Headless composition of file inputs into the shared current-analysis service.
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
-- JaCaMo environment/organization semantics, GUI/CLI project selection, and runtime integration.
+- Automatic `.jcm` environment resolution, persisted environment mappings,
+  live CArtAgO state, Moise, GUI/CLI project selection, and runtime integration.

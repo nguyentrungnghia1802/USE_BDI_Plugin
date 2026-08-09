@@ -9,7 +9,7 @@ Verification: source-backed; see Git history and DocumentationContractTest
 | --- | --- |
 | Host | USE 7.1.1, Java 21, Maven reactor |
 | Plugin | `org.tzi.use.plugins.bdi`, manifest version `0.1.0` |
-| Parser | JaCaMo `1.3.0` for `.jcm`; Jason `3.3.0` for `.asl` |
+| Parser/API | JaCaMo `1.3.0` for `.jcm`; Jason `3.3.0` for `.asl`; CArtAgO `3.1` artifact API |
 | Menu | `Plugins > AgentSpeak` |
 | Actions | `Hello BDI Plugin`, `Import AgentSpeak...` |
 | UI | Swing `ViewFrame` registered by USE `MainWindow` |
@@ -29,6 +29,7 @@ use-bdi-plugin/
     importer/     Jason/JaCaMo adapters and normalization
     model/ir/     immutable parser-independent BDI model
     model/mas/    immutable portable JaCaMo project IR
+    model/environment/ immutable CArtAgO-independent environment IR
     model/mapping/ explicit mapping domain
     index/        IR-derived indexes
     use/          read-only USE/OCL adapter
@@ -57,6 +58,10 @@ use-bdi-plugin/
   `MISSING` per instance.
 - `MasProjectModel` uses `ProjectSourceId` for relocation-stable project,
   agent, and resource links. Resources remain explicit `UNSUPPORTED` values.
+- `CArtAgOArtifactAdapter` reflects only official runtime-retained `@OPERATION`
+  metadata. Observable properties use explicit descriptors because CArtAgO
+  creates them imperatively through `defineObsProperty`; no Java parser or
+  workspace runtime is invoked.
 
 ## 4. Mapping And Validation Contracts
 
@@ -69,6 +74,14 @@ Each `ConsistencyRule` has a stable ID and phase. The orchestrator validates
 enabled IDs, sorts by phase/ID, evaluates immutable context, and applies exact
 source-fingerprint suppressions. The authoritative 22-rule matrix is in
 [the rule catalog](08_CONSISTENCY_RULE_CATALOG.md).
+
+The optional environment pilot uses a separate immutable context and
+`ENV-001..003`. It checks CArtAgO/UML operation existence, artifact-operation
+arity, and observable-property/UML-attribute targets. Existing mapping schema
+`0.2.0` is unchanged; pilot environment mappings are in-memory values pending a
+dedicated persistence migration. Missing runtime property values are
+`UNKNOWN`, not PASS. Environment findings can contribute typed artifact,
+operation/property, UML, gap, and issue nodes to the traceability graph.
 
 OCL checks preserve certainty:
 
@@ -203,9 +216,10 @@ For a new rule:
 3. test positive, negative, and unknown/unsupported evidence;
 4. update rule catalog and traceability.
 
-For a new JaCaMo layer, extend the separate adapter and plugin-owned MAS IR. Do
-not make current rules depend directly on `.jcm`, CArtAgO, Moise, or runtime
-classes. Resource semantics require a new accepted adapter/dependency decision.
+For a new JaCaMo layer, extend a separate adapter and plugin-owned IR. Current
+standard rules must not depend directly on `.jcm`, CArtAgO, Moise, or runtime
+classes. Persisting environment mappings, live state capture, and Moise each
+require a dedicated decision beyond ADR-0028.
 
 ## 10. Definition Of Done
 

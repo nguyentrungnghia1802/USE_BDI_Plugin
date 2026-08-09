@@ -50,9 +50,10 @@ repeat branch names, commit hashes, or last-verified dates.
 ## Release Boundary
 
 The plugin imports AgentSpeak through Jason, builds a plugin-owned BDI IR,
-maps it to a read-only USE UML/OCL projection, evaluates 22 deterministic rules,
-and provides reproducible Auction evidence. It is not a full JaCaMo integration:
-there is no `.jcm`, CArtAgO, Moise, or JaCaMo runtime lifecycle support yet.
+maps it to a read-only USE UML/OCL projection, evaluates 22 standard rules plus
+three static CArtAgO pilot rules, and provides reproducible Auction evidence.
+It is not a full JaCaMo integration: `.jcm` and artifact declarations can be
+inspected statically, but there is no Moise or JaCaMo runtime lifecycle support.
 
 The release remains open until the thesis release tag and complete external
 source/data/report/slides backup are created. House Building remains optional.

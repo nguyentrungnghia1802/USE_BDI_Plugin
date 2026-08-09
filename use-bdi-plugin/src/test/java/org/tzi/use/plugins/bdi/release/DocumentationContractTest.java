@@ -92,6 +92,7 @@ class DocumentationContractTest {
         String pluginPom = read(root.resolve("use-bdi-plugin/pom.xml"));
         assertTrue(pluginPom.contains("<jason.version>3.3.0</jason.version>"));
         assertTrue(pluginPom.contains("<jacamo.version>1.3.0</jacamo.version>"));
+        assertTrue(pluginPom.contains("<cartago.version>3.1</cartago.version>"));
 
         assertTrue(design.contains("mvn --batch-mode --no-transfer-progress clean verify"));
         assertTrue(design.contains("scripts/auction-evidence.ps1"));
@@ -103,7 +104,8 @@ class DocumentationContractTest {
 
         String architecture = read(project.resolve("04_SYSTEM_ARCHITECTURE.md"));
         assertTrue(architecture.contains("`JaCaMoProjectParserAdapter` uses the official JaCaMo 1.3.0 parser"));
-        assertTrue(architecture.contains("CArtAgO artifacts, model Moise semantics"));
+        assertTrue(architecture.contains("`CArtAgOArtifactAdapter`"));
+        assertTrue(architecture.contains("model Moise semantics"));
         String ideas = read(root.resolve("docs/idea/idea.md"));
         assertLocalLinksResolve(root.resolve("docs/idea/idea.md"), ideas);
         for (int idea = 1; idea <= 8; idea++) {

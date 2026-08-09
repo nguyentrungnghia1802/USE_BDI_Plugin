@@ -53,6 +53,7 @@ account, server, database, or remote authorization subsystem.
 | G-007 | Provide reproducible thesis evidence | Auction baseline, mutants, metrics, reports |
 | G-008 | Package and run as a USE 7.1.1 plugin | Assembly, smoke, and clean-clone checks |
 | G-009 | Import static JaCaMo `.jcm` agent declarations without claiming runtime integration | Auction project IR, diagnostics, and relocation tests |
+| G-010 | Pilot static CArtAgO artifact/UML consistency without starting a runtime | Adapter, environment mutant, trace, and package tests |
 
 ## 5. Non-goals
 
@@ -91,6 +92,8 @@ Optional project artifacts:
 - explainable mapping suggestions and confirmed mapping documents;
 - consistency issues with rule ID, severity, status, certainty, source span,
   UML reference, evidence, and suggested fix;
+- static environment findings and artifact/property trace chains, with
+  `UNKNOWN` when no dynamic CArtAgO state evidence exists;
 - JSON/HTML reports with version and hash metadata when supplied;
 - reproducible Auction case-study and benchmark artifacts under `target/`.
 
@@ -107,6 +110,8 @@ Optional project artifacts:
 6. Reports serialize supplied analysis results; they do not create truth by
    themselves.
 7. Every research claim is scoped to its fixture, oracle, and evidence.
+8. Static CArtAgO reflection establishes declarations only; it cannot establish
+   runtime availability, scheduling, state values, or behavioral conformance.
 
 ## 9. Technical baseline
 
@@ -116,6 +121,7 @@ Optional project artifacts:
 | Language/build | Java 21 and Maven reactor |
 | Plugin | `use-bdi-plugin`, manifest version `0.1.0` |
 | AgentSpeak parser | `io.github.jason-lang:jason-interpreter:3.3.0` |
+| Environment API | `org.jacamo:cartago:3.1` static artifact inspection |
 | UI | Swing action delegates and USE `ViewFrame` |
 | Persistence | Versioned UTF-8 JSON files; no database |
 | Packaging | Shaded plugin JAR inside the USE assembly ZIP |
@@ -129,7 +135,8 @@ Optional project artifacts:
 | Multi-file AgentSpeak import | Implemented | Per-file partial success |
 | Normalized IR and BDI indexes | Implemented | Explicit unsupported nodes/features |
 | USE model/snapshot projection | Implemented | Read-only adapter |
-| Mapping suggestions/editor/save/load | Implemented | Source IDs remain checkout-specific |
+| Mapping suggestions/editor/save/load | Implemented | Project-relative source identity v2 |
+| Static CArtAgO environment pilot | Implemented | In-memory mappings; no workspace/runtime |
 | Static and snapshot consistency rules | Implemented | 22 configured rule IDs |
 | Rule/suppression JSON repositories | Implemented | Versioned persistence and validation tests |
 | Automatic GUI project configuration | Implemented | Loads `.bdi-plugin` beside the active `.use` model; missing files use visible defaults |

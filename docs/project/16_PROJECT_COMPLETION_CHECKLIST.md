@@ -35,6 +35,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Official JaCaMo 1.3.0 parses Auction `.jcm` into portable MAS IR.
 - [x] `.jcm` agent import preserves partial success and explicit unsupported resources.
 - [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
+- [x] Static CArtAgO artifact pilot detects operation/arity/property mutants and preserves dynamic UNKNOWN.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
 - [x] User, developer, install, license, limitation, and threat guides exist.
@@ -43,8 +44,8 @@ are complete. Do not append per-day implementation diaries.
 
 - [x] `mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test`.
 - [x] `mvn --batch-mode --no-transfer-progress clean verify`.
-- [x] Extracted assembly contains the shaded plugin plus JaCaMo/Jason parsers,
-  without the excluded JaCaMo runtime stack.
+- [x] Extracted assembly contains the shaded plugin, JaCaMo/Jason parsers, and
+  CArtAgO artifact API without Moise or other excluded runtime transitives.
 - [x] Package/parser/report/menu smoke returns `GUI_SMOKE_OK`.
 - [x] Documentation links, stable facts, and evidence inventory are tested.
 - [x] Canonical documentation uses the compact inventory; redundant generic
@@ -53,11 +54,13 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline after the static JaCaMo project-import slice:
+Latest validated baseline after the static CArtAgO environment pilot:
 
 - focused CLI/current-snapshot/report tests: 10 pass;
-- plugin tests: 116 pass;
+- plugin tests: 121 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
+- package smoke verifies CArtAgO/Jason/JaCaMo classes, excludes Moise, and
+  returns `GUI_SMOKE_OK`;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
 - root `mvn clean verify`: all five modules, 121 GUI integration tests, and
   ZIP/TAR assembly succeed.
@@ -88,7 +91,7 @@ The following are future work, not hidden completion claims:
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
-- JaCaMo GUI/CLI composition, CArtAgO, Moise, and runtime integration.
+- JaCaMo GUI/CLI composition, persisted/live CArtAgO, Moise, and runtime integration.
 
 The prioritized development candidates are maintained in
 [the idea backlog](../idea/idea.md).
@@ -100,6 +103,7 @@ The prioritized development candidates are maintained in
 | Import/IR/index | importer, IR, golden, and index tests |
 | JaCaMo project import | parser spike, MAS golden, diagnostics, relocation, package smoke |
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
+| CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Plugin GUI | action/Explorer tests and `scripts/smoke.ps1` |
 | Mapping/rules | mapping, orchestrator, catalog, config, suppression tests |
 | USE/OCL safety | facade/evaluator tests and fingerprint assertions |

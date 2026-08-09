@@ -6,6 +6,9 @@ public enum TraceNodeKind {
     MAPPING,
     UML_ELEMENT,
     OCL_CONSTRAINT,
+    ENVIRONMENT_ARTIFACT,
+    ARTIFACT_OPERATION,
+    OBSERVABLE_PROPERTY,
     GAP,
     ISSUE
 }

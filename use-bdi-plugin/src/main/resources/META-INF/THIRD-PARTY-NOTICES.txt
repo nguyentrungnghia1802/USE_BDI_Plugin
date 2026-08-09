@@ -8,6 +8,12 @@ License: GNU Lesser General Public License version 3 (LGPLv3)
 Project: https://github.com/jacamo-lang/jacamo
 License: https://www.gnu.org/licenses/lgpl-3.0.html
 
+CArtAgO artifact API 3.1
+Artifact: org.jacamo:cartago:3.1
+License: GNU Lesser General Public License version 2.1 or later (LGPL-2.1-or-later)
+Project: https://github.com/CArtAgO-lang/cartago
+License: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
 Jason interpreter 3.3.0
 Artifact: io.github.jason-lang:jason-interpreter:3.3.0
 License: GNU Lesser General Public License version 3 (LGPLv3)

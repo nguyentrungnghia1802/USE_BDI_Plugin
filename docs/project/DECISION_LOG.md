@@ -39,6 +39,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0025 | Headless quality gate requires explicit `.use`, one-or-more `.asl`, and JSON/HTML output paths; mapping/rules/suppressions are optional explicit files, timestamp defaults to epoch, no CWD discovery occurs, and exits are 0 clean, 1 confirmed findings, 2 potential/unknown-only, 3 invalid input/config, 4 infrastructure/output failure | CLI integration/process smoke and deterministic-report tests |
 | ADR-0026 | Use the official JaCaMo 1.3.0 parser/model behind an adapter, paired with Jason 3.3.0; shade only the JaCaMo artifact and exclude its runtime transitives | parser spike, dependency evidence, package smoke |
 | ADR-0027 | Derive an immutable traceability graph from `CurrentAnalysisSnapshot`; use project-relative source and qualified UML identities, preserve issue certainty, and represent missing mappings as explicit gaps | Auction graph/query/portability tests |
+| ADR-0028 | Inspect CArtAgO 3.1 `@OPERATION` metadata behind an adapter, model observable properties from explicit static descriptors, keep pilot mappings in memory, and return UNKNOWN without runtime state evidence | adapter/mutant/catalog/package tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -59,7 +60,7 @@ new ADR that explicitly supersedes the affected entry.
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | Automatic USE state-change subscription lifecycle | Use `Refresh USE Snapshot`; stale queued refreshes are discarded |
 | OD-006 | External thesis data/report/slides locations and release owner | Keep backup/tag gates open |
-| OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Resolved for static project/agent IR by ADR-0026; resource semantics and runtime remain open |
+| OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Static project/agent IR and CArtAgO artifact pilot resolved by ADR-0026/0028; Moise and runtime remain open |
 
 ## 4. Active Risks
 
@@ -78,10 +79,11 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 113 pass, including JaCaMo parser, golden MAS IR,
-  diagnostics, partial-success, and relocation tests.
+- Plugin suite: 121 pass, including JaCaMo project import, portable
+  traceability, CArtAgO adapter/environment mutants, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
-- Packaged headless smoke verifies Auction JSON/HTML and process exits 1/3.
+- Package smoke verifies CArtAgO/Jason/JaCaMo classes, excludes Moise, and
+  returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
 - Root `mvn clean verify`: all five modules, 121 GUI integration tests, and
   ZIP/TAR distributions succeed.
 - Root `mvn clean verify` passed for the preceding host-refresh commit; current
@@ -139,3 +141,27 @@ edge. OCL issues retain their `OPEN` lifecycle status and `UNKNOWN` certainty
 through the issue node and chain edges. The deterministic debug serializer
 omits raw evidence text and absolute paths. Graph visualization, persistence,
 CArtAgO, Moise, and runtime traces remain outside this MVP slice.
+
+## 8. ADR-0028: Static CArtAgO Artifact Consistency Pilot
+
+**Status:** Accepted. **Date:** 2026-08-10.
+
+The plugin pins official `org.jacamo:cartago:3.1`. The adapter reflects the
+runtime-retained `cartago.OPERATION` annotation and immediately emits
+plugin-owned environment values. No CArtAgO type crosses into environment
+models, mappings, rules, or traceability. The packaged CArtAgO JAR lets user
+artifact classes link to the API, but the plugin never creates a workspace or
+calls `CartagoService`; all transitives remain excluded.
+
+CArtAgO observable properties are created imperatively through
+`Artifact.defineObsProperty`, not a declaration annotation. This pilot accepts
+explicit static property descriptors as evidence and does not parse Java
+source or instantiate a runtime workspace. Missing dynamic values therefore
+produce `ENV-003` with `UNKNOWN`, never PASS.
+
+Adding persisted environment kinds to mapping schema `0.2.0` would require a
+migration and compatibility policy. Rejected for this pilot: reusing existing
+mapping kinds or silently extending their meaning. Selected: separate immutable
+in-memory operation/property mappings until a later persistence ADR. Moise,
+runtime execution, live property capture, and generic Java parsing remain out
+of scope.

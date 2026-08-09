@@ -100,6 +100,23 @@ evidence. The Auction suite supplies targeted mutation evidence for `MAP-003`,
 `SIG-001`, `REF-001`, and `OCL-001`; the other rules still require additional
 domain-specific fixtures before they can support a broader research claim.
 
+## 2.2. Static environment pilot catalog
+
+These three rules are intentionally separate from `StandardConsistencyRules`,
+so AgentSpeak-only projects retain the exact 22-rule configuration contract.
+They consume `EnvironmentModel`, explicit in-memory environment mappings, and
+the immutable USE projection. They are not yet persisted or exposed in the GUI.
+
+| Rule ID | Check | Default result | Test/evidence trace |
+|---|---|---|---|
+| ENV-001 | CArtAgO artifact/operation and UML operation targets exist | ERROR / CONFIRMED | missing-operation mutant |
+| ENV-002 | BDI action arity matches the annotated artifact operation | ERROR / CONFIRMED | wrong-arity mutant |
+| ENV-003 | Observable property and UML attribute targets exist; dynamic value evidence is available | ERROR / CONFIRMED for missing targets, INFO / UNKNOWN without runtime values | valid baseline and wrong-property mutant |
+
+`EnvironmentConsistencyValidator` never starts CArtAgO. An explicit static
+property descriptor proves only the declaration. Without captured runtime
+values, `ENV-003` remains `UNKNOWN` and cannot be reported as PASS.
+
 ## 3. Goal support semantics
 
 Một plan hỗ trợ goal nếu:

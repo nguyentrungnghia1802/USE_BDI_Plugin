@@ -105,7 +105,16 @@ implemented.
 | FR-TRC-002 | Preserve issue status/certainty and represent absent confirmed mappings as explicit gaps | Implemented |
 | FR-TRC-003 | Query one issue chain deterministically without exposing checkout-absolute paths | Implemented |
 
-### 2.8 Case study and release
+### 2.8 Environment consistency pilot
+
+| ID | Requirement | Status |
+| --- | --- | --- |
+| FR-ENV-001 | Normalize CArtAgO 3.1 artifact operations into immutable plugin-owned environment IR | Implemented |
+| FR-ENV-002 | Validate mapped artifact operation existence and arity against USE operation targets | Implemented |
+| FR-ENV-003 | Validate declared observable-property/UML-attribute targets and return UNKNOWN without dynamic value evidence | Implemented |
+| FR-ENV-004 | Run CArtAgO workspaces or consume live artifact state | Planned |
+
+### 2.9 Case study and release
 
 | ID | Requirement | Status |
 | --- | --- | --- |
@@ -136,6 +145,7 @@ implemented.
 | BR-012 | Release completion requires tests, docs, package evidence, tag, and complete artifact backup. |
 | BR-013 | JaCaMo parser/model types stop at the project adapter; static import does not imply runtime support. |
 | BR-014 | The traceability graph is derived evidence, never a mutable or persisted source of truth. |
+| BR-015 | CArtAgO concrete APIs stop at the adapter; static declarations cannot imply runtime-state consistency. |
 
 ## 4. Core acceptance criteria
 
