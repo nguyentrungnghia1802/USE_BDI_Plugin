@@ -40,6 +40,9 @@ implemented.
 | FR-IMP-006 | Build goal, action, predicate, reference, and duplicate-label indexes | Implemented |
 | FR-IMP-007 | Run import in a background worker and ignore stale cancelled callbacks | Implemented |
 | FR-IMP-008 | Re-import tracked sources when their content changes | Implemented |
+| FR-IMP-009 | Parse a `.jcm` through JaCaMo 1.3.0 into portable project/agent/resource IR | Implemented |
+| FR-IMP-010 | Resolve project-relative agent sources and preserve valid agents after missing, invalid, or duplicate declarations | Implemented |
+| FR-IMP-011 | Retain workspace/organization/institution declarations as explicit unsupported resources | Implemented |
 
 ### 2.3 USE projection and mapping
 
@@ -123,6 +126,7 @@ implemented.
 | BR-010 | Evaluation metrics remain scoped to the labeled Auction mutants. |
 | BR-011 | USE core changes require an accepted ADR and focused regression evidence. |
 | BR-012 | Release completion requires tests, docs, package evidence, tag, and complete artifact backup. |
+| BR-013 | JaCaMo parser/model types stop at the project adapter; static import does not imply runtime support. |
 
 ## 4. Core acceptance criteria
 
@@ -145,6 +149,8 @@ implemented.
 11. Root verification completes all module and integration tests.
 12. Unknown/unsupported behavior remains visible in docs and reports.
 13. Missing project configuration uses visible defaults; malformed or unknown-rule configuration prevents the Explorer from opening with an explicit error.
+14. Copying a relative Auction `.jcm` project to another checkout produces the
+    same portable project IR and imports the same two AgentSpeak sources.
 
 ## 5. Non-functional requirements
 
@@ -195,6 +201,9 @@ implemented.
 | Bounded SOIL failure | Restore variation and report failure/unknown evidence |
 | Cancelled/stale import worker | Ignore stale callback; retain newest generation |
 | Report path/write failure | Propagate/report I/O failure; do not claim success |
+| Invalid `.jcm` syntax | `JCM-001` with parser position when available; no partial project is fabricated |
+| Missing/invalid/duplicate `.jcm` agent | `JCM-002`/`JCM-004`/`JCM-003`; independent valid sources remain imported |
+| JaCaMo environment/organization resource | Retain `UNSUPPORTED` reference and `JCM-005` warning |
 
 ## 7. Requirement synchronization checklist
 

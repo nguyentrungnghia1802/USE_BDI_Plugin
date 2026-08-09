@@ -48,7 +48,7 @@ new ADR that explicitly supersedes the affected entry.
 - OCL is PASS/FAIL/UNKNOWN and bounded effects restore state in `finally`.
 - Generated reports and metrics are scoped evidence, not general proof.
 - Auction is the required MVP corpus; House Building is optional.
-- Current project is Jason-integrated, not full JaCaMo-integrated.
+- Current project includes static JaCaMo project import, not full runtime integration.
 
 ## 3. Open Decisions
 
@@ -58,7 +58,7 @@ new ADR that explicitly supersedes the affected entry.
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | Automatic USE state-change subscription lifecycle | Use `Refresh USE Snapshot`; stale queued refreshes are discarded |
 | OD-006 | External thesis data/report/slides locations and release owner | Keep backup/tag gates open |
-| OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Import static `.jcm` project/agent declarations only; do not claim runtime integration |
+| OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Resolved for static project/agent IR by ADR-0026; resource semantics and runtime remain open |
 
 ## 4. Active Risks
 
@@ -77,7 +77,8 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 108 pass, including the official JaCaMo parser spike.
+- Plugin suite: 113 pass, including JaCaMo parser, golden MAS IR,
+  diagnostics, partial-success, and relocation tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Packaged headless smoke verifies Auction JSON/HTML and process exits 1/3.
 - Root `mvn clean verify`: all five modules, 121 GUI integration tests, and

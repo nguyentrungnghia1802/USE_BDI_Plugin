@@ -2,6 +2,8 @@ package org.tzi.use.plugins.bdi.importer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -53,8 +55,8 @@ public final class JasonAslParserAdapter {
         Agent agent = new Agent();
         agent.setConsiderToAddMIForThisAgent(false);
         agent.initAg();
-        try {
-            agent.parseAS(normalizedSource.toFile());
+        try (Reader reader = Files.newBufferedReader(normalizedSource, StandardCharsets.UTF_8)) {
+            agent.parseAS(reader, normalizedSource.toString());
         } catch (ParseException error) {
             throw new AslParseException(toSyntaxDiagnostic(normalizedSource, error), error);
         } catch (Exception error) {

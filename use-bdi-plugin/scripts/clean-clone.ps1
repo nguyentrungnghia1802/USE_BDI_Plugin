@@ -66,8 +66,11 @@ try {
     $pluginEntries = @(jar tf $pluginJar)
     $hasPluginClass = $pluginEntries -contains 'org/tzi/use/plugins/bdi/BdiPlugin.class'
     $hasJasonClass = $pluginEntries -contains 'jason/asSemantics/Agent.class'
+    $hasJaCaMoParser = $pluginEntries -contains 'jacamo/project/parser/JaCaMoProjectParser.class'
+    $hasJaCaMoRuntime = $pluginEntries -contains 'cartago/CartagoService.class'
     $hasThirdPartyNotices = $pluginEntries -contains 'META-INF/THIRD-PARTY-NOTICES.txt'
-    if ($LASTEXITCODE -ne 0 -or -not $hasPluginClass -or -not $hasJasonClass -or -not $hasThirdPartyNotices) {
+    if ($LASTEXITCODE -ne 0 -or -not $hasPluginClass -or -not $hasJasonClass -or
+            -not $hasJaCaMoParser -or $hasJaCaMoRuntime -or -not $hasThirdPartyNotices) {
         throw 'Clean-clone plugin JAR is not the expected shaded artifact.'
     }
 

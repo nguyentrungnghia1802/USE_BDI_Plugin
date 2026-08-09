@@ -1,0 +1,14 @@
+{
+  "name":"auction",
+  "source":"bdi-source-v2:11:auction.jcm:0:0:0:0",
+  "agents":[
+    {"name":"auctioneer","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0","status":"IMPORTED"},
+    {"name":"bidder1","source":"bdi-source-v2:10:bidder.asl:0:0:0:0","status":"IMPORTED"},
+    {"name":"bidder2","source":"bdi-source-v2:10:bidder.asl:0:0:0:0","status":"IMPORTED"}
+  ],
+  "resources":[
+    {"kind":"WORKSPACE","name":"auction_environment","source":null,"status":"UNSUPPORTED"},
+    {"kind":"ORGANIZATION","name":"auction_organization","source":"bdi-source-v2:24:auction-organization.xml:0:0:0:0","status":"UNSUPPORTED"},
+    {"kind":"INSTITUTION","name":"auction_institution","source":"bdi-source-v2:23:auction-institution.sai:0:0:0:0","status":"UNSUPPORTED"}
+  ]
+}

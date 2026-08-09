@@ -3,4 +3,10 @@ mas auction {
     agent bidder : bidder.asl {
         instances: bidder1, bidder2
     }
+    workspace auction_environment {
+    }
+    institution auction_institution : auction-institution.sai {
+    }
+    organisation auction_organization : auction-organization.xml {
+    }
 }

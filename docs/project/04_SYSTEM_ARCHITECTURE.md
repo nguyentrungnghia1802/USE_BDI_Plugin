@@ -7,6 +7,9 @@ Verification: source-backed; see Git history and DocumentationContractTest
 
 ```mermaid
 flowchart LR
+  JCM[JaCaMo .jcm] --> JP[JaCaMo 1.3.0 adapter]
+  JP --> MAS[Portable MAS project IR]
+  JP --> ASL
   ASL[AgentSpeak .asl] --> JA[Jason 3.3.0 adapter]
   JA --> IR[Immutable normalized BDI IR]
   USE[USE UML/OCL model and snapshot] --> UA[Read-only USE adapter]
@@ -29,14 +32,15 @@ USE owns UML/OCL and snapshot semantics. Plugin-owned values connect them.
 | --- | --- | --- |
 | Integration/UI | plugin actions, `ui` | application services and USE GUI boundary |
 | Application | `application`, report composition | importer, index, mapping, validation abstractions |
-| Adapters | `importer`, `use` | Jason or USE concrete APIs, respectively |
-| Domain | `model.ir`, `model.mapping`, issue values | Java/plugin-owned values only |
+| Adapters | `importer`, `use` | Jason/JaCaMo or USE concrete APIs, respectively |
+| Domain | `model.ir`, `model.mas`, `model.mapping`, issue values | Java/plugin-owned values only |
 | Analysis | `index`, `validation` | normalized IR, mappings, immutable USE projection |
 | Persistence | `persistence`, report exporters | versioned plugin-owned DTOs |
 
 Hard rules:
 
 - Jason AST and exceptions stop in the importer/normalizer boundary.
+- JaCaMo project/parser types stop in `JaCaMoProjectParserAdapter`.
 - Swing and USE concrete classes never enter normalized IR.
 - Rule evaluation consumes normalized IR and immutable projections, not parser
   AST or mutable GUI state.
@@ -120,15 +124,21 @@ Replacing the JAR requires restarting USE.
 
 ## 7. Current JaCaMo Boundary
 
-The project uses only Jason's parser/interpreter artifact as a syntax boundary.
-It does not import a JaCaMo `.jcm` project, model CArtAgO artifacts/workspaces,
-model Moise organizations, start a JaCaMo runtime, or consume execution traces.
-Future JaCaMo work must be adapter-first and must preserve the existing IR/rule
-boundaries. See [the development ideas](../idea/idea.md).
+`JaCaMoProjectParserAdapter` uses the official JaCaMo 1.3.0 parser and converts
+its result immediately to plugin-owned values. `MasProjectImportService`
+resolves sources under an explicit project root, delegates each unique source
+to `BdiImportService`, and returns portable `MasProjectModel` plus the existing
+AgentSpeak snapshot. Duplicate, missing, invalid, and outside-root sources are
+diagnostic outcomes rather than silent omissions.
+
+Workspace, organization, and institution declarations are retained as
+`MasResourceReference` with `UNSUPPORTED` status and `JCM-005`. The plugin does
+not normalize CArtAgO artifacts, model Moise semantics, start a JaCaMo runtime,
+or consume execution traces. `.jcm` is not wired into the GUI/headless CLI yet.
 
 ## 8. Known Architecture Gaps
 
 - Headless composition of file inputs into the shared current-analysis service.
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
-- Full JaCaMo project/environment/organization/runtime integration.
+- JaCaMo environment/organization semantics, GUI/CLI project selection, and runtime integration.

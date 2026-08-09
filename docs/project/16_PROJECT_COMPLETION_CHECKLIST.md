@@ -32,6 +32,8 @@ are complete. Do not append per-day implementation diaries.
 - [x] JSON/HTML exporters preserve issues, evidence, hashes, and suppressions.
 - [x] Explorer exports its exact current analysis as atomic JSON/HTML output.
 - [x] Headless gate composes the same snapshot and distinguishes CI outcomes.
+- [x] Official JaCaMo 1.3.0 parses Auction `.jcm` into portable MAS IR.
+- [x] `.jcm` agent import preserves partial success and explicit unsupported resources.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
 - [x] User, developer, install, license, limitation, and threat guides exist.
@@ -40,7 +42,8 @@ are complete. Do not append per-day implementation diaries.
 
 - [x] `mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test`.
 - [x] `mvn --batch-mode --no-transfer-progress clean verify`.
-- [x] Extracted assembly contains the shaded plugin and Jason runtime.
+- [x] Extracted assembly contains the shaded plugin plus JaCaMo/Jason parsers,
+  without the excluded JaCaMo runtime stack.
 - [x] Package/parser/report/menu smoke returns `GUI_SMOKE_OK`.
 - [x] Documentation links, stable facts, and evidence inventory are tested.
 - [x] Canonical documentation uses the compact inventory; redundant generic
@@ -49,10 +52,10 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline for the headless quality-gate slice:
+Latest validated baseline after the static JaCaMo project-import slice:
 
 - focused CLI/current-snapshot/report tests: 10 pass;
-- plugin tests: 107 pass;
+- plugin tests: 113 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
 - root `mvn clean verify`: all five modules, 121 GUI integration tests, and
@@ -84,7 +87,7 @@ The following are future work, not hidden completion claims:
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
-- full JaCaMo `.jcm`, CArtAgO, Moise, and runtime integration.
+- JaCaMo GUI/CLI composition, CArtAgO, Moise, and runtime integration.
 
 The prioritized development candidates are maintained in
 [the idea backlog](../idea/idea.md).
@@ -94,6 +97,7 @@ The prioritized development candidates are maintained in
 | Claim | Primary evidence |
 | --- | --- |
 | Import/IR/index | importer, IR, golden, and index tests |
+| JaCaMo project import | parser spike, MAS golden, diagnostics, relocation, package smoke |
 | Plugin GUI | action/Explorer tests and `scripts/smoke.ps1` |
 | Mapping/rules | mapping, orchestrator, catalog, config, suppression tests |
 | USE/OCL safety | facade/evaluator tests and fingerprint assertions |

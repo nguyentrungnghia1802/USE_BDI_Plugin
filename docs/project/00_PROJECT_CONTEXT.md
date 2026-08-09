@@ -46,12 +46,13 @@ account, server, database, or remote authorization subsystem.
 | --- | --- | --- |
 | G-001 | Import valid and invalid `.asl` files through Jason | Parser/import tests and fixtures |
 | G-002 | Preserve source spans and unsupported syntax | IR golden tests and `ASL-002` fixture |
-| G-003 | Keep domain logic independent of Jason and USE concrete APIs | Package boundaries and adapter tests |
+| G-003 | Keep domain logic independent of Jason, JaCaMo, and USE concrete APIs | Package boundaries and adapter tests |
 | G-004 | Support explicit, reviewable BDI-to-UML mappings | Mapping suggestions/editor/persistence tests |
 | G-005 | Produce deterministic, evidence-rich consistency findings | 22-rule catalog and rule tests |
 | G-006 | Evaluate snapshot OCL without corrupting current USE state | Snapshot/effect tests and ADRs |
 | G-007 | Provide reproducible thesis evidence | Auction baseline, mutants, metrics, reports |
 | G-008 | Package and run as a USE 7.1.1 plugin | Assembly, smoke, and clean-clone checks |
+| G-009 | Import static JaCaMo `.jcm` agent declarations without claiming runtime integration | Auction project IR, diagnostics, and relocation tests |
 
 ## 5. Non-goals
 
@@ -72,7 +73,8 @@ Required for the complete interactive workflow:
 
 - one USE `.use` UML/OCL specification;
 - optionally a current USE object/link snapshot;
-- one or more Jason-compatible `.asl` files;
+- one or more Jason-compatible `.asl` files, either directly or referenced by
+  a statically imported JaCaMo `.jcm` project;
 - user-confirmed mapping bindings when semantic checks require them.
 
 Optional project artifacts:

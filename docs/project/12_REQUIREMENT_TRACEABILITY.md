@@ -14,6 +14,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-IMP-001..003 | `JasonAslParserAdapter`, `JasonAslImporter`, import result/diagnostics | `JasonAslParserAdapterTest`, `JasonAslImporterTest`, `AslImportReportTest` | technical design, ADR-0002..0008 |
 | FR-IMP-004..006 | `JasonAstToIrNormalizer`, `model/ir`, `BdiIndexBuilder` | `AgentModelTest`, `IrHierarchyTest`, golden and index tests | architecture, technical design |
 | FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | architecture, developer guide |
+| FR-IMP-009..011 | `JaCaMoProjectParserAdapter`, `MasProjectImportService`, `model/mas` | parser spike, golden IR, partial-success, diagnostic, and relocation tests | ADR-0026, architecture, parser-spike evidence |
 | FR-MAP-001..002 | `UseUmlModelFacade`, `UseModelFingerprint` | `UseUmlModelFacadeTest` | architecture, technical design, ADR-0012 |
 | FR-MAP-003..006 | mapping domain/services/repository/editor | mapping suggestion/model/persistence/staleness/editor tests | technical design, ADR-0013/0014 |
 | FR-MAP-007 | `ProjectSourceId`, mapping/suppression repositories, `SourceSpan` | identity, v1 migration, byte-stability, invalid-root, and relocation tests | ADR-0021/0022, limitations |
@@ -50,6 +51,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | BR-010 | Ground-truth manifest, metrics test, threats/limitations |
 | BR-011 | ADR policy and focused `IntegrationModeIT`/`ShellIT` evidence |
 | BR-012 | Release checklist, package evidence, backup script/manifest |
+| BR-013 | JaCaMo adapter boundary scan, runtime exclusions, parser/import tests |
 
 ## 3. Evidence traceability
 
@@ -63,6 +65,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | Import/index timing | performance baseline and benchmark JSON |
 | UI availability | screenshot index and `PluginGuiSmoke` |
 | Package reproducibility | release-package evidence and clean-clone marker |
+| Static JaCaMo import | parser-spike evidence and Auction golden MAS project IR |
 | Research limitations | threats, limitations, and future-work documents |
 
 ## 4. Known untraced end-to-end gaps
@@ -70,7 +73,7 @@ documentation. It intentionally traces groups instead of every Java record.
 - One-click export of the current live GUI validation state.
 - Host model/snapshot change subscription for a long-lived BDI Explorer.
 - House Building or a second independent evaluation corpus.
-- Full JaCaMo `.jcm`, CArtAgO, Moise, and runtime-trace integration.
+- GUI/CLI `.jcm` composition plus CArtAgO, Moise, and runtime-trace integration.
 - Complete external data/report/slides backup and release tag.
 
 These are intentionally Partial/Planned/Optional requirements, not missing

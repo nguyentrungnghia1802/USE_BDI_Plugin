@@ -2,6 +2,12 @@
 
 - Jason support is an explicit supported subset. Valid but unsupported syntax
   is retained as `ASL-002`; it is not silently normalized as a complete model.
+- JaCaMo support is static `.jcm` project/agent import only. Named instances and
+  relative `.asl` links are normalized; declaration-template identity is not
+  recoverable after the official parser expands named instances.
+- Workspaces, organizations, and institutions are retained as unsupported
+  references. CArtAgO Java semantics, Moise semantics, runtime lifecycle,
+  execution traces, GUI project selection, and CLI `.jcm` inputs are absent.
 - `REF-001` can still classify some literal-like terms too broadly, producing
   potential false positives. This is a known BDI index limitation.
 - Schema `0.2.0` makes new mapping and suppression identities portable. Legacy
@@ -19,7 +25,8 @@
   `OCL-004`/`UNKNOWN` rather than an optimistic PASS.
 - `ReportMain` remains serializer-demo output. Live users should use Explorer's
   snapshot-backed export; CI users should use `BdiQualityGateMain`. The current
-  headless slice accepts `.asl` only and explicitly rejects `.jcm`.
+  headless slice accepts `.asl` only and explicitly rejects `.jcm`, even though
+  application-level static project import is available.
 - The Auction precision/recall/F1 result covers four targeted mutant
   instances, with no TN estimate and no claim for the whole rule catalog.
 - The performance result is a seven-iteration local baseline on the Smart Queue

@@ -9,7 +9,7 @@ Verification: source-backed; see Git history and DocumentationContractTest
 | --- | --- |
 | Host | USE 7.1.1, Java 21, Maven reactor |
 | Plugin | `org.tzi.use.plugins.bdi`, manifest version `0.1.0` |
-| Parser | `io.github.jason-lang:jason-interpreter:3.3.0` |
+| Parser | JaCaMo `1.3.0` for `.jcm`; Jason `3.3.0` for `.asl` |
 | Menu | `Plugins > AgentSpeak` |
 | Actions | `Hello BDI Plugin`, `Import AgentSpeak...` |
 | UI | Swing `ViewFrame` registered by USE `MainWindow` |
@@ -26,8 +26,9 @@ The verified plugin lifecycle uses `IPlugin`, `IPluginActionDelegate`,
 use-bdi-plugin/
   src/main/java/org/tzi/use/plugins/bdi/
     application/  import and project composition
-    importer/     Jason adapter and normalization
+    importer/     Jason/JaCaMo adapters and normalization
     model/ir/     immutable parser-independent BDI model
+    model/mas/    immutable portable JaCaMo project IR
     model/mapping/ explicit mapping domain
     index/        IR-derived indexes
     use/          read-only USE/OCL adapter
@@ -48,6 +49,13 @@ use-bdi-plugin/
 - `BdiImportService` combines per-file results, models, and one immutable
   `BdiIndex`; failed files do not erase successful files.
 - Jason classes are package-boundary implementation details.
+- `JaCaMoProjectParserAdapter` is the only production class that imports
+  `jacamo.*`; it emits parser-independent descriptors.
+- `MasProjectImportService` deduplicates instance names, imports each unique
+  source through `BdiImportService`, and assigns `IMPORTED`, `INVALID`, or
+  `MISSING` per instance.
+- `MasProjectModel` uses `ProjectSourceId` for relocation-stable project,
+  agent, and resource links. Resources remain explicit `UNSUPPORTED` values.
 
 ## 4. Mapping And Validation Contracts
 
@@ -139,8 +147,8 @@ text and cannot be converted into a successful analysis result.
 `BdiQualityGateMain` accepts explicit `--use`, repeatable `--asl`, optional
 `--mapping`/`--rules`/`--suppressions`, and one-or-more `--json`/`--html`
 outputs. It does not discover project files from the process CWD. Only `.asl`
-is accepted in this slice; `.jcm` is rejected as invalid input until the JaCaMo
-adapter exists. The timestamp defaults to `Instant.EPOCH` or is supplied by
+is accepted by this CLI slice; the application-level `.jcm` importer is not
+wired into the headless argument contract. The timestamp defaults to `Instant.EPOCH` or is supplied by
 `--timestamp` for byte-stable reports.
 
 The runner compiles a private `MSystem`, uses existing import/projection/
@@ -186,8 +194,9 @@ For a new rule:
 3. test positive, negative, and unknown/unsupported evidence;
 4. update rule catalog and traceability.
 
-For a new JaCaMo layer, create a separate adapter and plugin-owned IR. Do not
-make current rules depend directly on `.jcm`, CArtAgO, Moise, or runtime classes.
+For a new JaCaMo layer, extend the separate adapter and plugin-owned MAS IR. Do
+not make current rules depend directly on `.jcm`, CArtAgO, Moise, or runtime
+classes. Resource semantics require a new accepted adapter/dependency decision.
 
 ## 10. Definition Of Done
 
