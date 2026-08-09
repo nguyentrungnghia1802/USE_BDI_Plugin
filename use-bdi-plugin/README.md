@@ -107,7 +107,19 @@ and its dependent operations/associations while remaining a valid USE model.
 The test keeps the confirmed baseline mapping, then verifies nine missing
 targets and nine `MAP-003` findings. This is mutation evidence for stale
 mapping detection; the ground-truth manifest and aggregate metrics remain
-separate case-study tasks.
+are tracked separately in `docs/project/evidence/` and validated by the
+Auction evidence test.
+
+Run the complete Auction evaluation/evidence bundle with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\auction-evidence.ps1
+```
+
+The command runs signature, reference, and OCL fault-injection tests, checks
+the ground-truth/metrics/diagram/mapping artifacts, regenerates the baseline
+report, and reruns the structural mutant smoke. It ends with
+`AUCTION_EVIDENCE_OK` when all evidence gates pass.
 
 ## Build and automated smoke
 

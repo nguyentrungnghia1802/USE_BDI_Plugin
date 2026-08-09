@@ -1,0 +1,84 @@
+model AuctionOclOpenClosedMutant
+
+enum AuctionStatus {draft, open, closed}
+
+class Auctioneer
+attributes
+  name : String
+end
+
+class Auction
+attributes
+  title : String
+  status : AuctionStatus
+  reservePrice : Real
+operations
+  open()
+  placeBid(b : Bidder, amount : Real)
+  close()
+end
+
+class Bidder
+attributes
+  name : String
+  budget : Real
+operations
+  submitBid(a : Auction, amount : Real)
+end
+
+class Bid
+attributes
+  amount : Real
+end
+
+association AuctioneerAuctions between
+  Auctioneer[1] role auctioneer
+  Auction[*] role auctions
+end
+
+association AuctionBidders between
+  Auction[1] role auction
+  Bidder[*] role bidders
+end
+
+association AuctionBids between
+  Auction[1] role auction
+  Bid[*] role bids
+end
+
+association BidderBids between
+  Bidder[1] role bidder
+  Bid[*] role bids
+end
+
+constraints
+
+context Auction
+  inv NonEmptyTitle: self.title <> ''
+  inv NonNegativeReserve: self.reservePrice >= 0
+
+context Auctioneer
+  inv NonEmptyName: self.name <> ''
+
+context Bidder
+  inv NonNegativeBudget: self.budget >= 0
+
+context Bid
+  inv PositiveAmount: self.amount > 0
+
+context Auction::open()
+  pre CanOpen: self.status = #closed
+  post IsOpen: self.status = #open
+
+context Auction::placeBid(b : Bidder, amount : Real)
+  pre AuctionIsOpen: self.status = #open
+  pre BidderParticipates: self.bidders->includes(b)
+  pre AmountMeetsReserve: amount >= self.reservePrice
+
+context Auction::close()
+  pre CanClose: self.status = #open
+  post IsClosed: self.status = #closed
+
+context Bidder::submitBid(a : Auction, amount : Real)
+  pre AuctionIsOpen: a.status = #open
+  pre BudgetCoversBid: amount <= self.budget

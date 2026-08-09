@@ -1,0 +1,15 @@
+flowchart LR
+    ASL[auctioneer.asl + bidder.asl] --> J[Jason 3.3.0 adapter]
+    J --> IR[Normalized AgentModel IR]
+    IR --> IDX[BdiIndex]
+    UML[Auction.use + USE snapshot] --> F[UseUmlModelFacade]
+    F --> SNAP[Immutable UseModelSnapshot]
+    IR --> MAP[Confirmed MappingDocument]
+    SNAP --> MAP
+    IR --> V[ValidationOrchestrator]
+    MAP --> V
+    SNAP --> V
+    V --> ISS[ConsistencyIssue evidence]
+    ISS --> R[JSON / HTML report]
+    ISS --> UI[Problems / Mapping UI]
+    M[Mutation fixtures] --> V

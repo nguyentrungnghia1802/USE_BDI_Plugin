@@ -1,0 +1,5 @@
+mutantId,family,ruleId,scope,baselineCount,mutantCount,delta,detected
+STR-001-remove-bidder,STRUCTURAL,MAP-003,missing USE mapping targets,0,9,9,true
+SIG-001-open-arity,SIGNATURE,SIG-001,Auction::open(flag:String),0,1,1,true
+REF-001-bidder2,REFERENCE,REF-001,named object reference bidder2,0,4,4,true
+OCL-001-open-precondition,OCL,OCL-001,Auction::open() on auction1,0,1,1,true

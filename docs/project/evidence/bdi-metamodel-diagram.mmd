@@ -1,0 +1,30 @@
+classDiagram
+    Agent *-- Belief
+    Agent *-- Goal
+    Agent *-- Plan
+    Plan *-- Trigger
+    Plan *-- Context
+    Plan *-- PlanStep
+    PlanStep <|-- Action
+    PlanStep <|-- BeliefUpdate
+    PlanStep <|-- AchieveGoal
+    PlanStep <|-- InternalAction
+    PlanStep <|-- Test
+    Action --> PredicateSignature
+    Belief --> PredicateSignature
+    Goal --> PredicateSignature
+    Trigger --> PredicateSignature
+    Agent --> AgentObjectReference
+    Agent --> SourceSpan
+    Plan --> SourceSpan
+
+    class Agent
+    class Belief
+    class Goal
+    class Plan
+    class Trigger
+    class Context
+    class PlanStep
+    class PredicateSignature
+    class AgentObjectReference
+    class SourceSpan

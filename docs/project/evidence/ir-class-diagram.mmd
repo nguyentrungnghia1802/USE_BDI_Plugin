@@ -1,0 +1,33 @@
+classDiagram
+    AgentModel *-- BeliefModel
+    AgentModel *-- GoalModel
+    AgentModel *-- PlanModel
+    AgentModel *-- UnsupportedFeature
+    PlanModel *-- TriggerModel
+    PlanModel *-- ContextExpr
+    PlanModel *-- PlanStepModel
+    PlanStepModel <|-- ActionStepModel
+    PlanStepModel <|-- BeliefUpdateStepModel
+    PlanStepModel <|-- AchieveGoalStepModel
+    PlanStepModel <|-- InternalActionStepModel
+    PlanStepModel <|-- TestStepModel
+    PlanStepModel <|-- UnsupportedStepModel
+    TermModel <|-- LiteralTermModel
+    TermModel <|-- CompoundTermModel
+    TermModel <|-- NumberTermModel
+    TermModel <|-- StringTermModel
+    TermModel <|-- VariableTermModel
+    AgentModel --> SourceSpan
+    PlanModel --> SourceSpan
+    TermModel --> SourceSpan
+
+    class AgentModel
+    class BeliefModel
+    class GoalModel
+    class PlanModel
+    class TriggerModel
+    class ContextExpr
+    class PlanStepModel
+    class TermModel
+    class SourceSpan
+    class UnsupportedFeature

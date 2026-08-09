@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "0.1.0",
+  "caseStudy": "Auction-Case-Study",
+  "baseline": {
+    "report": "use-bdi-plugin/target/case-study/auction/auction-baseline.json",
+    "issues": 27,
+    "confirmedMappings": 14
+  },
+  "mutants": [
+    {
+      "id": "STR-001-remove-bidder",
+      "family": "STRUCTURAL",
+      "fixture": "use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/mutants/structural-remove-bidder.use",
+      "ruleId": "MAP-003",
+      "scope": "missing USE mapping targets",
+      "baselineCount": 0,
+      "mutantCount": 9,
+      "detected": true
+    },
+    {
+      "id": "SIG-001-open-arity",
+      "family": "SIGNATURE",
+      "fixture": "use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/mutants/signature-open-flag.use",
+      "ruleId": "SIG-001",
+      "scope": "Auction::open(flag:String)",
+      "baselineCount": 0,
+      "mutantCount": 1,
+      "detected": true
+    },
+    {
+      "id": "REF-001-bidder2",
+      "family": "REFERENCE",
+      "fixture": "use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/mutants/reference/auctioneer.asl",
+      "ruleId": "REF-001",
+      "scope": "named object reference bidder2",
+      "baselineCount": 0,
+      "mutantCount": 4,
+      "detected": true
+    },
+    {
+      "id": "OCL-001-open-precondition",
+      "family": "OCL",
+      "fixture": "use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/mutants/ocl-open-closed.use",
+      "ruleId": "OCL-001",
+      "scope": "Auction::open() on auction1",
+      "baselineCount": 0,
+      "mutantCount": 1,
+      "detected": true
+    }
+  ]
+}

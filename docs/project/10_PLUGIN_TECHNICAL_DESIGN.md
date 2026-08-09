@@ -340,6 +340,26 @@ resolution task beyond the first mapping slice.
   ADR-0014's stale-target policy and leaves signature, reference, and OCL
   mutant families for subsequent slices.
 
+### Implemented Auction fault-injection and thesis-evidence bundle
+
+- `AuctionFaultInjectionTest` covers three additional independent mutants:
+  `Auction::open(flag:String)` produces `SIG-001`, `bidder2` produces four
+  targeted `REF-001` findings, and the `#closed` `Auction::open` precondition
+  produces one `OCL-001` on a `draft` snapshot. The OCL test checks that the
+  immutable snapshot fingerprint is unchanged after evaluation.
+- `docs/project/evidence/auction-ground-truth.json` records the four mutant
+  IDs, fixtures, targeted rule IDs, baseline/mutant counts, and detection
+  status. `auction-metrics.csv` is the corresponding four-row targeted delta
+  table; it is not presented as precision/recall because the rule catalog is
+  intentionally conservative.
+- `auction-evidence.ps1` is the reproducible command for the tests, baseline
+  report, structural smoke, and artifact existence gate. The Mermaid files
+  cover runtime architecture, normalized IR, and the BDI metamodel; the
+  mapping examples document confirmed links and mutant effects.
+- No new ADR was required. The bundle consumes the accepted normalized-IR
+  rule boundary, read-only USE snapshot policy, OCL PASS/FAIL/UNKNOWN contract,
+  and existing ADR-0015/0016 report identity rules.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

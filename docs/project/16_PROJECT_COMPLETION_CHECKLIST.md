@@ -150,20 +150,20 @@
 - [x] Valid mapping. (confirmed Auction class/object/action/parameter/belief links)
 - [x] Baseline report. (deterministic JSON/HTML Auction report)
 - [x] Structural mutants. (remove-Bidder Auction fixture detects 9 stale mapping targets)
-- [ ] Signature mutants.
-- [ ] Reference mutants.
-- [ ] OCL mutants.
-- [ ] Ground truth manifest.
-- [ ] Metrics table.
-- [ ] Demo script.
+- [x] Signature mutants. (open/0 versus mutated open(flag:String) detects SIG-001)
+- [x] Reference mutants. (bidder2 reference detects 4 REF-001 findings)
+- [x] OCL mutants. (draft snapshot versus #closed precondition detects OCL-001)
+- [x] Ground truth manifest. (four Auction mutant outcomes)
+- [x] Metrics table. (targeted baseline/mutant deltas in CSV)
+- [x] Demo script. (reproducible Auction evidence command)
 - [ ] House Building exploratory import (optional).
 
 ## 13. Thesis evidence
 
-- [ ] Architecture diagram.
-- [ ] IR class diagram.
-- [ ] BDI metamodel diagram.
-- [ ] Mapping examples.
+- [x] Architecture diagram. (Mermaid runtime pipeline)
+- [x] IR class diagram. (normalized Java-owned IR hierarchy)
+- [x] BDI metamodel diagram. (agent/plan/index domain view)
+- [x] Mapping examples. (Auction confirmed and mutant links)
 - [ ] Rule catalog final.
 - [ ] UI screenshots.
 - [ ] Experiment protocol.
@@ -399,8 +399,29 @@
 - `powershell -ExecutionPolicy Bypass -File
   .\use-bdi-plugin\scripts\auction-structural-mutant.ps1` passed with marker
   `AUCTION_STRUCTURAL_MUTANT_OK`. The unchanged AgentSpeak files produce no
-  `ASL-001` issue. This evidence covers one structural mutant only; signature,
-  reference, OCL mutants, ground truth, and metrics remain open.
+  `ASL-001` issue. This entry records the structural member of the complete
+  Auction fault-injection bundle documented below.
+
+## Auction fault-injection and thesis-evidence bundle - 2026-08-09
+
+- `AuctionFaultInjectionTest` passes three additional mutant scenarios:
+  `SIG-001-open-arity` changes `Auction::open()` to
+  `Auction::open(flag:String)` and produces one `SIG-001`; `REF-001-bidder2`
+  changes the object reference to absent `bidder2` and produces four targeted
+  `REF-001` findings; `OCL-001-open-precondition` changes the open precondition
+  to `#closed` and produces one confirmed `OCL-001` for `auction1` in `draft`.
+- `AuctionEvidenceArtifactTest` verifies
+  `docs/project/evidence/auction-ground-truth.json`,
+  `auction-metrics.csv`, the three Mermaid diagrams, and the mapping examples.
+  The manifest also includes the previous structural mutant with nine
+  `MAP-003` findings and the 27-issue/14-binding baseline metadata.
+- `powershell -ExecutionPolicy Bypass -File
+  .\use-bdi-plugin\scripts\auction-evidence.ps1` passed with marker
+  `AUCTION_EVIDENCE_OK`; the nested baseline and structural scripts passed as
+  `AUCTION_BASELINE_REPORT_OK` and `AUCTION_STRUCTURAL_MUTANT_OK`.
+- The metrics table reports targeted mutant deltas only. It does not claim
+  thesis precision/recall/F1, because the current conservative `REF-001`,
+  signature, and OCL policies still require a broader labeled corpus.
 
 ## Phase 0 evidence - 2026-08-03
 

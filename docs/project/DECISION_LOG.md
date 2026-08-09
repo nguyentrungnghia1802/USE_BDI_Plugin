@@ -1205,3 +1205,27 @@ not hide a finding silently or mutate the USE model.
   `AUCTION_STRUCTURAL_MUTANT_OK`. No new ADR was required because this is an
   Auction fixture realization of the accepted stale-target policy; the
   separate ground-truth and metrics tasks remain open.
+
+## Auction fault-injection and thesis-evidence evidence - 2026-08-09
+
+- The signature mutant changes `Auction::open()` to
+  `Auction::open(flag:String)` while AgentSpeak still calls `open/0`. The
+  test rebinds only that operation target and observes one confirmed `SIG-001`
+  arity finding; the baseline has zero targeted `SIG-001` findings.
+- The reference mutant keeps the USE snapshot and mapping targets but changes
+  two AgentSpeak occurrences from `bidder1` to absent `bidder2`. The current
+  conservative object-reference index produces four targeted `REF-001`
+  findings, all open/potential, and the test locks that exact count.
+- The OCL mutant changes `Auction::open` from `self.status = #draft` to
+  `self.status = #closed`. The test explicitly sets `auction1.status` to
+  `draft`, binds the auctioneer agent object to `auction1` for this isolated
+  scenario, observes one `OCL-001`, and verifies the snapshot fingerprint is
+  unchanged after validation.
+- `auction-ground-truth.json` and `auction-metrics.csv` record these outcomes
+  plus the previous nine-finding structural mutant. The Mermaid architecture,
+  IR, and BDI diagrams and the mapping examples are checked by
+  `AuctionEvidenceArtifactTest` for required anchors.
+- `auction-evidence.ps1` passed with `AUCTION_EVIDENCE_OK`. No new ADR was
+  needed: this is case-study evidence built on ADR-0014's rule boundary,
+  read-only USE projection, OCL status contract, and ADR-0015/0016 reporting
+  identities. Precision/recall/F1 and a larger labeled corpus remain open.

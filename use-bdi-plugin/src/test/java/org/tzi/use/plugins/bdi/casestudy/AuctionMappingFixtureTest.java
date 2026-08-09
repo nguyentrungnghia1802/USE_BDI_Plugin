@@ -77,10 +77,18 @@ class AuctionMappingFixtureTest {
     }
 
     static MappingDocument confirmedMapping(BdiImportSnapshot imported, UseModelSnapshot uml) {
+        return confirmedMapping(imported, uml, "auctioneer.asl", "bidder.asl");
+    }
+
+    static MappingDocument confirmedMapping(
+            BdiImportSnapshot imported,
+            UseModelSnapshot uml,
+            String auctioneerFilename,
+            String bidderFilename) {
         MappingSuggestionService suggestions = new MappingSuggestionService();
         List<MappingSuggestion> candidates = suggestions.suggest(imported.models(), imported.index(), uml);
-        AgentModel auctioneer = model(imported, "auctioneer.asl");
-        AgentModel bidder = model(imported, "bidder.asl");
+        AgentModel auctioneer = model(imported, auctioneerFilename);
+        AgentModel bidder = model(imported, bidderFilename);
         List<MappingSuggestion> confirmed = new ArrayList<>();
 
         confirmed.add(require(candidates, MappingKind.AGENT_CLASS,
