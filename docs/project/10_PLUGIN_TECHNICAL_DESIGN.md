@@ -235,6 +235,20 @@ resolution task beyond the first mapping slice.
   analysis result only. JSON/HTML include suppression entries, and
   `ReportMain` loads the project suppression file when it exists.
 
+### Implemented performance baseline slice
+
+- `BdiPerformanceBenchmarkTest` measures the real plugin pipeline from Jason
+  parsing through normalized IR materialization and BDI index construction.
+  It uses the existing Smart Queue fixture, two warm-up iterations, and seven
+  measured iterations.
+- Every measured result is checked for the expected materialized model and
+  non-empty indexes before its duration is recorded. The test writes a
+  machine-readable report to `target/performance/bdi-import-index.json`.
+- The companion `scripts/performance.ps1` command provides a repeatable local
+  entry point. It intentionally has no hard duration threshold; benchmark
+  values are environment-dependent until the Auction case-study workload and
+  experiment protocol exist.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

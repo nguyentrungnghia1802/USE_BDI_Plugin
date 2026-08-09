@@ -140,7 +140,7 @@
 - [x] USE model integration tests.
 - [x] OCL tests.
 - [x] UI smoke test.
-- [ ] Performance benchmark.
+- [x] Performance benchmark. (import -> IR -> BDI index baseline)
 - [ ] Clean-clone reproducibility test.
 
 ## 12. Case study
@@ -279,6 +279,22 @@
   deterministic ordering. The test serializes each model twice.
 - `mvn -pl use-bdi-plugin -Dtest=AgentModelJsonSerializerTest test` passed with
   2 tests. This does not claim a broader golden corpus for Auction fixtures.
+
+## Performance benchmark evidence - 2026-08-09
+
+- `BdiPerformanceBenchmarkTest` measures the actual `BdiImportService` pipeline
+  on `fixtures/smartqueue/Smart_manager_agent.asl`: Jason parse, materialized
+  normalized IR, and `BdiIndexBuilder` indexing are included in each sample.
+- The harness warms up twice, measures seven iterations with `System.nanoTime`,
+  verifies 9 beliefs, 1 goal, 5 plans, materialization, action/predicate and
+  agent/object indexes on every iteration, and writes
+  `use-bdi-plugin/target/performance/bdi-import-index.json`.
+- The recorded run on 2026-08-09 used Jason `3.3.0` and BDI metamodel `0.1.0`:
+  minimum `3.5921 ms`, median `4.8261 ms`, p95 `10.1224 ms`.
+- Reproduce with
+  `powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\performance.ps1`.
+  These numbers are an environment comparison baseline, not a hard timing
+  gate, and do not claim Auction-scale performance data.
 
 ## Phase 0 evidence - 2026-08-03
 

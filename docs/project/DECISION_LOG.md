@@ -1077,3 +1077,19 @@ not hide a finding silently or mutate the USE model.
 - `mvn -pl use-bdi-plugin -Dtest=AgentModelJsonSerializerTest test` passed with
   2 tests. The golden corpus remains intentionally small until the Auction
   case-study fixtures exist.
+
+## Performance benchmark evidence - 2026-08-09
+
+- `BdiPerformanceBenchmarkTest` is a test-only measurement harness for the
+  existing `BdiImportService` path. It includes Jason parsing, normalized IR
+  materialization, and `BdiIndexBuilder` work; it does not access or mutate
+  USE core state.
+- The harness uses the tracked Smart Queue fixture, warms up twice, measures
+  seven iterations, verifies the expected 9 beliefs, 1 goal, 5 plans and
+  non-empty indexes on each iteration, then writes a JSON artifact under
+  `use-bdi-plugin/target/performance/`.
+- The 2026-08-09 run recorded minimum `3.5921 ms`, median `4.8261 ms`, and p95
+  `10.1224 ms` with Jason `3.3.0` and BDI metamodel `0.1.0`. The values are a
+  local baseline rather than a performance requirement.
+- No new ADR was needed: this slice adds measurement around already accepted
+  importer/IR/index boundaries and changes neither USE core nor runtime state.

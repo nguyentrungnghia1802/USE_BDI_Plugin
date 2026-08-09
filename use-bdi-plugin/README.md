@@ -33,6 +33,21 @@ The Smart Queue prototype is kept as a test fixture at
 `src/test/resources/fixtures/smartqueue/Smart_manager_agent.asl`; the smoke
 script checks that it is not reintroduced at repository root.
 
+## Performance baseline
+
+Run the small import/IR/index baseline from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\performance.ps1
+```
+
+The benchmark warms up twice, measures seven imports of the Smart Queue
+fixture, verifies the materialized IR and BDI index on every iteration, and
+writes `use-bdi-plugin/target/performance/bdi-import-index.json`. The test
+reports minimum, median, p95, and all measured durations in nanoseconds. It is
+an environment comparison baseline, not a hard timing gate; the fixture is
+small and is not yet the Auction case study workload.
+
 ## Build and automated smoke
 
 From the repository root:
