@@ -15,9 +15,9 @@ flowchart LR
   IR --> VAL[Consistency orchestrator]
   MAP --> VAL
   UA --> VAL
-  VAL --> ISS[Issues and evidence]
-  ISS --> GUI[BDI Explorer and Problems]
-  ISS --> REP[JSON and HTML reports]
+  VAL --> SNAP[Immutable current analysis snapshot]
+  SNAP --> GUI[BDI Explorer and Problems]
+  SNAP --> REP[JSON and HTML reports]
 ```
 
 The plugin is a bridge between two authorities. Jason owns AgentSpeak syntax;
@@ -58,7 +58,10 @@ Hard rules:
 8. Suggestions remain candidates until the user confirms mapping bindings.
 9. `ValidationOrchestrator` runs enabled rules by phase and applies exact
    suppressions.
-10. Explorer/Problems and exporters present the same evidence model.
+10. `CurrentAnalysisSnapshotService` validates once and freezes import, USE,
+    mapping, config, suppressions, issues, hashes, counts, time, and versions.
+11. Explorer/Problems consumes that snapshot; exporters serialize it in the
+    next GUI export slice rather than querying Swing or live USE state.
 
 Asynchronous imports carry a generation token so an older completion cannot
 replace a newer selection. Manual USE refresh resolves the current session
@@ -73,7 +76,7 @@ and verifies the state fingerprint before and after analysis.
 | BDI IR/index | import snapshot | immutable |
 | USE projection | adapter snapshot | immutable/read-only |
 | Mappings/config/suppressions | plugin/user files | versioned and validated |
-| Problems | validation run | recomputed |
+| Current analysis/Problems | application snapshot service | immutable, recomputed |
 | Reports | export caller | serialized supplied evidence only |
 
 OCL results are `PASS`, `FAIL`, or `UNKNOWN`; compile/evaluation errors cannot

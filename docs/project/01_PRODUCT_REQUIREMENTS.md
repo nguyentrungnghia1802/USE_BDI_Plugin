@@ -51,7 +51,7 @@ implemented.
 | FR-MAP-004 | Require explicit user confirmation before a suggestion becomes a binding | Implemented |
 | FR-MAP-005 | Add, update, remove, save, and load versioned `.bdimap.json` bindings | Implemented |
 | FR-MAP-006 | Detect missing sources, missing targets, and fingerprint staleness | Implemented |
-| FR-MAP-007 | Keep mapping/source identities portable after moving the checkout | Planned |
+| FR-MAP-007 | Keep mapping/source identities portable after moving the checkout | Implemented |
 
 ### 2.4 Consistency analysis
 
@@ -91,6 +91,7 @@ implemented.
 | FR-REP-003 | Include canonical model and mapping SHA-256 values when supplied | Implemented |
 | FR-REP-004 | Export the current live GUI analysis with one user action | Planned |
 | FR-REP-005 | Generate a zero-state serializer smoke through `ReportMain` without claiming live analysis | Implemented |
+| FR-REP-006 | Compose one immutable current analysis snapshot for Problems, GUI export, and headless gates | Implemented |
 
 ### 2.7 Case study and release
 

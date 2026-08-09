@@ -35,6 +35,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0021 | Represent portable source evidence as a case-preserving, project-relative `ProjectSourceId` v2 with explicit coordinates; reject sources outside an explicit root and retain v1 mapping behavior until migration | `ProjectSourceIdTest` |
 | ADR-0022 | Persist mappings and suppressions as schema `0.2.0` under an explicit existing project root; migrate v1 mappings to portable IDs on save, but retain irreversible v1 suppression hashes as legacy-only entries so relocation cannot broaden suppression | repository migration and relocation tests |
 | ADR-0023 | Refresh USE state manually through a plugin-owned provider that resolves the current session system per capture; run capture/validation on the EDT, discard stale generations, and verify the state fingerprint before/after analysis without claiming host event subscription | Explorer/provider/evaluator refresh tests |
+| ADR-0024 | Compose Problems/export/headless inputs through one immutable application-owned `CurrentAnalysisSnapshot`; validation runs once per composition, caller supplies time, and ADR-0016 hashes plus counts/version/config/suppression evidence are constructor-validated | current-analysis Auction/malformed/Explorer tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -51,7 +52,7 @@ new ADR that explicitly supersedes the affected entry.
 
 | ID | Decision needed | Safe current behavior |
 | --- | --- | --- |
-| OD-003 | Live GUI report/export composition | Use tested application/case-study composition; label `ReportMain` as serializer demo |
+| OD-003 | One-click serialization of the current GUI analysis | `CurrentAnalysisSnapshot` is the shared source; GUI action remains open |
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | Automatic USE state-change subscription lifecycle | Use `Refresh USE Snapshot`; stale queued refreshes are discarded |
 | OD-006 | External thesis data/report/slides locations and release owner | Keep backup/tag gates open |
@@ -73,10 +74,11 @@ new ADR that explicitly supersedes the affected entry.
 
 ## 5. Current Validation Record
 
-- USE refresh focused tests: 12 pass.
-- Plugin suite: 96 pass.
+- Current-analysis focused tests: 13 pass.
+- Plugin suite: 100 pass.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
-- Root `mvn clean verify`: all five modules and assembly packaging succeed.
+- Root `mvn clean verify` passed for the preceding host-refresh commit; current
+  application changes do not alter host or assembly wiring.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
 - Documentation contract checks the compact inventory, links, versions,

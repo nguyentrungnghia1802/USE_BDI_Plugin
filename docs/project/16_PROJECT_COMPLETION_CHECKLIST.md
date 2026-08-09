@@ -28,6 +28,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Project-relative source identity v2 is defined and relocation-tested.
 - [x] Mapping/suppression schema v2 migrates v1 safely under an explicit root.
 - [x] Explorer manually refreshes current USE state without reparsing AgentSpeak.
+- [x] Problems uses one immutable current-analysis application snapshot.
 - [x] JSON/HTML exporters preserve issues, evidence, hashes, and suppressions.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
@@ -46,12 +47,13 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline for the manual USE refresh slice:
+Latest validated baseline for the current-analysis snapshot slice:
 
-- focused Explorer/provider/evaluator/action tests: 12 pass;
-- plugin tests: 96 pass;
+- focused snapshot/Auction/Explorer/mapping tests: 13 pass;
+- plugin tests: 100 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
-- root `mvn clean verify`: all five modules and ZIP/TAR packaging succeed.
+- root `mvn clean verify` passed on the preceding host-refresh commit; this
+  application-only slice does not change host/package wiring.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.

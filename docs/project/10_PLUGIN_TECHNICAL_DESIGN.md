@@ -51,7 +51,7 @@ use-bdi-plugin/
 
 ## 4. Mapping And Validation Contracts
 
-Mapping schema `0.1.0` supports `AGENT_CLASS`, `AGENT_OBJECT`,
+Mapping schema `0.2.0` supports `AGENT_CLASS`, `AGENT_OBJECT`,
 `ACTION_OPERATION`, `PARAMETER`, `RECEIVER_OBJECT`, and `BELIEF_ATTRIBUTE`.
 `kind + source` is unique. Suggestions are deterministic and explainable but
 never auto-confirmed.
@@ -67,6 +67,14 @@ OCL checks preserve certainty:
 - snapshot preconditions return explicit status/evidence;
 - bounded effects require `soil:` and disposable state variation;
 - missing evidence yields potential/unknown, never fabricated PASS.
+
+`CurrentAnalysisSnapshotService` is the application composition boundary. It
+invokes the configured validator exactly once and returns immutable import/USE/
+mapping/config/suppression/issue evidence with caller-supplied time, derived
+counts, ADR-0016 model/mapping hashes, and parser/plugin/USE/metamodel versions.
+The constructor rejects count, hash, parser-version, metamodel, and OCL-without-
+USE inconsistencies. Problems reads this aggregate; Swing controls, `MSystem`,
+Jason AST, and mutable lists do not cross into it.
 
 ## 5. Persistence Contracts
 

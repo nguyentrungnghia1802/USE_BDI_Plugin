@@ -111,10 +111,20 @@ public final class MappingEditorPanel extends JPanel {
     }
 
     public void setDocument(MappingDocument document) {
+        setDocument(document, true);
+    }
+
+    void setDocumentWithoutNotification(MappingDocument document) {
+        setDocument(document, false);
+    }
+
+    private void setDocument(MappingDocument document, boolean notify) {
         this.document = Objects.requireNonNull(document, "document");
         tableModel.setBindings(document.bindings());
         status.setText(document.bindings().size() + " binding(s)");
-        documentChangeListener.accept(document);
+        if (notify) {
+            documentChangeListener.accept(document);
+        }
     }
 
     public void setDocumentChangeListener(Consumer<MappingDocument> listener) {

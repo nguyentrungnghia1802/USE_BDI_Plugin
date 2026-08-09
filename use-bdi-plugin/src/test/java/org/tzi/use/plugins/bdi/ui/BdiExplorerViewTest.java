@@ -210,6 +210,13 @@ class BdiExplorerViewTest {
         assertTrue(view.hasProblemCodeForTest("MAP-003"));
         assertTrue(view.statusForTest().getText().contains("USE snapshot refreshed"));
         assertTrue(view.statusForTest().getText().contains("[default]"));
+        assertEquals(view.problemsForTest().problemCount(),
+                view.currentAnalysisForTest().orElseThrow().issueCount());
+        assertEquals(view.currentAnalysisForTest().orElseThrow().issues().size(),
+                view.currentAnalysisForTest().orElseThrow().issueCount());
+        assertTrue(view.currentAnalysisForTest().orElseThrow().issues().stream()
+                .allMatch(issue -> view.hasProblemCodeForTest(issue.ruleId())));
+        assertTrue(view.currentAnalysisForTest().orElseThrow().suppressions().isEmpty());
         assertEquals(3, captures.get(), "initial, before-analysis, and after-analysis captures expected");
     }
 

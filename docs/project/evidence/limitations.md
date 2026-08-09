@@ -17,8 +17,9 @@
 - OCL checks are read-only snapshot checks. Bounded simulation is available
   only for the supported `soil:` effect form; missing or unknown effects yield
   `OCL-004`/`UNKNOWN` rather than an optimistic PASS.
-- The GUI has no live report export action. `ReportMain` creates demonstration
-  metadata output; the Auction pipeline composes real analysis reports.
+- The GUI has no live report export action. It now owns a tested immutable
+  current-analysis snapshot, but wiring that snapshot to JSON/HTML file actions
+  remains open. `ReportMain` is still only demonstration metadata output.
 - The Auction precision/recall/F1 result covers four targeted mutant
   instances, with no TN estimate and no claim for the whole rule catalog.
 - The performance result is a seven-iteration local baseline on the Smart Queue

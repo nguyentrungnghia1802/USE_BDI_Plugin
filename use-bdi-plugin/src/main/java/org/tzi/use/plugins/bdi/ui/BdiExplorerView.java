@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +33,8 @@ import org.tzi.use.plugins.bdi.application.BdiImportService;
 import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
 import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
+import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshot;
+import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshotService;
 import org.tzi.use.plugins.bdi.index.BdiIndex;
 import org.tzi.use.plugins.bdi.importer.AslDiagnostic;
 import org.tzi.use.plugins.bdi.model.ir.AchieveGoalStepModel;
@@ -56,7 +59,6 @@ import org.tzi.use.plugins.bdi.use.LiveUseSnapshotProvider;
 import org.tzi.use.plugins.bdi.use.UseSnapshotContext;
 import org.tzi.use.plugins.bdi.use.UseSnapshotProvider;
 import org.tzi.use.plugins.bdi.validation.SnapshotOclEvaluator;
-import org.tzi.use.plugins.bdi.validation.ValidationContext;
 import org.tzi.use.plugins.bdi.validation.ValidationOrchestrator;
 import org.tzi.use.uml.sys.MSystem;
 
@@ -70,7 +72,7 @@ public final class BdiExplorerView extends JPanel implements View {
     private final BdiProblemPanel problems;
     private final MappingEditorPanel mapping;
     private final MappingSuggestionService mappingSuggestionService;
-    private final ValidationOrchestrator validationOrchestrator;
+    private final CurrentAnalysisSnapshotService analysisService;
     private final String configurationSummary;
     private Optional<UseModelSnapshot> useModel;
     private Optional<SnapshotOclEvaluator> oclEvaluator;
@@ -79,6 +81,7 @@ public final class BdiExplorerView extends JPanel implements View {
     private final JButton refreshUseButton;
     private final BdiSourceTracker sourceTracker;
     private BdiImportSnapshot snapshot;
+    private Optional<CurrentAnalysisSnapshot> currentAnalysis = Optional.empty();
     private BdiImportWorker worker;
     private long importGeneration;
     private final AtomicLong useRefreshGeneration = new AtomicLong();
@@ -215,8 +218,14 @@ public final class BdiExplorerView extends JPanel implements View {
         this.oclEvaluator = Objects.requireNonNull(oclEvaluator, "oclEvaluator");
         this.useSnapshotProvider = Objects.requireNonNull(useSnapshotProvider, "useSnapshotProvider");
         this.mappingSuggestionService = new MappingSuggestionService();
-        this.validationOrchestrator = Objects.requireNonNull(validationOrchestrator, "validationOrchestrator");
+        ValidationOrchestrator configuredOrchestrator = Objects.requireNonNull(
+                validationOrchestrator, "validationOrchestrator");
         this.configurationSummary = Objects.requireNonNull(configurationSummary, "configurationSummary");
+        this.analysisService = new CurrentAnalysisSnapshotService(
+                configuredOrchestrator,
+                configurationSummary,
+                "0.1.0",
+                "USE-7.1.1");
         this.snapshot = new BdiImportSnapshot(List.of(), List.of(), BdiIndex.empty());
 
         JButton importButton = new JButton("Import .asl...");
@@ -361,6 +370,10 @@ public final class BdiExplorerView extends JPanel implements View {
         return useModel;
     }
 
+    Optional<CurrentAnalysisSnapshot> currentAnalysisForTest() {
+        return currentAnalysis;
+    }
+
     JLabel statusForTest() {
         return status;
     }
@@ -370,7 +383,8 @@ public final class BdiExplorerView extends JPanel implements View {
             snapshot = imported;
             sourceTracker.markImported();
             useModel.filter(model -> mapping.document().useFingerprint().equals("unknown"))
-                    .ifPresent(model -> mapping.setDocument(MappingDocument.empty(model.fingerprint())));
+                    .ifPresent(model -> mapping.setDocumentWithoutNotification(
+                            MappingDocument.empty(model.fingerprint())));
             mapping.setSuggestions(useModel
                     .map(model -> mappingSuggestionService.suggest(imported.models(), imported.index(), model))
                     .orElse(List.of()));
@@ -434,8 +448,14 @@ public final class BdiExplorerView extends JPanel implements View {
     }
 
     private void refreshProblems() {
+        currentAnalysis = Optional.of(analysisService.create(
+                Instant.now(),
+                snapshot,
+                useModel,
+                oclEvaluator,
+                mapping.document()));
         problems.setProblems(BdiProblemCollector.collectConsistencyIssues(
-                validationOrchestrator.evaluate(ValidationContext.from(snapshot, mapping.document(), useModel, oclEvaluator))));
+                currentAnalysis.orElseThrow().issues()));
     }
 
     private DefaultMutableTreeNode createTree(BdiImportSnapshot imported) {

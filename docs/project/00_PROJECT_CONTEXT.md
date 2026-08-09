@@ -132,7 +132,7 @@ Optional project artifacts:
 | Rule/suppression JSON repositories | Implemented | Versioned persistence and validation tests |
 | Automatic GUI project configuration | Implemented | Loads `.bdi-plugin` beside the active `.use` model; missing files use visible defaults |
 | JSON/HTML report exporters | Implemented | Real reports are pipeline/test driven |
-| Live GUI report export | Planned | `ReportMain` is metadata/demo output, not live analysis |
+| Live GUI report export | Planned | current-analysis snapshot exists; file action remains open |
 | Auction case study and four mutants | Implemented | Scoped evidence only |
 | House Building import | Optional | Not required for MVP |
 | Release tag | Planned | `v1.0.0-thesis-rc` not created |
