@@ -92,6 +92,7 @@ implemented.
 | FR-REP-004 | Export the current live GUI analysis with one user action | Implemented |
 | FR-REP-005 | Generate a zero-state serializer smoke through `ReportMain` without claiming live analysis | Implemented |
 | FR-REP-006 | Compose one immutable current analysis snapshot for Problems, GUI export, and headless gates | Implemented |
+| FR-REP-007 | Run the same analysis headlessly with deterministic reports and distinct CI exit semantics | Implemented |
 
 ### 2.7 Case study and release
 

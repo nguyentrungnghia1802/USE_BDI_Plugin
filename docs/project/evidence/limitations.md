@@ -18,8 +18,8 @@
   only for the supported `soil:` effect form; missing or unknown effects yield
   `OCL-004`/`UNKNOWN` rather than an optimistic PASS.
 - `ReportMain` remains serializer-demo output. Live users should use Explorer's
-  snapshot-backed `Export Current Analysis...` action; headless file composition
-  remains a separate quality-gate task.
+  snapshot-backed export; CI users should use `BdiQualityGateMain`. The current
+  headless slice accepts `.asl` only and explicitly rejects `.jcm`.
 - The Auction precision/recall/F1 result covers four targeted mutant
   instances, with no TN estimate and no claim for the whole rule catalog.
 - The performance result is a seven-iteration local baseline on the Smart Queue

@@ -58,6 +58,9 @@ powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1
 # Auction fault-injection and evidence bundle
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\auction-evidence.ps1
 
+# Packaged headless process/exit/report smoke
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\headless-quality-gate.ps1
+
 # Clean committed-tree package check
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\clean-clone.ps1
 ```
@@ -70,6 +73,26 @@ The root `mvn clean verify` gate is part of the supported release check. The
 integration-mode invalid-specification behavior and portable shell-fixture path
 comparison are documented in ADR-0019; do not suppress integration tests or
 change normal CLI exit behavior to make the gate pass.
+
+For a direct run against an extracted distribution, use its two packaged JARs:
+
+```powershell
+$cp = "$useHome\lib\plugins\use-bdi-plugin-7.1.1.jar;$useHome\lib\use-gui.jar"
+java -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
+  --use .\Auction.use `
+  --asl .\auctioneer.asl --asl .\bidder.asl `
+  --mapping .\Auction.bdimap.json `
+  --rules .\.bdi-plugin\rules.json `
+  --suppressions .\.bdi-plugin\suppressions.json `
+  --json .\analysis.json --html .\analysis.html `
+  --timestamp 2026-08-10T00:00:00Z
+```
+
+Exit `0` means no open finding, `1` at least one confirmed finding, `2` only
+potential/unknown findings, `3` invalid input/config, and `4` infrastructure or
+output failure. CI must not treat exit `2` as semantic PASS. Omit optional file
+arguments rather than relying on CWD discovery. Current input is `.asl` only;
+`.jcm` is rejected until the JaCaMo importer task is complete.
 
 ## Adding A Fixture And A Vertical Slice
 

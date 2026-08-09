@@ -133,6 +133,7 @@ Optional project artifacts:
 | Automatic GUI project configuration | Implemented | Loads `.bdi-plugin` beside the active `.use` model; missing files use visible defaults |
 | JSON/HTML report exporters | Implemented | Real reports are pipeline/test driven |
 | Live GUI report export | Implemented | current snapshot exports atomically as JSON or HTML |
+| Headless quality gate | Implemented | explicit `.use`/`.asl` inputs, deterministic reports, five exit classes |
 | Auction case study and four mutants | Implemented | Scoped evidence only |
 | House Building import | Optional | Not required for MVP |
 | Release tag | Planned | `v1.0.0-thesis-rc` not created |

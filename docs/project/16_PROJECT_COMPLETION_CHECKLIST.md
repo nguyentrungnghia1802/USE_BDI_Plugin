@@ -31,6 +31,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Problems uses one immutable current-analysis application snapshot.
 - [x] JSON/HTML exporters preserve issues, evidence, hashes, and suppressions.
 - [x] Explorer exports its exact current analysis as atomic JSON/HTML output.
+- [x] Headless gate composes the same snapshot and distinguishes CI outcomes.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
 - [x] User, developer, install, license, limitation, and threat guides exist.
@@ -48,14 +49,14 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline for the live GUI export slice:
+Latest validated baseline for the headless quality-gate slice:
 
-- focused report/export/Explorer tests: 13 pass;
-- plugin tests: 103 pass;
+- focused CLI/current-snapshot/report tests: 10 pass;
+- plugin tests: 107 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
-- package/parser/report/menu smoke passes and builds both assembly formats;
-- root `mvn clean verify` passed on the preceding host-refresh commit; this
-  plugin/UI slice does not change USE core or package wiring.
+- packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
+- root `mvn clean verify`: all five modules, 121 GUI integration tests, and
+  ZIP/TAR assembly succeed.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.

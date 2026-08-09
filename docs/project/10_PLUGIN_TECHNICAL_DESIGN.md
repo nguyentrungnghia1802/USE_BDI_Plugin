@@ -134,7 +134,22 @@ stale queued requests, reuses the existing BDI import, and compares USE state
 fingerprints before/after validation. Refresh failures remain visible in status
 text and cannot be converted into a successful analysis result.
 
-## 7. Build, Test, And Script Contracts
+## 7. Headless Quality Gate
+
+`BdiQualityGateMain` accepts explicit `--use`, repeatable `--asl`, optional
+`--mapping`/`--rules`/`--suppressions`, and one-or-more `--json`/`--html`
+outputs. It does not discover project files from the process CWD. Only `.asl`
+is accepted in this slice; `.jcm` is rejected as invalid input until the JaCaMo
+adapter exists. The timestamp defaults to `Instant.EPOCH` or is supplied by
+`--timestamp` for byte-stable reports.
+
+The runner compiles a private `MSystem`, uses existing import/projection/
+orchestrator/current-snapshot/report services, and compares state fingerprints.
+Exit codes are 0 clean, 1 confirmed findings, 2 potential/unknown-only, 3
+invalid input/config, and 4 infrastructure/output failure. A parser-invalid
+`.asl` is valid analysis input: it produces `ASL-001`, a report, and exit 1.
+
+## 8. Build, Test, And Script Contracts
 
 ```powershell
 mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test
@@ -145,6 +160,7 @@ mvn --batch-mode --no-transfer-progress clean verify
 | Script | Bounded success marker |
 | --- | --- |
 | `scripts/smoke.ps1` | `GUI_SMOKE_OK` |
+| `scripts/headless-quality-gate.ps1` | `HEADLESS_QUALITY_GATE_OK` |
 | `scripts/auction-evidence.ps1` | `AUCTION_EVIDENCE_OK` |
 | `scripts/performance.ps1` | `PERFORMANCE_BENCHMARK_OK` |
 | `scripts/clean-clone.ps1` | `CLEAN_CLONE_REPRODUCIBILITY_OK` |
@@ -154,7 +170,7 @@ Fixtures are separated into valid, invalid, unsupported, golden, Smart Queue,
 USE, and Auction/mutant groups. Tests do not require a network, database, or
 credentials. Fixed timestamps and canonical sorting protect reproducibility.
 
-## 8. Extension Rules
+## 9. Extension Rules
 
 For a new AgentSpeak construct:
 
@@ -173,7 +189,7 @@ For a new rule:
 For a new JaCaMo layer, create a separate adapter and plugin-owned IR. Do not
 make current rules depend directly on `.jcm`, CArtAgO, Moise, or runtime classes.
 
-## 9. Definition Of Done
+## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/
 architecture/checklist, an ADR for architectural changes, `git diff --check`,

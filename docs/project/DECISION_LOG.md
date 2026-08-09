@@ -36,6 +36,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0022 | Persist mappings and suppressions as schema `0.2.0` under an explicit existing project root; migrate v1 mappings to portable IDs on save, but retain irreversible v1 suppression hashes as legacy-only entries so relocation cannot broaden suppression | repository migration and relocation tests |
 | ADR-0023 | Refresh USE state manually through a plugin-owned provider that resolves the current session system per capture; run capture/validation on the EDT, discard stale generations, and verify the state fingerprint before/after analysis without claiming host event subscription | Explorer/provider/evaluator refresh tests |
 | ADR-0024 | Compose Problems/export/headless inputs through one immutable application-owned `CurrentAnalysisSnapshot`; validation runs once per composition, caller supplies time, and ADR-0016 hashes plus counts/version/config/suppression evidence are constructor-validated | current-analysis Auction/malformed/Explorer tests |
+| ADR-0025 | Headless quality gate requires explicit `.use`, one-or-more `.asl`, and JSON/HTML output paths; mapping/rules/suppressions are optional explicit files, timestamp defaults to epoch, no CWD discovery occurs, and exits are 0 clean, 1 confirmed findings, 2 potential/unknown-only, 3 invalid input/config, 4 infrastructure/output failure | CLI integration/process smoke and deterministic-report tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -74,10 +75,12 @@ new ADR that explicitly supersedes the affected entry.
 
 ## 5. Current Validation Record
 
-- Live-export focused tests: 13 pass.
-- Plugin suite: 103 pass.
+- Headless CLI/current-snapshot/report focused tests: 10 pass.
+- Plugin suite: 107 pass.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
-- Package/parser/report/menu smoke succeeds and builds ZIP/TAR distributions.
+- Packaged headless smoke verifies Auction JSON/HTML and process exits 1/3.
+- Root `mvn clean verify`: all five modules, 121 GUI integration tests, and
+  ZIP/TAR distributions succeed.
 - Root `mvn clean verify` passed for the preceding host-refresh commit; current
   application changes do not alter host or assembly wiring.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural

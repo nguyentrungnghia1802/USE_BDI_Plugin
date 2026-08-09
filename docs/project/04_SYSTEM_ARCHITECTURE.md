@@ -63,6 +63,9 @@ Hard rules:
 11. Explorer/Problems consumes that snapshot; `CurrentAnalysisReportService`
     serializes the same object atomically as JSON or HTML without querying
     Swing, rerunning validation, or reading live USE state.
+12. `HeadlessAnalysisService` compiles an isolated USE system from explicit
+    files and composes the same snapshot/report services without Swing or a
+    live USE session. It verifies its private state fingerprint before/after.
 
 Asynchronous imports carry a generation token so an older completion cannot
 replace a newer selection. Manual USE refresh resolves the current session
@@ -78,7 +81,7 @@ and verifies the state fingerprint before and after analysis.
 | USE projection | adapter snapshot | immutable/read-only |
 | Mappings/config/suppressions | plugin/user files | versioned and validated |
 | Current analysis/Problems | application snapshot service | immutable, recomputed |
-| Reports | export caller | serialized supplied evidence only |
+| Reports | GUI or headless caller | atomic serialization of supplied evidence only |
 
 OCL results are `PASS`, `FAIL`, or `UNKNOWN`; compile/evaluation errors cannot
 be converted to success. Bounded `soil:` effects execute only inside a USE
