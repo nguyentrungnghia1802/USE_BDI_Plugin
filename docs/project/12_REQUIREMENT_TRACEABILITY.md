@@ -10,28 +10,28 @@ documentation. It intentionally traces groups instead of every Java record.
 
 | Requirement IDs | Primary source | Primary automated evidence | Detailed docs |
 | --- | --- | --- | --- |
-| FR-PLG-001..005 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction` | `HelloBdiActionTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | `02`, install/user guides |
-| FR-IMP-001..003 | `JasonAslParserAdapter`, `JasonAslImporter`, import result/diagnostics | `JasonAslParserAdapterTest`, `JasonAslImporterTest`, `AslImportReportTest` | `03`, `05`, ADR-0002..0008 |
-| FR-IMP-004..006 | `JasonAstToIrNormalizer`, `model/ir`, `BdiIndexBuilder` | `AgentModelTest`, `IrHierarchyTest`, golden and index tests | `03`, technical design |
-| FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | `02`, `03`, developer guide |
-| FR-MAP-001..002 | `UseUmlModelFacade`, `UseModelFingerprint` | `UseUmlModelFacadeTest` | `02`, `05`, ADR-0012 |
-| FR-MAP-003..006 | mapping domain/services/repository/editor | mapping suggestion/model/persistence/staleness/editor tests | `03`, `04`, `05`, ADR-0013/0014 |
-| FR-MAP-007 | `MappingSourceId`, `SourceSpan` | portability behavior documented in fixture/tests | `04`, `09`, limitations |
+| FR-PLG-001..005 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction` | `HelloBdiActionTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | architecture, technical design, install/user guides |
+| FR-IMP-001..003 | `JasonAslParserAdapter`, `JasonAslImporter`, import result/diagnostics | `JasonAslParserAdapterTest`, `JasonAslImporterTest`, `AslImportReportTest` | technical design, ADR-0002..0008 |
+| FR-IMP-004..006 | `JasonAstToIrNormalizer`, `model/ir`, `BdiIndexBuilder` | `AgentModelTest`, `IrHierarchyTest`, golden and index tests | architecture, technical design |
+| FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | architecture, developer guide |
+| FR-MAP-001..002 | `UseUmlModelFacade`, `UseModelFingerprint` | `UseUmlModelFacadeTest` | architecture, technical design, ADR-0012 |
+| FR-MAP-003..006 | mapping domain/services/repository/editor | mapping suggestion/model/persistence/staleness/editor tests | technical design, ADR-0013/0014 |
+| FR-MAP-007 | `MappingSourceId`, `SourceSpan` | portability behavior documented in fixture/tests | decision log, limitations |
 | FR-VAL-001..003 | `StandardConsistencyRules`, `ValidationOrchestrator`, issue model | orchestrator/rule/catalog tests | rule catalog, ADR-0014 |
-| FR-VAL-004 | `RuleConfiguration`, repository/codec | rule configuration and orchestrator tests | `04`, `05`, ADR-0017 |
-| FR-VAL-005 | `Suppression`, service/repository/codec | suppression repository/service/report tests | `04`, `05`, ADR-0018 |
-| FR-VAL-006 | `BdiProjectConfigurationLoader`, `ImportBdiAction`, `BdiExplorerView` | loader and Explorer configuration tests | `01`, `02`, ADR-0020 |
-| FR-VAL-007..008 | `BdiExplorerView`, problem collector/panel | explorer/problem tests | `03`, user guide |
-| FR-OCL-001..006 | `UseSnapshotOclEvaluator`, snapshot result/status types | `UseSnapshotOclEvaluatorTest`, Auction OCL mutant test | `02`, `03`, `11`, ADR-0014 |
-| FR-OCL-007 | no implementation claimed | Optional checklist status | `00`, `01`, future work |
+| FR-VAL-004 | `RuleConfiguration`, repository/codec | rule configuration and orchestrator tests | technical design, ADR-0017 |
+| FR-VAL-005 | `Suppression`, service/repository/codec | suppression repository/service/report tests | technical design, ADR-0018 |
+| FR-VAL-006 | `BdiProjectConfigurationLoader`, `ImportBdiAction`, `BdiExplorerView` | loader and Explorer configuration tests | requirements, architecture, ADR-0020 |
+| FR-VAL-007..008 | `BdiExplorerView`, problem collector/panel | explorer/problem tests | architecture, user guide |
+| FR-OCL-001..006 | `UseSnapshotOclEvaluator`, snapshot result/status types | `UseSnapshotOclEvaluatorTest`, Auction OCL mutant test | architecture, technical design, ADR-0014 |
+| FR-OCL-007 | no implementation claimed | Optional checklist status | context, requirements, future work |
 | FR-UI-001..004 | `BdiExplorerView`, UI/problem/mapping models | UI and action tests plus GUI smoke | user guide, screenshot evidence |
-| FR-REP-001..003 | report data/exporters and fingerprints | report/hash/suppression tests, Auction baseline | `04`, `05`, ADR-0015/0016/0018 |
-| FR-REP-004 | Missing live GUI composition | Explicit Planned status and limitation contract | `01`, `05`, `09` |
-| FR-REP-005 | `ReportMain` zero-state serializer demonstration | report/package smoke tests | `01`, `05`, developer guide |
+| FR-REP-001..003 | report data/exporters and fingerprints | report/hash/suppression tests, Auction baseline | technical design, ADR-0015/0016/0018 |
+| FR-REP-004 | Missing live GUI composition | Explicit Planned status and limitation contract | requirements, decision log, ideas |
+| FR-REP-005 | `ReportMain` zero-state serializer demonstration | report/package smoke tests | requirements, technical/developer guides |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
-| FR-CS-004 | no required implementation | Optional checklist status | roadmap, future work |
-| FR-REL-001..002 | Maven POMs, smoke/clean-clone scripts | root verify and script markers | `07`, `08`, release evidence |
-| FR-REL-003..004 | tag/backup process | open checklist and backup manifest behavior | `08`, `09`, checklist |
+| FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
+| FR-REL-001..002 | Maven POMs, smoke/clean-clone scripts | root verify and script markers | developer/install guides, release evidence |
+| FR-REL-003..004 | tag/backup process | open checklist and backup manifest behavior | decision log and checklist |
 
 ## 2. Business-rule traceability
 
@@ -70,6 +70,7 @@ documentation. It intentionally traces groups instead of every Java record.
   suppression artifacts.
 - Host model/snapshot change subscription for a long-lived BDI Explorer.
 - House Building or a second independent evaluation corpus.
+- Full JaCaMo `.jcm`, CArtAgO, Moise, and runtime-trace integration.
 - Complete external data/report/slides backup and release tag.
 
 These are intentionally Partial/Planned/Optional requirements, not missing

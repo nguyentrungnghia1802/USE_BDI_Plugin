@@ -1,444 +1,147 @@
-# 10. Plugin Technical Design
+# Plugin Technical Design
 
-Status: specialized implementation design. Canonical scope, contracts, and
-current gaps are maintained in `00_PROJECT_CONTEXT.md` through
-`12_REQUIREMENT_TRACEABILITY.md`.
+Status: verified implementation contract
+Verification: source-backed; see Git history and DocumentationContractTest
 
-## 1. Baseline kỹ thuật
+## 1. Baseline
 
-- Java 21.
-- Maven multi-module.
-- USE modules hiện tại: `use-core`, `use-gui`, `use-assembly`.
-- Jason dependency đề xuất: `io.github.jason-lang:jason-interpreter:3.3.0`.
-- Jason API có các kiểu phù hợp như `Plan`, `PlanBody`, `Trigger`, `Literal`, `SourceInfo` và package parser.
+| Area | Contract |
+| --- | --- |
+| Host | USE 7.1.1, Java 21, Maven reactor |
+| Plugin | `org.tzi.use.plugins.bdi`, manifest version `0.1.0` |
+| Parser | `io.github.jason-lang:jason-interpreter:3.3.0` |
+| Menu | `Plugins > AgentSpeak` |
+| Actions | `Hello BDI Plugin`, `Import AgentSpeak...` |
+| UI | Swing `ViewFrame` registered by USE `MainWindow` |
+| Storage | local versioned UTF-8 JSON; no database/network API |
+| Evaluation | JUnit 5, package/GUI smoke, Auction fixtures |
 
-## 2. Technical spike bắt buộc trước khi code feature
+The verified plugin lifecycle uses `IPlugin`, `IPluginActionDelegate`,
+`IPluginAction.getSession()`, `Session.hasSystem()`, `Session.system()`, and
+`MainWindow.addNewViewFrame(...)`. Do not invent descriptor-level view APIs.
 
-Trong 1–2 ngày, đọc source USE để xác nhận:
-
-1. plugin descriptor/manifest cần gì;
-2. interface lifecycle và GUI action chính xác;
-3. cách lấy `MainWindow`, current `Session`, `MModel`, `MSystemState`;
-4. plugin classloader có nạp dependency transitively hay cần fat JAR;
-5. cách thêm menu/view mà không sửa `use-gui`;
-6. cách reload plugin khi debug;
-7. headless integration test khả thi đến đâu.
-
-Kết quả spike phải ghi vào `DECISION_LOG.md`; không đoán API rồi code rộng.
-
-## 3. Module structure
+## 2. Module And Package Structure
 
 ```text
 use-bdi-plugin/
-  pom.xml
   src/main/java/org/tzi/use/plugins/bdi/
-    plugin/
-    application/
-    importer/jason/
-    model/ir/
-    model/mapping/
-    model/issues/
-    index/
-    validation/rules/
-    ocl/
-    persistence/
-    report/
-    ui/
-  src/main/resources/
-    plugin metadata
-    messages.properties
-    icons/
-  src/test/java/
-  src/test/resources/fixtures/
-    asl/valid/
-    asl/invalid/
-    use/
-    mappings/
-    expected/
+    application/  import and project composition
+    importer/     Jason adapter and normalization
+    model/ir/     immutable parser-independent BDI model
+    model/mapping/ explicit mapping domain
+    index/        IR-derived indexes
+    use/          read-only USE/OCL adapter
+    validation/   rule SPI, catalog, orchestrator, suppressions
+    persistence/  versioned JSON repositories
+    problems/     issue presentation models
+    report/       JSON/HTML serialization
+    ui/           Explorer, mapping, and Problems Swing views
 ```
 
-## 4. Core interfaces
+## 3. Import And IR Contracts
 
-```java
-interface AslImporter {
-    ParseResult importFiles(List<Path> files);
-}
+- `AslImporter` attempts every validated source and preserves input order.
+- Syntax failures use `ASL-001`; other import failures use `ASL-IMPORT-001`.
+- Successful files produce immutable `AgentModel` trees and source spans.
+- Unnormalized Jason constructs produce `ASL-002` and explicit unsupported
+  nodes/features.
+- `BdiImportService` combines per-file results, models, and one immutable
+  `BdiIndex`; failed files do not erase successful files.
+- Jason classes are package-boundary implementation details.
 
-interface BdiModelIndex {
-    List<PlanModel> supportingPlans(PredicateSignature goal);
-    List<ActionCallSite> actionCalls(PredicateSignature action);
-}
+## 4. Mapping And Validation Contracts
 
-interface UmlModelFacade {
-    Optional<UmlClassRef> findClass(String name);
-    Optional<UmlObjectRef> findObject(String name);
-    List<UmlOperationRef> operations();
-    OclEvaluationResult evaluate(String expression, EvaluationBindings bindings);
-}
+Mapping schema `0.1.0` supports `AGENT_CLASS`, `AGENT_OBJECT`,
+`ACTION_OPERATION`, `PARAMETER`, `RECEIVER_OBJECT`, and `BELIEF_ATTRIBUTE`.
+`kind + source` is unique. Suggestions are deterministic and explainable but
+never auto-confirmed.
 
-interface ConsistencyRule {
-    String id();
-    RulePhase phase();
-    List<ConsistencyIssue> evaluate(ValidationContext context);
-}
+Each `ConsistencyRule` has a stable ID and phase. The orchestrator validates
+enabled IDs, sorts by phase/ID, evaluates immutable context, and applies exact
+source-fingerprint suppressions. The authoritative 22-rule matrix is in
+[the rule catalog](08_CONSISTENCY_RULE_CATALOG.md).
+
+OCL checks preserve certainty:
+
+- model/signature checks use immutable USE references;
+- snapshot preconditions return explicit status/evidence;
+- bounded effects require `soil:` and disposable state variation;
+- missing evidence yields potential/unknown, never fabricated PASS.
+
+## 5. Persistence Contracts
+
+Current schema version for mapping, rule, and suppression files: `0.1.0`.
+
+```json
+{"schemaVersion":"0.1.0","enabledRules":["ASL-001","MAP-003"]}
 ```
 
-## 5. Proposed services
+```json
+{"schemaVersion":"0.1.0","suppressions":[{"ruleId":"REF-001","sourceFingerprint":"<sha256>","reason":"reviewed"}]}
+```
 
-- `JasonAslImporter`
-- `JasonAstToIrNormalizer`
-- `BdiProjectRepository`
-- `BdiIndexBuilder`
-- `UseUmlModelFacade`
-- `MappingRepository`
-- `MappingSuggestionService`
-- `ValidationOrchestrator`
-- `OclPreconditionChecker`
-- `BoundedStateSimulator`
-- `ReportExporter`
+Repositories reject malformed input, unsupported versions, invalid values, and
+duplicates. Rule/suppression codecs reject unknown fields. The mapping decoder
+does not reject every unknown object field; OD-004 keeps strict closed-schema
+validation open. Generated reports contain supplied metadata, issues,
+suppressions, and optional canonical model/mapping SHA-256 identities.
 
-### Implemented Phase 2 slice
+## 6. GUI Project Composition
 
-- `BdiIndexBuilder` and immutable `BdiIndex` provide goal, action, predicate,
-  agent/object, and duplicate-label indexes over the normalized IR.
-- `BdiImportService` is the application boundary for full-tree imports and
-  partial per-file diagnostics.
-- `BdiImportWorker` keeps parser/index work off the Swing EDT.
-- `ImportBdiAction` and `BdiExplorerView` implement the first file chooser,
-  tree, and source-detail UI through the verified USE `ViewFrame` API.
-
-### Implemented Problems/re-import and USE adapter slice
-
-- `BdiProblemCollector`, `BdiProblemTableModel`, and `BdiProblemPanel` retain
-  import diagnostics, unsupported-feature evidence, and duplicate-label index
-  evidence in a filterable/groupable Problems tab.
-- `BdiSourceTracker` records normalized source stamps. Re-import runs the full
-  selected source set when at least one stamp changes and uses a generation token
-  to ignore stale background callbacks.
-- `UseUmlModelFacade` exposes immutable `Uml*Ref` records for the USE model and
-  current system state. It reads `MSystem.model()`, `MSystem.state()`,
-  `MModel.classes()/associations()/classInvariants()`, `MClass.attributes()` and
-  `operations()`, `MOperation.paramList()/preConditions()/postConditions()`,
-  `MSystemState.allObjects()/allLinks()`, and `MObjectState.attributeValueMap()`.
-- `UseOclEvaluator` delegates compilation/evaluation to USE's
-  `OCLCompiler.compileExpression(...)` and `Evaluator.eval(...)` without
-  changing the current state. `UseModelFingerprint` provides deterministic
-  SHA-256 identity for the immutable projection.
-
-The current syntactic reference policy is deliberately conservative: `.send`
-receivers are agent references and named terms in arguments are object
-references. `UseUmlModelFacade` now exposes the USE-side symbols, but resolving
-those syntactic references to mapped USE classes/objects remains a semantic
-resolution task beyond the first mapping slice.
-
-### Implemented mapping slice
-
-- `model/mapping/MappingKind`, `MappingBinding`, `MappingDocument`, and
-  `MappingSuggestion` are immutable Java-only domain values. The document schema
-  is `0.1.0`, includes the BDI metamodel version and USE fingerprint, and uses
-  `kind + source` as the replacement key for manual edits.
-- `MappingSuggestionService` accepts normalized `AgentModel`, `BdiIndex`, and
-  `UseModelSnapshot` values. It creates deterministic candidates for agent
-  classes/objects, action operations, positional parameters, `.send` receiver
-  objects, and initial-belief attributes. Name/arity scores include human-
-  readable evidence; candidates are not treated as confirmed mappings.
-- `MappingEditorPanel` is a Swing-only confirmation surface. It is mounted as
-  the `Mapping` tab in `BdiExplorerView` and can add/update, apply, remove, and
-  inspect bindings without changing the USE system.
-- `MappingFileRepository` stores the document as dependency-free UTF-8
-  `.bdimap.json`. The codec validates required fields, mapping kinds, duplicate
-  keys, and malformed JSON; persistence is intentionally outside the domain
-  records.
-
-### Implemented static consistency slice
-
-- `MappingSourceId` defines the shared source-key contract for agents, actions,
-  arguments, receivers, beliefs, and source paths. The detector treats missing
-  BDI sources and missing USE targets as stale errors. A USE fingerprint change
-  is retained as a staleness signal for review, not emitted as a false error by
-  the current rule catalog.
-- `ConsistencyRule`, `RulePhase`, `ValidationContext`,
-  `ValidationOrchestrator`, and immutable `ConsistencyIssue` provide the
-  plugin-owned static rule boundary. Issues retain severity, status, certainty,
-  source span, UML reference, evidence, and suggested fix.
-- The initial catalog implements `ASL-001/002`, `BDI-001/002/003/004`,
-  `REF-001/002`, `MAP-001/002/003`, `SIG-001/002/003`, and `OWN-001`.
-  Literal type inference is intentionally limited to String, Integer, Real,
-  and Boolean; unknown terms result in `SIG-003` WARNING rather than an
-  invented type claim.
-- `BdiExplorerView` reruns the static rules after import and after an editor
-  mapping change, then renders the result through the existing Problems tab.
-  The slice is read-only with respect to USE and has no OCL evaluation,
-  suppression, message, belief, or state-transition rules.
-
-### Implemented rule configuration slice
-
-- `RuleConfiguration` is an immutable schema `0.1.0` value containing an
-  explicit set of enabled rule IDs. The tracked
-  `use-bdi-plugin/.bdi-plugin/rules.json` enables all 22 current catalog rules
-  and preserves the default behavior.
-- `RuleConfigurationRepository` reads/writes deterministic UTF-8 JSON without
-  adding a JSON dependency. It rejects unsupported fields, duplicate IDs,
-  malformed values, and unsupported schema versions.
-- `ValidationOrchestrator` validates enabled IDs against the actual supplied
-  rule set and filters before evaluation. Unknown IDs fail fast; the default
-  constructor still selects every standard rule. Configuration is injected at
-  the application boundary and does not access or mutate USE state.
-
-### Implemented suppression slice
-
-- `Suppression` stores a rule ID, a 64-character source-span SHA-256
-  fingerprint, and a required reason. `IssueFingerprint` canonicalizes the
-  normalized source path and begin/end positions; it does not read or mutate
-  the source file.
-- `SuppressionRepository` persists schema `0.1.0` `suppressions.json` with
-  deterministic ordering and rejects unknown fields, duplicate keys, malformed
-  entries, and unsupported versions. The tracked project file is an explicit
-  empty configuration rather than a fake placeholder entry.
-- `SuppressionService` applies only matching suppressions to `OPEN` issues and
-  appends the reason as evidence. `ValidationOrchestrator` applies the service
-  after deterministic rule ordering and keeps the original inputs immutable.
-
-### Implemented GUI project-configuration slice
-
-- `BdiProjectConfigurationLoader` uses the parent of `MModel.filename()` as
-  the project root and discovers `.bdi-plugin/rules.json` plus
-  `.bdi-plugin/suppressions.json` there. It never guesses from process CWD.
-- Missing files produce explicit standard-rule/empty-suppression defaults.
-  Invalid JSON, unsupported schemas, or unknown rule IDs fail before the
-  Explorer opens and are shown through the action error dialog.
-- `BdiExplorerView` receives the immutable configuration composition, uses it
-  for every validation refresh, and exposes project/default origins in the
-  status text.
-
-### Implemented unsupported-fixture slice
-
-- `fixtures/asl/unsupported/relational-context.asl` is valid Jason 3.3.0 input
-  containing a relational plan context that the current normalized context tree
-  does not claim to support.
-- Jason 3.3.0 exposes `RelExpr` through `Structure`/`Literal`, so
-  `JasonAstToIrNormalizer` checks `RelExpr` before the generic `Literal` branch.
-  The adapter retains a `ContextUnsupported` node and an `ASL-002` feature
-  instead of silently normalizing the relation as a literal.
-- `UnsupportedFixtureTest` verifies successful parsing, source line evidence,
-  `BdiProblemCollector` warning projection, and the absence of an `ASL-001`
-  syntax diagnostic. No USE core source is changed.
-
-### Implemented golden IR slice
-
-- `AgentModelJsonSerializerTest` compares the normalized minimal model and the
-  unsupported relational-context model against checked-in JSON fixtures.
-- The unsupported golden explicitly covers `ContextUnsupported`, `ASL-002`,
-  portable source paths, source spans, and deterministic repeated serialization.
-  This remains a fixture-level regression gate, not a complete case-study
-  corpus.
-
-### Implemented report export slice
-
-- `ReportData` accepts immutable `ConsistencyIssue` evidence in addition to the
-  existing summary metadata, preserving the original constructor for simple
-  reports. It also accepts optional 64-character hexadecimal SHA-256 hashes
-  for the model and mapping inputs.
-- `HtmlReportExporter` emits a UTF-8 metadata page plus an escaped issue table
-  containing rule ID, severity, status, certainty, source location, message,
-  and evidence. `ReportExporter` emits the same fields in a JSON `issues` array
-  and includes `modelHash` and `mappingHash` metadata.
-- `UseModelFingerprint` hashes the immutable USE snapshot projection already
-  used by the adapter. `MappingFingerprint` hashes a canonical mapping
-  document whose bindings are sorted by their replacement key and whose
-  optional expressions/evidence are explicitly delimited.
-- Exporters do not execute rules or read USE state. They serialize the supplied
-  analysis result only. JSON/HTML include suppression entries, and
-  `ReportMain` loads the project suppression file when it exists.
-
-### Implemented performance baseline slice
-
-- `BdiPerformanceBenchmarkTest` measures the real plugin pipeline from Jason
-  parsing through normalized IR materialization and BDI index construction.
-  It uses the existing Smart Queue fixture, two warm-up iterations, and seven
-  measured iterations.
-- Every measured result is checked for the expected materialized model and
-  non-empty indexes before its duration is recorded. The test writes a
-  machine-readable report to `target/performance/bdi-import-index.json`.
-- The companion `scripts/performance.ps1` command provides a repeatable local
-  entry point. It intentionally has no hard duration threshold; benchmark
-  values are environment-dependent. The Smart Queue sample and the Auction
-  experiment protocol are documented in
-  `docs/project/evidence/performance-baseline.md` and
-  `docs/project/evidence/auction-experiment-protocol.md`.
-
-### Implemented clean-clone reproducibility slice
-
-- `scripts/clean-clone.ps1` clones the exact current `HEAD` into a generated
-  temporary directory, so uncommitted working-tree files are not used as
-  build inputs.
-- The script runs the full package path through `use-assembly`, verifies the
-  shaded `use-bdi-plugin` JAR contains the plugin class, Jason runtime, and
-  third-party notices, then verifies the plugin is present in the distribution
-  ZIP and the clone remains clean.
-- Cleanup is restricted to the generated temp path and can be disabled with
-  `-KeepClone` for investigation. This remains a separate reproducibility gate;
-  ADR-0019 records the later repair and passing root `mvn clean verify` result.
-
-### Implemented Auction UML/OCL fixture slice
-
-- `fixtures/casestudy/auction/Auction.use` is the first case-study model. It
-  defines `Auctioneer`, `Auction`, `Bidder`, and `Bid`, their participation
-  associations, an `AuctionStatus` enum, four mapped-operation candidates, and
-  OCL invariants/pre/postconditions for opening, bidding, and closing.
-- `AuctionModelFixtureTest` compiles the actual `.use` file with
-  `USECompiler`, projects it through `UseUmlModelFacade`, and verifies the
-  extracted model surface and source-independent constraint counts. It then
-  creates a small object/link snapshot and verifies the fingerprint changes.
-
-### Implemented Auction AgentSpeak fixture slice
-
-- `fixtures/casestudy/auction/auctioneer.asl` and `bidder.asl` are valid Jason
-  3.3.0 sources aligned with the Auction lifecycle vocabulary. They cover
-  initial beliefs, initial goals, plan contexts, belief updates, achieve goals,
-  external operation-shaped actions, and one internal `.print` action.
-- `AuctionAgentSpeakFixtureTest` imports both files through
-  `BdiImportService`, verifies two materialized models with 3 and 1 plans, and
-  checks `BdiIndex` call sites and action-kind classification for the lifecycle
-  actions. Explicit plan labels keep source IDs unique for same-position steps.
-
-### Implemented Auction valid-mapping slice
-
-- `AuctionMappingFixtureTest` selects exact-name/arity candidates from
-  `MappingSuggestionService` for the two agent files, their class/object
-  targets, the four lifecycle operations, positional parameters, and the
-  supported `auction_status/1` and `budget/1` belief attributes.
-- The test creates a populated read-only USE snapshot, builds a current
-  fingerprinted `MappingDocument`, round-trips it through
-  `MappingFileRepository`, and checks `MappingStalenessDetector` plus the
-  configured `MAP-001/002/003` rules.
-- The mapping is generated in a temporary directory rather than committed as
-  JSON because the current `MappingSourceId` contract stores normalized
-  absolute source paths. This keeps the case-study test portable without
-  weakening the actual persistence/staleness gate.
-- This slice confirms only the selected mapping links. Unsupported relational
-  beliefs are intentionally not forced into an attribute mapping; mutants,
-  ground truth, and reports remain separate checklist tasks.
-
-### Implemented Auction baseline-report slice
-
-- `AuctionBaselineReportTest` runs the real Auction import, populated USE
-  snapshot, confirmed mapping, and `ValidationOrchestrator` pipeline before
-  passing the immutable result to `ReportExporter` and `HtmlReportExporter`.
-- The test writes `target/case-study/auction/auction-baseline.json` and
-  `auction-baseline.html`, includes plugin/USE/Jason metadata, 14 mapping
-  bindings, the current model/mapping SHA-256 identities, and a fixed timestamp
-  for reproducibility. Repeated JSON/HTML exports are byte-identical.
-- The baseline currently records 27 findings: `REF-001` 10,
-  `BEL-001` 2, `OCL-002` 4, `OCL-004` 4, `OWN-001` 3, `SIG-002` 2, and
-  `SIG-003` 2. It is the pre-mutant comparison artifact; no mutant or ground
-  truth claim is made here.
-- `scripts/auction-baseline.ps1` provides the repeatable command and checks
-  both generated files. Source locations remain checkout-specific because the
-  current source-ID/report contract still uses normalized absolute paths.
-
-### Implemented Auction structural-mutant slice
-
-- `structural-remove-bidder.use` is an independent valid USE fixture that
-  removes the `Bidder` class, its dependent operations/associations, and its
-  constraints without modifying the baseline `Auction.use` source.
-- `AuctionStructuralMutantTest` imports the unchanged AgentSpeak files,
-  creates the confirmed baseline mapping, loads the mutant through
-  `USECompiler`, and compares the new immutable USE snapshot with the saved
-  mapping. The test observes the changed fingerprint and nine missing mapping
-  targets: one class, one object, two operations, four parameters, and one
-  attribute.
-- The existing `MappingStalenessDetector` and `MAP-003` rule produce nine
-  confirmed issues. No parser diagnostic is expected because both AgentSpeak
-  sources remain unchanged. `scripts/auction-structural-mutant.ps1` provides
-  the repeatable smoke command.
-- This slice deliberately does not introduce a new mutation framework or
-  claim a ground-truth/metrics corpus. It is a fixture-level realization of
-  ADR-0014's stale-target policy and leaves signature, reference, and OCL
-  mutant families for subsequent slices.
-
-### Implemented Auction fault-injection and thesis-evidence bundle
-
-- `AuctionFaultInjectionTest` covers three additional independent mutants:
-  `Auction::open(flag:String)` produces `SIG-001`, `bidder2` produces four
-  targeted `REF-001` findings, and the `#closed` `Auction::open` precondition
-  produces one `OCL-001` on a `draft` snapshot. The OCL test checks that the
-  immutable snapshot fingerprint is unchanged after evaluation.
-- `docs/project/evidence/auction-ground-truth.json` records the four mutant
-  IDs, fixtures, targeted rule IDs, baseline/mutant counts, and detection
-  status. `auction-metrics.csv` is the corresponding four-row targeted delta
-  table; it is not presented as precision/recall because the rule catalog is
-  intentionally conservative.
-- `auction-evidence.ps1` is the reproducible command for the tests, baseline
-  report, structural smoke, and artifact existence gate. The Mermaid files
-  cover runtime architecture, normalized IR, and the BDI metamodel; the
-  mapping examples document confirmed links and mutant effects.
-- No new ADR was required. The bundle consumes the accepted normalized-IR
-  rule boundary, read-only USE snapshot policy, OCL PASS/FAIL/UNKNOWN contract,
-  and existing ADR-0015/0016 report identity rules.
-
-### Completed thesis evidence package
-
-- The final current-MVP rule catalog is in
-  `docs/project/08_CONSISTENCY_RULE_CATALOG.md` and is checked against the
-  22-rule source registry by `RuleCatalogCompletenessTest`.
-- UI screenshots, the Auction protocol, scoped mutation metrics, benchmark
-  chart/table, threats to validity, limitations, and future work are indexed
-  under `docs/project/evidence/`. The interpretation boundary remains part of
-  each evidence document; no broad accuracy claim is inferred from four
-  mutants.
-- `docs/project/PLUGIN_INSTALL_GUIDE.md` is the source-build and extracted
-  distribution launch guide. It uses the existing shaded plugin packaging and
-  does not require a USE core change.
-
-## 6. Dependency packaging
-
-Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:
-
-- copy dependency JAR cạnh plugin nếu loader hỗ trợ;
-- tạo shaded/fat JAR bằng `maven-shade-plugin`.
-
-Phải kiểm tra classloader trước. Nếu shade, tránh relocate các package mà Jason dùng reflection; kiểm tra LGPL/GPL notices và tạo `THIRD_PARTY_NOTICES` khi phân phối.
-
-## 7. Configuration
+`BdiProjectConfigurationLoader` resolves the parent of the active USE model
+filename and loads:
 
 ```text
-.bdi-plugin/
-  project.json
-  mappings.bdimap.json
-  suppressions.json
-  rules.json
-  reports/
+.bdi-plugin/rules.json
+.bdi-plugin/suppressions.json
 ```
 
-Không ghi absolute path nếu có thể; dùng path tương đối so với project root.
+No current-working-directory fallback is allowed. Missing files select standard
+rules/empty suppressions and display that origin. Invalid files are shown as an
+error before `BdiExplorerView` opens.
 
-## 8. Logging
+## 7. Build, Test, And Script Contracts
 
-- logger theo package;
-- import summary ở INFO;
-- unsupported syntax ở WARN/diagnostic, không spam stack trace;
-- exception parser/plugin ở ERROR;
-- report chứa plugin version, USE version, Jason version và model hash.
-
-## 9. Git strategy
-
-- giữ `main` gần upstream/stable;
-- làm việc trên `feature/bdi-plugin` hoặc `thesis/bdi-plugin`;
-- commit theo vertical slice;
-- không force push;
-- không sửa core nếu chưa có ADR;
-- mỗi milestone tạo tag: `m0-baseline`, `m1-import`, `m2-mapping`, `m3-validation`, `m4-case-study`.
-
-## 10. Quản lý file prototype hiện tại
-
-Inventory ngày 04/08/2026 chỉ tìm thấy prototype
-`Smart_manager_agent.asl` ở root. File này đã được chuyển vào:
-
-```text
-use-bdi-plugin/src/test/resources/fixtures/smartqueue/Smart_manager_agent.asl
+```powershell
+mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test
+mvn --batch-mode --no-transfer-progress -pl use-assembly -am package
+mvn --batch-mode --no-transfer-progress clean verify
 ```
 
-Các tên `SmartQueue.use`, `.cmd` và `.clt` trong ghi chú cũ không có trong
-checkout hiện tại; không tạo placeholder và không coi chúng là đã di chuyển.
-Root repository chỉ nên giữ module, mã nguồn chính và tài liệu cấp project.
+| Script | Bounded success marker |
+| --- | --- |
+| `scripts/smoke.ps1` | `GUI_SMOKE_OK` |
+| `scripts/auction-evidence.ps1` | `AUCTION_EVIDENCE_OK` |
+| `scripts/performance.ps1` | `PERFORMANCE_BENCHMARK_OK` |
+| `scripts/clean-clone.ps1` | `CLEAN_CLONE_REPRODUCIBILITY_OK` |
+| `scripts/backup-thesis-artifacts.ps1` | `THESIS_BACKUP_OK` plus manifest |
+
+Fixtures are separated into valid, invalid, unsupported, golden, Smart Queue,
+USE, and Auction/mutant groups. Tests do not require a network, database, or
+credentials. Fixed timestamps and canonical sorting protect reproducibility.
+
+## 8. Extension Rules
+
+For a new AgentSpeak construct:
+
+1. verify Jason 3.3.0 AST behavior in an importer test;
+2. normalize it or emit explicit unsupported evidence;
+3. update golden IR/index fixtures;
+4. keep Jason types out of domain/rules.
+
+For a new rule:
+
+1. assign a stable catalog ID and phase;
+2. implement against `ValidationContext` only;
+3. test positive, negative, and unknown/unsupported evidence;
+4. update rule catalog and traceability.
+
+For a new JaCaMo layer, create a separate adapter and plugin-owned IR. Do not
+make current rules depend directly on `.jcm`, CArtAgO, Moise, or runtime classes.
+
+## 9. Definition Of Done
+
+A behavior change needs focused tests, module tests, updated requirements/
+architecture/checklist, an ADR for architectural changes, `git diff --check`,
+and a coherent feature-branch commit. Analysis must not leave the active USE
+state changed.

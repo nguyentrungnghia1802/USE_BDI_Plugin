@@ -1,171 +1,124 @@
-# 04. System Architecture
+# System Architecture
 
-Status: specialized implementation notes. For the canonical current-state
-architecture and limitations, see `02_SYSTEM_ARCHITECTURE.md`.
+Status: canonical architecture and safety boundary
+Verification: source-backed; see Git history and DocumentationContractTest
 
-## 1. Context diagram
+## 1. Research Architecture
 
 ```mermaid
 flowchart LR
-  ASL[AgentSpeak .asl] --> JP[Jason Parser/AST]
-  JP --> AD[Jason Adapter]
-  AD --> IR[Normalized BDI IR]
-  UML[USE UML/OCL Model + Snapshot] --> UA[USE Model Adapter]
-  IR --> MR[Mapping Registry]
-  UA --> MR
-  IR --> CE[Consistency Engine]
-  MR --> CE
-  UA --> CE
-  CE --> ISS[Issues and Evidence]
-  IR --> UI[BDI Tree]
-  MR --> UI
-  ISS --> UI
-  ISS --> REP[Report Export]
+  ASL[AgentSpeak .asl] --> JA[Jason 3.3.0 adapter]
+  JA --> IR[Immutable normalized BDI IR]
+  USE[USE UML/OCL model and snapshot] --> UA[Read-only USE adapter]
+  IR --> MAP[Explicit mapping model]
+  UA --> MAP
+  IR --> VAL[Consistency orchestrator]
+  MAP --> VAL
+  UA --> VAL
+  VAL --> ISS[Issues and evidence]
+  ISS --> GUI[BDI Explorer and Problems]
+  ISS --> REP[JSON and HTML reports]
 ```
 
-## 2. Layering
+The plugin is a bridge between two authorities. Jason owns AgentSpeak syntax;
+USE owns UML/OCL and snapshot semantics. Plugin-owned values connect them.
 
-### Layer A — Integration shell
-Menu, plugin lifecycle, project context, background task và notifications.
+## 2. Layers And Dependency Rules
 
-### Layer B — Import/adapter
-Gọi Jason parser, bắt exception, chuyển Jason AST sang normalized IR.
+| Layer | Packages/components | May depend on |
+| --- | --- | --- |
+| Integration/UI | plugin actions, `ui` | application services and USE GUI boundary |
+| Application | `application`, report composition | importer, index, mapping, validation abstractions |
+| Adapters | `importer`, `use` | Jason or USE concrete APIs, respectively |
+| Domain | `model.ir`, `model.mapping`, issue values | Java/plugin-owned values only |
+| Analysis | `index`, `validation` | normalized IR, mappings, immutable USE projection |
+| Persistence | `persistence`, report exporters | versioned plugin-owned DTOs |
 
-### Layer C — Domain
-IR, BDI metamodel, mapping model, issue model. Không phụ thuộc Swing hoặc Jason parser implementation.
+Hard rules:
 
-### Layer D — Analysis
-Index, symbol resolution, mapping suggestion, consistency rule engine, OCL bridge.
+- Jason AST and exceptions stop in the importer/normalizer boundary.
+- Swing and USE concrete classes never enter normalized IR.
+- Rule evaluation consumes normalized IR and immutable projections, not parser
+  AST or mutable GUI state.
+- Unsupported syntax creates explicit diagnostics/features; it is never
+  silently discarded.
+- USE core changes require a dedicated ADR. Plugin-first is the default.
 
-### Layer E — Presentation
-Tree view, mapping editor, Problems table, detail/evidence panel, export.
+## 3. Runtime Flow
 
-## 3. Dependency rule
+1. The user opens a `.use` model in USE.
+2. `ImportBdiAction` reads the current `Session`/`MSystem`.
+3. `BdiProjectConfigurationLoader` discovers optional rule and suppression
+   files beside the active model.
+4. A background worker parses all selected `.asl` files independently.
+5. The Jason adapter normalizes successful ASTs and retains failures as
+   diagnostics.
+6. `BdiIndexBuilder` derives signatures, references, support, and call sites.
+7. `UseUmlModelFacade` creates a deterministic read-only UML/snapshot view.
+8. Suggestions remain candidates until the user confirms mapping bindings.
+9. `ValidationOrchestrator` runs enabled rules by phase and applies exact
+   suppressions.
+10. Explorer/Problems and exporters present the same evidence model.
+
+Asynchronous imports carry a generation token so an older completion cannot
+replace a newer selection.
+
+## 4. State Ownership And Safety
+
+| State | Owner | Policy |
+| --- | --- | --- |
+| Jason AST | importer invocation | transient, never exposed |
+| BDI IR/index | import snapshot | immutable |
+| USE projection | adapter snapshot | immutable/read-only |
+| Mappings/config/suppressions | plugin/user files | versioned and validated |
+| Problems | validation run | recomputed |
+| Reports | export caller | serialized supplied evidence only |
+
+OCL results are `PASS`, `FAIL`, or `UNKNOWN`; compile/evaluation errors cannot
+be converted to success. Bounded `soil:` effects execute only inside a USE
+variation, and cleanup occurs in `finally`. Tests compare fingerprints before
+and after analysis.
+
+## 5. Persistence And Project Context
+
+There is no database, server, tenant, account, or network API. Optional files:
 
 ```text
-UI -> Application Services -> Domain Interfaces
-Jason Adapter -> Domain IR
-USE Adapter -> Domain View Models
-Rules -> Domain IR + Mapping + USE abstraction
-Domain <- không phụ thuộc UI/Jason/USE concrete classes
+<model-directory>/
+  Model.use
+  .bdimap.json
+  .bdi-plugin/
+    rules.json
+    suppressions.json
 ```
 
-## 4. Runtime pipeline
+The active `.use` parent is the project root. Missing config files use visible
+defaults; malformed versions or unknown rule IDs abort Explorer creation with
+an error. Current source IDs include absolute paths, so relocation remains an
+open portability decision.
 
-1. Người dùng mở `.use` trong USE.
-2. Plugin tạo `UseProjectContext` từ model và system state hiện tại.
-3. Người dùng import `.asl`.
-4. `JasonAslParserAdapter` parse từng file.
-5. `JasonAstToIrNormalizer` tạo `AgentModel`, child IR nodes và `SourceSpan`.
-6. `BdiIndexBuilder` tạo index goal/plan/action/reference.
-7. `MappingSuggestionService` tạo candidate mapping.
-8. Người dùng xác nhận hoặc chỉnh mapping.
-9. `ValidationOrchestrator` chạy rule sets.
-10. `IssueStore` cập nhật Problems view và exporter.
+## 6. Packaging And Host Lifecycle
 
-### Phase 2 explorer slice implemented
+`use-bdi-plugin` is an in-repository Maven module. USE dependencies are
+`provided`; Jason 3.3.0 and required runtime dependencies are shaded without
+package relocation. The assembly places the plugin JAR under `lib/plugins`.
 
-- `BdiIndexBuilder` consumes only `model/ir` and returns an immutable
-  `BdiIndex`; no Jason or USE concrete type crosses into the index package.
-- `BdiImportService` imports each selected source independently, materializes
-  the normalized tree, and builds the index from successful models while
-  retaining diagnostics for failed files.
-- `BdiImportWorker` executes that service via `SwingWorker`. The first
-  `BdiExplorerView` displays source files, beliefs, goals, plans, ordered
-  steps, and a detail pane with source spans/excerpts.
+Actions implement `IPluginActionDelegate`, access the current session through
+`IPluginAction`, and add `ViewFrame` through `MainWindow.addNewViewFrame(...)`.
+Replacing the JAR requires restarting USE.
 
-### Phase 2 mapping slice implemented
+## 7. Current JaCaMo Boundary
 
-- `MappingSuggestionService` consumes the normalized BDI index and immutable
-  USE projection to create explainable candidates for agent/class/object,
-  action/operation, parameter, receiver, and belief/attribute links.
-- `MappingDocument` and `MappingBinding` remain domain-only immutable values;
-  `MappingEditorPanel` is the Swing confirmation boundary and is exposed as a
-  `Mapping` tab in the explorer.
-- `MappingFileRepository` persists confirmed bindings as versioned
-  `.bdimap.json`.
+The project uses only Jason's parser/interpreter artifact as a syntax boundary.
+It does not import a JaCaMo `.jcm` project, model CArtAgO artifacts/workspaces,
+model Moise organizations, start a JaCaMo runtime, or consume execution traces.
+Future JaCaMo work must be adapter-first and must preserve the existing IR/rule
+boundaries. See [the development ideas](../idea/idea.md).
 
-### Phase 3 static consistency slice implemented
+## 8. Known Architecture Gaps
 
-- `MappingSourceId` centralizes stable BDI source identities used by both
-  suggestions and rule evaluation. `MappingStalenessDetector` reports missing
-  mapping sources/targets and model fingerprint changes without mutating USE.
-- `ValidationOrchestrator` executes `ConsistencyRule` implementations in stable
-  parse, IR, reference, mapping, and signature phases. It consumes only the
-  normalized BDI snapshot, confirmed mapping document, and immutable USE model
-  projection.
-- The existing Problems tab projects immutable `ConsistencyIssue` records.
-  Applying a user-confirmed mapping refreshes the results immediately; it does
-  not execute OCL or modify USE state.
-- `RuleConfiguration` and `RuleConfigurationRepository` provide a versioned,
-  dependency-free `rules.json` boundary. `ValidationOrchestrator` validates
-  configured IDs and evaluates only enabled rules; the default constructor
-  retains all standard rules.
-- `Suppression`, `SuppressionRepository`, and `SuppressionService` provide a
-  source-span fingerprint boundary. Matching open issues become
-  `SUPPRESSED` with reason evidence, while the immutable BDI/USE inputs remain
-  unchanged.
-
-### Project configuration composition implemented
-
-- `ImportBdiAction` reads the verified `MModel.filename()` value and delegates
-  project-file discovery to `BdiProjectConfigurationLoader`; the parent of the
-  active `.use` file is the only project-root convention.
-- `BdiProjectConfiguration` composes the selected `RuleConfiguration` and
-  suppressions into the Explorer's `ValidationOrchestrator`. Missing files use
-  visible defaults; invalid JSON/version/rule IDs abort view creation with a
-  user-facing error.
-- The loader and Explorer tests cover project/default sources and actual rule
-  filtering. This changes no USE core model or snapshot state.
-
-## 5. OCL integration levels
-
-### Level 0 — Model presence
-Kiểm tra class/object/attribute/operation tồn tại.
-
-### Level 1 — Signature
-Kiểm tra owner, arity, direction và type compatibility.
-
-### Level 2 — Snapshot precondition
-Bind receiver + argument vào snapshot hiện tại và đánh giá operation precondition bằng USE.
-
-### Level 3 — Bounded effect simulation
-Chỉ chạy khi action có effect specification hoặc adapter sang SOIL/USE commands. Thực hiện trên snapshot sao chép/transaction, sau đó kiểm tra invariant và postcondition.
-
-### Level 4 — Full behavioral verification
-Không thuộc phạm vi chính.
-
-## 6. Deployment options
-
-### Option A — In-repository Maven module (khuyến nghị khi phát triển)
-
-```text
-use/
-  use-core/
-  use-gui/
-  use-assembly/
-  use-bdi-plugin/
-```
-
-Ưu điểm: debug trực tiếp, dùng source của USE. Nhược điểm: phải giữ fork đồng bộ upstream.
-
-### Option B — Sibling plugin repository
-
-```text
-workspace/
-  use/
-  use-bdi-plugin/
-```
-
-Ưu điểm: tách biệt và dễ đóng gói. Nhược điểm: cần cấu hình dependency/source attachment.
-
-Bắt đầu với Option A để giảm chi phí debug; tách repository sau MVP nếu cần.
-
-## 7. Materialization strategy
-
-Có hai cách biểu diễn BDI trong USE:
-
-1. **Overlay mode — bắt buộc:** IR nằm trong plugin, hiển thị bằng BDI view và liên kết đến UML elements.
-2. **Materialized mode — nghiên cứu/mở rộng:** sinh `.use`/`.cmd` hoặc integrated model để các BDI entities xuất hiện như object trong USE.
-
-Overlay mode phải hoàn thành trước. Materialized mode không được chặn tiến độ mapping và validation.
+- Portable project-relative source identity and migration.
+- Live export of the current GUI analysis.
+- Strict unknown-field policy for mapping JSON.
+- Refresh/subscription when the active USE state changes after opening a view.
+- Full JaCaMo project/environment/organization/runtime integration.

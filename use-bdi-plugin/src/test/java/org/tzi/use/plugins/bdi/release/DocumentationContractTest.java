@@ -16,6 +16,13 @@ class DocumentationContractTest {
             "README.md",
             "00_PROJECT_CONTEXT.md",
             "01_PRODUCT_REQUIREMENTS.md",
+            "04_SYSTEM_ARCHITECTURE.md",
+            "08_CONSISTENCY_RULE_CATALOG.md",
+            "10_PLUGIN_TECHNICAL_DESIGN.md",
+            "16_PROJECT_COMPLETION_CHECKLIST.md",
+            "DECISION_LOG.md",
+            "12_REQUIREMENT_TRACEABILITY.md");
+    private static final List<String> REMOVED_REDUNDANT_DOCUMENTS = List.of(
             "02_SYSTEM_ARCHITECTURE.md",
             "03_DOMAIN_AND_FLOWS.md",
             "04_DATABASE.md",
@@ -26,7 +33,8 @@ class DocumentationContractTest {
             "09_DECISIONS_AND_RISKS.md",
             "10_DOCUMENTATION_SYNC_CHECKLIST.md",
             "11_TENANT_ISOLATION_AND_AUDIT.md",
-            "12_REQUIREMENT_TRACEABILITY.md");
+            "14_ROADMAP_TO_DECEMBER_2026.md",
+            "PR_DESCRIPTION.md");
     private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[[^]]+\\]\\(([^)]+)\\)");
     private static final String VERIFICATION_MARKER =
             "Verification: source-backed; see Git history and DocumentationContractTest";
@@ -49,6 +57,10 @@ class DocumentationContractTest {
                     () -> "Canonical document duplicates a volatile commit baseline: " + path);
             assertLocalLinksResolve(path, content);
         }
+        for (String document : REMOVED_REDUNDANT_DOCUMENTS) {
+            assertTrue(Files.notExists(project.resolve(document)),
+                    () -> "Redundant project document was reintroduced: " + document);
+        }
 
         assertLocalLinksResolve(root.resolve("docs/README.md"), Files.readString(root.resolve("docs/README.md")));
 
@@ -62,33 +74,42 @@ class DocumentationContractTest {
         assertTrue(requirements.contains("FR-REP-004"));
         assertTrue(requirements.contains("FR-REL-004"));
 
-        String persistence = read(project.resolve("04_DATABASE.md"));
-        assertTrue(persistence.contains("no relational or"));
-        assertTrue(persistence.contains("embedded database"));
-        assertTrue(persistence.contains("Current schema version: `0.1.0`"));
-        assertTrue(persistence.contains("does not reject every unknown object"));
+        String design = read(project.resolve("10_PLUGIN_TECHNICAL_DESIGN.md"));
+        assertTrue(design.contains("no database/network API"));
+        assertTrue(design.contains("Current schema version for mapping, rule, and suppression files: `0.1.0`"));
+        assertTrue(design.contains("does not reject every unknown object field"));
 
-        String api = read(project.resolve("05_API.md"));
         String descriptor = read(root.resolve("use-bdi-plugin/src/main/resources/useplugin.xml"));
         for (String marker : List.of(
                 "org.tzi.use.plugins.bdi",
                 "Hello BDI Plugin",
                 "Import AgentSpeak...")) {
-            assertTrue(api.contains(marker), () -> "API document misses plugin contract: " + marker);
+            assertTrue(design.contains(marker), () -> "Technical design misses plugin contract: " + marker);
             assertTrue(descriptor.contains(marker), () -> "Descriptor misses plugin contract: " + marker);
         }
 
         String pluginPom = read(root.resolve("use-bdi-plugin/pom.xml"));
         assertTrue(pluginPom.contains("<jason.version>3.3.0</jason.version>"));
 
-        String testing = read(project.resolve("07_DEVELOPMENT_AND_TESTING.md"));
-        assertTrue(testing.contains("mvn --batch-mode --no-transfer-progress clean verify"));
-        assertTrue(testing.contains("scripts\\auction-evidence.ps1"));
-        assertTrue(api.contains("AUCTION_EVIDENCE_OK"));
+        assertTrue(design.contains("mvn --batch-mode --no-transfer-progress clean verify"));
+        assertTrue(design.contains("scripts/auction-evidence.ps1"));
+        assertTrue(design.contains("AUCTION_EVIDENCE_OK"));
 
-        String risks = read(project.resolve("09_DECISIONS_AND_RISKS.md"));
-        assertTrue(risks.contains("ADR-0019"));
-        assertTrue(risks.contains("OD-004"));
+        String decisions = read(project.resolve("DECISION_LOG.md"));
+        assertTrue(decisions.contains("ADR-0019"));
+        assertTrue(decisions.contains("OD-004"));
+
+        String architecture = read(project.resolve("04_SYSTEM_ARCHITECTURE.md"));
+        assertTrue(architecture.contains("It does not import a JaCaMo `.jcm` project"));
+        String ideas = read(root.resolve("docs/idea/idea.md"));
+        assertLocalLinksResolve(root.resolve("docs/idea/idea.md"), ideas);
+        for (int idea = 1; idea <= 8; idea++) {
+            String expectedHeading = "## Idea " + idea + " -";
+            assertTrue(ideas.contains(expectedHeading),
+                    () -> "Missing prioritized development heading: " + expectedHeading);
+        }
+        assertTrue(ideas.contains("CArtAgO"));
+        assertTrue(ideas.contains("Moise"));
 
         String ignore = read(root.resolve(".gitignore"));
         assertTrue(ignore.lines().anyMatch(line -> line.trim().equals("/docs/agent/")));

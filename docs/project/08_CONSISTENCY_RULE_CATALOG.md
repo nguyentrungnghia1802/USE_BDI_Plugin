@@ -1,5 +1,8 @@
 # 08. Consistency Rule Catalog
 
+Status: authoritative implemented rule matrix
+Verification: source-backed; see Git history and DocumentationContractTest
+
 ## 1. Rule result model
 
 ```text
