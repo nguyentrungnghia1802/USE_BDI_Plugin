@@ -25,6 +25,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Suppressions require rule ID plus exact source fingerprint and reason.
 - [x] OCL/effect checks distinguish PASS/FAIL/UNKNOWN and restore state.
 - [x] Project rule/suppression files auto-load beside the active `.use` model.
+- [x] Project-relative source identity v2 is defined and relocation-tested.
 - [x] JSON/HTML exporters preserve issues, evidence, hashes, and suppressions.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
@@ -73,7 +74,7 @@ release gates.
 
 The following are future work, not hidden completion claims:
 
-- OD-001: portable project-relative source identity and migration;
+- OD-001: persisted mapping/suppression migration to source identity v2;
 - OD-003: one-click export of the current live GUI analysis;
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: refresh/subscription after current USE state changes;

@@ -70,6 +70,12 @@ OCL checks preserve certainty:
 
 ## 5. Persistence Contracts
 
+`ProjectSourceId` v2 is the portable source value for future persistence. Its
+canonical form is length-delimited, contains a normalized project-relative path
+plus begin/end line and column, preserves case, and requires an explicit root.
+T01 deliberately leaves `MappingSourceId` and schema `0.1.0` unchanged; schema
+migration belongs to the next slice.
+
 Current schema version for mapping, rule, and suppression files: `0.1.0`.
 
 ```json

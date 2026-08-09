@@ -32,6 +32,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0018 | Suppress only exact rule/source-fingerprint pairs with a reason and retain suppression transparency in reports | suppression/report tests |
 | ADR-0019 | Invalid specifications return only in explicit integration-test mode; normal CLI exit behavior remains unchanged | 121 GUI integration tests |
 | ADR-0020 | Discover rules/suppressions only beside the active file-backed `.use` model; visible defaults for absence and visible failure for invalid input | loader/action/Explorer tests |
+| ADR-0021 | Represent portable source evidence as a case-preserving, project-relative `ProjectSourceId` v2 with explicit coordinates; reject sources outside an explicit root and retain v1 mapping behavior until migration | `ProjectSourceIdTest` |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -48,7 +49,7 @@ new ADR that explicitly supersedes the affected entry.
 
 | ID | Decision needed | Safe current behavior |
 | --- | --- | --- |
-| OD-001 | Project-relative source IDs and migration of existing mappings/suppressions | Keep absolute IDs and report relocation staleness |
+| OD-001 | Migration of existing mappings/suppressions to project-relative source IDs | `ProjectSourceId` v2 is available; persisted v1 artifacts remain absolute until migration |
 | OD-003 | Live GUI report/export composition | Use tested application/case-study composition; label `ReportMain` as serializer demo |
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | USE snapshot refresh/subscription lifecycle | Reopen/re-import Explorer after host state changes |

@@ -4,9 +4,9 @@
   is retained as `ASL-002`; it is not silently normalized as a complete model.
 - `REF-001` can still classify some literal-like terms too broadly, producing
   potential false positives. This is a known BDI index limitation.
-- Mapping source IDs currently contain normalized absolute paths. Portable
-  checked-in case-study mapping files are therefore avoided; temporary mapping
-  documents are used in tests.
+- `ProjectSourceId` v2 now defines portable project-relative source evidence,
+  but mapping and suppression schema `0.1.0` still contains absolute-path-based
+  identities. Moving a checkout keeps legacy entries stale until migration.
 - The mapping decoder validates required fields, kinds, duplicate mapping keys,
   and syntax, but does not reject every unknown JSON field.
 - GUI configuration discovery is intentionally limited to `.bdi-plugin`
