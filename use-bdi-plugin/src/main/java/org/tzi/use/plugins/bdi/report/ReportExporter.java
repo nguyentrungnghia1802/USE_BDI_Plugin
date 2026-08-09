@@ -29,6 +29,10 @@ public final class ReportExporter {
         sb.append(',');
         appendNumberField(sb, "mappingsCount", data.mappingsCount());
         sb.append(',');
+        appendField(sb, "modelHash", data.modelHash().orElse(null));
+        sb.append(',');
+        appendField(sb, "mappingHash", data.mappingHash().orElse(null));
+        sb.append(',');
         appendField(sb, "notes", data.notes());
         sb.append(',');
         appendIssues(sb, data);

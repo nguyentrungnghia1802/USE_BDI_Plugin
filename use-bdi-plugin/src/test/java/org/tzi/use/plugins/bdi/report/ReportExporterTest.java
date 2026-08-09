@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +17,9 @@ import org.tzi.use.plugins.bdi.validation.IssueStatus;
 
 public class ReportExporterTest {
 
+    private static final String MODEL_HASH = "a".repeat(64);
+    private static final String MAPPING_HASH = "b".repeat(64);
+
     @Test
     public void exportJson_writesFile() throws Exception {
         ReportData data = new ReportData(
@@ -28,6 +30,8 @@ public class ReportExporterTest {
                 3,
                 5,
                 "unit-test",
+                Optional.of(MODEL_HASH),
+                Optional.of(MAPPING_HASH),
                 List.of(new ConsistencyIssue(
                         "ASL-001",
                         IssueSeverity.ERROR,
@@ -54,5 +58,7 @@ public class ReportExporterTest {
         Assertions.assertTrue(content.contains("ASL-001"));
         Assertions.assertTrue(content.contains("bad \\\"syntax\\\""));
         Assertions.assertTrue(content.contains("bad.asl:2:3"));
+        Assertions.assertTrue(content.contains("\"modelHash\":\"" + MODEL_HASH + "\""));
+        Assertions.assertTrue(content.contains("\"mappingHash\":\"" + MAPPING_HASH + "\""));
     }
 }

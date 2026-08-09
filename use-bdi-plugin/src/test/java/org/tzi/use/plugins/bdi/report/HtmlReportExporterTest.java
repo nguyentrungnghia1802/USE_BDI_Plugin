@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +17,9 @@ import org.tzi.use.plugins.bdi.validation.IssueStatus;
 
 public class HtmlReportExporterTest {
 
+    private static final String MODEL_HASH = "c".repeat(64);
+    private static final String MAPPING_HASH = "d".repeat(64);
+
     @Test
     public void exportHtml_writesFileAndContainsProjectName() throws Exception {
         ReportData data = new ReportData(
@@ -28,6 +30,8 @@ public class HtmlReportExporterTest {
                 1,
                 2,
                 "<script>alert('x')</script>",
+                Optional.of(MODEL_HASH),
+                Optional.of(MAPPING_HASH),
                 List.of(new ConsistencyIssue(
                         "MAP-001",
                         IssueSeverity.ERROR,
@@ -56,6 +60,8 @@ public class HtmlReportExporterTest {
         Assertions.assertTrue(content.contains("agent.asl:4:2"));
         Assertions.assertTrue(content.contains("source &lt;agent&gt;"));
         Assertions.assertTrue(content.contains("&lt;script&gt;alert(&#39;x&#39;)&lt;/script&gt;"));
+        Assertions.assertTrue(content.contains(MODEL_HASH));
+        Assertions.assertTrue(content.contains(MAPPING_HASH));
         Assertions.assertFalse(content.contains("<script>alert"));
     }
 }

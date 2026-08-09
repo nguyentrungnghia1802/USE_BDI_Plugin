@@ -876,3 +876,59 @@ messages, and independent from rule execution or USE state mutation.
 - `mvn -pl use-bdi-plugin test` passed with 47 tests, including HTML source and
   evidence rendering, HTML escaping, JSON issue serialization, and the existing
   OCL/validation regression suite.
+
+## ADR-0016 - Canonical model and mapping hashes in reports
+
+- Status: Accepted
+- Date: 2026-08-09
+- Scope: Section 10 model/mapping hash reporting
+
+### Context
+
+The report exporter now preserves issue evidence, but a report still needs a
+reproducible identity for the USE input and confirmed mapping document. The
+identity must be independent of Swing/Jason objects, stable across equivalent
+binding orderings, and must not cause the exporter to read or mutate the active
+USE session.
+
+### Verified implementation evidence
+
+- `use/UseModelFingerprint.java` is the existing SHA-256 implementation over
+  the immutable `UseModelSnapshot` projection. It uses length-delimited fields
+  and the snapshot's already normalized/sorted collections.
+- `model/mapping/MappingFingerprint.java` computes SHA-256 over mapping schema,
+  BDI metamodel, USE fingerprint, and bindings sorted by
+  `MappingBinding.key()`. Binding fields and evidence use explicit markers and
+  counts in the canonical stream.
+- `report/ReportData.java` stores optional model/mapping hashes and rejects
+  values that are not 64-character hexadecimal digests while retaining the
+  existing constructor for callers without source models.
+- `report/ReportExporter.java` and `report/HtmlReportExporter.java` serialize
+  the supplied hashes as JSON metadata and HTML metadata rows. They do not
+  recompute hashes, access `Session`, or execute validation.
+
+### Decision
+
+- Reuse `UseModelFingerprint` for the model identity and use
+  `MappingFingerprint` for the mapping identity; both produce lowercase
+  SHA-256 hex strings.
+- Make binding order non-semantic by sorting on the persisted replacement key.
+  Include schema/metamodel/USE metadata, binding target, expression, and
+  evidence so a meaningful source change changes the identity.
+- Keep hash computation outside exporters. The future application pipeline
+  passes the computed values into `ReportData`; a summary-only caller exports
+  `null` for hashes rather than an invented placeholder.
+
+### Consequences and limits
+
+- JSON/HTML report consumers can compare model and mapping identities without
+  depending on USE core or Jason types.
+- The current `ReportMain` demonstration has no live model/mapping pipeline and
+  therefore emits null hashes. Rule configuration and suppression export remain
+  open checklist items.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin clean test` passed with 49 tests, including stable
+  mapping-fingerprint ordering, changed-binding detection, and JSON/HTML hash
+  serialization. No USE core source was modified.

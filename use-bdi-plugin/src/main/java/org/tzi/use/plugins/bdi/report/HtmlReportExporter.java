@@ -26,6 +26,8 @@ public final class HtmlReportExporter {
         appendRow(sb, "Timestamp", DateTimeFormatter.ISO_INSTANT.format(data.timestamp()));
         appendRow(sb, "Issues Count", Integer.toString(data.issuesCount()));
         appendRow(sb, "Mappings Count", Integer.toString(data.mappingsCount()));
+        appendRow(sb, "Model Hash", data.modelHash().orElse(null));
+        appendRow(sb, "Mapping Hash", data.mappingHash().orElse(null));
         appendRow(sb, "Notes", data.notes());
         sb.append("</table>\n</body>\n</html>\n");
 

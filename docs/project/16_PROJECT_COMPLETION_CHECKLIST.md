@@ -124,7 +124,7 @@
 - [x] JSON report. (generated to `docs/bdi-report.json` by `ReportMain`)
 - [x] HTML or CSV report.
 - [x] Plugin/USE/Jason versions. (included in report metadata)
-- [ ] Model and mapping hashes.
+- [x] Model and mapping hashes. (SHA-256 identities are carried by report metadata)
 - [ ] Rule configuration.
 - [x] Issue evidence/source. (HTML and JSON exports include rule, status, certainty, source, message, and evidence)
 - [ ] Suppressions included.
@@ -198,6 +198,26 @@
 - `mvn -pl use-bdi-plugin test` passed with 47 tests. No USE core source was
   changed and the user's pre-existing `docs/agent/PROMPT_START_PROJECT.md`
   change was not staged.
+
+## Reporting identity evidence - 2026-08-09
+
+- `UseModelFingerprint` supplies the existing SHA-256 identity for the
+  immutable `UseModelSnapshot`; `MappingFingerprint` adds a deterministic
+  SHA-256 identity for `MappingDocument` using schema/metamodel/USE metadata
+  and bindings sorted by `MappingBinding.key()`.
+- Mapping canonicalization includes binding targets, optional expressions, and
+  evidence with explicit markers/counts. `ReportData` validates supplied
+  hashes as 64-character hexadecimal SHA-256 values while preserving the
+  summary constructor used by `ReportMain`.
+- JSON exports write `modelHash` and `mappingHash`; HTML exports show them as
+  `Model Hash` and `Mapping Hash`. Exporters serialize supplied values only and
+  do not inspect or mutate USE state.
+- `MappingFingerprintTest`, `ReportExporterTest`, and
+  `HtmlReportExporterTest` cover stable ordering, content changes, and both
+  report formats. `mvn -pl use-bdi-plugin clean test` passed with 49 tests.
+- The demo `ReportMain` still emits null hashes until a live model/mapping
+  analysis pipeline supplies the computed values; that integration is not
+  claimed by this checklist item.
 
 ## Phase 0 evidence - 2026-08-03
 

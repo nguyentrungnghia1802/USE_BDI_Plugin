@@ -171,13 +171,19 @@ resolution task beyond the first mapping slice.
 
 - `ReportData` accepts immutable `ConsistencyIssue` evidence in addition to the
   existing summary metadata, preserving the original constructor for simple
-  reports.
+  reports. It also accepts optional 64-character hexadecimal SHA-256 hashes
+  for the model and mapping inputs.
 - `HtmlReportExporter` emits a UTF-8 metadata page plus an escaped issue table
   containing rule ID, severity, status, certainty, source location, message,
-  and evidence. `ReportExporter` emits the same fields in a JSON `issues` array.
+  and evidence. `ReportExporter` emits the same fields in a JSON `issues` array
+  and includes `modelHash` and `mappingHash` metadata.
+- `UseModelFingerprint` hashes the immutable USE snapshot projection already
+  used by the adapter. `MappingFingerprint` hashes a canonical mapping
+  document whose bindings are sorted by their replacement key and whose
+  optional expressions/evidence are explicitly delimited.
 - Exporters do not execute rules or read USE state. They serialize the supplied
-  analysis result only; model/mapping hashes, rule configuration, and
-  suppression sections remain separate reporting tasks.
+  analysis result only; rule configuration and suppression sections remain
+  separate reporting tasks.
 
 ## 6. Dependency packaging
 

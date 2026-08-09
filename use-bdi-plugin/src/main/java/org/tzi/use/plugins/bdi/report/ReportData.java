@@ -3,6 +3,7 @@ package org.tzi.use.plugins.bdi.report;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
 
@@ -15,6 +16,8 @@ public final class ReportData {
     private final int mappingsCount;
     private final String notes;
     private final List<ConsistencyIssue> issues;
+    private final Optional<String> modelHash;
+    private final Optional<String> mappingHash;
 
     public ReportData(String projectName,
                       String pluginVersion,
@@ -23,7 +26,8 @@ public final class ReportData {
                       int issuesCount,
                       int mappingsCount,
                       String notes) {
-        this(projectName, pluginVersion, useVersion, timestamp, issuesCount, mappingsCount, notes, List.of());
+        this(projectName, pluginVersion, useVersion, timestamp, issuesCount, mappingsCount, notes,
+                Optional.empty(), Optional.empty(), List.of());
     }
 
     public ReportData(String projectName,
@@ -33,6 +37,20 @@ public final class ReportData {
                       int issuesCount,
                       int mappingsCount,
                       String notes,
+                      List<ConsistencyIssue> issues) {
+        this(projectName, pluginVersion, useVersion, timestamp, issuesCount, mappingsCount, notes,
+                Optional.empty(), Optional.empty(), issues);
+    }
+
+    public ReportData(String projectName,
+                      String pluginVersion,
+                      String useVersion,
+                      Instant timestamp,
+                      int issuesCount,
+                      int mappingsCount,
+                      String notes,
+                      Optional<String> modelHash,
+                      Optional<String> mappingHash,
                       List<ConsistencyIssue> issues) {
         this.projectName = Objects.requireNonNull(projectName, "projectName");
         this.pluginVersion = Objects.requireNonNull(pluginVersion, "pluginVersion");
@@ -45,6 +63,8 @@ public final class ReportData {
         this.mappingsCount = mappingsCount;
         this.notes = notes;
         this.issues = List.copyOf(Objects.requireNonNull(issues, "issues"));
+        this.modelHash = validateHash(modelHash, "modelHash");
+        this.mappingHash = validateHash(mappingHash, "mappingHash");
     }
 
     public String projectName() { return projectName; }
@@ -55,4 +75,16 @@ public final class ReportData {
     public int mappingsCount() { return mappingsCount; }
     public String notes() { return notes; }
     public List<ConsistencyIssue> issues() { return issues; }
+    public Optional<String> modelHash() { return modelHash; }
+    public Optional<String> mappingHash() { return mappingHash; }
+
+    private static Optional<String> validateHash(Optional<String> value, String field) {
+        Objects.requireNonNull(value, field);
+        value.ifPresent(hash -> {
+            if (!hash.matches("[0-9a-fA-F]{64}")) {
+                throw new IllegalArgumentException(field + " must be a SHA-256 hex digest");
+            }
+        });
+        return value;
+    }
 }
