@@ -68,8 +68,14 @@ working tree's unstaged files.
 The first Auction UML/OCL fixture is kept at
 `src/test/resources/fixtures/casestudy/auction/Auction.use`. It is compiled
 and projected through the verified USE adapter by
-`AuctionModelFixtureTest`; it intentionally does not claim Auction
-AgentSpeak, mappings, mutants, or reports yet.
+`AuctionModelFixtureTest`.
+
+The paired Jason 3.3.0 AgentSpeak fixtures are kept beside it as
+`auctioneer.asl` and `bidder.asl`. `AuctionAgentSpeakFixtureTest` imports both
+files through `BdiImportService`, verifies materialized beliefs/goals/plans,
+and checks the indexed `open`, `placeBid`, `close`, `submitBid`, and `.print`
+call sites. This remains an import/index fixture slice; it does not claim a
+confirmed UML-to-AgentSpeak mapping, mutants, or reports.
 
 ## Build and automated smoke
 

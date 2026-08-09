@@ -1124,3 +1124,21 @@ not hide a finding silently or mutate the USE model.
   populated object/link snapshot with a changed fingerprint.
 - No new ADR was needed: this is a fixture and integration-test realization of
   the existing Auction-first roadmap and read-only USE adapter policy.
+
+## Auction AgentSpeak evidence - 2026-08-09
+
+- `use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/auctioneer.asl`
+  and `bidder.asl` are valid Jason 3.3.0 sources aligned with the operations
+  and lifecycle terms in `Auction.use`. The files intentionally use only
+  syntax already accepted by the existing Jason adapter and normalizer.
+- `AuctionAgentSpeakFixtureTest` imports both sources through
+  `BdiImportService`, confirms no diagnostics, checks materialized model
+  counts, and verifies `BdiIndex` entries for `open/0`, `placeBid/2`, `close/0`,
+  `submitBid/2`, and internal `.print/1`.
+- The test first exposed that unlabeled Jason plans have an empty normalized
+  plan label; the assertion was reduced to the actual indexed contract rather
+  than inventing trigger-derived labels. This is evidence about current Jason
+  3.3.0 adapter behavior, not a parser change.
+- No new ADR was needed. The slice adds case-study fixtures and regression
+  coverage only; confirmed mappings, mutants, ground truth, and reports remain
+  open tasks.

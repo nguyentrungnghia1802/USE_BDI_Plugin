@@ -273,9 +273,20 @@ resolution task beyond the first mapping slice.
   `USECompiler`, projects it through `UseUmlModelFacade`, and verifies the
   extracted model surface and source-independent constraint counts. It then
   creates a small object/link snapshot and verifies the fingerprint changes.
-- This slice establishes only the UML/OCL fixture boundary. Auction
-  AgentSpeak, confirmed mappings, mutant inputs, ground truth, and reports
-  remain separate checklist tasks.
+
+### Implemented Auction AgentSpeak fixture slice
+
+- `fixtures/casestudy/auction/auctioneer.asl` and `bidder.asl` are valid Jason
+  3.3.0 sources aligned with the Auction lifecycle vocabulary. They cover
+  initial beliefs, initial goals, plan contexts, belief updates, achieve goals,
+  external operation-shaped actions, and one internal `.print` action.
+- `AuctionAgentSpeakFixtureTest` imports both files through
+  `BdiImportService`, verifies two materialized models with 3 and 1 plans, and
+  checks `BdiIndex` call sites and action-kind classification for the lifecycle
+  actions.
+- This slice establishes only the AgentSpeak fixture/import/index boundary.
+  Confirmed UML-to-AgentSpeak mappings, mutant inputs, ground truth, and
+  reports remain separate checklist tasks.
 
 ## 6. Dependency packaging
 

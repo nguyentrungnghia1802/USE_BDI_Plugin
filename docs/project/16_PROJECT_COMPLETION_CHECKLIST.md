@@ -146,7 +146,7 @@
 ## 12. Case study
 
 - [x] Auction UML/OCL model. (first compilable Auction fixture)
-- [ ] Auction AgentSpeak files.
+- [x] Auction AgentSpeak files. (auctioneer and bidder fixtures)
 - [ ] Valid mapping.
 - [ ] Baseline report.
 - [ ] Structural mutants.
@@ -320,8 +320,24 @@
   `UseUmlModelFacade`, then creates 3 objects and 2 links and verifies the
   immutable snapshot fingerprint changes.
 - `mvn -pl use-bdi-plugin -Dtest=AuctionModelFixtureTest test` passed with
-  1 test. Auction AgentSpeak, mapping, mutants, ground truth, and reports are
-  intentionally not claimed by this slice.
+  1 test.
+
+## Auction AgentSpeak evidence - 2026-08-09
+
+- `use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/auctioneer.asl`
+  and `bidder.asl` are valid Jason 3.3.0 fixtures aligned with the Auction
+  lifecycle vocabulary. They cover initial beliefs/goals, plan contexts,
+  belief updates, achieve goals, external actions, and `.print`.
+- `AuctionAgentSpeakFixtureTest` imports both files through
+  `BdiImportService` with no diagnostics, verifies materialized model counts
+  of 2 beliefs, 1 goal, and 3 plans for `auctioneer`, and 2 beliefs, 1 goal,
+  and 1 plan for `bidder`.
+- The test also verifies one indexed external call for each of `open/0`,
+  `placeBid/2`, `close/0`, and `submitBid/2`, plus one indexed internal
+  `.print/1` call, and verifies goal-to-supporting-plan lookups.
+- `mvn -pl use-bdi-plugin -Dtest=AuctionAgentSpeakFixtureTest test` passed
+  with 1 test. No mapping, mutant, ground-truth, or report claim is made by
+  this fixture/import slice.
 
 ## Phase 0 evidence - 2026-08-03
 
