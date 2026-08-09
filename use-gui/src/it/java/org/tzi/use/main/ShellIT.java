@@ -121,9 +121,16 @@ public class ShellIT {
 
         List<String> expectedOutput = createCommandFile(testFile, cmdFile);
 
-        List<String> actualOutput = runUSE(useFile, cmdFile).collect(Collectors.toList());
+        List<String> actualOutput = runUSE(useFile, cmdFile)
+                .map(line -> normalizeModelPath(line, useFile))
+                .collect(Collectors.toList());
 
         validateOutput(testFile, expectedOutput, actualOutput);
+    }
+
+    private String normalizeModelPath(String line, Path modelPath) {
+        String absolutePath = modelPath.toAbsolutePath().normalize().toString();
+        return line.replace(absolutePath, modelPath.getFileName().toString());
     }
 
     /**

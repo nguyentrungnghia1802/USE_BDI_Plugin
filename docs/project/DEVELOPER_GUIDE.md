@@ -61,10 +61,10 @@ powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\clean-clone.ps
 direct GUI probe. This is intentional: Maven exec's isolated classloader does
 not reproduce USE's plugin runtime classpath for GUI classes.
 
-The root `mvn clean verify` gate is tracked separately. At the current
-baseline, `use-gui` `ShellIT` exits before the Failsafe handshake; do not hide
-that failure by suppressing the integration test or editing USE core without a
-reviewed ADR.
+The root `mvn clean verify` gate is part of the supported release check. The
+integration-mode invalid-specification behavior and portable shell-fixture path
+comparison are documented in ADR-0019; do not suppress integration tests or
+change normal CLI exit behavior to make the gate pass.
 
 ## Adding A Fixture And A Vertical Slice
 
@@ -123,5 +123,5 @@ distribution.
 - Current OCL/effect support is deliberately bounded; unsupported or unknown
   results remain visible.
 - The House Building import is exploratory and optional.
-- The root Failsafe handshake issue and the missing external slide/data
-  artifacts remain release blockers.
+- The full backup item still needs external slide/data artifacts that are not
+  present in this checkout.

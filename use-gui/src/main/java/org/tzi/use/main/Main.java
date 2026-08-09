@@ -128,6 +128,9 @@ public final class Main {
 
 			// compile errors?
 			if (model == null) {
+				if (Options.integrationTestMode) {
+					return;
+				}
 				System.exit(1);
 			}
 

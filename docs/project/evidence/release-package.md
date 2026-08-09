@@ -1,8 +1,8 @@
 # Release Package Evidence
 
 This page defines the repeatable package gates for the USE BDI plugin. It
-separates the committed-tree package check from the root USE integration-test
-gate, which currently has an independent Failsafe handshake failure.
+records both the committed-tree package check and the root USE integration-test
+gate.
 
 ## Reproduction
 
@@ -41,8 +41,8 @@ directory and records uncommitted paths separately from the source archive.
   committed-tree package evidence.
 - `THESIS_BACKUP_OK` confirms the source archive and manifest were written; it
   does not claim that missing external slides/data have been recovered.
-- Root `mvn clean verify` remains a separate release gate until the existing
-  `use-gui` `ShellIT` Failsafe handshake issue is resolved under review.
+- Root `mvn clean verify` passed after the ADR-0019 integration-test repair;
+  the release tag and complete external-artifact backup remain separate gates.
 
 ## Verified Run - 2026-08-09
 
@@ -51,3 +51,5 @@ directory and records uncommitted paths separately from the source archive.
   `CLEAN_CLONE_REPRODUCIBILITY_OK`.
 - The clean clone built the full `use-assembly` package and verified the
   shaded plugin, Jason runtime class, embedded notice, and ZIP plugin entry.
+- The root `mvn --batch-mode --no-transfer-progress clean verify` run passed
+  `use-core`, 121 `use-gui` integration tests, 74 plugin tests, and assembly.

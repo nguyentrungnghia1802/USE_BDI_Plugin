@@ -175,7 +175,7 @@
 
 ## 14. Release
 
-- [ ] `mvn clean verify` pass.
+- [x] `mvn clean verify` pass. (2026-08-09: use-core, use-gui 121 ShellIT/integration tests, plugin 74 tests, and assembly all passed)
 - [x] Plugin install guide.
 - [x] User guide. (`USER_GUIDE.md` covers build, GUI clicks, Auction demo, and troubleshooting)
 - [x] Developer guide. (`DEVELOPER_GUIDE.md` records module/API boundaries, tests, and extension rules)
@@ -212,10 +212,9 @@
 - `mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test` passed with 73 tests, including the full Auction, UI, OCL, catalog, and metrics suite.
 - `powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\performance.ps1` passed with marker `PERFORMANCE_BENCHMARK_OK`.
 - `powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1` passed the assembled package, shaded Jason parser/report checks, and direct extracted-distribution GUI probe with `GUI_SMOKE_OK`.
-- The root `mvn --batch-mode --no-transfer-progress clean verify` recheck did
-  not pass: `use-core` passed, while `use-gui` `ShellIT` exited before the
-  Failsafe handshake. The release checkbox remains open; see `DECISION_LOG.md`
-  and `evidence/limitations.md`.
+- The earlier root verify failure was caused by invalid-specification fixtures
+  terminating `Main.main` during `-it`; ADR-0019 records the focused fix and
+  regression test. The current release status is recorded below.
 
 ## Reporting evidence - 2026-08-09
 
@@ -737,6 +736,21 @@
   `slides`, and `presentation` directories are absent from this checkout;
   therefore the full source/data/report/slides item remains open.
 - The clean-clone release check passed from committed `HEAD` `3834433d` with
-  `CLEAN_CLONE_REPRODUCIBILITY_OK`. The tag remains pending because root
-  `mvn clean verify` is still open due to the existing `use-gui` Failsafe
-  handshake failure, and the full backup item lacks external slide/data input.
+  `CLEAN_CLONE_REPRODUCIBILITY_OK`. Root `mvn clean verify` now also passes;
+  the tag remains pending because the full backup item lacks external
+  slide/data input.
+
+## Root verification repair - 2026-08-09
+
+- `Main.main` now returns instead of calling `System.exit(1)` when
+  specification compilation fails in explicit `Options.integrationTestMode`.
+  Normal CLI invalid-specification behavior is unchanged.
+- `ShellIT` normalizes the absolute fixture model path in captured diagnostics
+  to the model basename before comparing portable `.in` expectations.
+- `IntegrationModeIT` covers invalid `t053.use`; `ShellIT` covers all 120
+  shell fixtures. `mvn --batch-mode --no-transfer-progress clean verify`
+  passed with 1 `use-core` integration test, 121 `use-gui` integration tests,
+  74 plugin tests, and a successful `use-assembly` package.
+- The change is limited to test-mode error return and test-output portability;
+  it does not alter normal USE CLI exit behavior, plugin lifecycle, or USE
+  model state semantics.

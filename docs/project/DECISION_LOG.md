@@ -1317,3 +1317,49 @@ not hide a finding silently or mutate the USE model.
   close root `mvn clean verify`, the release tag, or the full backup item;
   those still depend on the known Failsafe issue and missing external
   slide/data artifacts.
+
+## ADR-0019 - Preserve invalid-specification results in integration-test mode
+
+- Status: Accepted
+- Date: 2026-08-09
+- Scope: USE GUI shell integration-test lifecycle only
+
+### Context
+
+The root verification gate failed in `use-gui` before any dynamic shell test
+completed. `ShellIT` invokes `Main.main` with `-it` and includes the existing
+fixture `t053.use`, whose `firstSecond()` operation intentionally omits a
+return type. USE correctly reports the specification compile error, but
+`Main.main` then unconditionally called `System.exit(1)` when `model == null`.
+That terminated the Failsafe fork with `completed=0` instead of returning the
+error output to `ShellIT` for comparison.
+
+### Decision
+
+When `Options.integrationTestMode` is true and specification compilation
+returns no model, `Main.main` returns to the integration-test caller. The normal
+CLI path still calls `System.exit(1)`, so invalid specifications keep their
+existing command-line exit behavior. `ShellIT` also normalizes the absolute
+fixture model path in captured diagnostics to the fixture basename before
+comparison, so expected `.in` files remain portable across checkout paths.
+No parser, plugin lifecycle, or runtime USE state policy changes.
+
+### Validation plan
+
+- `IntegrationModeIT` calls the invalid `t053.use` fixture with `-it` and
+  asserts that `Main.main` returns without throwing.
+- `ShellIT` must compare all 120 shell fixtures without embedding the local
+  `target/test-classes` absolute path in expected output.
+- The existing `ShellIT` suite must complete all dynamic fixtures under the
+  normal root `mvn clean verify` gate.
+
+### Validation evidence
+
+- `IntegrationModeIT` passed for invalid `t053.use` without terminating the
+  test process.
+- `mvn --batch-mode --no-transfer-progress clean verify` passed on
+  2026-08-09: `use-core` ran 1 integration test, `use-gui` ran 121 integration
+  tests including all 120 `ShellIT` fixtures, the plugin ran 74 tests, and the
+  `use-assembly` ZIP was built successfully.
+- No USE CLI exit behavior changes outside `Options.integrationTestMode` were
+  introduced, and no plugin or current-model state code was changed.

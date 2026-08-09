@@ -94,6 +94,6 @@ to assemble the plugin:
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\clean-clone.ps1
 ```
 
-This guide does not claim that the separate root `mvn clean verify` Failsafe
-handshake limitation has been resolved; the release checklist records that
-gate independently.
+The root `mvn clean verify` gate is covered by ADR-0019 and currently passes.
+The release checklist still tracks the tag and the complete backup separately
+because external slide/data directories are not present in this checkout.
