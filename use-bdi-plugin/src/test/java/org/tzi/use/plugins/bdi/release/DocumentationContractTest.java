@@ -76,7 +76,8 @@ class DocumentationContractTest {
 
         String design = read(project.resolve("10_PLUGIN_TECHNICAL_DESIGN.md"));
         assertTrue(design.contains("no database/network API"));
-        assertTrue(design.contains("Current schema version for mapping, rule, and suppression files: `0.1.0`"));
+        assertTrue(design.contains("Current mapping and suppression schema: `0.2.0`"));
+        assertTrue(design.contains("Rule configuration remains"));
         assertTrue(design.contains("does not reject every unknown object field"));
 
         String descriptor = read(root.resolve("use-bdi-plugin/src/main/resources/useplugin.xml"));

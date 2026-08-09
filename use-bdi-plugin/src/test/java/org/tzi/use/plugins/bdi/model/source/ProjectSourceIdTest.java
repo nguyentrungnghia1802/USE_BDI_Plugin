@@ -55,12 +55,13 @@ class ProjectSourceIdTest {
     void roundTripsCanonicalIdentity(@TempDir Path tempDir) {
         ProjectSourceId identity = ProjectSourceId.from(
                 tempDir,
-                new SourceSpan(tempDir.resolve("agents/with%name.asl"), 10, 3, 11, 7));
+                new SourceSpan(tempDir.resolve("agents/with%#name.asl"), 10, 3, 11, 7));
 
         ProjectSourceId decoded = ProjectSourceId.parse(identity.canonical());
 
         assertEquals(identity, decoded);
         assertEquals(identity.toSourceSpan(tempDir), decoded.toSourceSpan(tempDir));
+        assertTrue(identity.canonical().contains("%25%23"));
     }
 
     @Test

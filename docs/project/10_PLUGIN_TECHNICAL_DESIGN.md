@@ -70,21 +70,28 @@ OCL checks preserve certainty:
 
 ## 5. Persistence Contracts
 
-`ProjectSourceId` v2 is the portable source value for future persistence. Its
+`ProjectSourceId` v2 is the portable source value used by persistence. Its
 canonical form is length-delimited, contains a normalized project-relative path
 plus begin/end line and column, preserves case, and requires an explicit root.
-T01 deliberately leaves `MappingSourceId` and schema `0.1.0` unchanged; schema
-migration belongs to the next slice.
+Mapping and suppression repositories require an existing absolute project root;
+they never infer one from the process working directory.
 
-Current schema version for mapping, rule, and suppression files: `0.1.0`.
+Current mapping and suppression schema: `0.2.0`. Rule configuration remains
+`0.1.0`.
 
 ```json
 {"schemaVersion":"0.1.0","enabledRules":["ASL-001","MAP-003"]}
 ```
 
 ```json
-{"schemaVersion":"0.1.0","suppressions":[{"ruleId":"REF-001","sourceFingerprint":"<sha256>","reason":"reviewed"}]}
+{"schemaVersion":"0.2.0","suppressions":[{"ruleId":"REF-001","identityVersion":"bdi-source-v2","sourceFingerprint":"<sha256>","sourceId":"<canonical-project-source-id>","reason":"reviewed"}]}
 ```
+
+Loading schema `0.1.0` mappings converts absolute path-bearing bindings at the
+repository boundary and writes deterministic v2 on the next save. A v1
+suppression hash is irreversible, so migration preserves it as
+`identityVersion: bdi-source-v1` with `sourceId: null`; it remains exact for the
+original checkout and cannot suppress a relocated issue by accident.
 
 Repositories reject malformed input, unsupported versions, invalid values, and
 duplicates. Rule/suppression codecs reject unknown fields. The mapping decoder

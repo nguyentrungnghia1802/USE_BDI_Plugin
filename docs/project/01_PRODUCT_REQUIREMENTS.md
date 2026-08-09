@@ -169,7 +169,9 @@ implemented.
 
 - Build target is Java 21; host model is USE 7.1.1.
 - Jason and runtime dependencies are pinned and shaded.
-- Absolute source identity is a known portability limitation, not hidden.
+- New persisted source identities are project-relative. Irreversible legacy
+  suppression hashes remain explicitly versioned and may become stale after
+  relocation rather than matching more broadly.
 
 ### Maintainability
 

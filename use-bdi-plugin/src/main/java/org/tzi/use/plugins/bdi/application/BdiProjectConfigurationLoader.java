@@ -64,7 +64,7 @@ public final class BdiProjectConfigurationLoader {
                     ? ruleRepository.load(rulesFile)
                     : RuleConfiguration.standard();
             List<Suppression> suppressions = suppressionsLoaded
-                    ? suppressionRepository.load(suppressionsFile)
+                    ? suppressionRepository.load(suppressionsFile, projectRoot)
                     : List.of();
             BdiProjectConfiguration configuration = new BdiProjectConfiguration(
                     Optional.of(projectRoot),

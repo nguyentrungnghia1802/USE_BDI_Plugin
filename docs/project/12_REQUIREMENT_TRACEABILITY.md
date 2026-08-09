@@ -16,7 +16,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | architecture, developer guide |
 | FR-MAP-001..002 | `UseUmlModelFacade`, `UseModelFingerprint` | `UseUmlModelFacadeTest` | architecture, technical design, ADR-0012 |
 | FR-MAP-003..006 | mapping domain/services/repository/editor | mapping suggestion/model/persistence/staleness/editor tests | technical design, ADR-0013/0014 |
-| FR-MAP-007 | `ProjectSourceId`, `MappingSourceId`, `SourceSpan` | `ProjectSourceIdTest` relocation/path/range tests; legacy mapping identity regression | ADR-0021, limitations |
+| FR-MAP-007 | `ProjectSourceId`, mapping/suppression repositories, `SourceSpan` | identity, v1 migration, byte-stability, invalid-root, and relocation tests | ADR-0021/0022, limitations |
 | FR-VAL-001..003 | `StandardConsistencyRules`, `ValidationOrchestrator`, issue model | orchestrator/rule/catalog tests | rule catalog, ADR-0014 |
 | FR-VAL-004 | `RuleConfiguration`, repository/codec | rule configuration and orchestrator tests | technical design, ADR-0017 |
 | FR-VAL-005 | `Suppression`, service/repository/codec | suppression repository/service/report tests | technical design, ADR-0018 |
@@ -66,8 +66,6 @@ documentation. It intentionally traces groups instead of every Java record.
 ## 4. Known untraced end-to-end gaps
 
 - One-click export of the current live GUI validation state.
-- Portable relative source identity and migration of existing mapping/
-  suppression artifacts.
 - Host model/snapshot change subscription for a long-lived BDI Explorer.
 - House Building or a second independent evaluation corpus.
 - Full JaCaMo `.jcm`, CArtAgO, Moise, and runtime-trace integration.

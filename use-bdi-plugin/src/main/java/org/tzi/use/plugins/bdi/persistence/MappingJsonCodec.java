@@ -1,5 +1,6 @@
 package org.tzi.use.plugins.bdi.persistence;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -12,10 +13,12 @@ import org.tzi.use.plugins.bdi.model.mapping.MappingKind;
 
 /** Small dependency-free JSON codec for the deliberately narrow mapping schema. */
 final class MappingJsonCodec {
+    private static final String LEGACY_SCHEMA_VERSION = "0.1.0";
+
     private MappingJsonCodec() {
     }
 
-    static String encode(MappingDocument document) {
+    static String encode(MappingDocument document, Path projectRoot) {
         StringBuilder json = new StringBuilder();
         json.append("{\n");
         field(json, "schemaVersion", quote(document.schemaVersion()), true);
@@ -29,7 +32,9 @@ final class MappingJsonCodec {
             MappingBinding binding = document.bindings().get(index);
             json.append("    {");
             json.append("\"kind\":").append(quote(binding.kind().name())).append(',');
-            json.append("\"source\":").append(quote(binding.source())).append(',');
+            json.append("\"source\":")
+                    .append(quote(MappingSourceMigration.toPortable(binding, projectRoot)))
+                    .append(',');
             json.append("\"target\":").append(quote(binding.target())).append(',');
             json.append("\"expression\":")
                     .append(binding.expression().map(MappingJsonCodec::quote).orElse("null"))
@@ -52,10 +57,14 @@ final class MappingJsonCodec {
         return json.toString();
     }
 
-    static MappingDocument decode(String json) {
+    static MappingDocument decode(String json, Path projectRoot) {
         Object parsed = parseJson(json);
         Map<String, Object> root = object(parsed, "root");
         String schemaVersion = string(root, "schemaVersion");
+        boolean legacy = LEGACY_SCHEMA_VERSION.equals(schemaVersion);
+        if (!legacy && !MappingDocument.CURRENT_SCHEMA_VERSION.equals(schemaVersion)) {
+            throw new IllegalArgumentException("Unsupported mapping schema version: " + schemaVersion);
+        }
         String bdiMetamodelVersion = string(root, "bdiMetamodelVersion");
         String useFingerprint = string(root, "useFingerprint");
         List<Object> rawBindings = array(root, "bindings");
@@ -63,7 +72,11 @@ final class MappingJsonCodec {
         for (Object rawBinding : rawBindings) {
             Map<String, Object> binding = object(rawBinding, "binding");
             MappingKind kind = enumValue(MappingKind.class, string(binding, "kind"));
-            String source = string(binding, "source");
+            String source = MappingSourceMigration.toRuntime(
+                    kind,
+                    string(binding, "source"),
+                    projectRoot,
+                    legacy);
             String target = string(binding, "target");
             Optional<String> expression = optionalString(binding, "expression");
             List<String> evidence = array(binding, "evidence").stream()
@@ -71,7 +84,11 @@ final class MappingJsonCodec {
                     .toList();
             bindings.add(new MappingBinding(kind, source, target, expression, evidence));
         }
-        return new MappingDocument(schemaVersion, bdiMetamodelVersion, useFingerprint, bindings);
+        return new MappingDocument(
+                MappingDocument.CURRENT_SCHEMA_VERSION,
+                bdiMetamodelVersion,
+                useFingerprint,
+                bindings);
     }
 
     static Object parseJson(String json) {

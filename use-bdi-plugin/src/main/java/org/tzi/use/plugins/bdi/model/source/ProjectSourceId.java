@@ -128,7 +128,7 @@ public record ProjectSourceId(
     }
 
     private static String encodeSegment(String segment) {
-        return segment.replace("%", "%25").replace("\\", "%5C");
+        return segment.replace("%", "%25").replace("#", "%23").replace("\\", "%5C");
     }
 
     private static String decodeSegment(String segment) {

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.nio.file.Path;
 
 /** Applies persisted suppressions without mutating issue or model inputs. */
 public final class SuppressionService {
@@ -14,6 +15,20 @@ public final class SuppressionService {
     public static List<ConsistencyIssue> apply(
             List<ConsistencyIssue> issues,
             List<Suppression> suppressions) {
+        return applyInternal(issues, suppressions, null);
+    }
+
+    public static List<ConsistencyIssue> apply(
+            List<ConsistencyIssue> issues,
+            List<Suppression> suppressions,
+            Path projectRoot) {
+        return applyInternal(issues, suppressions, Objects.requireNonNull(projectRoot, "projectRoot"));
+    }
+
+    private static List<ConsistencyIssue> applyInternal(
+            List<ConsistencyIssue> issues,
+            List<Suppression> suppressions,
+            Path projectRoot) {
         Objects.requireNonNull(issues, "issues");
         Objects.requireNonNull(suppressions, "suppressions");
         Map<String, Suppression> byKey = new HashMap<>();
@@ -27,7 +42,12 @@ public final class SuppressionService {
         List<ConsistencyIssue> result = new ArrayList<>();
         for (ConsistencyIssue issue : issues) {
             Objects.requireNonNull(issue, "issue");
-            Suppression suppression = byKey.get(issue.ruleId() + "\u0000" + IssueFingerprint.forIssue(issue));
+            Suppression suppression = suppressions.stream()
+                    .filter(candidate -> projectRoot == null
+                            ? candidate.matches(issue)
+                            : candidate.matches(issue, projectRoot))
+                    .findFirst()
+                    .orElse(null);
             if (suppression == null || issue.status() != IssueStatus.OPEN) {
                 result.add(issue);
                 continue;

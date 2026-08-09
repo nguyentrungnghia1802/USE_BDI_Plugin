@@ -37,7 +37,7 @@ public record BdiProjectConfiguration(
     }
 
     public ValidationOrchestrator newOrchestrator() {
-        return new ValidationOrchestrator(rules, suppressions);
+        return new ValidationOrchestrator(rules, suppressions, projectRoot);
     }
 
     public String summary() {

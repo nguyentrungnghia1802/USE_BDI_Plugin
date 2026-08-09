@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
@@ -33,6 +34,7 @@ import org.tzi.use.plugins.bdi.persistence.MappingFileRepository;
 @SuppressWarnings("serial")
 public final class MappingEditorPanel extends JPanel {
     private final MappingFileRepository repository;
+    private final Optional<Path> projectRoot;
     private final MappingTableModel tableModel = new MappingTableModel();
     private final JTable table = new JTable(tableModel);
     private final DefaultListModel<MappingSuggestion> suggestionModel = new DefaultListModel<>();
@@ -46,12 +48,18 @@ public final class MappingEditorPanel extends JPanel {
     };
 
     public MappingEditorPanel() {
-        this(new MappingFileRepository());
+        this(new MappingFileRepository(), Optional.empty());
     }
 
     MappingEditorPanel(MappingFileRepository repository) {
+        this(repository, Optional.empty());
+    }
+
+    MappingEditorPanel(MappingFileRepository repository, Optional<Path> projectRoot) {
         super(new BorderLayout(6, 6));
         this.repository = Objects.requireNonNull(repository, "repository");
+        this.projectRoot = Objects.requireNonNull(projectRoot, "projectRoot")
+                .map(path -> path.toAbsolutePath().normalize());
         setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 
         JPanel editControls = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 0));
@@ -123,13 +131,18 @@ public final class MappingEditorPanel extends JPanel {
     }
 
     public void save(Path file) throws IOException {
-        repository.save(file, document);
+        repository.save(file, document, requiredProjectRoot(file));
         status.setText("Saved " + document.bindings().size() + " binding(s)");
     }
 
     public void load(Path file) throws IOException {
-        setDocument(repository.load(file));
+        setDocument(repository.load(file, requiredProjectRoot(file)));
         status.setText("Loaded " + document.bindings().size() + " binding(s)");
+    }
+
+    private Path requiredProjectRoot(Path file) throws IOException {
+        return projectRoot.orElseThrow(() -> new IOException(
+                "Mapping persistence requires an active file-backed USE project: " + file));
     }
 
     JTable tableForTest() {

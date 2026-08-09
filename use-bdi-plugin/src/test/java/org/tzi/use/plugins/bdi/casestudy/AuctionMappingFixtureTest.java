@@ -59,9 +59,10 @@ class AuctionMappingFixtureTest {
         assertEquals(14, document.bindings().size());
 
         Path mappingFile = tempDir.resolve("Auction.bdimap.json");
+        Path projectRoot = imported.models().get(0).source().getParent();
         MappingFileRepository repository = new MappingFileRepository();
-        repository.save(mappingFile, document);
-        MappingDocument loaded = repository.load(mappingFile);
+        repository.save(mappingFile, document, projectRoot);
+        MappingDocument loaded = repository.load(mappingFile, projectRoot);
         assertEquals(document, loaded);
         assertEquals(64, MappingFingerprint.compute(loaded).length());
 

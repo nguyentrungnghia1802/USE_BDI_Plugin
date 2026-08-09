@@ -1,5 +1,6 @@
 package org.tzi.use.plugins.bdi.persistence;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -9,17 +10,21 @@ import java.util.Map;
 import java.util.Set;
 
 import org.tzi.use.plugins.bdi.validation.Suppression;
+import org.tzi.use.plugins.bdi.model.source.ProjectSourceId;
 
 /** Dependency-free JSON codec for the versioned suppressions.json schema. */
 final class SuppressionJsonCodec {
-    static final String CURRENT_SCHEMA_VERSION = "0.1.0";
+    static final String CURRENT_SCHEMA_VERSION = "0.2.0";
+    private static final String LEGACY_SCHEMA_VERSION = "0.1.0";
     private static final Set<String> ROOT_FIELDS = Set.of("schemaVersion", "suppressions");
-    private static final Set<String> SUPPRESSION_FIELDS = Set.of("ruleId", "sourceFingerprint", "reason");
+    private static final Set<String> LEGACY_SUPPRESSION_FIELDS = Set.of("ruleId", "sourceFingerprint", "reason");
+    private static final Set<String> SUPPRESSION_FIELDS = Set.of(
+            "ruleId", "identityVersion", "sourceFingerprint", "sourceId", "reason");
 
     private SuppressionJsonCodec() {
     }
 
-    static String encode(List<Suppression> suppressions) {
+    static String encode(List<Suppression> suppressions, Path projectRoot) {
         List<Suppression> ordered = List.copyOf(suppressions);
         Set<String> keys = new HashSet<>();
         for (Suppression suppression : ordered) {
@@ -38,10 +43,18 @@ final class SuppressionJsonCodec {
         }
         for (int index = 0; index < ordered.size(); index++) {
             Suppression suppression = ordered.get(index);
+            suppression.projectSourceId().ifPresent(sourceId -> sourceId.resolve(projectRoot));
             json.append("    {\"ruleId\":")
                     .append(MappingJsonCodec.quote(suppression.ruleId()))
+                    .append(",\"identityVersion\":")
+                    .append(MappingJsonCodec.quote(suppression.identityVersion()))
                     .append(",\"sourceFingerprint\":")
                     .append(MappingJsonCodec.quote(suppression.sourceFingerprint()))
+                    .append(",\"sourceId\":")
+                    .append(suppression.projectSourceId()
+                            .map(ProjectSourceId::canonical)
+                            .map(MappingJsonCodec::quote)
+                            .orElse("null"))
                     .append(",\"reason\":")
                     .append(MappingJsonCodec.quote(suppression.reason()))
                     .append('}');
@@ -53,21 +66,49 @@ final class SuppressionJsonCodec {
         return json.append("  ]\n}\n").toString();
     }
 
-    static List<Suppression> decode(String json) {
+    static List<Suppression> decode(String json, Path projectRoot) {
         Map<String, Object> root = object(MappingJsonCodec.parseJson(json), "root");
         rejectUnknownFields(root, ROOT_FIELDS, "root");
         String schemaVersion = string(root, "schemaVersion");
-        if (!CURRENT_SCHEMA_VERSION.equals(schemaVersion)) {
+        boolean legacy = LEGACY_SCHEMA_VERSION.equals(schemaVersion);
+        if (!legacy && !CURRENT_SCHEMA_VERSION.equals(schemaVersion)) {
             throw new IllegalArgumentException("Unsupported suppression schema version: " + schemaVersion);
         }
         List<Suppression> suppressions = new ArrayList<>();
         for (Object raw : array(root, "suppressions")) {
             Map<String, Object> value = object(raw, "suppression");
-            rejectUnknownFields(value, SUPPRESSION_FIELDS, "suppression");
-            suppressions.add(new Suppression(
-                    string(value, "ruleId"),
-                    string(value, "sourceFingerprint"),
-                    string(value, "reason")));
+            rejectUnknownFields(value, legacy ? LEGACY_SUPPRESSION_FIELDS : SUPPRESSION_FIELDS, "suppression");
+            if (legacy) {
+                suppressions.add(new Suppression(
+                        string(value, "ruleId"),
+                        string(value, "sourceFingerprint"),
+                        string(value, "reason")));
+                continue;
+            }
+            String identityVersion = string(value, "identityVersion");
+            String sourceId = optionalString(value, "sourceId");
+            if ("bdi-source-v1".equals(identityVersion)) {
+                if (sourceId != null) {
+                    throw new IllegalArgumentException("Legacy suppression sourceId must be null");
+                }
+                suppressions.add(new Suppression(
+                        string(value, "ruleId"),
+                        string(value, "sourceFingerprint"),
+                        string(value, "reason")));
+            } else if (ProjectSourceId.VERSION.equals(identityVersion)) {
+                if (sourceId == null) {
+                    throw new IllegalArgumentException("Project-relative suppression requires sourceId");
+                }
+                ProjectSourceId parsed = ProjectSourceId.parse(sourceId);
+                parsed.resolve(projectRoot);
+                suppressions.add(new Suppression(
+                        string(value, "ruleId"),
+                        string(value, "sourceFingerprint"),
+                        string(value, "reason"),
+                        java.util.Optional.of(parsed)));
+            } else {
+                throw new IllegalArgumentException("Unsupported suppression identity version: " + identityVersion);
+            }
         }
         Set<String> keys = new HashSet<>();
         for (Suppression suppression : suppressions) {
@@ -112,6 +153,17 @@ final class SuppressionJsonCodec {
         Object value = object.get(field);
         if (!(value instanceof String text) || text.isBlank()) {
             throw new IllegalArgumentException(field + " must be a non-blank string");
+        }
+        return text;
+    }
+
+    private static String optionalString(Map<String, Object> object, String field) {
+        Object value = object.get(field);
+        if (value == null) {
+            return null;
+        }
+        if (!(value instanceof String text) || text.isBlank()) {
+            throw new IllegalArgumentException(field + " must be null or a non-blank string");
         }
         return text;
     }

@@ -26,6 +26,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] OCL/effect checks distinguish PASS/FAIL/UNKNOWN and restore state.
 - [x] Project rule/suppression files auto-load beside the active `.use` model.
 - [x] Project-relative source identity v2 is defined and relocation-tested.
+- [x] Mapping/suppression schema v2 migrates v1 safely under an explicit root.
 - [x] JSON/HTML exporters preserve issues, evidence, hashes, and suppressions.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
@@ -44,12 +45,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline for the active-project configuration slice:
+Latest validated baseline for the source-identity migration slice:
 
-- focused action/loader/Explorer/documentation tests: 13 pass;
-- plugin tests: 82 pass;
-- isolated root reactor: 204 tests pass (1 core, 121 GUI, 82 plugin);
-- `use-assembly` ZIP/TAR package succeeds.
+- focused migration/configuration/UI/Auction tests: 18 pass;
+- plugin tests: 92 pass;
+- `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
+- the previously verified `use-assembly` ZIP/TAR package remains unchanged.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
@@ -74,7 +75,6 @@ release gates.
 
 The following are future work, not hidden completion claims:
 
-- OD-001: persisted mapping/suppression migration to source identity v2;
 - OD-003: one-click export of the current live GUI analysis;
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: refresh/subscription after current USE state changes;

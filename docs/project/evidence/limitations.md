@@ -4,9 +4,9 @@
   is retained as `ASL-002`; it is not silently normalized as a complete model.
 - `REF-001` can still classify some literal-like terms too broadly, producing
   potential false positives. This is a known BDI index limitation.
-- `ProjectSourceId` v2 now defines portable project-relative source evidence,
-  but mapping and suppression schema `0.1.0` still contains absolute-path-based
-  identities. Moving a checkout keeps legacy entries stale until migration.
+- Schema `0.2.0` makes new mapping and suppression identities portable. Legacy
+  `0.1.0` suppression hashes are intentionally retained as legacy-only because
+  their original paths cannot be recovered; they do not match after relocation.
 - The mapping decoder validates required fields, kinds, duplicate mapping keys,
   and syntax, but does not reject every unknown JSON field.
 - GUI configuration discovery is intentionally limited to `.bdi-plugin`

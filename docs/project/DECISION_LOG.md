@@ -33,6 +33,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0019 | Invalid specifications return only in explicit integration-test mode; normal CLI exit behavior remains unchanged | 121 GUI integration tests |
 | ADR-0020 | Discover rules/suppressions only beside the active file-backed `.use` model; visible defaults for absence and visible failure for invalid input | loader/action/Explorer tests |
 | ADR-0021 | Represent portable source evidence as a case-preserving, project-relative `ProjectSourceId` v2 with explicit coordinates; reject sources outside an explicit root and retain v1 mapping behavior until migration | `ProjectSourceIdTest` |
+| ADR-0022 | Persist mappings and suppressions as schema `0.2.0` under an explicit existing project root; migrate v1 mappings to portable IDs on save, but retain irreversible v1 suppression hashes as legacy-only entries so relocation cannot broaden suppression | repository migration and relocation tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -49,7 +50,6 @@ new ADR that explicitly supersedes the affected entry.
 
 | ID | Decision needed | Safe current behavior |
 | --- | --- | --- |
-| OD-001 | Migration of existing mappings/suppressions to project-relative source IDs | `ProjectSourceId` v2 is available; persisted v1 artifacts remain absolute until migration |
 | OD-003 | Live GUI report/export composition | Use tested application/case-study composition; label `ReportMain` as serializer demo |
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | USE snapshot refresh/subscription lifecycle | Reopen/re-import Explorer after host state changes |
@@ -61,7 +61,7 @@ new ADR that explicitly supersedes the affected entry.
 | Risk | Control | Residual status |
 | --- | --- | --- |
 | Unsupported AgentSpeak is misrepresented | Jason authority, unsupported IR, diagnostics, golden fixtures | controlled |
-| Persisted artifacts stale after checkout relocation | fingerprints and staleness reporting | open via OD-001 |
+| Legacy suppression hashes become stale after checkout relocation | versioned legacy marker prevents broad matching; recreate reviewed entries as v2 when appropriate | accepted migration limitation |
 | OCL information gap becomes false PASS | explicit PASS/FAIL/UNKNOWN | controlled |
 | Analysis mutates current USE state | read-only facade, disposable variation, fingerprint tests | controlled |
 | Open Explorer uses an older USE snapshot | user guidance; reopen/re-import | open via OD-005 |
@@ -72,9 +72,11 @@ new ADR that explicitly supersedes the affected entry.
 
 ## 5. Current Validation Record
 
-- Active-project configuration focused tests: 13 pass.
-- Plugin suite: 82 pass.
-- Isolated root `clean verify`: 204 tests pass and assembly packages succeed.
+- Source-identity migration focused tests: 18 pass.
+- Plugin suite: 92 pass.
+- Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
+- The prior isolated root `clean verify` and assembly packaging evidence remains
+  valid for unchanged release wiring.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
 - Documentation contract checks the compact inventory, links, versions,

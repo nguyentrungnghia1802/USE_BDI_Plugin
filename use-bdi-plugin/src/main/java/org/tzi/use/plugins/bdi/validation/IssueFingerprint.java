@@ -7,6 +7,7 @@ import java.util.HexFormat;
 import java.util.Objects;
 
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
+import org.tzi.use.plugins.bdi.model.source.ProjectSourceId;
 
 /** Computes the stable source identity used by suppression entries. */
 public final class IssueFingerprint {
@@ -30,15 +31,23 @@ public final class IssueFingerprint {
             append(canonical, Integer.toString(sourceSpan.endLine()));
             append(canonical, Integer.toString(sourceSpan.endColumn()));
         }
-        try {
-            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
-                    .digest(canonical.toString().getBytes(StandardCharsets.UTF_8)));
-        } catch (NoSuchAlgorithmException error) {
-            throw new AssertionError("JVM must provide SHA-256", error);
-        }
+        return sha256(canonical.toString());
+    }
+
+    public static String forProjectSource(ProjectSourceId sourceId) {
+        return sha256(Objects.requireNonNull(sourceId, "sourceId").canonical());
     }
 
     private static void append(StringBuilder canonical, String value) {
         canonical.append(value.length()).append(':').append(value).append('\n');
+    }
+
+    private static String sha256(String value) {
+        try {
+            return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                    .digest(value.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException error) {
+            throw new AssertionError("JVM must provide SHA-256", error);
+        }
     }
 }

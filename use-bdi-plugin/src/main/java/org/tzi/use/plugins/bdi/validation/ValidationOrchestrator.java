@@ -1,10 +1,12 @@
 package org.tzi.use.plugins.bdi.validation;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -14,6 +16,7 @@ public final class ValidationOrchestrator {
     private final List<ConsistencyRule> rules;
     private final RuleConfiguration configuration;
     private final List<Suppression> suppressions;
+    private final Optional<Path> projectRoot;
 
     public ValidationOrchestrator() {
         this(StandardConsistencyRules.create(), RuleConfiguration.standard(), List.of());
@@ -25,6 +28,13 @@ public final class ValidationOrchestrator {
 
     public ValidationOrchestrator(RuleConfiguration configuration, List<Suppression> suppressions) {
         this(StandardConsistencyRules.create(), configuration, suppressions);
+    }
+
+    public ValidationOrchestrator(
+            RuleConfiguration configuration,
+            List<Suppression> suppressions,
+            Optional<Path> projectRoot) {
+        this(StandardConsistencyRules.create(), configuration, suppressions, projectRoot);
     }
 
     public ValidationOrchestrator(List<ConsistencyRule> rules) {
@@ -39,9 +49,23 @@ public final class ValidationOrchestrator {
             List<ConsistencyRule> rules,
             RuleConfiguration configuration,
             List<Suppression> suppressions) {
+        this(rules, configuration, suppressions, Optional.empty());
+    }
+
+    public ValidationOrchestrator(
+            List<ConsistencyRule> rules,
+            RuleConfiguration configuration,
+            List<Suppression> suppressions,
+            Optional<Path> projectRoot) {
         List<ConsistencyRule> candidates = List.copyOf(Objects.requireNonNull(rules, "rules"));
         this.configuration = Objects.requireNonNull(configuration, "configuration");
         this.suppressions = List.copyOf(Objects.requireNonNull(suppressions, "suppressions"));
+        this.projectRoot = Objects.requireNonNull(projectRoot, "projectRoot")
+                .map(path -> path.toAbsolutePath().normalize());
+        if (this.projectRoot.isEmpty()
+                && this.suppressions.stream().anyMatch(suppression -> suppression.projectSourceId().isPresent())) {
+            throw new IllegalArgumentException("Project-relative suppressions require a project root");
+        }
         Set<String> available = new HashSet<>();
         for (ConsistencyRule rule : candidates) {
             Objects.requireNonNull(rule, "rule");
@@ -87,7 +111,9 @@ public final class ValidationOrchestrator {
                         .thenComparing(ConsistencyIssue::ruleId)
                         .thenComparing(ConsistencyIssue::message))
                 .toList();
-        return SuppressionService.apply(ordered, suppressions);
+        return projectRoot
+                .map(root -> SuppressionService.apply(ordered, suppressions, root))
+                .orElseGet(() -> SuppressionService.apply(ordered, suppressions));
     }
 
     private static RuleConfiguration allRules(List<ConsistencyRule> rules) {

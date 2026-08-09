@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -17,11 +18,15 @@ class MappingEditorPanelTest {
 
     @Test
     void appliesSuggestionAndPersistsManualMappingDocument() throws Exception {
-        MappingEditorPanel panel = new MappingEditorPanel();
+        Path root = tempDir.toAbsolutePath();
+        String source = root.resolve("agent.asl").toString().replace('\\', '/');
+        MappingEditorPanel panel = new MappingEditorPanel(
+                new org.tzi.use.plugins.bdi.persistence.MappingFileRepository(),
+                Optional.of(root));
         panel.setDocument(MappingDocument.empty("fingerprint"));
         panel.setSuggestions(List.of(new MappingSuggestion(
                 MappingKind.AGENT_CLASS,
-                "agent.asl",
+                source,
                 "ManagerAgent",
                 1.0,
                 List.of("Exact normalized name match"))));
@@ -30,12 +35,14 @@ class MappingEditorPanelTest {
 
         Path file = tempDir.resolve("mapping.bdimap.json");
         panel.save(file);
-        MappingEditorPanel loaded = new MappingEditorPanel();
+        MappingEditorPanel loaded = new MappingEditorPanel(
+                new org.tzi.use.plugins.bdi.persistence.MappingFileRepository(),
+                Optional.of(root));
         loaded.load(file);
 
         assertEquals(1, panel.tableForTest().getRowCount());
         assertEquals(1, loaded.tableForTest().getRowCount());
         assertEquals("ManagerAgent", loaded.document()
-                .find(MappingKind.AGENT_CLASS, "agent.asl").orElseThrow().target());
+                .find(MappingKind.AGENT_CLASS, source).orElseThrow().target());
     }
 }

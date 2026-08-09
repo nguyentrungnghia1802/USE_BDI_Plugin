@@ -144,7 +144,8 @@ public final class BdiExplorerView extends JPanel implements View {
                 useModel,
                 oclEvaluator,
                 Objects.requireNonNull(configuration, "configuration").newOrchestrator(),
-                configuration.summary());
+                configuration.summary(),
+                configuration.projectRoot());
     }
 
     private BdiExplorerView(
@@ -153,7 +154,8 @@ public final class BdiExplorerView extends JPanel implements View {
             Optional<UseModelSnapshot> useModel,
             Optional<SnapshotOclEvaluator> oclEvaluator,
             ValidationOrchestrator validationOrchestrator,
-            String configurationSummary) {
+            String configurationSummary,
+            Optional<Path> projectRoot) {
         super(new BorderLayout(6, 6));
         this.importService = Objects.requireNonNull(importService, "importService");
         this.sourceTracker = Objects.requireNonNull(sourceTracker, "sourceTracker");
@@ -198,7 +200,7 @@ public final class BdiExplorerView extends JPanel implements View {
         split.setResizeWeight(0.42);
         split.setPreferredSize(new Dimension(900, 520));
         problems = new BdiProblemPanel();
-        mapping = new MappingEditorPanel();
+        mapping = new MappingEditorPanel(new org.tzi.use.plugins.bdi.persistence.MappingFileRepository(), projectRoot);
         mapping.setDocumentChangeListener(ignored -> refreshProblems());
         JTabbedPane tabs = new JTabbedPane();
         tabs.addTab("Explorer", split);

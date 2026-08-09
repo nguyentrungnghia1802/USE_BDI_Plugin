@@ -17,7 +17,7 @@ public final class ReportMain {
             Path suppressionFile = projectRoot.resolve(Path.of(
                     "use-bdi-plugin", ".bdi-plugin", "suppressions.json"));
             List<Suppression> suppressions = Files.exists(suppressionFile)
-                    ? new SuppressionRepository().load(suppressionFile)
+                    ? new SuppressionRepository().load(suppressionFile, projectRoot)
                     : List.of();
             ReportData data = new ReportData(
                     "USE-BDI-Project",

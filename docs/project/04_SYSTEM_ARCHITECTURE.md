@@ -95,8 +95,9 @@ There is no database, server, tenant, account, or network API. Optional files:
 The active `.use` parent is the project root. Missing config files use visible
 defaults; malformed versions or unknown rule IDs abort Explorer creation with
 an error. `ProjectSourceId` v2 provides a case-preserving relative path and
-source range under an explicit root and rejects outside-root sources. Existing
-mapping/suppression files remain v1 until the separate migration slice.
+  source range under an explicit root and rejects outside-root sources. Schema
+  v2 repositories migrate v1 mappings on save and retain v1 suppression hashes
+  as explicitly legacy-only entries.
 
 ## 6. Packaging And Host Lifecycle
 
@@ -118,7 +119,6 @@ boundaries. See [the development ideas](../idea/idea.md).
 
 ## 8. Known Architecture Gaps
 
-- Migration of persisted mapping/suppression identities to `ProjectSourceId` v2.
 - Live export of the current GUI analysis.
 - Strict unknown-field policy for mapping JSON.
 - Refresh/subscription when the active USE state changes after opening a view.

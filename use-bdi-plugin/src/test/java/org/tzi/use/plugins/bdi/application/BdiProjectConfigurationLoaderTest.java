@@ -25,7 +25,10 @@ class BdiProjectConfigurationLoaderTest {
         RuleConfiguration rules = RuleConfiguration.of(List.of("ASL-001"));
         Suppression suppression = new Suppression("ASL-001", "0".repeat(64), "Reviewed fixture");
         new RuleConfigurationRepository().save(configurationDirectory.resolve("rules.json"), rules);
-        new SuppressionRepository().save(configurationDirectory.resolve("suppressions.json"), List.of(suppression));
+        new SuppressionRepository().save(
+                configurationDirectory.resolve("suppressions.json"),
+                List.of(suppression),
+                tempDir.toAbsolutePath());
 
         BdiProjectConfiguration loaded = new BdiProjectConfigurationLoader().load(model);
 
