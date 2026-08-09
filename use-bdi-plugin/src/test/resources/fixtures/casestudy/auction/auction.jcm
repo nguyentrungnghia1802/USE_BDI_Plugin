@@ -1,0 +1,6 @@
+mas auction {
+    agent auctioneer : auctioneer.asl
+    agent bidder : bidder.asl {
+        instances: bidder1, bidder2
+    }
+}

@@ -37,6 +37,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0023 | Refresh USE state manually through a plugin-owned provider that resolves the current session system per capture; run capture/validation on the EDT, discard stale generations, and verify the state fingerprint before/after analysis without claiming host event subscription | Explorer/provider/evaluator refresh tests |
 | ADR-0024 | Compose Problems/export/headless inputs through one immutable application-owned `CurrentAnalysisSnapshot`; validation runs once per composition, caller supplies time, and ADR-0016 hashes plus counts/version/config/suppression evidence are constructor-validated | current-analysis Auction/malformed/Explorer tests |
 | ADR-0025 | Headless quality gate requires explicit `.use`, one-or-more `.asl`, and JSON/HTML output paths; mapping/rules/suppressions are optional explicit files, timestamp defaults to epoch, no CWD discovery occurs, and exits are 0 clean, 1 confirmed findings, 2 potential/unknown-only, 3 invalid input/config, 4 infrastructure/output failure | CLI integration/process smoke and deterministic-report tests |
+| ADR-0026 | Use the official JaCaMo 1.3.0 parser/model behind an adapter, paired with Jason 3.3.0; shade only the JaCaMo artifact and exclude its runtime transitives | parser spike, dependency evidence, package smoke |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -57,7 +58,7 @@ new ADR that explicitly supersedes the affected entry.
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | Automatic USE state-change subscription lifecycle | Use `Refresh USE Snapshot`; stale queued refreshes are discarded |
 | OD-006 | External thesis data/report/slides locations and release owner | Keep backup/tag gates open |
-| OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Support Jason `.asl` only and make no full-JaCaMo claim |
+| OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Import static `.jcm` project/agent declarations only; do not claim runtime integration |
 
 ## 4. Active Risks
 
@@ -70,13 +71,13 @@ new ADR that explicitly supersedes the affected entry.
 | Open Explorer does not update automatically after USE state changes | visible manual refresh with state-safety check | automatic subscription open via OD-005 |
 | Mapping JSON typo is tolerated | domain validation and tests | open via OD-004 |
 | Report is mistaken for live analysis | GUI export is snapshot-backed; `ReportMain` remains explicitly demo-only | mitigated |
-| JaCaMo scope is overclaimed from Jason dependency | architecture/docs test and explicit boundary | open via OD-007 |
+| JaCaMo scope is overclaimed from static project import | adapter boundary, runtime dependency exclusions, explicit resource status | open via OD-007 |
 | External thesis artifacts are omitted | backup manifest and open release gate | open via OD-006 |
 
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 107 pass.
+- Plugin suite: 108 pass, including the official JaCaMo parser spike.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Packaged headless smoke verifies Auction JSON/HTML and process exits 1/3.
 - Root `mvn clean verify`: all five modules, 121 GUI integration tests, and
@@ -92,3 +93,29 @@ new ADR that explicitly supersedes the affected entry.
 Exact dates, commits, command output, and historical implementation details are
 available from Git history, CI, and `docs/project/evidence/`; they are not
 duplicated here.
+
+## 6. ADR-0026: Official JaCaMo Parser With A Static-Only Package
+
+**Status:** Accepted. **Date:** 2026-08-10.
+
+The `.jcm` syntax authority is the official `org.jacamo:jacamo:1.3.0`
+artifact. Its published POM depends on Jason 3.3.0, matching ADR-0002. The
+plugin calls `JaCaMoProjectParser(Reader).parse(String)` only through an
+adapter and immediately converts the result to plugin-owned values.
+
+Option A, selected, shades the JaCaMo parser/model JAR while excluding every
+transitive runtime dependency. The existing explicit Jason 3.3.0 dependency
+supplies the parser's shared MAS model. This keeps the USE plugin small and
+prevents accidental runtime claims. Option B, rejected for this slice, packages
+the full JaCaMo dependency graph and launcher; it introduces CArtAgO, Moise,
+REST, Gradle Tooling and runtime lifecycle/classloader risk without serving
+static project import.
+
+The accepted boundary does not parse CArtAgO Java artifacts, normalize Moise,
+or launch a MAS. Environment and organization declarations must remain visible
+as unsupported resource references until dedicated adapters are accepted.
+JaCaMo and Jason contain seven overlapping project-template resources in the
+shaded JAR; no parser classes overlap, and these templates are outside the
+static import contract. Package smoke continues to verify both parser classes.
+`docs/project/evidence/jacamo-parser-spike.md` records the source signatures,
+artifact provenance, dependency result, checksums, and fallback.

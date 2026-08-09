@@ -16,7 +16,15 @@
 
     <properties>
         <jason.version>3.3.0</jason.version>
+        <jacamo.version>1.3.0</jacamo.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jacamo-maven-repository</id>
+            <url>https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -39,6 +47,18 @@
                 <exclusion>
                     <groupId>javax.json</groupId>
                     <artifactId>javax.json-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jacamo</groupId>
+            <artifactId>jacamo</artifactId>
+            <version>${jacamo.version}</version>
+            <exclusions>
+                <!-- Static .jcm parsing does not start or package the JaCaMo runtime. -->
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
