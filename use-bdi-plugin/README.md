@@ -82,7 +82,19 @@ class/object, action/operation, positional-parameter, and supported belief
 bindings, round-trips them through `MappingFileRepository`, and verifies no
 stale or `MAP-*` issue remains. The mapping is created at test runtime because
 the current source-ID contract intentionally stores normalized absolute paths;
-no checkout-specific JSON is committed. Mutants and reports remain open.
+no checkout-specific JSON is committed.
+
+Generate the current Auction baseline report with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\auction-baseline.ps1
+```
+
+The script writes `target/case-study/auction/auction-baseline.json` and `.html`.
+The test-backed baseline contains 14 confirmed mappings and 27 reproducible
+findings across `REF-001`, `BEL-001`, `OCL-002`, `OCL-004`, `OWN-001`,
+`SIG-002`, and `SIG-003`; these are the pre-mutant comparison point, not a
+claim that every cross-model rule is already semantically clean.
 
 ## Build and automated smoke
 

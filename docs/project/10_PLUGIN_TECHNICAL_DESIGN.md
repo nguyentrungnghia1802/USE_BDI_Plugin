@@ -303,6 +303,23 @@ resolution task beyond the first mapping slice.
   beliefs are intentionally not forced into an attribute mapping; mutants,
   ground truth, and reports remain separate checklist tasks.
 
+### Implemented Auction baseline-report slice
+
+- `AuctionBaselineReportTest` runs the real Auction import, populated USE
+  snapshot, confirmed mapping, and `ValidationOrchestrator` pipeline before
+  passing the immutable result to `ReportExporter` and `HtmlReportExporter`.
+- The test writes `target/case-study/auction/auction-baseline.json` and
+  `auction-baseline.html`, includes plugin/USE/Jason metadata, 14 mapping
+  bindings, the current model/mapping SHA-256 identities, and a fixed timestamp
+  for reproducibility. Repeated JSON/HTML exports are byte-identical.
+- The baseline currently records 27 findings: `REF-001` 10,
+  `BEL-001` 2, `OCL-002` 4, `OCL-004` 4, `OWN-001` 3, `SIG-002` 2, and
+  `SIG-003` 2. It is the pre-mutant comparison artifact; no mutant or ground
+  truth claim is made here.
+- `scripts/auction-baseline.ps1` provides the repeatable command and checks
+  both generated files. Source locations remain checkout-specific because the
+  current source-ID/report contract still uses normalized absolute paths.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

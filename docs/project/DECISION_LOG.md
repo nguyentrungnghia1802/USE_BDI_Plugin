@@ -1163,3 +1163,25 @@ not hide a finding silently or mutate the USE model.
   follows the accepted mapping policy while avoiding a false portable fixture:
   current source IDs contain normalized absolute paths. No mapping core or USE
   core source was changed, and no new ADR was needed.
+
+## Auction baseline-report evidence - 2026-08-09
+
+- `AuctionBaselineReportTest` composes the existing Auction import, read-only
+  USE snapshot, confirmed mapping, and `ValidationOrchestrator` values before
+  calling the existing JSON/HTML exporters. It does not make `ReportMain` or
+  the USE core own a new case-study execution path.
+- The generated metadata records project `Auction-Case-Study`, plugin `0.1.0`,
+  USE `USE-7.1.1`, Jason `3.3.0` in notes, 14 mappings, model/mapping SHA-256
+  identities, and the fixed timestamp `2026-08-09T00:00:00Z`.
+- The baseline has 27 findings: `REF-001=10`, `BEL-001=2`, `OCL-002=4`,
+  `OCL-004=4`, `OWN-001=3`, `SIG-002=2`, and `SIG-003=2`. These include
+  conservative potential/unknown results from current reference, ownership,
+  numeric-type, and unavailable bounded-OCL-effect policies; they are retained
+  as comparison evidence rather than suppressed.
+- `scripts/auction-baseline.ps1` passed with `AUCTION_BASELINE_REPORT_OK` and
+  verified `target/case-study/auction/auction-baseline.json` plus `.html`.
+  Repeated exports are byte-identical in the same checkout.
+- No new ADR was needed: this is a case-study realization of ADR-0015/0016
+  exporter/hash contracts and ADR-0014 rule evidence. Generated reports remain
+  under `target/` because source paths are currently absolute and checkout
+  specific.

@@ -55,6 +55,28 @@ class AuctionMappingFixtureTest {
         UseModelSnapshot uml = new UseUmlModelFacade().snapshot(system);
         assertEquals(3, uml.objects().size());
 
+        MappingDocument document = confirmedMapping(imported, uml);
+        assertEquals(14, document.bindings().size());
+
+        Path mappingFile = tempDir.resolve("Auction.bdimap.json");
+        MappingFileRepository repository = new MappingFileRepository();
+        repository.save(mappingFile, document);
+        MappingDocument loaded = repository.load(mappingFile);
+        assertEquals(document, loaded);
+        assertEquals(64, MappingFingerprint.compute(loaded).length());
+
+        assertTrue(new MappingStalenessDetector()
+                .detect(imported.models(), imported.index(), loaded, uml)
+                .isEmpty());
+
+        List<ConsistencyIssue> mappingIssues = new ValidationOrchestrator()
+                .evaluate(ValidationContext.from(imported, loaded, Optional.of(uml))).stream()
+                .filter(issue -> issue.ruleId().startsWith("MAP-"))
+                .toList();
+        assertTrue(mappingIssues.isEmpty(), () -> "Unexpected mapping issues: " + mappingIssues);
+    }
+
+    static MappingDocument confirmedMapping(BdiImportSnapshot imported, UseModelSnapshot uml) {
         MappingSuggestionService suggestions = new MappingSuggestionService();
         List<MappingSuggestion> candidates = suggestions.suggest(imported.models(), imported.index(), uml);
         AgentModel auctioneer = model(imported, "auctioneer.asl");
@@ -81,30 +103,13 @@ class AuctionMappingFixtureTest {
 
         confirmed.add(require(candidates, MappingKind.BELIEF_ATTRIBUTE, "auction_status/1", "Auction::status"));
         confirmed.add(require(candidates, MappingKind.BELIEF_ATTRIBUTE, "budget/1", "Bidder::budget"));
+        assertTrue(confirmed.stream().allMatch(suggestion -> !suggestion.reasons().isEmpty()));
 
         MappingDocument document = MappingDocument.empty(uml.fingerprint());
         for (MappingSuggestion suggestion : confirmed) {
             document = document.upsert(suggestion.toBinding());
         }
-        assertEquals(14, document.bindings().size());
-        assertTrue(confirmed.stream().allMatch(suggestion -> !suggestion.reasons().isEmpty()));
-
-        Path mappingFile = tempDir.resolve("Auction.bdimap.json");
-        MappingFileRepository repository = new MappingFileRepository();
-        repository.save(mappingFile, document);
-        MappingDocument loaded = repository.load(mappingFile);
-        assertEquals(document, loaded);
-        assertEquals(64, MappingFingerprint.compute(loaded).length());
-
-        assertTrue(new MappingStalenessDetector()
-                .detect(imported.models(), imported.index(), loaded, uml)
-                .isEmpty());
-
-        List<ConsistencyIssue> mappingIssues = new ValidationOrchestrator()
-                .evaluate(ValidationContext.from(imported, loaded, Optional.of(uml))).stream()
-                .filter(issue -> issue.ruleId().startsWith("MAP-"))
-                .toList();
-        assertTrue(mappingIssues.isEmpty(), () -> "Unexpected mapping issues: " + mappingIssues);
+        return document;
     }
 
     private static void addActionMapping(
@@ -163,7 +168,7 @@ class AuctionMappingFixtureTest {
                 .orElseThrow(() -> new AssertionError("Missing model: " + filename));
     }
 
-    private static MSystem loadAuctionSystem() throws Exception {
+    static MSystem loadAuctionSystem() throws Exception {
         Path fixture = fixture("fixtures/casestudy/auction/Auction.use");
         StringWriter errors = new StringWriter();
         MModel model = USECompiler.compileSpecification(
@@ -183,7 +188,7 @@ class AuctionMappingFixtureTest {
         return system;
     }
 
-    private static Path fixture(String name) throws URISyntaxException {
+    static Path fixture(String name) throws URISyntaxException {
         URL resource = AuctionMappingFixtureTest.class.getClassLoader().getResource(name);
         if (resource == null) {
             throw new IllegalStateException("Missing fixture: " + name);

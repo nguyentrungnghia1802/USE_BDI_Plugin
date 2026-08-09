@@ -148,7 +148,7 @@
 - [x] Auction UML/OCL model. (first compilable Auction fixture)
 - [x] Auction AgentSpeak files. (auctioneer and bidder fixtures)
 - [x] Valid mapping. (confirmed Auction class/object/action/parameter/belief links)
-- [ ] Baseline report.
+- [x] Baseline report. (deterministic JSON/HTML Auction report)
 - [ ] Structural mutants.
 - [ ] Signature mutants.
 - [ ] Reference mutants.
@@ -359,6 +359,28 @@
   passed with 2 tests. The runtime mapping file is temporary because source IDs
   currently contain normalized absolute paths; no checkout-specific JSON is
   claimed as a portable fixture.
+
+## Auction baseline-report evidence - 2026-08-09
+
+- `AuctionBaselineReportTest` runs the actual Auction import, populated USE
+  snapshot, confirmed 14-binding mapping, and `ValidationOrchestrator`, then
+  exports both JSON and HTML reports to
+  `use-bdi-plugin/target/case-study/auction/`.
+- The report metadata contains project `Auction-Case-Study`, plugin `0.1.0`,
+  USE `USE-7.1.1`, Jason `3.3.0` in notes, 14 mappings, a 64-character model
+  hash, a 64-character mapping hash, and fixed timestamp
+  `2026-08-09T00:00:00Z`.
+- The locked baseline has 27 findings with histogram `REF-001=10`,
+  `BEL-001=2`, `OCL-002=4`, `OCL-004=4`, `OWN-001=3`, `SIG-002=2`, and
+  `SIG-003=2`. This records the current pre-mutant behavior, including
+  potential/unknown findings; it does not silently discard them.
+- Repeated JSON and HTML exports are byte-identical within the same checkout.
+  `powershell -ExecutionPolicy Bypass -File
+  .\use-bdi-plugin\scripts\auction-baseline.ps1` passed with marker
+  `AUCTION_BASELINE_REPORT_OK` and verified both output files.
+- The generated report is intentionally under `target/`, not committed as a
+  portable fixture, because source spans and mapping source IDs currently use
+  normalized absolute paths.
 
 ## Phase 0 evidence - 2026-08-03
 
