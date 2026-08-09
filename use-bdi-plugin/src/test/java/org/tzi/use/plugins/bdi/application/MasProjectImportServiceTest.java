@@ -42,7 +42,8 @@ class MasProjectImportServiceTest {
                 MasProjectDiagnostic.UNSUPPORTED_RESOURCE),
                 result.diagnostics().stream().map(MasProjectDiagnostic::code).toList());
         assertEquals(
-                Files.readString(fixture("fixtures/expected/auction-mas-project.json"), StandardCharsets.UTF_8),
+                Files.readString(fixture("fixtures/expected/auction-mas-project.json"), StandardCharsets.UTF_8)
+                        .replace("\r\n", "\n"),
                 serializer.serialize(project));
     }
 
