@@ -147,7 +147,7 @@
 
 - [x] Auction UML/OCL model. (first compilable Auction fixture)
 - [x] Auction AgentSpeak files. (auctioneer and bidder fixtures)
-- [ ] Valid mapping.
+- [x] Valid mapping. (confirmed Auction class/object/action/parameter/belief links)
 - [ ] Baseline report.
 - [ ] Structural mutants.
 - [ ] Signature mutants.
@@ -338,6 +338,27 @@
 - `mvn -pl use-bdi-plugin -Dtest=AuctionAgentSpeakFixtureTest test` passed
   with 1 test. No mapping, mutant, ground-truth, or report claim is made by
   this fixture/import slice.
+
+## Auction valid-mapping evidence - 2026-08-09
+
+- `AuctionMappingFixtureTest` selects exact-name/arity suggestions from the
+  imported Auction models and populated `Auction.use` snapshot for 14 confirmed
+  bindings: two agent classes, two agent objects, four action operations, four
+  positional parameters, and two supported belief attributes.
+- The test persists and reloads the document through
+  `MappingFileRepository`, verifies the current USE fingerprint and BDI
+  metamodel metadata, and confirms no `MappingStalenessDetector` findings.
+- The configured validation run produces no `MAP-001`, `MAP-002`, or `MAP-003`
+  issue for the confirmed case-study mapping. Relational beliefs without a UML
+  attribute target are intentionally not forced into `BELIEF_ATTRIBUTE` links.
+- Auction plan labels are explicit because unlabeled plans with the same step
+  position would otherwise share the current `MappingSourceId` key
+  (`source + plan label + step`) and `MappingDocument.upsert` would replace a
+  prior action binding.
+- `mvn -pl use-bdi-plugin '-Dtest=AuctionAgentSpeakFixtureTest,AuctionMappingFixtureTest' test`
+  passed with 2 tests. The runtime mapping file is temporary because source IDs
+  currently contain normalized absolute paths; no checkout-specific JSON is
+  claimed as a portable fixture.
 
 ## Phase 0 evidence - 2026-08-03
 

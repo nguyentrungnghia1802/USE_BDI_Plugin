@@ -74,8 +74,15 @@ The paired Jason 3.3.0 AgentSpeak fixtures are kept beside it as
 `auctioneer.asl` and `bidder.asl`. `AuctionAgentSpeakFixtureTest` imports both
 files through `BdiImportService`, verifies materialized beliefs/goals/plans,
 and checks the indexed `open`, `placeBid`, `close`, `submitBid`, and `.print`
-call sites. This remains an import/index fixture slice; it does not claim a
-confirmed UML-to-AgentSpeak mapping, mutants, or reports.
+call sites. The plans have explicit labels so the stable source IDs remain
+unique when multiple plans use the same step position.
+
+`AuctionMappingFixtureTest` selects the exact-name/arity candidates, confirms
+class/object, action/operation, positional-parameter, and supported belief
+bindings, round-trips them through `MappingFileRepository`, and verifies no
+stale or `MAP-*` issue remains. The mapping is created at test runtime because
+the current source-ID contract intentionally stores normalized absolute paths;
+no checkout-specific JSON is committed. Mutants and reports remain open.
 
 ## Build and automated smoke
 

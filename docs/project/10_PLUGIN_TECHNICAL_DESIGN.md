@@ -283,10 +283,25 @@ resolution task beyond the first mapping slice.
 - `AuctionAgentSpeakFixtureTest` imports both files through
   `BdiImportService`, verifies two materialized models with 3 and 1 plans, and
   checks `BdiIndex` call sites and action-kind classification for the lifecycle
-  actions.
-- This slice establishes only the AgentSpeak fixture/import/index boundary.
-  Confirmed UML-to-AgentSpeak mappings, mutant inputs, ground truth, and
-  reports remain separate checklist tasks.
+  actions. Explicit plan labels keep source IDs unique for same-position steps.
+
+### Implemented Auction valid-mapping slice
+
+- `AuctionMappingFixtureTest` selects exact-name/arity candidates from
+  `MappingSuggestionService` for the two agent files, their class/object
+  targets, the four lifecycle operations, positional parameters, and the
+  supported `auction_status/1` and `budget/1` belief attributes.
+- The test creates a populated read-only USE snapshot, builds a current
+  fingerprinted `MappingDocument`, round-trips it through
+  `MappingFileRepository`, and checks `MappingStalenessDetector` plus the
+  configured `MAP-001/002/003` rules.
+- The mapping is generated in a temporary directory rather than committed as
+  JSON because the current `MappingSourceId` contract stores normalized
+  absolute source paths. This keeps the case-study test portable without
+  weakening the actual persistence/staleness gate.
+- This slice confirms only the selected mapping links. Unsupported relational
+  beliefs are intentionally not forced into an attribute mapping; mutants,
+  ground truth, and reports remain separate checklist tasks.
 
 ## 6. Dependency packaging
 

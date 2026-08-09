@@ -1142,3 +1142,24 @@ not hide a finding silently or mutate the USE model.
 - No new ADR was needed. The slice adds case-study fixtures and regression
   coverage only; confirmed mappings, mutants, ground truth, and reports remain
   open tasks.
+
+## Auction valid-mapping evidence - 2026-08-09
+
+- `AuctionMappingFixtureTest` selects exact-name/arity candidates from the
+  existing `MappingSuggestionService` and turns them into 14 confirmed
+  `MappingBinding` values: class/object links for `auctioneer.asl` and
+  `bidder.asl`, four lifecycle action/operation links, four positional
+  parameter links, and `auction_status/1` plus `budget/1` attribute links.
+- The test compiles the real Auction USE fixture, creates the minimum
+  auctioneer/auction/bidder object/link snapshot, sets the current USE
+  fingerprint, round-trips the document through `MappingFileRepository`, and
+  finds no staleness or `MAP-001/002/003` issue.
+- The test initially exposed a source-key collision: three unlabeled
+  `auctioneer` plans used step `1`, and `MappingSourceId.action` therefore
+  produced the same `source#plan:#step:1` key. The case-study plans now carry
+  explicit Jason labels (`run_auction`, `receive_bid`, `finish_auction`, and
+  `submit_bid`) so the existing stable-key contract can distinguish them.
+- The mapping is generated in `@TempDir` rather than checked in as JSON. This
+  follows the accepted mapping policy while avoiding a false portable fixture:
+  current source IDs contain normalized absolute paths. No mapping core or USE
+  core source was changed, and no new ADR was needed.

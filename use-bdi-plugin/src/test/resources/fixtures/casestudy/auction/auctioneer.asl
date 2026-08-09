@@ -2,15 +2,15 @@ auction_status(draft).
 registered_bidder(bidder1).
 !run_auction.
 
-+!run_auction : auction_status(draft)
+@run_auction +!run_auction : auction_status(draft)
     <- open;
        +auction_status(open);
        -auction_status(draft);
        !receive_bid.
 
-+!receive_bid : auction_status(open) & registered_bidder(bidder1)
+@receive_bid +!receive_bid : auction_status(open) & registered_bidder(bidder1)
     <- placeBid(bidder1, 120);
        !finish_auction.
 
-+!finish_auction : auction_status(open)
+@finish_auction +!finish_auction : auction_status(open)
     <- close.
