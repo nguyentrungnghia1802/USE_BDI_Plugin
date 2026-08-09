@@ -6,6 +6,15 @@ import org.junit.jupiter.api.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+
+import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
+import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
+import org.tzi.use.plugins.bdi.validation.IssueCertainty;
+import org.tzi.use.plugins.bdi.validation.IssueSeverity;
+import org.tzi.use.plugins.bdi.validation.IssueStatus;
 
 public class ReportExporterTest {
 
@@ -18,7 +27,19 @@ public class ReportExporterTest {
                 Instant.now(),
                 3,
                 5,
-                "unit-test"
+                "unit-test",
+                List.of(new ConsistencyIssue(
+                        "ASL-001",
+                        IssueSeverity.ERROR,
+                        IssueStatus.OPEN,
+                        "bad \"syntax\"",
+                        Optional.empty(),
+                        Optional.empty(),
+                        Optional.of(new SourceSpan(Path.of("bad.asl"), 2, 3, 2, 4)),
+                        Optional.empty(),
+                        List.of("parser evidence"),
+                        Optional.empty(),
+                        IssueCertainty.CONFIRMED))
         );
 
         Path tmp = Files.createTempDirectory("bdi-report-test");
@@ -27,6 +48,11 @@ public class ReportExporterTest {
         ReportExporter.exportJson(data, out);
 
         Assertions.assertTrue(Files.exists(out));
+        String content = Files.readString(out);
         Assertions.assertTrue(Files.size(out) > 0);
+        Assertions.assertTrue(content.contains("\"issues\":[{"));
+        Assertions.assertTrue(content.contains("ASL-001"));
+        Assertions.assertTrue(content.contains("bad \\\"syntax\\\""));
+        Assertions.assertTrue(content.contains("bad.asl:2:3"));
     }
 }

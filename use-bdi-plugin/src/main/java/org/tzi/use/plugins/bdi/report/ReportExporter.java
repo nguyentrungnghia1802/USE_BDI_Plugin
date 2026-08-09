@@ -5,6 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
+import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
+import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
 
 public final class ReportExporter {
 
@@ -26,11 +30,44 @@ public final class ReportExporter {
         appendNumberField(sb, "mappingsCount", data.mappingsCount());
         sb.append(',');
         appendField(sb, "notes", data.notes());
+        sb.append(',');
+        appendIssues(sb, data);
         sb.append('}');
 
         byte[] bytes = sb.toString().getBytes(StandardCharsets.UTF_8);
         Files.createDirectories(output.getParent());
         Files.write(output, bytes);
+    }
+
+    private static void appendIssues(StringBuilder sb, ReportData data) {
+        sb.append("\"issues\":[");
+        for (int index = 0; index < data.issues().size(); index++) {
+            if (index > 0) {
+                sb.append(',');
+            }
+            ConsistencyIssue issue = data.issues().get(index);
+            sb.append('{');
+            appendField(sb, "ruleId", issue.ruleId());
+            sb.append(',');
+            appendField(sb, "severity", issue.severity().name());
+            sb.append(',');
+            appendField(sb, "status", issue.status().name());
+            sb.append(',');
+            appendField(sb, "certainty", issue.certainty().name());
+            sb.append(',');
+            appendField(sb, "message", issue.message());
+            sb.append(',');
+            appendField(sb, "source", source(issue.sourceSpan()));
+            sb.append(',');
+            appendField(sb, "evidence", String.join("; ", issue.evidence()));
+            sb.append('}');
+        }
+        sb.append(']');
+    }
+
+    private static String source(Optional<SourceSpan> span) {
+        return span.map(value -> value.source() + ":" + value.beginLine() + ":" + value.beginColumn())
+                .orElse(null);
     }
 
     private static void appendField(StringBuilder sb, String name, String value) {

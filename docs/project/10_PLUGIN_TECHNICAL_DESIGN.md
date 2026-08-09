@@ -167,6 +167,18 @@ resolution task beyond the first mapping slice.
   The slice is read-only with respect to USE and has no OCL evaluation,
   suppression, message, belief, or state-transition rules.
 
+### Implemented report export slice
+
+- `ReportData` accepts immutable `ConsistencyIssue` evidence in addition to the
+  existing summary metadata, preserving the original constructor for simple
+  reports.
+- `HtmlReportExporter` emits a UTF-8 metadata page plus an escaped issue table
+  containing rule ID, severity, status, certainty, source location, message,
+  and evidence. `ReportExporter` emits the same fields in a JSON `issues` array.
+- Exporters do not execute rules or read USE state. They serialize the supplied
+  analysis result only; model/mapping hashes, rule configuration, and
+  suppression sections remain separate reporting tasks.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

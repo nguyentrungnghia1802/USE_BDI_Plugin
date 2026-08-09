@@ -837,3 +837,42 @@ making claims that require executing OCL or mutating the active USE system.
 - `mvn -pl use-bdi-plugin -am test` passed with 44 plugin tests on the full
   reactor, including `ValidationOrchestratorTest`,
   `MappingStalenessDetectorTest`, and the mapping-to-Problems UI regression.
+
+## ADR-0015 - Evidence-preserving HTML report export
+
+- Status: Accepted
+- Date: 2026-08-09
+- Scope: Section 10 HTML/CSV report and issue evidence/source export
+
+### Context
+
+The repository already had a small JSON/HTML metadata report, but the HTML
+output did not contain the consistency findings that support thesis evidence.
+The next reporting slice must remain deterministic, safe for arbitrary source
+messages, and independent from rule execution or USE state mutation.
+
+### Decision
+
+- Extend plugin-owned `ReportData` with an immutable list of
+  `ConsistencyIssue` records while preserving the existing summary constructor.
+- Export the same normalized issue fields in HTML and JSON: rule ID, severity,
+  status, certainty, source location, message, and evidence. Missing source
+  spans are rendered as `unknown` rather than invented coordinates.
+- Escape all HTML cell values, including messages and evidence, and keep the
+  report UTF-8. The exporter serializes supplied results only; it does not
+  invoke the validator or access the active USE session.
+
+### Consequences and limits
+
+- The `HTML or CSV report` checklist item and issue evidence/source reporting
+  now have executable coverage without changing USE core.
+- Model/mapping hashes, rule configuration, suppression sections, and a
+  report UI action remain open reporting work. The existing `ReportMain` demo
+  still supplies an empty issue list until the application report pipeline is
+  connected to a live validation snapshot.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test` passed with 47 tests, including HTML source and
+  evidence rendering, HTML escaping, JSON issue serialization, and the existing
+  OCL/validation regression suite.

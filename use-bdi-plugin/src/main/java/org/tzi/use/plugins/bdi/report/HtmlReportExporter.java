@@ -5,6 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
+import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
+import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
 
 public final class HtmlReportExporter {
 
@@ -25,9 +29,49 @@ public final class HtmlReportExporter {
         appendRow(sb, "Notes", data.notes());
         sb.append("</table>\n</body>\n</html>\n");
 
+        sb.insert(sb.lastIndexOf("</body>"), issuesTable(data));
+
         byte[] bytes = sb.toString().getBytes(StandardCharsets.UTF_8);
         Files.createDirectories(output.getParent());
         Files.write(output, bytes);
+    }
+
+    private static String issuesTable(ReportData data) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<h2>Consistency Issues</h2>\n");
+        if (data.issues().isEmpty()) {
+            return sb.append("<p>No consistency issues were supplied.</p>\n").toString();
+        }
+        sb.append("<table border=\"1\">\n<tr>");
+        for (String heading : new String[] {"Rule", "Severity", "Status", "Certainty", "Source", "Message", "Evidence"}) {
+            sb.append("<th style=\"text-align:left;padding:6px;\">")
+                    .append(escapeHtml(heading))
+                    .append("</th>");
+        }
+        sb.append("</tr>\n");
+        for (ConsistencyIssue issue : data.issues()) {
+            sb.append("<tr>");
+            cell(sb, issue.ruleId());
+            cell(sb, issue.severity().name());
+            cell(sb, issue.status().name());
+            cell(sb, issue.certainty().name());
+            cell(sb, source(issue.sourceSpan()));
+            cell(sb, issue.message());
+            cell(sb, String.join("; ", issue.evidence()));
+            sb.append("</tr>\n");
+        }
+        return sb.append("</table>\n").toString();
+    }
+
+    private static void cell(StringBuilder sb, String value) {
+        sb.append("<td style=\"padding:6px;\">")
+                .append(escapeHtml(value))
+                .append("</td>");
+    }
+
+    private static String source(Optional<SourceSpan> span) {
+        return span.map(value -> value.source() + ":" + value.beginLine() + ":" + value.beginColumn())
+                .orElse("unknown");
     }
 
     private static void appendRow(StringBuilder sb, String name, String value) {

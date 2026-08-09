@@ -122,11 +122,11 @@
 ## 10. Reporting
 
 - [x] JSON report. (generated to `docs/bdi-report.json` by `ReportMain`)
-- [ ] HTML or CSV report.
+- [x] HTML or CSV report.
 - [x] Plugin/USE/Jason versions. (included in report metadata)
 - [ ] Model and mapping hashes.
 - [ ] Rule configuration.
-- [x] Issue evidence/source. (issue linking supported in rule model; export of evidence pending full report schema)
+- [x] Issue evidence/source. (HTML and JSON exports include rule, status, certainty, source, message, and evidence)
 - [ ] Suppressions included.
 
 ## 11. Testing
@@ -183,6 +183,21 @@
 - [ ] Release package tested on clean machine/profile.
 - [ ] Git tag `v1.0.0-thesis-rc`.
 - [ ] Backup source, data, report and slides.
+
+## Reporting evidence - 2026-08-09
+
+- `ReportData` now carries immutable `ConsistencyIssue` records while retaining
+  the existing summary constructor used by `ReportMain`.
+- `HtmlReportExporter` writes a metadata summary and an escaped consistency
+  issue table with rule ID, severity, status, certainty, source location,
+  message, and evidence. `ReportExporter` includes the same issue fields in
+  the JSON `issues` array.
+- `HtmlReportExporterTest` verifies source/evidence rendering and HTML escaping
+  for an injection-shaped message; `ReportExporterTest` verifies JSON issue
+  serialization and escaped quotes.
+- `mvn -pl use-bdi-plugin test` passed with 47 tests. No USE core source was
+  changed and the user's pre-existing `docs/agent/PROMPT_START_PROJECT.md`
+  change was not staged.
 
 ## Phase 0 evidence - 2026-08-03
 
