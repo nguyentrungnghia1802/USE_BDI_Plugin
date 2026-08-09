@@ -94,6 +94,10 @@ Domain <- không phụ thuộc UI/Jason/USE concrete classes
 - The existing Problems tab projects immutable `ConsistencyIssue` records.
   Applying a user-confirmed mapping refreshes the results immediately; it does
   not execute OCL or modify USE state.
+- `RuleConfiguration` and `RuleConfigurationRepository` provide a versioned,
+  dependency-free `rules.json` boundary. `ValidationOrchestrator` validates
+  configured IDs and evaluates only enabled rules; the default constructor
+  retains all standard rules.
 
 ## 5. OCL integration levels
 

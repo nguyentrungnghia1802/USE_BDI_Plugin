@@ -167,6 +167,20 @@ resolution task beyond the first mapping slice.
   The slice is read-only with respect to USE and has no OCL evaluation,
   suppression, message, belief, or state-transition rules.
 
+### Implemented rule configuration slice
+
+- `RuleConfiguration` is an immutable schema `0.1.0` value containing an
+  explicit set of enabled rule IDs. The tracked
+  `use-bdi-plugin/.bdi-plugin/rules.json` enables all 22 current catalog rules
+  and preserves the default behavior.
+- `RuleConfigurationRepository` reads/writes deterministic UTF-8 JSON without
+  adding a JSON dependency. It rejects unsupported fields, duplicate IDs,
+  malformed values, and unsupported schema versions.
+- `ValidationOrchestrator` validates enabled IDs against the actual supplied
+  rule set and filters before evaluation. Unknown IDs fail fast; the default
+  constructor still selects every standard rule. Configuration is injected at
+  the application boundary and does not access or mutate USE state.
+
 ### Implemented report export slice
 
 - `ReportData` accepts immutable `ConsistencyIssue` evidence in addition to the
@@ -182,8 +196,7 @@ resolution task beyond the first mapping slice.
   document whose bindings are sorted by their replacement key and whose
   optional expressions/evidence are explicitly delimited.
 - Exporters do not execute rules or read USE state. They serialize the supplied
-  analysis result only; rule configuration and suppression sections remain
-  separate reporting tasks.
+  analysis result only; suppression sections remain a separate reporting task.
 
 ## 6. Dependency packaging
 

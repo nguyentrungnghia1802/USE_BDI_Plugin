@@ -1,6 +1,7 @@
 package org.tzi.use.plugins.bdi.validation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
@@ -41,6 +42,29 @@ import org.tzi.use.plugins.bdi.use.UmlParameterRef;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
 
 class ValidationOrchestratorTest {
+    @Test
+    void evaluatesOnlyRulesEnabledByConfiguration() {
+        RuleConfiguration configuration = RuleConfiguration.of(List.of("ASL-001", "SIG-003"));
+        ValidationOrchestrator orchestrator = new ValidationOrchestrator(configuration);
+
+        List<ConsistencyIssue> issues = orchestrator.evaluate(mutantContext());
+        Set<String> issueIds = issues.stream().map(ConsistencyIssue::ruleId).collect(Collectors.toSet());
+
+        assertEquals(configuration, orchestrator.configuration());
+        assertEquals(Set.of("ASL-001", "SIG-003"),
+                orchestrator.rules().stream().map(ConsistencyRule::id).collect(Collectors.toSet()));
+        assertTrue(issueIds.stream().allMatch(configuration::isEnabled));
+        assertTrue(issueIds.contains("ASL-001"));
+        assertTrue(issueIds.contains("SIG-003"));
+    }
+
+    @Test
+    void rejectsConfigurationForUnknownRuleIds() {
+        RuleConfiguration configuration = RuleConfiguration.of(List.of("NOT-A-RULE"));
+
+        assertThrows(IllegalArgumentException.class, () -> new ValidationOrchestrator(configuration));
+    }
+
     @Test
     void evaluatesEveryFirstSliceRuleWithTraceableEvidence() {
         ValidationContext context = mutantContext();

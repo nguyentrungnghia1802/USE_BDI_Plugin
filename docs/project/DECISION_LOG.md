@@ -932,3 +932,58 @@ USE session.
 - `mvn -pl use-bdi-plugin clean test` passed with 49 tests, including stable
   mapping-fingerprint ordering, changed-binding detection, and JSON/HTML hash
   serialization. No USE core source was modified.
+
+## ADR-0017 - Versioned rule configuration and fail-fast selection
+
+- Status: Accepted
+- Date: 2026-08-09
+- Scope: Section 10 rule configuration
+
+### Context
+
+The static consistency catalog is implemented and the orchestrator currently
+executes every registered rule. The project design already reserves
+`.bdi-plugin/rules.json`, but there was no verified schema or way to select a
+subset without changing rule code. Configuration must remain outside the
+normalized IR and must not make rule execution depend on Swing or USE state.
+
+### Verified implementation evidence
+
+- `validation/RuleConfiguration.java` is an immutable schema `0.1.0` value with
+  a sorted enabled-rule ID set. It validates rule-ID shape and duplicate IDs.
+- `persistence/RuleConfigurationRepository.java` saves/loads UTF-8 JSON. The
+  codec reuses the existing dependency-free JSON parser and rejects unknown
+  fields, malformed arrays, duplicate IDs, and unsupported schema versions.
+- `validation/ValidationOrchestrator.java` validates configured IDs against the
+  actual supplied `ConsistencyRule` list before filtering. The no-argument
+  path constructs the full 22-rule standard configuration, preserving prior
+  behavior; unknown IDs fail rather than being silently ignored.
+- `.bdi-plugin/rules.json` records the all-enabled default configuration for
+  reproducible project setup.
+
+### Decision
+
+- Use an explicit `enabledRules` array in versioned `rules.json`. An empty
+  array means no rules are selected; omission is not treated as implicit
+  enablement.
+- Inject `RuleConfiguration` into `ValidationOrchestrator` at the application
+  boundary. Reject configuration IDs that do not exist in the supplied rule
+  set, while allowing the repository to parse future valid-shaped IDs before a
+  matching rule implementation is installed.
+- Keep project-file discovery separate from the domain and orchestrator. The
+  current explorer keeps the all-standard default because a verified project
+  context/config lookup API has not been established.
+
+### Consequences and limits
+
+- Reproducible experiments can disable selected checks without editing Java
+  code, and reports can later record the loaded configuration as metadata.
+- Configuration loading is available as an explicit repository service; UI
+  auto-discovery and report inclusion of the configuration remain follow-up
+  work. No USE core source or current USE state is changed.
+
+### Validation evidence
+
+- `mvn -pl use-bdi-plugin test` passed with 53 tests, including configuration
+  round-trip, malformed-file rejection, rule filtering, and unknown-ID
+  rejection. No USE core source was modified.

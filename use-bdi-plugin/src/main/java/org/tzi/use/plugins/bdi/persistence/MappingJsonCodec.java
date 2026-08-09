@@ -53,7 +53,7 @@ final class MappingJsonCodec {
     }
 
     static MappingDocument decode(String json) {
-        Object parsed = new Parser(json).parse();
+        Object parsed = parseJson(json);
         Map<String, Object> root = object(parsed, "root");
         String schemaVersion = string(root, "schemaVersion");
         String bdiMetamodelVersion = string(root, "bdiMetamodelVersion");
@@ -74,6 +74,10 @@ final class MappingJsonCodec {
         return new MappingDocument(schemaVersion, bdiMetamodelVersion, useFingerprint, bindings);
     }
 
+    static Object parseJson(String json) {
+        return new Parser(json).parse();
+    }
+
     private static void field(StringBuilder json, String name, String value, boolean comma) {
         json.append("  ").append(quote(name)).append(':').append(value);
         if (comma) {
@@ -82,7 +86,7 @@ final class MappingJsonCodec {
         json.append('\n');
     }
 
-    private static String quote(String value) {
+    static String quote(String value) {
         StringBuilder quoted = new StringBuilder(value.length() + 2).append('"');
         for (int index = 0; index < value.length(); index++) {
             char character = value.charAt(index);

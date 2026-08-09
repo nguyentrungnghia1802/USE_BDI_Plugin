@@ -1,0 +1,27 @@
+{
+  "schemaVersion":"0.1.0",
+  "enabledRules": [
+    "ASL-001",
+    "ASL-002",
+    "BDI-001",
+    "BDI-002",
+    "BDI-003",
+    "BDI-004",
+    "BEL-001",
+    "CTX-001",
+    "MAP-001",
+    "MAP-002",
+    "MAP-003",
+    "MSG-001",
+    "OCL-001",
+    "OCL-002",
+    "OCL-003",
+    "OCL-004",
+    "OWN-001",
+    "REF-001",
+    "REF-002",
+    "SIG-001",
+    "SIG-002",
+    "SIG-003"
+  ]
+}

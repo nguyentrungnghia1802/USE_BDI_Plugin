@@ -71,6 +71,12 @@ final class StandardConsistencyRules {
                 rule("OCL-004", RulePhase.BOUNDED_SIMULATION, StandardConsistencyRules::skippedBoundedEffects));
     }
 
+    static Set<String> ids() {
+        return create().stream()
+                .map(ConsistencyRule::id)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
     private static List<ConsistencyIssue> parseErrors(ValidationContext context) {
         return context.diagnostics().stream()
                 .filter(diagnostic -> diagnostic.code().equals(AslDiagnostic.SYNTAX_ERROR_CODE))

@@ -125,7 +125,7 @@
 - [x] HTML or CSV report.
 - [x] Plugin/USE/Jason versions. (included in report metadata)
 - [x] Model and mapping hashes. (SHA-256 identities are carried by report metadata)
-- [ ] Rule configuration.
+- [x] Rule configuration. (versioned `rules.json` filters enabled rule IDs)
 - [x] Issue evidence/source. (HTML and JSON exports include rule, status, certainty, source, message, and evidence)
 - [ ] Suppressions included.
 
@@ -218,6 +218,24 @@
 - The demo `ReportMain` still emits null hashes until a live model/mapping
   analysis pipeline supplies the computed values; that integration is not
   claimed by this checklist item.
+
+## Rule configuration evidence - 2026-08-09
+
+- `use-bdi-plugin/.bdi-plugin/rules.json` is a tracked schema `0.1.0` example
+  enabling all 22 standard rule IDs, so the default behavior remains unchanged.
+- `RuleConfiguration` stores an immutable sorted enabled-rule set.
+  `RuleConfigurationRepository` persists deterministic UTF-8 JSON and rejects
+  unknown fields, duplicate IDs, malformed values, and unsupported schema
+  versions.
+- `ValidationOrchestrator` accepts the configuration, rejects IDs absent from
+  the supplied rule set, and evaluates only enabled rules. Its no-argument
+  constructor still enables every standard rule.
+- `RuleConfigurationRepositoryTest` covers round-trip ordering and malformed
+  configuration; `ValidationOrchestratorTest` covers filtering and unknown-ID
+  rejection. `mvn -pl use-bdi-plugin test` passed with 53 tests.
+- Automatic discovery of `rules.json` from a project context is not claimed;
+  the repository still lacks the authoritative `00_PROJECT_CONTEXT.md` and
+  the application can inject a loaded configuration explicitly.
 
 ## Phase 0 evidence - 2026-08-03
 
