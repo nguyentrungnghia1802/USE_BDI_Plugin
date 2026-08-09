@@ -1,8 +1,7 @@
 # State Isolation and Audit Guarantees
 
 Status: canonical safety and evidence matrix; multi-tenancy is not applicable
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Scope
 

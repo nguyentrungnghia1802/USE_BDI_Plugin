@@ -1374,7 +1374,7 @@ No parser, plugin lifecycle, or runtime USE state policy changes.
   codebase, testing, operations, risks, synchronization, state safety, and
   traceability. Existing architecture/design/ADR/evidence files remain
   specialized records rather than competing sources of truth.
-- The audit records five current gaps without changing runtime architecture:
+- At that audit, five gaps were recorded without changing runtime architecture:
   absolute source identity, no GUI auto-load for rules/suppressions, no live
   GUI report export, no host-state subscription for an open Explorer, and
   mapping JSON's incomplete unknown-field rejection.
@@ -1390,3 +1390,66 @@ No parser, plugin lifecycle, or runtime USE state policy changes.
 - Root `mvn --batch-mode --no-transfer-progress clean verify` then passed with
   1 `use-core` integration test, 121 `use-gui` integration tests, 75 plugin
   tests, and the assembled distribution.
+
+## ADR-0020 - Active-model project configuration discovery
+
+- Status: Accepted
+- Date: 2026-08-09
+- Scope: GUI composition of existing rule and suppression repositories
+
+### Context
+
+ADR-0017 and ADR-0018 established versioned repositories but intentionally
+left project discovery open. The normal GUI therefore always created the
+all-rule/no-suppression orchestrator, making persisted configuration ineffective
+in the primary workflow. The checked USE API exposes the current model source
+through `MSystem.model().filename()` and documents that it may be empty for an
+in-memory model.
+
+### Decision
+
+- Define the parent of a non-blank active `.use` model filename as the BDI
+  project root for this workflow.
+- Discover only `.bdi-plugin/rules.json` and
+  `.bdi-plugin/suppressions.json` below that root. Do not use process CWD as a
+  fallback because USE may be launched from an unrelated directory.
+- Missing files select standard rules and an empty suppression list, with the
+  source of each choice visible in Explorer status.
+- Reject malformed files, unsupported versions, and unknown rule IDs before
+  opening the Explorer; show the load error instead of silently running a
+  different configuration.
+- Compose immutable configuration into `ValidationOrchestrator`. Do not mutate
+  the USE model/state and do not change the source-identity policy in this ADR.
+
+### Consequences and limits
+
+- FR-VAL-006 and the GUI configuration workflow are implemented end to end.
+- Project configuration follows the active model directory; models built only
+  in memory use explicit defaults.
+- Portable source IDs, live report export, and host snapshot subscription
+  remain separate open decisions.
+
+### Validation evidence
+
+- `BdiProjectConfigurationLoaderTest` covers project files, missing defaults,
+  malformed JSON, unknown rules, and unnamed models.
+- `BdiExplorerViewTest` verifies that a one-rule project configuration removes
+  unrelated mapping findings and exposes project/default origins in status.
+- Focused action/loader/Explorer/documentation tests passed with 13 tests. The
+  plugin reactor passed with 82 tests. An isolated current-working-tree root
+  `clean verify` then passed with 1 `use-core` integration test, 121 `use-gui`
+  integration tests, 82 plugin tests (204 total), and the assembled
+  distribution. The isolated run avoided local Java language-server writes and
+  locks in Maven `target` directories observed during in-place retries.
+
+## Documentation sync-tax repair evidence - 2026-08-09
+
+- Canonical documents previously duplicated one date and commit hash across 13
+  files, while the index also named a deleted feature branch. Every subsequent
+  commit made that metadata stale without changing the documented behavior.
+- Canonical files now use a stable source-backed verification marker. Exact
+  date/commit provenance comes from each file's Git history and the CI run for
+  that commit.
+- `DocumentationContractTest` rejects reintroduction of volatile
+  `Last verified` and `Code baseline` metadata while retaining inventory,
+  local-link, version, menu, schema, script, and ignore-policy checks.

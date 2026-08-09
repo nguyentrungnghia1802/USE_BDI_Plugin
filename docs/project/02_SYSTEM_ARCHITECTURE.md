@@ -1,8 +1,7 @@
 # System Architecture
 
 Status: canonical implemented architecture
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Architecture summary
 
@@ -151,11 +150,11 @@ notices remain embedded.
 | OCL compile/evaluation failure | Return non-PASS status and evidence |
 | Bounded effect failure | Restore state and report result |
 | Malformed persisted JSON | Reject load; keep current in-memory document |
+| Malformed/unknown-rule project configuration | Reject before opening Explorer and show the configuration error |
 | Report write failure | Surface I/O failure and leave analysis state unchanged |
 
 ## 11. Architecture limitations
 
-- GUI views do not auto-load `rules.json` or `suppressions.json`.
 - The current view does not subscribe to later USE snapshot/model changes.
 - Source IDs and source fingerprints include normalized absolute paths.
 - `ReportMain` is a serializer smoke/demo, not a live GUI-analysis exporter.

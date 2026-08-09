@@ -1,8 +1,7 @@
 # Product Requirements
 
 Status: canonical requirement baseline synchronized with implementation
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Status terminology
 
@@ -63,7 +62,7 @@ implemented.
 | FR-VAL-003 | Return immutable issues with severity, status, certainty, source, UML target, evidence, and suggested fix | Implemented |
 | FR-VAL-004 | Enable a configured subset of known rules and fail fast on unknown IDs | Implemented |
 | FR-VAL-005 | Persist and apply source-fingerprint suppressions with a reason | Implemented |
-| FR-VAL-006 | Auto-load rules and suppressions into each GUI project/session | Planned |
+| FR-VAL-006 | Auto-load rules and suppressions from `.bdi-plugin` beside the active `.use` model | Implemented |
 | FR-VAL-007 | Refresh Problems after import and confirmed mapping changes | Implemented |
 | FR-VAL-008 | Never silently classify an unavailable semantic fact as PASS | Implemented |
 
@@ -143,6 +142,7 @@ implemented.
     third-party notices.
 11. Root verification completes all module and integration tests.
 12. Unknown/unsupported behavior remains visible in docs and reports.
+13. Missing project configuration uses visible defaults; malformed or unknown-rule configuration prevents the Explorer from opening with an explicit error.
 
 ## 5. Non-functional requirements
 

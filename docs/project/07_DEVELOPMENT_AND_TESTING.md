@@ -1,8 +1,7 @@
 # Development and Testing
 
 Status: canonical build, test, and definition-of-done guide
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Prerequisites
 
@@ -121,7 +120,11 @@ script marker proves only its bounded checks.
    and object diagrams.
 6. Save/load a mapping to a temporary path.
 7. Confirm a mapping edit refreshes Problems.
-8. Restart USE after changing the plugin JAR.
+8. Place a restricted `.bdi-plugin/rules.json` beside the loaded `.use` model,
+   reopen the import action, and verify the status identifies project rules.
+9. Corrupt the configuration in a disposable copy and verify the Explorer is
+   not opened and the configuration error is shown.
+10. Restart USE after changing the plugin JAR.
 
 Use [the user guide](USER_GUIDE.md) for exact clicks.
 

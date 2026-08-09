@@ -13,12 +13,10 @@
 
 1. Make project-root and source identity handling portable so confirmed mapping
    documents can be checked in and replayed on a clean machine.
-2. Auto-load rule and suppression configuration through an explicit project
-   context and surface the active configuration in the GUI.
-3. Add a live GUI report action composed from the current import snapshot,
+2. Add a live GUI report action composed from the current import snapshot,
    mapping, USE fingerprint, rule configuration, and suppressions.
-4. Add an explicit refresh/subscription contract for USE model/snapshot changes.
-5. Integrate the report/evaluation commands into a CI job that records Java,
+3. Add an explicit refresh/subscription contract for USE model/snapshot changes.
+4. Integrate the report/evaluation commands into a CI job that records Java,
    Maven, USE, Jason, and host metadata.
 
 ## Evaluation

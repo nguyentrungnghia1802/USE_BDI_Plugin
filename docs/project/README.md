@@ -1,8 +1,7 @@
 # USE BDI Plugin Project Documentation
 
 Status: canonical documentation index
-Last verified: 2026-08-09
-Code baseline: `c1b11b41` on `thesis/snapshot-ocl-slice`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 This directory is the source of truth for the thesis extension that imports,
 maps, and checks consistency between AgentSpeak BDI models and USE UML/OCL
@@ -66,6 +65,6 @@ simulation, JSON/HTML exporters, and the Auction mutation evidence bundle.
 
 The release is not final while the thesis release tag and complete external
 source/data/report/slides backup remain open. House Building is optional. The
-GUI does not yet auto-discover rule/suppression configuration or export the
-current live analysis in one click; those limitations are explicit in the
-requirements and risk register.
+GUI auto-loads rule/suppression configuration beside the active `.use` model,
+but does not yet export the current live analysis in one click; remaining
+limitations are explicit in the requirements and risk register.

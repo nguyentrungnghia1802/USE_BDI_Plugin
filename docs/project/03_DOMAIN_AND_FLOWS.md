@@ -1,8 +1,7 @@
 # Domain and Flows
 
 Status: canonical domain and workflow specification
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Domain model
 
@@ -112,9 +111,11 @@ without partially replacing the active document.
    a `SuppressionService`.
 6. Project issues into Problems or pass them to an exporter.
 
-The default GUI constructs `ValidationOrchestrator()` with all standard rules
-and no project-file auto-loading. Persistence support exists but is not an
-implicit GUI lifecycle.
+When a USE model is loaded, the GUI resolves its parent directory as the
+project root and loads optional `.bdi-plugin/rules.json` and
+`.bdi-plugin/suppressions.json` before opening the Explorer. Missing files use
+the all-rule/empty-suppression defaults and the status bar names their source;
+malformed files or unknown rule IDs fail before analysis starts.
 
 ## 8. Issue lifecycle
 

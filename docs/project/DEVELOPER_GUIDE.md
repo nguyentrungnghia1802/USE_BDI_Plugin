@@ -13,6 +13,8 @@ The canonical specification and source-of-truth precedence are indexed in
 `use-bdi-plugin` is an in-repository Maven module. Its important boundaries are:
 
 - `importer/` - Jason 3.3.0 adapter and Java-only import result/diagnostics.
+- `application/` - import orchestration and active-model project configuration
+  discovery/composition.
 - `model/ir/` - immutable normalized AgentSpeak IR and source spans.
 - `index/` - derived BDI signatures, references, and call sites.
 - `model/mapping/` and `persistence/` - mapping domain values and versioned
@@ -118,13 +120,20 @@ The release-wide scope and exact license evidence are in
 `docs/project/THIRD_PARTY_NOTICES.md`. Keep `COPYING` in the assembled USE
 distribution.
 
+## Project Configuration Boundary
+
+`ImportBdiAction` passes `MSystem.model().filename()` to
+`BdiProjectConfigurationLoader`. The loader uses only the model file's parent
+directory and reads `.bdi-plugin/rules.json` plus `suppressions.json` there.
+Missing files are defaults; malformed or unknown-rule configuration is a
+blocking, user-visible error. Keep discovery outside domain rules and do not
+introduce a CWD fallback, because USE can be launched from an unrelated folder.
+
 ## Known Limits
 
 - Mapping suggestions are explainable candidates, not semantic proof.
 - Absolute source IDs make generated mapping/report artifacts checkout
   specific.
-- `rules.json` and `suppressions.json` repositories are implemented, but the
-  normal GUI does not auto-load them from a project context.
 - `ReportMain` is a serializer demonstration; the GUI has no live report export
   action yet.
 - The mapping decoder does not currently reject every unknown JSON field.

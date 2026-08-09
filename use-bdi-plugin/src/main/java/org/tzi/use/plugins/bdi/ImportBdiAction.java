@@ -1,17 +1,22 @@
 package org.tzi.use.plugins.bdi;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.tzi.use.gui.main.ViewFrame;
+import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
+import org.tzi.use.plugins.bdi.application.BdiProjectConfigurationLoader;
 import org.tzi.use.runtime.gui.IPluginAction;
 import org.tzi.use.runtime.gui.IPluginActionDelegate;
 import org.tzi.use.plugins.bdi.ui.BdiExplorerView;
+import org.tzi.use.uml.sys.MSystem;
 
 /** Opens the BDI explorer and starts a multi-file AgentSpeak import. */
 public final class ImportBdiAction implements IPluginActionDelegate {
@@ -49,14 +54,32 @@ public final class ImportBdiAction implements IPluginActionDelegate {
     }
 
     static void openView(IPluginAction pluginAction, List<Path> sources) {
-        BdiExplorerView view = pluginAction.getSession().hasSystem()
-                ? new BdiExplorerView(pluginAction.getSession().system())
-                : new BdiExplorerView();
+        BdiExplorerView view;
+        try {
+            if (pluginAction.getSession().hasSystem()) {
+                var system = pluginAction.getSession().system();
+                BdiProjectConfiguration configuration = loadProjectConfiguration(system);
+                view = new BdiExplorerView(system, configuration);
+            } else {
+                view = new BdiExplorerView();
+            }
+        } catch (IOException error) {
+            JOptionPane.showMessageDialog(
+                    pluginAction.getParent(),
+                    error.getMessage(),
+                    "BDI project configuration error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         ViewFrame frame = new ViewFrame("BDI Explorer", view, "New.gif");
         frame.getContentPane().setLayout(new BorderLayout());
         frame.getContentPane().add(view, BorderLayout.CENTER);
         pluginAction.getParent().addNewViewFrame(frame);
         frame.setSize(920, 580);
         view.importFiles(sources);
+    }
+
+    static BdiProjectConfiguration loadProjectConfiguration(MSystem system) throws IOException {
+        return new BdiProjectConfigurationLoader().loadModel(system.model().filename());
     }
 }

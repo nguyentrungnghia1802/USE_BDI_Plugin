@@ -18,10 +18,12 @@ import javax.swing.tree.TreeModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
+import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
 import org.tzi.use.plugins.bdi.model.mapping.MappingKind;
 import org.tzi.use.plugins.bdi.use.UmlClassRef;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
+import org.tzi.use.plugins.bdi.validation.RuleConfiguration;
 
 class BdiExplorerViewTest {
     @Test
@@ -126,6 +128,39 @@ class BdiExplorerViewTest {
         assertTrue(view.mappingForTest().document().bindings().stream()
                 .anyMatch(binding -> binding.kind() == MappingKind.AGENT_CLASS));
         assertTrue(!view.hasProblemCodeForTest("MAP-001"));
+    }
+
+    @Test
+    void appliesProjectRuleConfigurationAndShowsItsSource() throws Exception {
+        UseModelSnapshot useModel = new UseModelSnapshot(
+                "fixture",
+                "fixture.use",
+                List.of(new UmlClassRef("Minimal", false, List.of())),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                "fingerprint");
+        BdiProjectConfiguration configuration = new BdiProjectConfiguration(
+                java.util.Optional.of(Path.of(".")),
+                RuleConfiguration.of(List.of("ASL-001")),
+                List.of(),
+                true,
+                false);
+        BdiExplorerView view = new BdiExplorerView(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                useModel,
+                configuration);
+
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+
+        assertTrue(!view.hasProblemCodeForTest("MAP-001"));
+        assertTrue(view.statusForTest().getText().contains("1 rule(s) [project]"));
+        assertTrue(view.statusForTest().getText().contains("0 suppression(s) [default]"));
     }
 
     private static void waitForImport(BdiExplorerView view) throws Exception {

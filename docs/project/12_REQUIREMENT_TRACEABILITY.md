@@ -1,8 +1,7 @@
 # Requirement Traceability Matrix
 
 Status: canonical implementation and test trace
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 This matrix maps requirement groups to executable source, tests, and detailed
 documentation. It intentionally traces groups instead of every Java record.
@@ -21,7 +20,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-VAL-001..003 | `StandardConsistencyRules`, `ValidationOrchestrator`, issue model | orchestrator/rule/catalog tests | rule catalog, ADR-0014 |
 | FR-VAL-004 | `RuleConfiguration`, repository/codec | rule configuration and orchestrator tests | `04`, `05`, ADR-0017 |
 | FR-VAL-005 | `Suppression`, service/repository/codec | suppression repository/service/report tests | `04`, `05`, ADR-0018 |
-| FR-VAL-006 | GUI composition in `BdiExplorerView` | absence bounded by architecture/doc contract test | `01`, `02`, `09` |
+| FR-VAL-006 | `BdiProjectConfigurationLoader`, `ImportBdiAction`, `BdiExplorerView` | loader and Explorer configuration tests | `01`, `02`, ADR-0020 |
 | FR-VAL-007..008 | `BdiExplorerView`, problem collector/panel | explorer/problem tests | `03`, user guide |
 | FR-OCL-001..006 | `UseSnapshotOclEvaluator`, snapshot result/status types | `UseSnapshotOclEvaluatorTest`, Auction OCL mutant test | `02`, `03`, `11`, ADR-0014 |
 | FR-OCL-007 | no implementation claimed | Optional checklist status | `00`, `01`, future work |
@@ -66,7 +65,6 @@ documentation. It intentionally traces groups instead of every Java record.
 
 ## 4. Known untraced end-to-end gaps
 
-- Project-context discovery and automatic GUI loading of rules/suppressions.
 - One-click export of the current live GUI validation state.
 - Portable relative source identity and migration of existing mapping/
   suppression artifacts.

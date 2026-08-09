@@ -66,6 +66,7 @@
 - [x] Problems table.
 - [x] Filtering/grouping.
 - [x] Re-import changed files.
+- [x] Auto-load project rules/suppressions beside the active `.use` model.
 
 ## 6. USE adapter
 
@@ -183,6 +184,32 @@
 - [x] Release package tested on clean machine/profile. (clean-clone package from committed `594b2b07` passed with `CLEAN_CLONE_REPRODUCIBILITY_OK`)
 - [ ] Git tag `v1.0.0-thesis-rc`.
 - [ ] Backup source, data, report and slides.
+
+## Documentation sync-tax and GUI project configuration - 2026-08-09
+
+- [x] Replaced duplicated canonical verification dates, branch names, and
+  commit hashes with one stable source-backed marker; file Git history and CI
+  own volatile provenance.
+- [x] Updated `DocumentationContractTest` to reject volatile `Last verified`
+  and `Code baseline` metadata in canonical documents.
+- [x] Added `BdiProjectConfigurationLoader` and immutable composition rooted at
+  the parent of the active `.use` model.
+- [x] Missing project files use visible standard-rule/empty-suppression
+  defaults; malformed files, unsupported schema versions, and unknown rule IDs
+  fail before the Explorer opens.
+- [x] `BdiExplorerView` evaluates and refreshes Problems with the loaded rule
+  set/suppressions and shows project/default origins in its status.
+- Focused evidence: `BdiProjectConfigurationLoaderTest`,
+  `BdiExplorerViewTest`, `ImportBdiActionTest`, and
+  `DocumentationContractTest`.
+- Focused command passed with 13 tests; the complete plugin reactor passed with
+  82 tests and no failures.
+- An isolated current-working-tree copy passed root
+  `mvn --batch-mode --no-transfer-progress clean verify` with 1 `use-core`
+  integration test, 121 `use-gui` integration tests, 82 plugin tests, and a
+  successful `use-assembly` package (204 tests total). Isolation avoided the
+  local Java language server concurrently replacing/locking Maven `target`
+  outputs during in-place verification.
 
 ## Thesis evidence and install-guide bundle - 2026-08-09
 

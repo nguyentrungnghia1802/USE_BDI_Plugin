@@ -1,8 +1,7 @@
 # Project Context
 
 Status: canonical current-state specification
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Research problem
 
@@ -131,7 +130,7 @@ Optional project artifacts:
 | Mapping suggestions/editor/save/load | Implemented | Source IDs remain checkout-specific |
 | Static and snapshot consistency rules | Implemented | 22 configured rule IDs |
 | Rule/suppression JSON repositories | Implemented | Versioned persistence and validation tests |
-| Automatic GUI project configuration | Planned | GUI does not auto-load rule/suppression files |
+| Automatic GUI project configuration | Implemented | Loads `.bdi-plugin` beside the active `.use` model; missing files use visible defaults |
 | JSON/HTML report exporters | Implemented | Real reports are pipeline/test driven |
 | Live GUI report export | Planned | `ReportMain` is metadata/demo output, not live analysis |
 | Auction case study and four mutants | Implemented | Scoped evidence only |

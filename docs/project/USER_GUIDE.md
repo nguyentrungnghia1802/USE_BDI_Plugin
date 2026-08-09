@@ -18,6 +18,20 @@ The checked-in Auction files are under
 - `auctioneer.asl` - auctioneer AgentSpeak source.
 - `bidder.asl` - bidder AgentSpeak source.
 
+Optional project configuration belongs beside the `.use` file:
+
+```text
+auction-project/
+  Auction.use
+  .bdi-plugin/
+    rules.json
+    suppressions.json
+```
+
+The Explorer loads these files when it opens. If either file is absent, its
+status text identifies the standard-rule or empty-suppression default. Invalid
+configuration is shown as an error and the Explorer is not opened.
+
 ## Build And Start USE
 
 From the repository root, build the assembled distribution:
@@ -95,8 +109,6 @@ The tracked screenshots and their exact UI path are indexed in
 
 ## Current Workflow Limits
 
-- The GUI uses all standard rules by default; it does not automatically load
-  `.bdi-plugin/rules.json` or `.bdi-plugin/suppressions.json`.
 - Mapping files can be selected with Save/Load, but current source IDs contain
   absolute paths and may become stale after moving the checkout.
 - There is no one-click export of the current live Problems state. The Auction

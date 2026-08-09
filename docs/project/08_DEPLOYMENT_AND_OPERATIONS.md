@@ -1,8 +1,7 @@
 # Deployment and Operations
 
 Status: canonical local distribution and release operations guide
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Environment model
 
@@ -20,13 +19,16 @@ staging, and production servers. Operational environments are:
 
 No credentials or secrets are required. Configuration artifacts are local:
 
-- `rules.json` selects enabled rules when explicitly loaded by an application
-  composition;
-- `suppressions.json` records reviewed suppressions when explicitly loaded;
+- `.bdi-plugin/rules.json` beside the active `.use` model selects enabled
+  rules;
+- `.bdi-plugin/suppressions.json` beside the active `.use` model records
+  reviewed suppressions;
 - `.bdimap.json` contains user-confirmed mapping bindings;
 - `-H=<use-home>` tells USE where to load libraries/plugins.
 
-The current GUI does not auto-discover the two `.bdi-plugin` project files.
+Missing project files use visible all-rule/empty-suppression defaults. Invalid
+JSON, unsupported versions, or unknown configured rule IDs are shown as an
+error and prevent the Explorer from opening.
 Users choose mapping files through the Mapping tab.
 
 ## 3. Build and package sequence

@@ -28,6 +28,7 @@ import org.tzi.use.gui.views.View;
 import org.tzi.use.plugins.bdi.ImportBdiAction;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
 import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
+import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
 import org.tzi.use.plugins.bdi.index.BdiIndex;
 import org.tzi.use.plugins.bdi.importer.AslDiagnostic;
@@ -67,6 +68,7 @@ public final class BdiExplorerView extends JPanel implements View {
     private final MappingEditorPanel mapping;
     private final MappingSuggestionService mappingSuggestionService;
     private final ValidationOrchestrator validationOrchestrator;
+    private final String configurationSummary;
     private final Optional<UseModelSnapshot> useModel;
     private final Optional<SnapshotOclEvaluator> oclEvaluator;
     private final JButton reimportButton;
@@ -76,11 +78,13 @@ public final class BdiExplorerView extends JPanel implements View {
     private long importGeneration;
 
     public BdiExplorerView() {
-        this(new BdiImportService(), new BdiSourceTracker(), Optional.empty(), Optional.empty());
+        this(new BdiImportService(), new BdiSourceTracker(), Optional.empty(), Optional.empty(),
+                BdiProjectConfiguration.defaults());
     }
 
     public BdiExplorerView(UseModelSnapshot useModel) {
-        this(new BdiImportService(), new BdiSourceTracker(), Optional.of(Objects.requireNonNull(useModel, "useModel")), Optional.empty());
+        this(new BdiImportService(), new BdiSourceTracker(), Optional.of(Objects.requireNonNull(useModel, "useModel")), Optional.empty(),
+                BdiProjectConfiguration.defaults());
     }
 
     public BdiExplorerView(MSystem system) {
@@ -88,36 +92,76 @@ public final class BdiExplorerView extends JPanel implements View {
                 new BdiImportService(),
                 new BdiSourceTracker(),
                 Optional.of(new UseUmlModelFacade().snapshot(Objects.requireNonNull(system, "system"))),
-                Optional.of(new UseSnapshotOclEvaluator(system)));
+                Optional.of(new UseSnapshotOclEvaluator(system)),
+                BdiProjectConfiguration.defaults());
+    }
+
+    public BdiExplorerView(MSystem system, BdiProjectConfiguration configuration) {
+        this(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                Optional.of(new UseUmlModelFacade().snapshot(Objects.requireNonNull(system, "system"))),
+                Optional.of(new UseSnapshotOclEvaluator(system)),
+                Objects.requireNonNull(configuration, "configuration"));
     }
 
     BdiExplorerView(BdiImportService importService) {
-        this(importService, new BdiSourceTracker(), Optional.empty(), Optional.empty());
+        this(importService, new BdiSourceTracker(), Optional.empty(), Optional.empty(),
+                BdiProjectConfiguration.defaults());
     }
 
     BdiExplorerView(BdiImportService importService, BdiSourceTracker sourceTracker) {
-        this(importService, sourceTracker, Optional.empty(), Optional.empty());
+        this(importService, sourceTracker, Optional.empty(), Optional.empty(),
+                BdiProjectConfiguration.defaults());
     }
 
     BdiExplorerView(
             BdiImportService importService,
             BdiSourceTracker sourceTracker,
             UseModelSnapshot useModel) {
-        this(importService, sourceTracker, Optional.of(Objects.requireNonNull(useModel, "useModel")), Optional.empty());
+        this(importService, sourceTracker, Optional.of(Objects.requireNonNull(useModel, "useModel")), Optional.empty(),
+                BdiProjectConfiguration.defaults());
+    }
+
+    BdiExplorerView(
+            BdiImportService importService,
+            BdiSourceTracker sourceTracker,
+            UseModelSnapshot useModel,
+            BdiProjectConfiguration configuration) {
+        this(importService, sourceTracker, Optional.of(Objects.requireNonNull(useModel, "useModel")), Optional.empty(),
+                Objects.requireNonNull(configuration, "configuration"));
     }
 
     private BdiExplorerView(
             BdiImportService importService,
             BdiSourceTracker sourceTracker,
             Optional<UseModelSnapshot> useModel,
-            Optional<SnapshotOclEvaluator> oclEvaluator) {
+            Optional<SnapshotOclEvaluator> oclEvaluator,
+            BdiProjectConfiguration configuration) {
+        this(
+                importService,
+                sourceTracker,
+                useModel,
+                oclEvaluator,
+                Objects.requireNonNull(configuration, "configuration").newOrchestrator(),
+                configuration.summary());
+    }
+
+    private BdiExplorerView(
+            BdiImportService importService,
+            BdiSourceTracker sourceTracker,
+            Optional<UseModelSnapshot> useModel,
+            Optional<SnapshotOclEvaluator> oclEvaluator,
+            ValidationOrchestrator validationOrchestrator,
+            String configurationSummary) {
         super(new BorderLayout(6, 6));
         this.importService = Objects.requireNonNull(importService, "importService");
         this.sourceTracker = Objects.requireNonNull(sourceTracker, "sourceTracker");
         this.useModel = Objects.requireNonNull(useModel, "useModel");
         this.oclEvaluator = Objects.requireNonNull(oclEvaluator, "oclEvaluator");
         this.mappingSuggestionService = new MappingSuggestionService();
-        this.validationOrchestrator = new ValidationOrchestrator();
+        this.validationOrchestrator = Objects.requireNonNull(validationOrchestrator, "validationOrchestrator");
+        this.configurationSummary = Objects.requireNonNull(configurationSummary, "configurationSummary");
         this.snapshot = new BdiImportSnapshot(List.of(), List.of(), BdiIndex.empty());
 
         JButton importButton = new JButton("Import .asl...");
@@ -127,7 +171,7 @@ public final class BdiExplorerView extends JPanel implements View {
         reimportButton.setToolTipText("Re-import all selected files after a source change");
         reimportButton.setEnabled(false);
         reimportButton.addActionListener(event -> reimportChangedFiles());
-        status = new JLabel("No AgentSpeak source imported");
+        status = new JLabel("No AgentSpeak source imported; " + configurationSummary);
         JPanel buttons = new JPanel();
         buttons.add(importButton);
         buttons.add(reimportButton);
@@ -260,6 +304,7 @@ public final class BdiExplorerView extends JPanel implements View {
             if (problemCount > 0) {
                 message += ", " + problemCount + " problem(s)";
             }
+            message += "; " + configurationSummary;
             status.setText(message);
             detail.setText("Select a BDI node to inspect its details and source span.");
         };

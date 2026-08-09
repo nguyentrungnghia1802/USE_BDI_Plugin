@@ -1,8 +1,7 @@
 # Decisions and Risks
 
 Status: canonical decision index and active risk register
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 The full accepted decision text and evidence remain in
 [DECISION_LOG.md](DECISION_LOG.md). This document provides current ownership,
@@ -41,13 +40,13 @@ architecture require ADR review.
 | ADR-0017 | Use versioned rule configuration and fail fast on unknown IDs |
 | ADR-0018 | Use source-fingerprint suppressions and include them in reports |
 | ADR-0019 | Return invalid-spec results only in integration-test mode; preserve normal CLI exit |
+| ADR-0020 | Discover project configuration beside the active `.use` model and fail visibly on invalid input |
 
 ## 3. Open decisions
 
 | ID | Decision needed | Trigger | Safe current behavior |
 | --- | --- | --- | --- |
 | OD-001 | Relative project-root source identity and migration | Before portable checked-in mappings/suppressions | Keep absolute identity and report staleness |
-| OD-002 | GUI project-context auto-load for rules/suppressions | Before claiming project configuration end-to-end | Use all-rule default; explicit library loading only |
 | OD-003 | Live GUI analysis report/export action | Before user-facing report acceptance | Use case-study/application composition |
 | OD-004 | Closed unknown-field policy for mapping JSON | Before schema evolution | Validate required/current values; document leniency |
 | OD-005 | USE snapshot refresh/subscription lifecycle | Before long-lived view consistency claim | Re-open/re-import view for a new projection |
@@ -62,7 +61,6 @@ supporting class alone.
 | ID | Debt | Impact | Control/next action |
 | --- | --- | --- | --- |
 | TD-001 | Absolute source IDs in mappings, suppressions, reports | Checkout relocation causes staleness | Design project-root identity migration (OD-001) |
-| TD-002 | GUI does not auto-load rule/suppression files | Persisted configuration is not end-to-end in normal UI | Add explicit project context and UI state (OD-002) |
 | TD-003 | No live GUI report export | User may confuse `ReportMain` with real analysis | Add export action composed from current snapshot (OD-003) |
 | TD-004 | Mapping codec permits unknown fields | Typos may be ignored | Add closed-field validation or versioned extension policy |
 | TD-005 | View captures a USE projection without host change subscription | Long-lived view may analyze an older snapshot | Add refresh/subscription contract or reopen guidance |
@@ -81,7 +79,7 @@ supporting class alone.
 | R-004 | Analysis corrupts current USE state | Low | Critical | read-only facade, variation/finally, fingerprint tests | Release-blocking if observed |
 | R-005 | OCL information gap becomes false PASS | Medium | High | PASS/FAIL/UNKNOWN contract and evidence | Controlled/residual |
 | R-006 | GUI displays stale USE projection | Medium | Medium | view/import lifecycle guidance | Open (OD-005) |
-| R-007 | Rule/config docs drift from source registry | Medium | High | catalog and documentation contract tests | Controlled |
+| R-007 | Rule/config docs drift from source registry | Medium | High | catalog, project-loader, and documentation contract tests | Controlled |
 | R-008 | Shaded dependencies/license evidence incomplete | Low | High | package smoke, runtime tree, embedded notices | Controlled |
 | R-009 | Report output is mistaken for live analysis | Medium | High | explicit `ReportMain` limitation | Open (OD-003) |
 | R-010 | Mapping JSON typo is silently tolerated | Medium | Medium | required/domain validation and documented debt | Open (OD-004) |
@@ -89,7 +87,7 @@ supporting class alone.
 | R-012 | GUI smoke is skipped on headless CI | Medium | Medium | separate desktop smoke marker/manual acceptance | Open residual |
 | R-013 | Java launcher uses Java 8 while Maven uses 21 | Medium | Medium | verify both commands, set launcher JDK | Open environment risk |
 | R-014 | External thesis artifacts are omitted from backup | High | High | manifest missing paths and open release gate | Open (OD-006) |
-| R-015 | Documentation drifts after agent instructions are untracked | Medium | High | canonical sync checklist/test and PR discipline | Controlled/residual |
+| R-015 | Documentation drifts after agent instructions are untracked | Medium | High | stable verification marker, Git history, canonical sync tests, and PR discipline | Controlled/residual |
 
 ## 6. Risk acceptance rules
 

@@ -1,8 +1,7 @@
 # Data and Persistence
 
 Status: canonical persistence contract; no database is used
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Persistence model
 
@@ -79,8 +78,9 @@ ID format, and unsupported schema versions. The orchestrator additionally
 rejects syntactically valid IDs that are absent from the supplied rule set.
 Serialization sorts IDs.
 
-The tracked example enables all 22 standard rules. The GUI currently uses the
-same all-rules default directly; it does not auto-discover this file.
+The tracked example enables all 22 standard rules. For an active file-backed
+USE model, the GUI loads `<model-directory>/.bdi-plugin/rules.json`; absence
+uses the same all-rules default and malformed/unknown-rule input is rejected.
 
 ## 5. Suppression schema
 
@@ -105,6 +105,9 @@ versions. Serialization sorts by suppression key.
 
 Source fingerprints currently include normalized absolute paths. Moving the
 source file or checkout can intentionally invalidate a suppression.
+
+For an active file-backed USE model, the GUI loads
+`<model-directory>/.bdi-plugin/suppressions.json`; absence uses an empty list.
 
 ## 6. Report schema
 

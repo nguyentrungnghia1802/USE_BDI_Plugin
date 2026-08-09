@@ -9,8 +9,9 @@
   documents are used in tests.
 - The mapping decoder validates required fields, kinds, duplicate mapping keys,
   and syntax, but does not reject every unknown JSON field.
-- Rule and suppression repositories are implemented, but the normal GUI does
-  not automatically load `.bdi-plugin/rules.json` or `suppressions.json`.
+- GUI configuration discovery is intentionally limited to `.bdi-plugin`
+  beside the active file-backed `.use` model; unnamed/in-memory models use
+  defaults and there is no broader workspace search.
 - The BDI Explorer captures a USE model/snapshot projection and does not
   subscribe to later host-state changes.
 - OCL checks are read-only snapshot checks. Bounded simulation is available

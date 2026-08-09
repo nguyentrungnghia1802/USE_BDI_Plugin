@@ -1,8 +1,7 @@
 # Documentation Synchronization Checklist
 
 Status: mandatory project documentation process
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Principle
 
@@ -41,15 +40,15 @@ Numbers refer to files in `docs/project/`.
 Each canonical `00` through `12` document maintains:
 
 - purpose/status;
-- last verified date;
-- code baseline commit or a clear reason it is pending;
+- the stable source-backed verification marker;
 - explicit Implemented/Partial/Planned/Optional distinctions;
 - current limitations and source-of-truth links;
 - a synchronization checklist where useful.
 
-Do not fabricate a commit hash. A documentation commit may reference the last
-verified production-code baseline when the documentation itself is the only
-subsequent change.
+Verification date and commit provenance come from each file's Git history and
+the CI result for that commit. Do not duplicate volatile dates, branch names,
+or commit hashes across canonical files; that creates synchronization tax and
+becomes stale immediately after a documentation commit.
 
 ## 4. Pre-change checklist
 
@@ -125,9 +124,9 @@ Automated documentation tests should verify stable, high-value facts:
 - absence of tracked `docs/agent` references;
 - guide/release/notice markers.
 
-Tests should not freeze volatile prose, timestamps, line counts, benchmark
-durations, or every heading. A test is a guardrail, not a replacement for
-human review.
+Tests should not freeze volatile prose, timestamps, branch names, commit hashes,
+line counts, benchmark durations, or every heading. A test is a guardrail, not
+a replacement for human review.
 
 ## 9. Drift handling
 
@@ -161,3 +160,8 @@ of GUI configuration auto-load, live report export, mapping unknown-field
 validation, source-path portability, and release completion. Existing detailed
 architecture, ADR, rule, guide, and evidence documents remain specialized
 records linked by the canonical index.
+
+The later sync-tax repair replaced duplicated date/hash/branch metadata with a
+stable verification marker. Per-file Git history identifies the exact commit
+and date, while `DocumentationContractTest` protects inventory, links, stable
+facts, and the absence of volatile canonical metadata.

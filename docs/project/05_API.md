@@ -1,8 +1,7 @@
 # Plugin and Internal API Contracts
 
 Status: canonical integration contract; no HTTP API is exposed
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Contract sources
 
@@ -114,6 +113,15 @@ Each rule has a stable ID, phase, and pure evaluation over
 - optionally applies suppressions after evaluation;
 - never changes input models/mappings.
 
+### Project configuration composition
+
+`BdiProjectConfigurationLoader.loadModel(String)` resolves the parent of the
+active USE model filename as the project root. It loads optional
+`.bdi-plugin/rules.json` and `.bdi-plugin/suppressions.json`, returning an
+immutable `BdiProjectConfiguration`. Missing files select standard rules and
+an empty suppression list. Malformed files, unsupported versions, and unknown
+rule IDs are surfaced as `IOException` before `BdiExplorerView` opens.
+
 ### `ConsistencyIssue`
 
 Required semantics include rule ID, severity, status, message, evidence, and
@@ -149,6 +157,8 @@ Markers only prove the checks implemented by that script. For example,
 - Public plugin contracts target USE 7.1.1 and Java 21.
 - Jason behavior is pinned to 3.3.0.
 - JSON contracts are versioned independently at 0.1.0.
+- GUI project discovery is rooted at the active file-backed `.use` model; an
+  in-memory/unnamed model uses explicit defaults.
 - Changing rule IDs, mapping kinds, source identity, report fields, menu labels,
   or plugin IDs is a contract change requiring migration/test/doc review.
 - Adding an HTTP API requires a new architecture decision; none exists today.

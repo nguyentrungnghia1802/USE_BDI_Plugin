@@ -106,6 +106,18 @@ Domain <- không phụ thuộc UI/Jason/USE concrete classes
   `SUPPRESSED` with reason evidence, while the immutable BDI/USE inputs remain
   unchanged.
 
+### Project configuration composition implemented
+
+- `ImportBdiAction` reads the verified `MModel.filename()` value and delegates
+  project-file discovery to `BdiProjectConfigurationLoader`; the parent of the
+  active `.use` file is the only project-root convention.
+- `BdiProjectConfiguration` composes the selected `RuleConfiguration` and
+  suppressions into the Explorer's `ValidationOrchestrator`. Missing files use
+  visible defaults; invalid JSON/version/rule IDs abort view creation with a
+  user-facing error.
+- The loader and Explorer tests cover project/default sources and actual rule
+  filtering. This changes no USE core model or snapshot state.
+
 ## 5. OCL integration levels
 
 ### Level 0 — Model presence

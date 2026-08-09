@@ -28,6 +28,8 @@ class DocumentationContractTest {
             "11_TENANT_ISOLATION_AND_AUDIT.md",
             "12_REQUIREMENT_TRACEABILITY.md");
     private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[[^]]+\\]\\(([^)]+)\\)");
+    private static final String VERIFICATION_MARKER =
+            "Verification: source-backed; see Git history and DocumentationContractTest";
 
     @Test
     void keepsCanonicalSpecificationCompleteLinkedAndSourceBacked() throws IOException {
@@ -39,8 +41,12 @@ class DocumentationContractTest {
             assertTrue(Files.isRegularFile(path), () -> "Missing canonical document: " + path);
             String content = Files.readString(path);
             assertTrue(!content.isBlank(), () -> "Empty canonical document: " + path);
-            assertTrue(content.contains("Last verified: 2026-08-09"),
+            assertTrue(content.contains(VERIFICATION_MARKER),
                     () -> "Missing verification metadata: " + path);
+            assertTrue(!content.contains("Last verified:"),
+                    () -> "Canonical document duplicates a volatile verification date: " + path);
+            assertTrue(!content.contains("Code baseline:"),
+                    () -> "Canonical document duplicates a volatile commit baseline: " + path);
             assertLocalLinksResolve(path, content);
         }
 
@@ -90,6 +96,7 @@ class DocumentationContractTest {
         String docsIndex = read(root.resolve("docs/README.md"));
         assertTrue(!docsIndex.contains("](agent/"));
         assertTrue(!docsIndex.contains("](docs/agent/"));
+        assertTrue(!read(project.resolve("README.md")).contains("thesis/snapshot-ocl-slice"));
     }
 
     private static void assertLocalLinksResolve(Path document, String content) {

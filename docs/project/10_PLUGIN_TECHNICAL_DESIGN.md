@@ -199,6 +199,18 @@ resolution task beyond the first mapping slice.
   appends the reason as evidence. `ValidationOrchestrator` applies the service
   after deterministic rule ordering and keeps the original inputs immutable.
 
+### Implemented GUI project-configuration slice
+
+- `BdiProjectConfigurationLoader` uses the parent of `MModel.filename()` as
+  the project root and discovers `.bdi-plugin/rules.json` plus
+  `.bdi-plugin/suppressions.json` there. It never guesses from process CWD.
+- Missing files produce explicit standard-rule/empty-suppression defaults.
+  Invalid JSON, unsupported schemas, or unknown rule IDs fail before the
+  Explorer opens and are shown through the action error dialog.
+- `BdiExplorerView` receives the immutable configuration composition, uses it
+  for every validation refresh, and exposes project/default origins in the
+  status text.
+
 ### Implemented unsupported-fixture slice
 
 - `fixtures/asl/unsupported/relational-context.asl` is valid Jason 3.3.0 input

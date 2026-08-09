@@ -9,8 +9,10 @@
 The implemented MVP has completed the planned Phase 0 through Phase 7
 capabilities: plugin shell, Jason import/IR, Explorer/index, mapping, 22 rules,
 snapshot OCL/bounded effects, Auction mutants/evidence, guides, packaging, and
-root verification. This document preserves the original schedule and scope
-ordering; current completion truth is `16_PROJECT_COMPLETION_CHECKLIST.md`.
+root verification. GUI project configuration now composes persisted rule and
+suppression files from the active model directory. This document preserves the
+original schedule and scope ordering; current completion truth is
+`16_PROJECT_COMPLETION_CHECKLIST.md`.
 
 Open items are the optional House Building import, release candidate tag, and
 complete external source/data/report/slides backup. Current product gaps that

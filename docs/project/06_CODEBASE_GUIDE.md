@@ -1,8 +1,7 @@
 # Codebase Guide
 
 Status: canonical repository and extension guide
-Last verified: 2026-08-09
-Code baseline: `c1b11b41`
+Verification: source-backed; see Git history and DocumentationContractTest
 
 ## 1. Repository layout
 
@@ -57,7 +56,7 @@ use-bdi-plugin/
 | Package | Owns | Must not own |
 | --- | --- | --- |
 | root plugin package | Plugin/actions and USE integration entry points | Domain rules |
-| `application` | Import use cases and snapshots | Swing widgets or Jason AST policy |
+| `application` | Import use cases, snapshots, and project configuration composition | Swing widgets or Jason AST policy |
 | `importer` | Jason parse adapter, normalization, diagnostics | USE model access |
 | `model.ir` | Immutable normalized AgentSpeak model | Jason/USE/Swing types |
 | `index` | Derived immutable BDI lookups | Parsing or UI |
@@ -91,6 +90,8 @@ use-bdi-plugin/
 - UML references are qualified strings from the USE facade.
 - Generated output belongs under module `target/` unless it is reviewed thesis
   evidence intentionally tracked under `docs/project/evidence/`.
+- GUI project configuration is discovered only from the parent directory of
+  the active file-backed `.use` model; do not fall back to process CWD.
 
 ## 6. Adding AgentSpeak support
 
