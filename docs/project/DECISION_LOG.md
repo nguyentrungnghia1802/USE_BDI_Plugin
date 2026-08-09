@@ -1110,3 +1110,17 @@ not hide a finding silently or mutate the USE model.
 - This implements the existing reproducibility checklist boundary and does
   not create a new architectural decision. The known root `mvn clean verify`
   Failsafe limitation remains separately documented.
+
+## Auction UML/OCL evidence - 2026-08-09
+
+- `use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/Auction.use`
+  defines the first small case-study model without changing USE core or
+  inventing an AgentSpeak parser boundary. The model has four domain classes,
+  four associations, an auction-status enum, four operations, and OCL
+  invariants/pre/postconditions for the core auction lifecycle.
+- `AuctionModelFixtureTest` uses the already verified `USECompiler` and
+  `UseUmlModelFacade` APIs. It checks the extracted classes, associations,
+  attributes, operations, invariant count, pre/postcondition counts, and a
+  populated object/link snapshot with a changed fingerprint.
+- No new ADR was needed: this is a fixture and integration-test realization of
+  the existing Auction-first roadmap and read-only USE adapter policy.

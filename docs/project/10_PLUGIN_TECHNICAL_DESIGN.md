@@ -263,6 +263,20 @@ resolution task beyond the first mapping slice.
   claim that the repository's separate `mvn clean verify` baseline limitation
   has been resolved.
 
+### Implemented Auction UML/OCL fixture slice
+
+- `fixtures/casestudy/auction/Auction.use` is the first case-study model. It
+  defines `Auctioneer`, `Auction`, `Bidder`, and `Bid`, their participation
+  associations, an `AuctionStatus` enum, four mapped-operation candidates, and
+  OCL invariants/pre/postconditions for opening, bidding, and closing.
+- `AuctionModelFixtureTest` compiles the actual `.use` file with
+  `USECompiler`, projects it through `UseUmlModelFacade`, and verifies the
+  extracted model surface and source-independent constraint counts. It then
+  creates a small object/link snapshot and verifies the fingerprint changes.
+- This slice establishes only the UML/OCL fixture boundary. Auction
+  AgentSpeak, confirmed mappings, mutant inputs, ground truth, and reports
+  remain separate checklist tasks.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

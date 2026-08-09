@@ -63,6 +63,14 @@ and checks that the clone remains clean after the build. Use `-KeepClone` only
 when inspecting a failed temporary clone. The script never uses the current
 working tree's unstaged files.
 
+## Auction case-study fixture
+
+The first Auction UML/OCL fixture is kept at
+`src/test/resources/fixtures/casestudy/auction/Auction.use`. It is compiled
+and projected through the verified USE adapter by
+`AuctionModelFixtureTest`; it intentionally does not claim Auction
+AgentSpeak, mappings, mutants, or reports yet.
+
 ## Build and automated smoke
 
 From the repository root:

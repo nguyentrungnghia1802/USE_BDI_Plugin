@@ -145,7 +145,7 @@
 
 ## 12. Case study
 
-- [ ] Auction UML/OCL model.
+- [x] Auction UML/OCL model. (first compilable Auction fixture)
 - [ ] Auction AgentSpeak files.
 - [ ] Valid mapping.
 - [ ] Baseline report.
@@ -309,6 +309,19 @@
   `CLEAN_CLONE_REPRODUCIBILITY_OK`. Temporary clone cleanup is path-checked;
   `-KeepClone` is available for diagnostics. This evidence does not claim the
   separate root `mvn clean verify`/Failsafe baseline limitation is resolved.
+
+## Auction UML/OCL evidence - 2026-08-09
+
+- `use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/Auction.use`
+  is a compilable first Auction case-study model. It contains 4 classes,
+  4 associations, 7 attributes, 4 operations, and 5 class invariants.
+- `AuctionModelFixtureTest` compiles the real fixture with `USECompiler`,
+  verifies 7 operation preconditions and 2 postconditions through
+  `UseUmlModelFacade`, then creates 3 objects and 2 links and verifies the
+  immutable snapshot fingerprint changes.
+- `mvn -pl use-bdi-plugin -Dtest=AuctionModelFixtureTest test` passed with
+  1 test. Auction AgentSpeak, mapping, mutants, ground truth, and reports are
+  intentionally not claimed by this slice.
 
 ## Phase 0 evidence - 2026-08-03
 
