@@ -26,7 +26,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-OCL-007 | no implementation claimed | Optional checklist status | context, requirements, future work |
 | FR-UI-001..004 | `BdiExplorerView`, `LiveUseSnapshotProvider`, UI/problem/mapping models | UI/action/provider tests, stale-refresh and GUI smoke | user guide, ADR-0023, screenshot evidence |
 | FR-REP-001..003 | report data/exporters and fingerprints | report/hash/suppression tests, Auction baseline | technical design, ADR-0015/0016/0018 |
-| FR-REP-004 | Missing live GUI composition | Explicit Planned status and limitation contract | requirements, decision log, ideas |
+| FR-REP-004 | Explorer export action and `CurrentAnalysisReportService` | GUI/direct parity, atomic failure, UTF-8 and HTML escaping tests | user guide, ADR-0015/0024 |
 | FR-REP-005 | `ReportMain` zero-state serializer demonstration | report/package smoke tests | requirements, technical/developer guides |
 | FR-REP-006 | `CurrentAnalysisSnapshotService`, immutable aggregate | Auction, malformed, deterministic-time, state-safety, and Explorer parity tests | ADR-0024, architecture, technical design |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |

@@ -15,6 +15,7 @@ loading are verified independently by `PluginGuiSmoke`.
 | 3 | Imported AgentSpeak tree with agents, beliefs, goals, and plans | [demo_bdi_explorer.png](../../report/images/demo_bdi_explorer.png) |
 | 4 | Selected BDI element and source/detail panel | [demo_bdi_explorer_detail.png](../../report/images/demo_bdi_explorer_detail.png) |
 | 5 | `Problems` tab with consistency findings | [demo_bdi_problems.png](../../report/images/demo_bdi_problems.png) |
+| 6 | Explorer toolbar with `Export Current Analysis...` and JSON/HTML chooser | Pending capture after the next assembled-GUI evidence run |
 
 ## Live demo path
 
@@ -26,6 +27,9 @@ loading are verified independently by `PluginGuiSmoke`.
    the source/detail panel.
 6. Click the `Problems` tab and show rule ID, severity, certainty, and source
    evidence. Keep `UNKNOWN` findings visible; do not present them as PASS.
+7. Click `Export Current Analysis...`, select JSON or HTML, and show the saved
+   path in the status line. Capture Step 6 only from an assembled USE runtime;
+   do not substitute a mock dialog or generated image.
 
 ## Automated trace
 

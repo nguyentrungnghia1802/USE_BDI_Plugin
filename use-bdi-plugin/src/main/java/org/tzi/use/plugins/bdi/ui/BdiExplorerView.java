@@ -2,6 +2,7 @@ package org.tzi.use.plugins.bdi.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,7 +15,9 @@ import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -26,6 +29,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.tzi.use.gui.views.View;
 import org.tzi.use.plugins.bdi.ImportBdiAction;
@@ -51,6 +55,8 @@ import org.tzi.use.plugins.bdi.model.ir.PlanStepModel;
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.model.ir.TestStepModel;
 import org.tzi.use.plugins.bdi.model.mapping.MappingSuggestionService;
+import org.tzi.use.plugins.bdi.report.CurrentAnalysisReportService;
+import org.tzi.use.plugins.bdi.report.ReportFormat;
 import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
 import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
 import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
@@ -73,12 +79,15 @@ public final class BdiExplorerView extends JPanel implements View {
     private final MappingEditorPanel mapping;
     private final MappingSuggestionService mappingSuggestionService;
     private final CurrentAnalysisSnapshotService analysisService;
+    private final CurrentAnalysisReportService reportService = new CurrentAnalysisReportService();
     private final String configurationSummary;
+    private final String projectName;
     private Optional<UseModelSnapshot> useModel;
     private Optional<SnapshotOclEvaluator> oclEvaluator;
     private final Optional<UseSnapshotProvider> useSnapshotProvider;
     private final JButton reimportButton;
     private final JButton refreshUseButton;
+    private final JButton exportButton;
     private final BdiSourceTracker sourceTracker;
     private BdiImportSnapshot snapshot;
     private Optional<CurrentAnalysisSnapshot> currentAnalysis = Optional.empty();
@@ -221,6 +230,11 @@ public final class BdiExplorerView extends JPanel implements View {
         ValidationOrchestrator configuredOrchestrator = Objects.requireNonNull(
                 validationOrchestrator, "validationOrchestrator");
         this.configurationSummary = Objects.requireNonNull(configurationSummary, "configurationSummary");
+        this.projectName = projectRoot
+                .map(Path::getFileName)
+                .map(Path::toString)
+                .filter(name -> !name.isBlank())
+                .orElse("USE-BDI-Analysis");
         this.analysisService = new CurrentAnalysisSnapshotService(
                 configuredOrchestrator,
                 configurationSummary,
@@ -239,11 +253,16 @@ public final class BdiExplorerView extends JPanel implements View {
         refreshUseButton.setToolTipText("Capture the current USE model/state and re-run analysis");
         refreshUseButton.setEnabled(useSnapshotProvider.isPresent());
         refreshUseButton.addActionListener(event -> refreshUseSnapshot());
+        exportButton = new JButton("Export Current Analysis...");
+        exportButton.setToolTipText("Export the currently displayed Problems analysis as JSON or HTML");
+        exportButton.setEnabled(false);
+        exportButton.addActionListener(event -> chooseExportCurrentAnalysis());
         status = new JLabel("No AgentSpeak source imported; " + configurationSummary);
         JPanel buttons = new JPanel();
         buttons.add(importButton);
         buttons.add(reimportButton);
         buttons.add(refreshUseButton);
+        buttons.add(exportButton);
         JPanel toolbar = new JPanel(new BorderLayout(6, 0));
         toolbar.add(buttons, BorderLayout.WEST);
         toolbar.add(status, BorderLayout.CENTER);
@@ -366,12 +385,20 @@ public final class BdiExplorerView extends JPanel implements View {
         return refreshUseButton;
     }
 
+    JButton exportButtonForTest() {
+        return exportButton;
+    }
+
     Optional<UseModelSnapshot> useModelForTest() {
         return useModel;
     }
 
     Optional<CurrentAnalysisSnapshot> currentAnalysisForTest() {
         return currentAnalysis;
+    }
+
+    Path exportCurrentAnalysisForTest(Path output, ReportFormat format, boolean overwrite) throws IOException {
+        return exportCurrentAnalysis(output, format, overwrite);
     }
 
     JLabel statusForTest() {
@@ -456,6 +483,63 @@ public final class BdiExplorerView extends JPanel implements View {
                 mapping.document()));
         problems.setProblems(BdiProblemCollector.collectConsistencyIssues(
                 currentAnalysis.orElseThrow().issues()));
+        exportButton.setEnabled(true);
+    }
+
+    private void chooseExportCurrentAnalysis() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Export current BDI analysis");
+        FileNameExtensionFilter jsonFilter = new FileNameExtensionFilter(
+                ReportFormat.JSON.description(), ReportFormat.JSON.extension());
+        FileNameExtensionFilter htmlFilter = new FileNameExtensionFilter(
+                ReportFormat.HTML.description(), ReportFormat.HTML.extension(), "htm");
+        chooser.setAcceptAllFileFilterUsed(false);
+        chooser.addChoosableFileFilter(jsonFilter);
+        chooser.addChoosableFileFilter(htmlFilter);
+        chooser.setFileFilter(jsonFilter);
+        chooser.setSelectedFile(new java.io.File("bdi-analysis.json"));
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+            status.setText("Analysis export cancelled; " + configurationSummary);
+            return;
+        }
+
+        ReportFormat format = chooser.getFileFilter() == htmlFilter ? ReportFormat.HTML : ReportFormat.JSON;
+        Path output = withExtension(chooser.getSelectedFile().toPath(), format);
+        boolean overwrite = false;
+        if (Files.exists(output)) {
+            int choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Replace existing report?\n" + output.toAbsolutePath(),
+                    "Confirm report overwrite",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (choice != JOptionPane.YES_OPTION) {
+                status.setText("Analysis export cancelled; existing file retained: " + output.toAbsolutePath());
+                return;
+            }
+            overwrite = true;
+        }
+        try {
+            Path exported = exportCurrentAnalysis(output, format, overwrite);
+            status.setText("Exported current analysis to " + exported);
+        } catch (IOException | RuntimeException error) {
+            status.setText("Analysis export failed for " + output.toAbsolutePath() + ": " + error.getMessage());
+        }
+    }
+
+    private Path exportCurrentAnalysis(Path output, ReportFormat format, boolean overwrite) throws IOException {
+        CurrentAnalysisSnapshot analysis = currentAnalysis.orElseThrow(() ->
+                new IOException("No current analysis is available; import AgentSpeak first"));
+        return reportService.export(projectName, analysis, format, output, overwrite);
+    }
+
+    private static Path withExtension(Path output, ReportFormat format) {
+        String filename = output.getFileName().toString();
+        if (ReportFormat.fromFilename(filename) == format
+                && filename.toLowerCase(java.util.Locale.ROOT).endsWith("." + format.extension())) {
+            return output;
+        }
+        return output.resolveSibling(filename + "." + format.extension());
     }
 
     private DefaultMutableTreeNode createTree(BdiImportSnapshot imported) {

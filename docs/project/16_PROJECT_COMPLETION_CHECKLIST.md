@@ -30,6 +30,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Explorer manually refreshes current USE state without reparsing AgentSpeak.
 - [x] Problems uses one immutable current-analysis application snapshot.
 - [x] JSON/HTML exporters preserve issues, evidence, hashes, and suppressions.
+- [x] Explorer exports its exact current analysis as atomic JSON/HTML output.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
 - [x] User, developer, install, license, limitation, and threat guides exist.
@@ -47,13 +48,14 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline for the current-analysis snapshot slice:
+Latest validated baseline for the live GUI export slice:
 
-- focused snapshot/Auction/Explorer/mapping tests: 13 pass;
-- plugin tests: 100 pass;
+- focused report/export/Explorer tests: 13 pass;
+- plugin tests: 103 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
+- package/parser/report/menu smoke passes and builds both assembly formats;
 - root `mvn clean verify` passed on the preceding host-refresh commit; this
-  application-only slice does not change host/package wiring.
+  plugin/UI slice does not change USE core or package wiring.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
@@ -78,7 +80,6 @@ release gates.
 
 The following are future work, not hidden completion claims:
 
-- OD-003: one-click export of the current live GUI analysis;
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;

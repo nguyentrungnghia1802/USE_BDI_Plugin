@@ -107,6 +107,12 @@ does not reject every unknown object field; OD-004 keeps strict closed-schema
 validation open. Generated reports contain supplied metadata, issues,
 suppressions, and optional canonical model/mapping SHA-256 identities.
 
+`CurrentAnalysisReportService` converts one `CurrentAnalysisSnapshot` to one
+`ReportData` shared by JSON and HTML. GUI writes use a sibling temporary file
+and move only a completed serialization into place. Existing targets require
+explicit overwrite confirmation; exporters never parse, validate, or inspect
+the current `MSystem`.
+
 ## 6. GUI Project Composition
 
 `BdiProjectConfigurationLoader` resolves the parent of the active USE model

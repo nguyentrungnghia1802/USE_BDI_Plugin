@@ -1,6 +1,7 @@
 package org.tzi.use.plugins.bdi.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -24,6 +25,7 @@ import org.tzi.use.plugins.bdi.application.BdiImportService;
 import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
 import org.tzi.use.plugins.bdi.model.mapping.MappingKind;
+import org.tzi.use.plugins.bdi.report.ReportFormat;
 import org.tzi.use.plugins.bdi.use.UmlClassRef;
 import org.tzi.use.plugins.bdi.use.UmlObjectRef;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
@@ -37,6 +39,27 @@ import org.tzi.use.plugins.bdi.validation.RuleConfiguration;
 import org.tzi.use.plugins.bdi.validation.SnapshotOclEvaluator;
 
 class BdiExplorerViewTest {
+    @Test
+    void exportsTheExactCurrentAnalysisAndExposesTheGuiAction(@TempDir Path tempDir) throws Exception {
+        BdiExplorerView view = new BdiExplorerView(new BdiImportService());
+        assertEquals("Export Current Analysis...", view.exportButtonForTest().getText());
+        assertFalse(view.exportButtonForTest().isEnabled());
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+        var current = view.currentAnalysisForTest().orElseThrow();
+        Path output = tempDir.resolve("current.json");
+
+        view.exportCurrentAnalysisForTest(output, ReportFormat.JSON, false);
+
+        assertTrue(view.exportButtonForTest().isEnabled());
+        assertSame(current, view.currentAnalysisForTest().orElseThrow(), "export must not rerun analysis");
+        String report = Files.readString(output);
+        assertTrue(report.contains("\"issuesCount\":" + current.issueCount()));
+        assertTrue(report.contains(current.mappingHash()));
+        assertTrue(report.contains("Configuration:"));
+        assertEquals(current.issues().size(), current.issueCount());
+    }
+
     @Test
     void buildsBdiTreeAndSourceDetailAfterBackgroundImport() throws Exception {
         BdiExplorerView view = new BdiExplorerView(new BdiImportService());

@@ -134,8 +134,8 @@ introduce a CWD fallback, because USE can be launched from an unrelated folder.
 - Mapping suggestions are explainable candidates, not semantic proof.
 - Absolute source IDs make generated mapping/report artifacts checkout
   specific.
-- `ReportMain` is a serializer demonstration; the GUI has no live report export
-  action yet.
+- `ReportMain` is a serializer demonstration; live GUI export must go through
+  `CurrentAnalysisReportService` with the Explorer-owned immutable snapshot.
 - The mapping decoder does not currently reject every unknown JSON field.
 - A BDI Explorer captures a USE projection and does not subscribe to later
   host model/snapshot changes.

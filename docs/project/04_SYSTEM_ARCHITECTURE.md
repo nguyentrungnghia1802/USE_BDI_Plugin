@@ -60,8 +60,9 @@ Hard rules:
    suppressions.
 10. `CurrentAnalysisSnapshotService` validates once and freezes import, USE,
     mapping, config, suppressions, issues, hashes, counts, time, and versions.
-11. Explorer/Problems consumes that snapshot; exporters serialize it in the
-    next GUI export slice rather than querying Swing or live USE state.
+11. Explorer/Problems consumes that snapshot; `CurrentAnalysisReportService`
+    serializes the same object atomically as JSON or HTML without querying
+    Swing, rerunning validation, or reading live USE state.
 
 Asynchronous imports carry a generation token so an older completion cannot
 replace a newer selection. Manual USE refresh resolves the current session
@@ -124,7 +125,7 @@ boundaries. See [the development ideas](../idea/idea.md).
 
 ## 8. Known Architecture Gaps
 
-- Live export of the current GUI analysis.
+- Headless composition of file inputs into the shared current-analysis service.
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
 - Full JaCaMo project/environment/organization/runtime integration.

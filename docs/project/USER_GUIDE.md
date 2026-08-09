@@ -82,6 +82,10 @@ The `-H` value must be the extracted USE home. It lets USE resolve
    `Refresh USE Snapshot` in the BDI Explorer toolbar. The status line shows the
    refreshed fingerprint, problem count, and configuration source. This does
    not re-import `.asl`; use `Re-import changed` only for AgentSpeak edits.
+7. Click `Export Current Analysis...`, choose `JSON report` or `HTML report`,
+   select a destination, and click `Save`. If the destination exists, confirm
+   `Replace existing report?`; choosing No or cancelling keeps it unchanged.
+   The status line displays the absolute output path or the failure cause.
 
 ### 3. Review mappings
 
@@ -108,18 +112,22 @@ USE model because no trustworthy project root exists.
 - BDI Explorer `Problems` tab: show rule ID, severity, certainty, source, and
   evidence.
 - BDI Explorer `Mapping` tab: show confirmed links and save/load controls.
+- BDI Explorer `Export Current Analysis...`: save the exact Problems snapshot,
+  including configuration, hashes, issue evidence, and suppressions.
 
 The tracked screenshots and their exact UI path are indexed in
-`docs/project/evidence/ui-screenshots.md`.
+`docs/project/evidence/ui-screenshots.md`. Until a refreshed export screenshot
+is captured, that index records the required placeholder and capture policy;
+tests verify the exact button label without fabricating visual evidence.
 
 ## Current Workflow Limits
 
 - Legacy `0.1.0` suppression hashes cannot be converted back into source paths.
   They remain legacy-only and intentionally do not match after moving the
   checkout; recreate a reviewed suppression to store a portable v2 identity.
-- There is no one-click export of the current live Problems state. The Auction
-  evidence command creates the verified analysis reports; `ReportMain` alone
-  is only a serializer demonstration.
+- `ReportMain` alone is only a serializer demonstration. Use the Explorer
+  action for the current Problems snapshot or the Auction evidence command for
+  the reproducible thesis case-study bundle.
 - USE does not yet push state-change events into Explorer automatically. Click
   `Refresh USE Snapshot` after changing the model/state; failures are shown in
   the Explorer status line and retain the previous imported BDI model.

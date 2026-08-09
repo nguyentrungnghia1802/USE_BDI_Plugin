@@ -52,7 +52,7 @@ new ADR that explicitly supersedes the affected entry.
 
 | ID | Decision needed | Safe current behavior |
 | --- | --- | --- |
-| OD-003 | One-click serialization of the current GUI analysis | `CurrentAnalysisSnapshot` is the shared source; GUI action remains open |
+| OD-003 | One-click serialization of the current GUI analysis | Resolved: Explorer exports the shared snapshot atomically as JSON/HTML |
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | Automatic USE state-change subscription lifecycle | Use `Refresh USE Snapshot`; stale queued refreshes are discarded |
 | OD-006 | External thesis data/report/slides locations and release owner | Keep backup/tag gates open |
@@ -68,15 +68,16 @@ new ADR that explicitly supersedes the affected entry.
 | Analysis mutates current USE state | read-only facade, disposable variation, fingerprint tests | controlled |
 | Open Explorer does not update automatically after USE state changes | visible manual refresh with state-safety check | automatic subscription open via OD-005 |
 | Mapping JSON typo is tolerated | domain validation and tests | open via OD-004 |
-| Report is mistaken for live analysis | explicit serializer-demo limitation | open via OD-003 |
+| Report is mistaken for live analysis | GUI export is snapshot-backed; `ReportMain` remains explicitly demo-only | mitigated |
 | JaCaMo scope is overclaimed from Jason dependency | architecture/docs test and explicit boundary | open via OD-007 |
 | External thesis artifacts are omitted | backup manifest and open release gate | open via OD-006 |
 
 ## 5. Current Validation Record
 
-- Current-analysis focused tests: 13 pass.
-- Plugin suite: 100 pass.
+- Live-export focused tests: 13 pass.
+- Plugin suite: 103 pass.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
+- Package/parser/report/menu smoke succeeds and builds ZIP/TAR distributions.
 - Root `mvn clean verify` passed for the preceding host-refresh commit; current
   application changes do not alter host or assembly wiring.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural

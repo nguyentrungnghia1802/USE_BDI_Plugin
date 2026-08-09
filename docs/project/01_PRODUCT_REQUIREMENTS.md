@@ -89,7 +89,7 @@ implemented.
 | FR-REP-001 | Export supplied analysis results as deterministic UTF-8 JSON and escaped HTML | Implemented |
 | FR-REP-002 | Include plugin/USE/Jason metadata, issues, evidence, and suppressions | Implemented |
 | FR-REP-003 | Include canonical model and mapping SHA-256 values when supplied | Implemented |
-| FR-REP-004 | Export the current live GUI analysis with one user action | Planned |
+| FR-REP-004 | Export the current live GUI analysis with one user action | Implemented |
 | FR-REP-005 | Generate a zero-state serializer smoke through `ReportMain` without claiming live analysis | Implemented |
 | FR-REP-006 | Compose one immutable current analysis snapshot for Problems, GUI export, and headless gates | Implemented |
 
