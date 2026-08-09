@@ -1064,3 +1064,16 @@ not hide a finding silently or mutate the USE model.
   between valid-but-unsupported syntax and invalid AgentSpeak.
 - This is an implementation of the existing unsupported-syntax policy in
   ADR-0010/ADR-0012, not a new USE-core or parser architecture decision.
+
+## Golden IR evidence - 2026-08-09
+
+- `AgentModelJsonSerializerTest` compares the minimal model and the
+  unsupported relational-context model with checked-in expected JSON. Each
+  result is serialized twice to protect deterministic output.
+- `unsupported-relational-context-agent-model.json` records relative source
+  paths and the `ContextUnsupported`/`ASL-002` evidence, including its source
+  span and subject. This extends the existing IR golden contract without
+  changing the domain model or USE core.
+- `mvn -pl use-bdi-plugin -Dtest=AgentModelJsonSerializerTest test` passed with
+  2 tests. The golden corpus remains intentionally small until the Auction
+  case-study fixtures exist.

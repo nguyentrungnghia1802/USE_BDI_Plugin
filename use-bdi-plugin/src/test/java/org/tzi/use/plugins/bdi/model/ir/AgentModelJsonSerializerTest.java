@@ -25,6 +25,18 @@ class AgentModelJsonSerializerTest {
         assertEquals(expected, serializer.serialize(model, source.getParent()));
     }
 
+    @Test
+    void serializesUnsupportedFixtureWithPortableSourcePaths() throws Exception {
+        Path source = fixture("fixtures/asl/unsupported/relational-context.asl");
+        AgentModel model = new JasonAslParserAdapter().parseModel(source);
+        String expected = resource("fixtures/expected/unsupported-relational-context-agent-model.json");
+
+        AgentModelJsonSerializer serializer = new AgentModelJsonSerializer();
+
+        assertEquals(expected, serializer.serialize(model, source.getParent()));
+        assertEquals(expected, serializer.serialize(model, source.getParent()));
+    }
+
     private static String resource(String name) throws IOException {
         try (InputStream input = AgentModelJsonSerializerTest.class.getClassLoader().getResourceAsStream(name)) {
             if (input == null) {

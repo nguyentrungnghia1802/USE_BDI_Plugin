@@ -134,7 +134,7 @@
 - [x] Valid ASL fixtures.
 - [x] Invalid ASL fixtures.
 - [x] Unsupported fixtures. (relational-context fixture is retained as ASL-002 evidence)
-- [ ] Golden IR tests.
+- [x] Golden IR tests. (minimal and unsupported-context IR JSON fixtures)
 - [x] Rule tests.
 - [x] Mapping persistence tests.
 - [x] USE model integration tests.
@@ -269,6 +269,16 @@
   `BdiProblemCollector` WARNING projection, and no `ASL-001` syntax problem.
 - `mvn -pl use-bdi-plugin -Dtest=UnsupportedFixtureTest test` passed. No USE
   core source was changed.
+
+## Golden IR evidence - 2026-08-09
+
+- `AgentModelJsonSerializerTest` now compares both the existing minimal IR
+  golden and `fixtures/expected/unsupported-relational-context-agent-model.json`.
+- The unsupported golden preserves portable source paths, the
+  `ContextUnsupported` node, `ASL-002` feature kind/subject, source spans, and
+  deterministic ordering. The test serializes each model twice.
+- `mvn -pl use-bdi-plugin -Dtest=AgentModelJsonSerializerTest test` passed with
+  2 tests. This does not claim a broader golden corpus for Auction fixtures.
 
 ## Phase 0 evidence - 2026-08-03
 

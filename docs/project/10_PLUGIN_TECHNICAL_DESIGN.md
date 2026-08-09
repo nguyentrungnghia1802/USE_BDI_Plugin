@@ -208,6 +208,15 @@ resolution task beyond the first mapping slice.
   `BdiProblemCollector` warning projection, and the absence of an `ASL-001`
   syntax diagnostic. No USE core source is changed.
 
+### Implemented golden IR slice
+
+- `AgentModelJsonSerializerTest` compares the normalized minimal model and the
+  unsupported relational-context model against checked-in JSON fixtures.
+- The unsupported golden explicitly covers `ContextUnsupported`, `ASL-002`,
+  portable source paths, source spans, and deterministic repeated serialization.
+  This remains a fixture-level regression gate, not a complete case-study
+  corpus.
+
 ### Implemented report export slice
 
 - `ReportData` accepts immutable `ConsistencyIssue` evidence in addition to the
