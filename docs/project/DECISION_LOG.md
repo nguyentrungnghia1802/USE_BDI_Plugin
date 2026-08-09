@@ -1093,3 +1093,20 @@ not hide a finding silently or mutate the USE model.
   local baseline rather than a performance requirement.
 - No new ADR was needed: this slice adds measurement around already accepted
   importer/IR/index boundaries and changes neither USE core nor runtime state.
+
+## Clean-clone reproducibility evidence - 2026-08-09
+
+- `use-bdi-plugin/scripts/clean-clone.ps1` uses `git clone --no-local
+  --no-checkout` followed by detached checkout of the source `HEAD`. This
+  deliberately tests the committed tree rather than the current worktree and
+  preserves unrelated user changes in the original checkout.
+- The reproducibility command is `mvn --batch-mode --no-transfer-progress -pl
+  use-assembly -am package`. The script verifies the plugin shaded JAR, Jason
+  runtime class, third-party notices, distribution ZIP entry, and clean Git
+  status before and after the build.
+- Temporary cleanup is allowed only for the generated `use-bdi-clean-clone-*`
+  path below the system temp directory; `-KeepClone` supports investigation.
+  No USE core or plugin runtime behavior is changed by this smoke slice.
+- This implements the existing reproducibility checklist boundary and does
+  not create a new architectural decision. The known root `mvn clean verify`
+  Failsafe limitation remains separately documented.

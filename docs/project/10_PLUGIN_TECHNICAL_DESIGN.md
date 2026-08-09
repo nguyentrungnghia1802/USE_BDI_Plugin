@@ -249,6 +249,20 @@ resolution task beyond the first mapping slice.
   values are environment-dependent until the Auction case-study workload and
   experiment protocol exist.
 
+### Implemented clean-clone reproducibility slice
+
+- `scripts/clean-clone.ps1` clones the exact current `HEAD` into a generated
+  temporary directory, so uncommitted working-tree files are not used as
+  build inputs.
+- The script runs the full package path through `use-assembly`, verifies the
+  shaded `use-bdi-plugin` JAR contains the plugin class, Jason runtime, and
+  third-party notices, then verifies the plugin is present in the distribution
+  ZIP and the clone remains clean.
+- Cleanup is restricted to the generated temp path and can be disabled with
+  `-KeepClone` for investigation. This is a reproducibility smoke gate, not a
+  claim that the repository's separate `mvn clean verify` baseline limitation
+  has been resolved.
+
 ## 6. Dependency packaging
 
 Plugin JAR có thể cần chứa Jason và dependency. Hai phương án:

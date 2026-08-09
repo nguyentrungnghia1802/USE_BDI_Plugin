@@ -141,7 +141,7 @@
 - [x] OCL tests.
 - [x] UI smoke test.
 - [x] Performance benchmark. (import -> IR -> BDI index baseline)
-- [ ] Clean-clone reproducibility test.
+- [x] Clean-clone reproducibility test. (exact HEAD -> USE distribution package)
 
 ## 12. Case study
 
@@ -295,6 +295,20 @@
   `powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\performance.ps1`.
   These numbers are an environment comparison baseline, not a hard timing
   gate, and do not claim Auction-scale performance data.
+
+## Clean-clone reproducibility evidence - 2026-08-09
+
+- `use-bdi-plugin/scripts/clean-clone.ps1` clones the exact current `HEAD`
+  into a generated temp directory and checks the clone is clean before and
+  after building. It does not copy unstaged working-tree files.
+- The clone runs `mvn --batch-mode --no-transfer-progress -pl use-assembly -am
+  package`, then verifies `use-bdi-plugin-7.1.1.jar` contains the BDI plugin,
+  Jason `Agent` class, and third-party notices. It also verifies the same
+  plugin JAR is present at `use-7.1.1/lib/plugins/` in the assembled ZIP.
+- The script passed with marker
+  `CLEAN_CLONE_REPRODUCIBILITY_OK`. Temporary clone cleanup is path-checked;
+  `-KeepClone` is available for diagnostics. This evidence does not claim the
+  separate root `mvn clean verify`/Failsafe baseline limitation is resolved.
 
 ## Phase 0 evidence - 2026-08-03
 

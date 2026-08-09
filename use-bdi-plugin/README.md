@@ -48,6 +48,21 @@ reports minimum, median, p95, and all measured durations in nanoseconds. It is
 an environment comparison baseline, not a hard timing gate; the fixture is
 small and is not yet the Auction case study workload.
 
+## Clean-clone reproducibility
+
+Run the clean-clone build from the repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\clean-clone.ps1
+```
+
+The script clones the exact current `HEAD` into a generated temporary
+directory, runs `mvn --batch-mode --no-transfer-progress -pl use-assembly -am
+package`, verifies the shaded plugin JAR and the plugin entry in the USE ZIP,
+and checks that the clone remains clean after the build. Use `-KeepClone` only
+when inspecting a failed temporary clone. The script never uses the current
+working tree's unstaged files.
+
 ## Build and automated smoke
 
 From the repository root:
