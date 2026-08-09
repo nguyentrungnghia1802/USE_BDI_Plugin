@@ -61,7 +61,9 @@ Hard rules:
 10. Explorer/Problems and exporters present the same evidence model.
 
 Asynchronous imports carry a generation token so an older completion cannot
-replace a newer selection.
+replace a newer selection. Manual USE refresh resolves the current session
+system again, captures and validates on the EDT, rejects stale queued requests,
+and verifies the state fingerprint before and after analysis.
 
 ## 4. State Ownership And Safety
 
@@ -121,5 +123,5 @@ boundaries. See [the development ideas](../idea/idea.md).
 
 - Live export of the current GUI analysis.
 - Strict unknown-field policy for mapping JSON.
-- Refresh/subscription when the active USE state changes after opening a view.
+- Automatic subscription when USE state changes; manual refresh is available.
 - Full JaCaMo project/environment/organization/runtime integration.

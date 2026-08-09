@@ -59,7 +59,7 @@ public final class ImportBdiAction implements IPluginActionDelegate {
             if (pluginAction.getSession().hasSystem()) {
                 var system = pluginAction.getSession().system();
                 BdiProjectConfiguration configuration = loadProjectConfiguration(system);
-                view = new BdiExplorerView(system, configuration);
+                view = new BdiExplorerView(() -> pluginAction.getSession().system(), configuration);
             } else {
                 view = new BdiExplorerView();
             }

@@ -24,7 +24,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-VAL-007..008 | `BdiExplorerView`, problem collector/panel | explorer/problem tests | architecture, user guide |
 | FR-OCL-001..006 | `UseSnapshotOclEvaluator`, snapshot result/status types | `UseSnapshotOclEvaluatorTest`, Auction OCL mutant test | architecture, technical design, ADR-0014 |
 | FR-OCL-007 | no implementation claimed | Optional checklist status | context, requirements, future work |
-| FR-UI-001..004 | `BdiExplorerView`, UI/problem/mapping models | UI and action tests plus GUI smoke | user guide, screenshot evidence |
+| FR-UI-001..004 | `BdiExplorerView`, `LiveUseSnapshotProvider`, UI/problem/mapping models | UI/action/provider tests, stale-refresh and GUI smoke | user guide, ADR-0023, screenshot evidence |
 | FR-REP-001..003 | report data/exporters and fingerprints | report/hash/suppression tests, Auction baseline | technical design, ADR-0015/0016/0018 |
 | FR-REP-004 | Missing live GUI composition | Explicit Planned status and limitation contract | requirements, decision log, ideas |
 | FR-REP-005 | `ReportMain` zero-state serializer demonstration | report/package smoke tests | requirements, technical/developer guides |

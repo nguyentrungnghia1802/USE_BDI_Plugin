@@ -34,6 +34,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0020 | Discover rules/suppressions only beside the active file-backed `.use` model; visible defaults for absence and visible failure for invalid input | loader/action/Explorer tests |
 | ADR-0021 | Represent portable source evidence as a case-preserving, project-relative `ProjectSourceId` v2 with explicit coordinates; reject sources outside an explicit root and retain v1 mapping behavior until migration | `ProjectSourceIdTest` |
 | ADR-0022 | Persist mappings and suppressions as schema `0.2.0` under an explicit existing project root; migrate v1 mappings to portable IDs on save, but retain irreversible v1 suppression hashes as legacy-only entries so relocation cannot broaden suppression | repository migration and relocation tests |
+| ADR-0023 | Refresh USE state manually through a plugin-owned provider that resolves the current session system per capture; run capture/validation on the EDT, discard stale generations, and verify the state fingerprint before/after analysis without claiming host event subscription | Explorer/provider/evaluator refresh tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -52,7 +53,7 @@ new ADR that explicitly supersedes the affected entry.
 | --- | --- | --- |
 | OD-003 | Live GUI report/export composition | Use tested application/case-study composition; label `ReportMain` as serializer demo |
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
-| OD-005 | USE snapshot refresh/subscription lifecycle | Reopen/re-import Explorer after host state changes |
+| OD-005 | Automatic USE state-change subscription lifecycle | Use `Refresh USE Snapshot`; stale queued refreshes are discarded |
 | OD-006 | External thesis data/report/slides locations and release owner | Keep backup/tag gates open |
 | OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Support Jason `.asl` only and make no full-JaCaMo claim |
 
@@ -64,7 +65,7 @@ new ADR that explicitly supersedes the affected entry.
 | Legacy suppression hashes become stale after checkout relocation | versioned legacy marker prevents broad matching; recreate reviewed entries as v2 when appropriate | accepted migration limitation |
 | OCL information gap becomes false PASS | explicit PASS/FAIL/UNKNOWN | controlled |
 | Analysis mutates current USE state | read-only facade, disposable variation, fingerprint tests | controlled |
-| Open Explorer uses an older USE snapshot | user guidance; reopen/re-import | open via OD-005 |
+| Open Explorer does not update automatically after USE state changes | visible manual refresh with state-safety check | automatic subscription open via OD-005 |
 | Mapping JSON typo is tolerated | domain validation and tests | open via OD-004 |
 | Report is mistaken for live analysis | explicit serializer-demo limitation | open via OD-003 |
 | JaCaMo scope is overclaimed from Jason dependency | architecture/docs test and explicit boundary | open via OD-007 |
@@ -72,11 +73,10 @@ new ADR that explicitly supersedes the affected entry.
 
 ## 5. Current Validation Record
 
-- Source-identity migration focused tests: 18 pass.
-- Plugin suite: 92 pass.
+- USE refresh focused tests: 12 pass.
+- Plugin suite: 96 pass.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
-- The prior isolated root `clean verify` and assembly packaging evidence remains
-  valid for unchanged release wiring.
+- Root `mvn clean verify`: all five modules and assembly packaging succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
 - Documentation contract checks the compact inventory, links, versions,

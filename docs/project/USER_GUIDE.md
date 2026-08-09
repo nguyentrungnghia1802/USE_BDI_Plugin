@@ -78,6 +78,10 @@ The `-H` value must be the extracted USE home. It lets USE resolve
    excerpt in the detail area.
 5. Open the `Problems` tab to inspect retained diagnostics and consistency
    rows. A valid parser import should not create an `ASL-001` syntax error.
+6. After creating/deleting objects, links, or changing attributes in USE, click
+   `Refresh USE Snapshot` in the BDI Explorer toolbar. The status line shows the
+   refreshed fingerprint, problem count, and configuration source. This does
+   not re-import `.asl`; use `Re-import changed` only for AgentSpeak edits.
 
 ### 3. Review mappings
 
@@ -116,8 +120,9 @@ The tracked screenshots and their exact UI path are indexed in
 - There is no one-click export of the current live Problems state. The Auction
   evidence command creates the verified analysis reports; `ReportMain` alone
   is only a serializer demonstration.
-- Re-open/re-import the Explorer after changing the USE model or snapshot; the
-  current view does not subscribe to later host-state changes.
+- USE does not yet push state-change events into Explorer automatically. Click
+  `Refresh USE Snapshot` after changing the model/state; failures are shown in
+  the Explorer status line and retain the previous imported BDI model.
 
 ## Reproducible Evidence Run
 

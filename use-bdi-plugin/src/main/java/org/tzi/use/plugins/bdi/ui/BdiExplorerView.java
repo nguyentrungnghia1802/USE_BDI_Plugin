@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -50,8 +52,9 @@ import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
 import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
 import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
-import org.tzi.use.plugins.bdi.use.UseSnapshotOclEvaluator;
-import org.tzi.use.plugins.bdi.use.UseUmlModelFacade;
+import org.tzi.use.plugins.bdi.use.LiveUseSnapshotProvider;
+import org.tzi.use.plugins.bdi.use.UseSnapshotContext;
+import org.tzi.use.plugins.bdi.use.UseSnapshotProvider;
 import org.tzi.use.plugins.bdi.validation.SnapshotOclEvaluator;
 import org.tzi.use.plugins.bdi.validation.ValidationContext;
 import org.tzi.use.plugins.bdi.validation.ValidationOrchestrator;
@@ -69,13 +72,16 @@ public final class BdiExplorerView extends JPanel implements View {
     private final MappingSuggestionService mappingSuggestionService;
     private final ValidationOrchestrator validationOrchestrator;
     private final String configurationSummary;
-    private final Optional<UseModelSnapshot> useModel;
-    private final Optional<SnapshotOclEvaluator> oclEvaluator;
+    private Optional<UseModelSnapshot> useModel;
+    private Optional<SnapshotOclEvaluator> oclEvaluator;
+    private final Optional<UseSnapshotProvider> useSnapshotProvider;
     private final JButton reimportButton;
+    private final JButton refreshUseButton;
     private final BdiSourceTracker sourceTracker;
     private BdiImportSnapshot snapshot;
     private BdiImportWorker worker;
     private long importGeneration;
+    private final AtomicLong useRefreshGeneration = new AtomicLong();
 
     public BdiExplorerView() {
         this(new BdiImportService(), new BdiSourceTracker(), Optional.empty(), Optional.empty(),
@@ -88,21 +94,32 @@ public final class BdiExplorerView extends JPanel implements View {
     }
 
     public BdiExplorerView(MSystem system) {
-        this(
-                new BdiImportService(),
-                new BdiSourceTracker(),
-                Optional.of(new UseUmlModelFacade().snapshot(Objects.requireNonNull(system, "system"))),
-                Optional.of(new UseSnapshotOclEvaluator(system)),
-                BdiProjectConfiguration.defaults());
+        this(() -> Objects.requireNonNull(system, "system"), BdiProjectConfiguration.defaults());
     }
 
     public BdiExplorerView(MSystem system, BdiProjectConfiguration configuration) {
+        this(() -> Objects.requireNonNull(system, "system"), configuration);
+    }
+
+    public BdiExplorerView(Supplier<MSystem> currentSystem, BdiProjectConfiguration configuration) {
+        this(new LiveUseSnapshotProvider(currentSystem), configuration);
+    }
+
+    private BdiExplorerView(UseSnapshotProvider provider, BdiProjectConfiguration configuration) {
+        this(provider.capture(), provider, configuration);
+    }
+
+    private BdiExplorerView(
+            UseSnapshotContext initial,
+            UseSnapshotProvider provider,
+            BdiProjectConfiguration configuration) {
         this(
                 new BdiImportService(),
                 new BdiSourceTracker(),
-                Optional.of(new UseUmlModelFacade().snapshot(Objects.requireNonNull(system, "system"))),
-                Optional.of(new UseSnapshotOclEvaluator(system)),
-                Objects.requireNonNull(configuration, "configuration"));
+                Optional.of(initial.snapshot()),
+                Optional.of(initial.oclEvaluator()),
+                Objects.requireNonNull(configuration, "configuration"),
+                Optional.of(provider));
     }
 
     BdiExplorerView(BdiImportService importService) {
@@ -132,12 +149,45 @@ public final class BdiExplorerView extends JPanel implements View {
                 Objects.requireNonNull(configuration, "configuration"));
     }
 
+    BdiExplorerView(
+            BdiImportService importService,
+            BdiSourceTracker sourceTracker,
+            UseSnapshotProvider provider,
+            BdiProjectConfiguration configuration) {
+        this(importService, sourceTracker, provider.capture(), provider, configuration);
+    }
+
+    private BdiExplorerView(
+            BdiImportService importService,
+            BdiSourceTracker sourceTracker,
+            UseSnapshotContext initial,
+            UseSnapshotProvider provider,
+            BdiProjectConfiguration configuration) {
+        this(
+                importService,
+                sourceTracker,
+                Optional.of(initial.snapshot()),
+                Optional.of(initial.oclEvaluator()),
+                configuration,
+                Optional.of(provider));
+    }
+
     private BdiExplorerView(
             BdiImportService importService,
             BdiSourceTracker sourceTracker,
             Optional<UseModelSnapshot> useModel,
             Optional<SnapshotOclEvaluator> oclEvaluator,
             BdiProjectConfiguration configuration) {
+        this(importService, sourceTracker, useModel, oclEvaluator, configuration, Optional.empty());
+    }
+
+    private BdiExplorerView(
+            BdiImportService importService,
+            BdiSourceTracker sourceTracker,
+            Optional<UseModelSnapshot> useModel,
+            Optional<SnapshotOclEvaluator> oclEvaluator,
+            BdiProjectConfiguration configuration,
+            Optional<UseSnapshotProvider> useSnapshotProvider) {
         this(
                 importService,
                 sourceTracker,
@@ -145,7 +195,8 @@ public final class BdiExplorerView extends JPanel implements View {
                 oclEvaluator,
                 Objects.requireNonNull(configuration, "configuration").newOrchestrator(),
                 configuration.summary(),
-                configuration.projectRoot());
+                configuration.projectRoot(),
+                useSnapshotProvider);
     }
 
     private BdiExplorerView(
@@ -155,12 +206,14 @@ public final class BdiExplorerView extends JPanel implements View {
             Optional<SnapshotOclEvaluator> oclEvaluator,
             ValidationOrchestrator validationOrchestrator,
             String configurationSummary,
-            Optional<Path> projectRoot) {
+            Optional<Path> projectRoot,
+            Optional<UseSnapshotProvider> useSnapshotProvider) {
         super(new BorderLayout(6, 6));
         this.importService = Objects.requireNonNull(importService, "importService");
         this.sourceTracker = Objects.requireNonNull(sourceTracker, "sourceTracker");
         this.useModel = Objects.requireNonNull(useModel, "useModel");
         this.oclEvaluator = Objects.requireNonNull(oclEvaluator, "oclEvaluator");
+        this.useSnapshotProvider = Objects.requireNonNull(useSnapshotProvider, "useSnapshotProvider");
         this.mappingSuggestionService = new MappingSuggestionService();
         this.validationOrchestrator = Objects.requireNonNull(validationOrchestrator, "validationOrchestrator");
         this.configurationSummary = Objects.requireNonNull(configurationSummary, "configurationSummary");
@@ -173,10 +226,15 @@ public final class BdiExplorerView extends JPanel implements View {
         reimportButton.setToolTipText("Re-import all selected files after a source change");
         reimportButton.setEnabled(false);
         reimportButton.addActionListener(event -> reimportChangedFiles());
+        refreshUseButton = new JButton("Refresh USE Snapshot");
+        refreshUseButton.setToolTipText("Capture the current USE model/state and re-run analysis");
+        refreshUseButton.setEnabled(useSnapshotProvider.isPresent());
+        refreshUseButton.addActionListener(event -> refreshUseSnapshot());
         status = new JLabel("No AgentSpeak source imported; " + configurationSummary);
         JPanel buttons = new JPanel();
         buttons.add(importButton);
         buttons.add(reimportButton);
+        buttons.add(refreshUseButton);
         JPanel toolbar = new JPanel(new BorderLayout(6, 0));
         toolbar.add(buttons, BorderLayout.WEST);
         toolbar.add(status, BorderLayout.CENTER);
@@ -226,6 +284,16 @@ public final class BdiExplorerView extends JPanel implements View {
         return true;
     }
 
+    public void refreshUseSnapshot() {
+        long generation = useRefreshGeneration.incrementAndGet();
+        Runnable refresh = () -> refreshUseSnapshotOnEdt(generation);
+        if (SwingUtilities.isEventDispatchThread()) {
+            refresh.run();
+        } else {
+            SwingUtilities.invokeLater(refresh);
+        }
+    }
+
     private void startImport(List<Path> sources, String message) {
         if (worker != null && !worker.isDone()) {
             worker.cancel(true);
@@ -251,6 +319,7 @@ public final class BdiExplorerView extends JPanel implements View {
     @Override
     public void detachModel() {
         importGeneration++;
+        useRefreshGeneration.incrementAndGet();
         if (worker != null && !worker.isDone()) {
             worker.cancel(true);
         }
@@ -282,6 +351,14 @@ public final class BdiExplorerView extends JPanel implements View {
 
     JButton reimportButtonForTest() {
         return reimportButton;
+    }
+
+    JButton refreshUseButtonForTest() {
+        return refreshUseButton;
+    }
+
+    Optional<UseModelSnapshot> useModelForTest() {
+        return useModel;
     }
 
     JLabel statusForTest() {
@@ -319,6 +396,41 @@ public final class BdiExplorerView extends JPanel implements View {
 
     private void showFailure(Throwable failure) {
         status.setText("Import failed: " + failure.getMessage());
+    }
+
+    private void refreshUseSnapshotOnEdt(long generation) {
+        if (generation != useRefreshGeneration.get()) {
+            return;
+        }
+        status.setText("Refreshing USE snapshot...");
+        try {
+            UseSnapshotProvider provider = useSnapshotProvider.orElseThrow(
+                    () -> new IllegalStateException("No live USE system is available"));
+            UseSnapshotContext refreshed = provider.capture();
+            if (generation != useRefreshGeneration.get()) {
+                return;
+            }
+            String beforeAnalysis = refreshed.snapshot().fingerprint();
+            useModel = Optional.of(refreshed.snapshot());
+            oclEvaluator = Optional.of(refreshed.oclEvaluator());
+            mapping.setSuggestions(mappingSuggestionService.suggest(
+                    snapshot.models(), snapshot.index(), refreshed.snapshot()));
+            refreshProblems();
+            String afterAnalysis = provider.capture().snapshot().fingerprint();
+            if (!beforeAnalysis.equals(afterAnalysis)) {
+                throw new IllegalStateException("USE state changed during snapshot analysis");
+            }
+            if (generation == useRefreshGeneration.get()) {
+                String shortFingerprint = beforeAnalysis.substring(0, Math.min(12, beforeAnalysis.length()));
+                status.setText("USE snapshot refreshed [" + shortFingerprint
+                        + "]; " + problems.problemCount() + " problem(s); " + configurationSummary);
+            }
+        } catch (RuntimeException error) {
+            if (generation == useRefreshGeneration.get()) {
+                String message = error.getMessage() == null ? error.getClass().getSimpleName() : error.getMessage();
+                status.setText("USE snapshot refresh failed: " + message + "; " + configurationSummary);
+            }
+        }
     }
 
     private void refreshProblems() {

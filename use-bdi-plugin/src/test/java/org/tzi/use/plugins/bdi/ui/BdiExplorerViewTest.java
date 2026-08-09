@@ -1,6 +1,7 @@
 package org.tzi.use.plugins.bdi.ui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URISyntaxException;
@@ -8,8 +9,10 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -22,8 +25,16 @@ import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
 import org.tzi.use.plugins.bdi.model.mapping.MappingKind;
 import org.tzi.use.plugins.bdi.use.UmlClassRef;
+import org.tzi.use.plugins.bdi.use.UmlObjectRef;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
+import org.tzi.use.plugins.bdi.use.UseSnapshotContext;
+import org.tzi.use.plugins.bdi.use.UseSnapshotProvider;
+import org.tzi.use.plugins.bdi.validation.BoundedEffectResult;
+import org.tzi.use.plugins.bdi.validation.BoundedEffectStatus;
+import org.tzi.use.plugins.bdi.validation.OclSnapshotResult;
+import org.tzi.use.plugins.bdi.validation.OclSnapshotStatus;
 import org.tzi.use.plugins.bdi.validation.RuleConfiguration;
+import org.tzi.use.plugins.bdi.validation.SnapshotOclEvaluator;
 
 class BdiExplorerViewTest {
     @Test
@@ -161,6 +172,143 @@ class BdiExplorerViewTest {
         assertTrue(!view.hasProblemCodeForTest("MAP-001"));
         assertTrue(view.statusForTest().getText().contains("1 rule(s) [project]"));
         assertTrue(view.statusForTest().getText().contains("0 suppression(s) [default]"));
+    }
+
+    @Test
+    void refreshesUseSnapshotAndProblemsWithoutReimportingAsl() throws Exception {
+        UseModelSnapshot before = useSnapshot("a".repeat(64), true);
+        UseModelSnapshot after = useSnapshot("b".repeat(64));
+        AtomicInteger captures = new AtomicInteger();
+        UseSnapshotProvider provider = () -> new UseSnapshotContext(
+                captures.incrementAndGet() == 1 ? before : after,
+                unknownEvaluator());
+        BdiExplorerView view = new BdiExplorerView(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                provider,
+                BdiProjectConfiguration.defaults());
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+        for (int index = 0; index < view.mappingForTest().suggestionsForTest().getModel().getSize(); index++) {
+            if (view.mappingForTest().suggestionsForTest().getModel().getElementAt(index).kind()
+                    == MappingKind.AGENT_OBJECT) {
+                view.mappingForTest().suggestionsForTest().setSelectedIndex(index);
+                break;
+            }
+        }
+        view.mappingForTest().applySelectedSuggestionForTest();
+        assertTrue(view.mappingForTest().document().bindings().stream()
+                .anyMatch(binding -> binding.kind() == MappingKind.AGENT_OBJECT));
+        var imported = view.snapshotForTest();
+        assertTrue(!view.hasProblemCodeForTest("MAP-003"));
+
+        view.refreshUseSnapshot();
+        flushEdt();
+
+        assertSame(imported, view.snapshotForTest(), "refresh must not reparse AgentSpeak");
+        assertEquals(after.fingerprint(), view.useModelForTest().orElseThrow().fingerprint());
+        assertTrue(view.hasProblemCodeForTest("MAP-003"));
+        assertTrue(view.statusForTest().getText().contains("USE snapshot refreshed"));
+        assertTrue(view.statusForTest().getText().contains("[default]"));
+        assertEquals(3, captures.get(), "initial, before-analysis, and after-analysis captures expected");
+    }
+
+    @Test
+    void reportsRefreshFailureInsteadOfTreatingItAsSuccess() throws Exception {
+        AtomicInteger captures = new AtomicInteger();
+        UseSnapshotProvider provider = () -> {
+            if (captures.incrementAndGet() > 1) {
+                throw new IllegalStateException("fixture capture failed");
+            }
+            return new UseSnapshotContext(useSnapshot("c".repeat(64)), unknownEvaluator());
+        };
+        BdiExplorerView view = new BdiExplorerView(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                provider,
+                BdiProjectConfiguration.defaults());
+
+        view.refreshUseSnapshot();
+        flushEdt();
+
+        assertTrue(view.statusForTest().getText().contains("refresh failed"));
+        assertTrue(view.statusForTest().getText().contains("fixture capture failed"));
+        assertTrue(!view.statusForTest().getText().contains("refreshed ["));
+    }
+
+    @Test
+    void discardsQueuedStaleRefreshBeforeReadingUse() throws Exception {
+        AtomicInteger captures = new AtomicInteger();
+        UseSnapshotProvider provider = () -> {
+            captures.incrementAndGet();
+            return new UseSnapshotContext(useSnapshot("d".repeat(64)), unknownEvaluator());
+        };
+        BdiExplorerView view = new BdiExplorerView(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                provider,
+                BdiProjectConfiguration.defaults());
+        CountDownLatch edtBlocked = new CountDownLatch(1);
+        CountDownLatch releaseEdt = new CountDownLatch(1);
+        SwingUtilities.invokeLater(() -> {
+            edtBlocked.countDown();
+            try {
+                releaseEdt.await(10, TimeUnit.SECONDS);
+            } catch (InterruptedException error) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        assertTrue(edtBlocked.await(10, TimeUnit.SECONDS));
+
+        view.refreshUseSnapshot();
+        view.refreshUseSnapshot();
+        releaseEdt.countDown();
+        flushEdt();
+
+        assertEquals(3, captures.get(), "stale request must not capture USE state");
+    }
+
+    private static UseModelSnapshot useSnapshot(String fingerprint) {
+        return useSnapshot(fingerprint, false);
+    }
+
+    private static UseModelSnapshot useSnapshot(String fingerprint, boolean includeObject) {
+        return new UseModelSnapshot(
+                "fixture",
+                "fixture.use",
+                List.of(new UmlClassRef("Minimal", false, List.of())),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                includeObject
+                        ? List.of(new UmlObjectRef("minimal1", "Minimal", true, Map.of()))
+                        : List.of(),
+                List.of(),
+                fingerprint);
+    }
+
+    private static SnapshotOclEvaluator unknownEvaluator() {
+        return new SnapshotOclEvaluator() {
+            @Override
+            public List<OclSnapshotResult> evaluatePreconditions(
+                    org.tzi.use.plugins.bdi.use.UmlOperationRef operation,
+                    String receiverObject,
+                    List<org.tzi.use.plugins.bdi.model.ir.TermModel> arguments) {
+                return List.of(new OclSnapshotResult(
+                        operation.reference(), OclSnapshotStatus.UNKNOWN, List.of("fixture unknown")));
+            }
+
+            @Override
+            public OclSnapshotResult evaluateExpression(String expression, String subject) {
+                return new OclSnapshotResult(subject, OclSnapshotStatus.UNKNOWN, List.of("fixture unknown"));
+            }
+
+            @Override
+            public BoundedEffectResult simulateSoilEffect(String source) {
+                return new BoundedEffectResult(BoundedEffectStatus.UNKNOWN, List.of("fixture unknown"));
+            }
+        };
     }
 
     private static void waitForImport(BdiExplorerView view) throws Exception {

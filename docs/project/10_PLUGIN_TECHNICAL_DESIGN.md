@@ -113,6 +113,13 @@ No current-working-directory fallback is allowed. Missing files select standard
 rules/empty suppressions and display that origin. Invalid files are shown as an
 error before `BdiExplorerView` opens.
 
+`LiveUseSnapshotProvider` resolves the current `Session.system()` for each
+manual refresh and returns a projection/evaluator pair from that same system.
+`BdiExplorerView` runs refresh on the EDT, uses a generation token to discard
+stale queued requests, reuses the existing BDI import, and compares USE state
+fingerprints before/after validation. Refresh failures remain visible in status
+text and cannot be converted into a successful analysis result.
+
 ## 7. Build, Test, And Script Contracts
 
 ```powershell

@@ -42,6 +42,8 @@ class UseSnapshotOclEvaluatorTest {
                 enqueue, "queue1", List.of(new StringTermModel("", span))).get(0).status());
         assertEquals(OclSnapshotStatus.UNKNOWN, evaluator.evaluatePreconditions(
                 enqueue, "queue1", List.of(new VariableTermModel("Item", span))).get(0).status());
+        assertEquals(OclSnapshotStatus.UNKNOWN,
+                evaluator.evaluateExpression("not valid ocl", "broken expression").status());
 
         String before = new UseUmlModelFacade().snapshot(system).fingerprint();
         BoundedEffectResult result = evaluator.simulateSoilEffect("soil: queue1.size := -1");

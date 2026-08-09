@@ -27,6 +27,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Project rule/suppression files auto-load beside the active `.use` model.
 - [x] Project-relative source identity v2 is defined and relocation-tested.
 - [x] Mapping/suppression schema v2 migrates v1 safely under an explicit root.
+- [x] Explorer manually refreshes current USE state without reparsing AgentSpeak.
 - [x] JSON/HTML exporters preserve issues, evidence, hashes, and suppressions.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
@@ -45,12 +46,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline for the source-identity migration slice:
+Latest validated baseline for the manual USE refresh slice:
 
-- focused migration/configuration/UI/Auction tests: 18 pass;
-- plugin tests: 92 pass;
+- focused Explorer/provider/evaluator/action tests: 12 pass;
+- plugin tests: 96 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
-- the previously verified `use-assembly` ZIP/TAR package remains unchanged.
+- root `mvn clean verify`: all five modules and ZIP/TAR packaging succeed.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
@@ -77,7 +78,7 @@ The following are future work, not hidden completion claims:
 
 - OD-003: one-click export of the current live GUI analysis;
 - OD-004: strict mapping JSON unknown-field policy;
-- OD-005: refresh/subscription after current USE state changes;
+- OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
 - full JaCaMo `.jcm`, CArtAgO, Moise, and runtime integration.
 
