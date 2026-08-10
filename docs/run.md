@@ -2,6 +2,8 @@
 
 Tài liệu này tổng hợp các câu lệnh cơ bản để biên dịch, đóng gói và chạy dự án **USE** cùng **USE BDI Plugin**.
 
+**Lưu ý:** Các script chạy UI (`run-use-gui.ps1` / `run-use-gui.cmd`) sẽ tự động kiểm tra và chạy `mvn package` nếu chưa có file `use-gui.jar`. Tuy nhiên, bạn cũng có thể chủ động đóng gói trước bằng lệnh `mvn clean package -pl use-assembly -am`.
+
 ---
 
 ## 1. Chạy UI Dự Án (Chạy Giao Diện Đồ Họa - GUI)
