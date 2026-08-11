@@ -102,7 +102,7 @@ domain-specific fixtures before they can support a broader research claim.
 
 ## 2.2. Static environment pilot catalog
 
-These three rules are intentionally separate from `StandardConsistencyRules`,
+These four rules are intentionally separate from `StandardConsistencyRules`,
 so AgentSpeak-only projects retain the exact 22-rule configuration contract.
 They consume `EnvironmentModel`, explicit in-memory environment mappings, and
 the immutable USE projection. They are not yet persisted or exposed in the GUI.
@@ -112,10 +112,14 @@ the immutable USE projection. They are not yet persisted or exposed in the GUI.
 | ENV-001 | CArtAgO artifact/operation and UML operation targets exist | ERROR / CONFIRMED | missing-operation mutant |
 | ENV-002 | BDI action arity matches the annotated artifact operation | ERROR / CONFIRMED | wrong-arity mutant |
 | ENV-003 | Observable property and UML attribute targets exist; dynamic value evidence is available | ERROR / CONFIRMED for missing targets, INFO / UNKNOWN without runtime values | valid baseline and wrong-property mutant |
+| ENV-004 | A confirmed persisted environment mapping is stale or cannot be revalidated | ERROR / CONFIRMED when a target changed, WARNING / UNKNOWN when status remains unknown | persisted Auction stale-target and unknown-status tests |
 
 `EnvironmentConsistencyValidator` never starts CArtAgO. An explicit static
-property descriptor proves only the declaration. Without captured runtime
-values, `ENV-003` remains `UNKNOWN` and cannot be reported as PASS.
+property descriptor proves only the declaration. `EnvironmentMappingValidationService`
+admits only `CONFIRMED + CURRENT` records to that validator. Candidates are
+excluded and stale/unknown confirmed records produce `ENV-004`. Without
+captured runtime values, `ENV-003` remains `UNKNOWN` and cannot be reported as
+PASS.
 
 ## 3. Goal support semantics
 

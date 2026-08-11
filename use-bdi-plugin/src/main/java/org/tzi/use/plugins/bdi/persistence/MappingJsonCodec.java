@@ -202,8 +202,61 @@ final class MappingJsonCodec {
                 case 'n' -> parseLiteral("null", null);
                 case 't' -> parseLiteral("true", Boolean.TRUE);
                 case 'f' -> parseLiteral("false", Boolean.FALSE);
-                default -> throw error("Unsupported JSON value");
+                case '-' -> parseNumber();
+                default -> {
+                    if (!Character.isDigit(input.charAt(offset))) {
+                        throw error("Unsupported JSON value");
+                    }
+                    yield parseNumber();
+                }
             };
+        }
+
+        private Number parseNumber() {
+            int start = offset;
+            if (consume('-')) {
+                if (offset >= input.length() || !Character.isDigit(input.charAt(offset))) {
+                    throw error("Invalid JSON number");
+                }
+            }
+            while (offset < input.length() && Character.isDigit(input.charAt(offset))) {
+                offset++;
+            }
+            boolean decimal = false;
+            if (consume('.')) {
+                decimal = true;
+                if (offset >= input.length() || !Character.isDigit(input.charAt(offset))) {
+                    throw error("Invalid JSON number");
+                }
+                while (offset < input.length() && Character.isDigit(input.charAt(offset))) {
+                    offset++;
+                }
+            }
+            if (offset < input.length() && (input.charAt(offset) == 'e' || input.charAt(offset) == 'E')) {
+                decimal = true;
+                offset++;
+                if (offset < input.length() && (input.charAt(offset) == '+' || input.charAt(offset) == '-')) {
+                    offset++;
+                }
+                if (offset >= input.length() || !Character.isDigit(input.charAt(offset))) {
+                    throw error("Invalid JSON number");
+                }
+                while (offset < input.length() && Character.isDigit(input.charAt(offset))) {
+                    offset++;
+                }
+            }
+            String value = input.substring(start, offset);
+            try {
+                if (decimal) {
+                    return Double.valueOf(value);
+                }
+                long parsed = Long.parseLong(value);
+                return parsed >= Integer.MIN_VALUE && parsed <= Integer.MAX_VALUE
+                        ? Integer.valueOf((int) parsed)
+                        : Long.valueOf(parsed);
+            } catch (NumberFormatException error) {
+                throw error("Invalid JSON number: " + value);
+            }
         }
 
         private Map<String, Object> parseObject() {

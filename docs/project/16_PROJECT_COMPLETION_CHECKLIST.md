@@ -36,6 +36,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] `.jcm` agent import preserves partial success and explicit unsupported resources.
 - [x] `.jcm` projects compose through the shared immutable analysis snapshot service.
 - [x] Explorer and headless CLI expose the shared `.jcm` project analysis path.
+- [x] Typed CArtAgO environment mappings persist in a strict portable document and revalidate stale targets.
 - [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
 - [x] Static CArtAgO artifact pilot detects operation/arity/property mutants and preserves dynamic UNKNOWN.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
@@ -56,10 +57,11 @@ are complete. Do not append per-day implementation diaries.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 
-Latest validated baseline after the static CArtAgO environment pilot:
+Latest validated baseline after typed CArtAgO environment mapping persistence:
 
+- focused T13 persistence/environment tests: 10 pass;
 - focused T12 GUI/CLI/project-worker tests: 22 pass;
-- plugin tests: 121 pass;
+- plugin tests: 130 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo classes, excludes Moise, and
   returns `GUI_SMOKE_OK`;
@@ -82,6 +84,19 @@ T12 project-entry-point evidence:
 - CLI `--jcm` shares T11 composition, rejects conflicts/missing/wrong-extension
   input with exit 3, and preserves deterministic JSON/HTML output behavior;
 - package smoke and root verification are required before release integration.
+
+T13 environment-mapping evidence:
+
+- `EnvironmentMappingFileRepositoryTest`: 4 tests cover typed operation/property
+  round-trip, deterministic bytes, checkout relocation, confirmation filtering,
+  unknown status, malformed/unknown/duplicate records, invalid roots, and the
+  unchanged `.bdimap.json` repository contract;
+- `AuctionEnvironmentMappingPersistenceTest`: 2 tests prove the persisted path
+  preserves the `ENV-003` dynamic `UNKNOWN` oracle and emits `ENV-004` for a
+  removed UML target without passing it silently to the legacy rules;
+- `RuleCatalogCompletenessTest` includes the separate `ENV-004` catalog entry;
+- [CArtAgO environment mapping persistence evidence](evidence/cartago-environment-mapping-persistence.md)
+  records schema, source identity, rejection policy, and limitations.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
@@ -109,7 +124,7 @@ The following are future work, not hidden completion claims:
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
-- Persisted/live CArtAgO, Moise, and runtime integration.
+- Live CArtAgO, Moise, and runtime integration.
 
 The prioritized development candidates are maintained in
 [the idea backlog](../idea/idea.md).
@@ -122,6 +137,7 @@ The prioritized development candidates are maintained in
 | JaCaMo project import | parser spike, MAS golden, diagnostics, relocation, package smoke |
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
+| Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |
 | Plugin GUI | action/Explorer tests and `scripts/smoke.ps1` |
 | Mapping/rules | mapping, orchestrator, catalog, config, suppression tests |
 | USE/OCL safety | facade/evaluator tests and fingerprint assertions |

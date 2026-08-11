@@ -116,6 +116,8 @@ implemented.
 | FR-ENV-002 | Validate mapped artifact operation existence and arity against USE operation targets | Implemented |
 | FR-ENV-003 | Validate declared observable-property/UML-attribute targets and return UNKNOWN without dynamic value evidence | Implemented |
 | FR-ENV-004 | Run CArtAgO workspaces or consume live artifact state | Planned |
+| FR-ENV-005 | Persist typed CArtAgO operation/property mappings in a portable deterministic `.cartago-map.json` document | Implemented |
+| FR-ENV-006 | Revalidate confirmed environment targets and preserve explicit candidate/stale/unknown status | Implemented |
 
 ### 2.9 Case study and release
 
@@ -149,6 +151,7 @@ implemented.
 | BR-013 | JaCaMo parser/model types stop at the project adapter; static import does not imply runtime support. |
 | BR-014 | The traceability graph is derived evidence, never a mutable or persisted source of truth. |
 | BR-015 | CArtAgO concrete APIs stop at the adapter; static declarations cannot imply runtime-state consistency. |
+| BR-016 | Environment mapping suggestions remain candidates; only confirmed current bindings enter environment rules, while stale and unknown states remain explicit. |
 
 ## 4. Core acceptance criteria
 

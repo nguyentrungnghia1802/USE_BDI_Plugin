@@ -87,12 +87,20 @@ source-fingerprint suppressions. The authoritative 22-rule matrix is in
 [the rule catalog](08_CONSISTENCY_RULE_CATALOG.md).
 
 The optional environment pilot uses a separate immutable context and
-`ENV-001..003`. It checks CArtAgO/UML operation existence, artifact-operation
-arity, and observable-property/UML-attribute targets. Existing mapping schema
-`0.2.0` is unchanged; pilot environment mappings are in-memory values pending a
-dedicated persistence migration. Missing runtime property values are
-`UNKNOWN`, not PASS. Environment findings can contribute typed artifact,
-operation/property, UML, gap, and issue nodes to the traceability graph.
+`ENV-001..004`. It checks CArtAgO/UML operation existence, artifact-operation
+arity, observable-property/UML-attribute targets, and stale/unknown confirmed
+bindings. Existing mapping schema `0.2.0` is unchanged. Persisted environment
+records use the separate `EnvironmentMappingDocument` schema `0.1.0`, typed
+operation/property records, portable `ProjectSourceId` v2 provenance, explicit
+confirmation, evidence, and staleness state. `EnvironmentMappingJsonCodec` is
+strict about closed fields and deterministic field order; the repository
+requires an explicit project root and cannot overwrite a destination after
+validation failure. Missing runtime property values are `UNKNOWN`, not PASS.
+Candidates do not enter rules. Only confirmed current records are converted to
+the existing environment mappings; stale or unknown confirmed records produce
+`ENV-004` with auditable evidence. Environment findings can contribute typed
+artifact, operation/property, UML, gap, and issue nodes to the traceability
+graph.
 
 OCL checks preserve certainty:
 
@@ -232,8 +240,8 @@ For a new rule:
 
 For a new JaCaMo layer, extend a separate adapter and plugin-owned IR. Current
 standard rules must not depend directly on `.jcm`, CArtAgO, Moise, or runtime
-classes. Persisting environment mappings, live state capture, and Moise each
-require a dedicated decision beyond ADR-0028.
+classes. Live CArtAgO state capture and Moise each require a dedicated decision
+beyond ADR-0028/ADR-0031.
 
 ## 10. Definition Of Done
 

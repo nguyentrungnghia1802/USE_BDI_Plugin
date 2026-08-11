@@ -42,6 +42,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0028 | Inspect CArtAgO 3.1 `@OPERATION` metadata behind an adapter, model observable properties from explicit static descriptors, keep pilot mappings in memory, and return UNKNOWN without runtime state evidence | adapter/mutant/catalog/package tests |
 | ADR-0029 | Compose static `.jcm` imports and direct AgentSpeak imports through one immutable `MasProjectAnalysisService` and keep project diagnostics separate from BDI diagnostics | project-analysis service tests |
 | ADR-0030 | Route GUI and headless `.jcm` entry points through the shared project service; use a background Swing worker, reject mixed input before output, and never start JaCaMo runtime | Explorer/worker/CLI/package smoke |
+| ADR-0031 | Persist CArtAgO operation/property bindings in a separate typed environment document; preserve BDI mapping schema `0.2.0` and reject unknown environment fields/versions | environment codec/repository/migration tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -209,3 +210,26 @@ Moise, subscriptions, and automatic project-resource execution remain outside
 this slice. Project diagnostics are visible in the Explorer tree/status and
 CLI output; the existing consistency report remains the immutable analysis
 snapshot supplied by the caller.
+
+## 11. ADR-0031: Separate Versioned CArtAgO Mapping Document
+
+**Status:** Accepted. **Date:** 2026-08-11.
+
+The existing `MappingDocument` is the source of truth for six BDI-to-UML
+mapping kinds and schema `0.2.0`. CArtAgO operation/property mappings have
+different identity, artifact/operation arity evidence, confirmation, source
+provenance, and stale-target semantics. They are therefore persisted in a
+separate plugin-owned environment document (for example
+`.cartago-map.json`) with its own version and strict closed-field codec.
+
+Option A, selected, keeps `MappingDocument` byte/semantic compatible and lets
+the environment validator consume only confirmed, current typed records.
+Option B, rejected, would add environment fields to the BDI schema and force a
+cross-domain migration before the pilot has an accepted runtime contract. No
+legacy environment document existed before this ADR; BDI-only files are
+regression-tested unchanged. Unknown environment versions, fields, duplicate
+keys, invalid roots, and malformed records fail before a file is rewritten.
+
+Suggestions remain `CANDIDATE`; stale or unavailable targets are explicit
+`STALE`/`UNKNOWN` states and never silently become valid mappings. CArtAgO
+concrete types remain confined to the adapter.

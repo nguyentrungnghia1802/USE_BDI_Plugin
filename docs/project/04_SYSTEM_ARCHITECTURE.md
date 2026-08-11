@@ -166,6 +166,17 @@ inspect CArtAgO artifacts, or consume execution traces. The GUI/headless
 entry points provide static `.jcm` composition only; they do not launch a
 JaCaMo runtime.
 
+Static environment bindings are persisted separately from `.bdimap.json` in a
+typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
+an explicit project root, uses portable `ProjectSourceId` v2 provenance, emits
+deterministic UTF-8 JSON, and rejects unknown fields, unsupported versions,
+duplicate mapping identities, invalid roots, and malformed records. The
+`EnvironmentMappingValidationService` revalidates confirmed operation/property
+targets against the current plugin-owned environment and USE snapshots. Only
+`CONFIRMED + CURRENT` mappings reach `EnvironmentConsistencyValidator`; a
+candidate is excluded, while a stale or unknown confirmed mapping emits
+`ENV-004` with source and target evidence.
+
 ## 8. Traceability Boundary
 
 `TraceabilityGraphBuilder` consumes only `CurrentAnalysisSnapshot` plus an
@@ -179,5 +190,5 @@ source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
-- Automatic `.jcm` environment resolution, persisted environment mappings,
-  live CArtAgO state, Moise, and runtime integration.
+- Automatic `.jcm` environment resolution, live CArtAgO state, Moise, and
+  runtime integration.

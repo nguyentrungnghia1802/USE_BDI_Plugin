@@ -35,6 +35,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-REP-007 | `BdiQualityGateMain`, `HeadlessAnalysisService`, packaged smoke | Auction, `.jcm`, invalid/conflicting input, review-only, deterministic and process-exit tests | ADR-0025/0030, developer guide |
 | FR-TRC-001..003 | `trace` graph values, builder, query, and serializer | `AuctionTraceabilityGraphTest` complete-chain, gap, deduplication, certainty, and portability tests | ADR-0027, architecture, technical design |
 | FR-ENV-001..004 | `CArtAgOArtifactAdapter`, `model.environment`, environment validator/trace contributor | adapter, Auction baseline, three mutants, boundary, catalog, and package tests | ADR-0028, CArtAgO spike evidence |
+| FR-ENV-005..006 | `EnvironmentMappingDocument`, typed persisted records, strict codec/repository, staleness detector, validation service | round-trip/relocation, invalid-record, candidate/unknown, BDI regression, persisted Auction, stale-target, and catalog tests | ADR-0031, environment mapping persistence evidence |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
 | FR-REL-001..002 | Maven POMs, smoke/clean-clone scripts | root verify and script markers | developer/install guides, release evidence |
@@ -58,6 +59,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | BR-013 | JaCaMo adapter boundary scan, runtime exclusions, parser/import tests |
 | BR-014 | Immutable graph constructors, snapshot-only builder, and graph portability tests |
 | BR-015 | Environment boundary test, UNKNOWN dynamic-state test, and package dependency smoke |
+| BR-016 | Environment document confirmation filter, `ENV-004`, candidate/stale/unknown tests, and deterministic persistence evidence |
 
 ## 3. Evidence traceability
 
@@ -74,6 +76,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | Static JaCaMo import | parser-spike evidence and Auction golden MAS project IR |
 | Unified issue trace | Auction traceability graph test and ADR-0027 |
 | Static environment consistency | CArtAgO adapter/mutant tests and ADR-0028 |
+| Persisted environment mappings | strict environment codec/repository, relocation and stale-target tests, ADR-0031, and persistence evidence |
 | Research limitations | threats, limitations, and future-work documents |
 
 ## 4. Known untraced end-to-end gaps

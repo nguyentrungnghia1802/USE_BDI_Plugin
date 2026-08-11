@@ -29,7 +29,8 @@ class RuleCatalogCompletenessTest {
 
         assertEquals(EXPECTED_RULE_IDS, phases.keySet());
         assertEquals(22, phases.size());
-        assertEquals(Set.of("ENV-001", "ENV-002", "ENV-003"), Set.copyOf(EnvironmentRuleCatalog.ids()));
+        assertEquals(Set.of("ENV-001", "ENV-002", "ENV-003", "ENV-004"),
+                Set.copyOf(EnvironmentRuleCatalog.ids()));
         assertEquals(RulePhase.PARSE, phases.get("ASL-001"));
         assertEquals(RulePhase.IR_WELL_FORMEDNESS, phases.get("BDI-001"));
         assertEquals(RulePhase.REFERENCE, phases.get("REF-001"));
