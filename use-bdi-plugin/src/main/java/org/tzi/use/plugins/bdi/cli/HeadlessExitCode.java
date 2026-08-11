@@ -1,6 +1,8 @@
 package org.tzi.use.plugins.bdi.cli;
 
 import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshot;
+import org.tzi.use.plugins.bdi.importer.MasProjectDiagnostic;
+import org.tzi.use.plugins.bdi.importer.MasProjectDiagnosticSeverity;
 import org.tzi.use.plugins.bdi.validation.IssueCertainty;
 import org.tzi.use.plugins.bdi.validation.IssueStatus;
 
@@ -33,5 +35,23 @@ public enum HeadlessExitCode {
             return CONFIRMED_FINDINGS;
         }
         return REVIEW_FINDINGS;
+    }
+
+    public static HeadlessExitCode forResult(
+            CurrentAnalysisSnapshot snapshot,
+            java.util.List<MasProjectDiagnostic> projectDiagnostics) {
+        boolean invalidProject = projectDiagnostics.stream().anyMatch(item ->
+                item.severity() == MasProjectDiagnosticSeverity.ERROR
+                        && (MasProjectDiagnostic.PARSE_ERROR.equals(item.code())
+                                || MasProjectDiagnostic.SOURCE_OUTSIDE_ROOT.equals(item.code())));
+        if (invalidProject) {
+            return INVALID_INPUT;
+        }
+        boolean projectErrors = projectDiagnostics.stream()
+                .anyMatch(item -> item.severity() == MasProjectDiagnosticSeverity.ERROR);
+        if (projectErrors) {
+            return CONFIRMED_FINDINGS;
+        }
+        return forSnapshot(snapshot);
     }
 }

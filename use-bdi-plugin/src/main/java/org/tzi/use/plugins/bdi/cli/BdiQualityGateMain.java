@@ -48,6 +48,9 @@ public final class BdiQualityGateMain {
             result.snapshot().issues().forEach(issue -> out.println(
                     issue.ruleId() + " " + issue.certainty() + " " + issue.message()
                             + " evidence=" + String.join("; ", issue.evidence())));
+            result.projectDiagnostics().forEach(diagnostic -> out.println(
+                    diagnostic.code() + " " + diagnostic.severity() + " " + diagnostic.message()
+                            + " source=" + diagnostic.source()));
             return exit.code();
         } catch (HeadlessInputException | IllegalArgumentException error) {
             err.println("BDI_QUALITY_GATE_INPUT_ERROR: " + error.getMessage());
@@ -66,7 +69,8 @@ public final class BdiQualityGateMain {
         return """
                 USE BDI headless quality gate
                   --use <model.use>          required
-                  --asl <agent.asl>          required, repeatable
+                  --asl <agent.asl>          direct AgentSpeak input, repeatable
+                  --jcm <project.jcm>        JaCaMo project input; mutually exclusive with --asl
                   --mapping <file>           optional .bdimap.json
                   --rules <file>             optional rules.json
                   --suppressions <file>      optional suppressions.json
@@ -94,6 +98,7 @@ public final class BdiQualityGateMain {
             }
             Path use = null;
             List<Path> asl = new ArrayList<>();
+            Path jcm = null;
             Path mapping = null;
             Path rules = null;
             Path suppressions = null;
@@ -111,6 +116,7 @@ public final class BdiQualityGateMain {
                     case "--overwrite" -> overwrite = true;
                     case "--use" -> use = Path.of(value(args, ++index, option));
                     case "--asl" -> asl.add(Path.of(value(args, ++index, option)));
+                    case "--jcm" -> jcm = Path.of(value(args, ++index, option));
                     case "--mapping" -> mapping = Path.of(value(args, ++index, option));
                     case "--rules" -> rules = Path.of(value(args, ++index, option));
                     case "--suppressions" -> suppressions = Path.of(value(args, ++index, option));
@@ -135,6 +141,7 @@ public final class BdiQualityGateMain {
                     new HeadlessAnalysisRequest(
                             use,
                             asl,
+                            Optional.ofNullable(jcm),
                             Optional.ofNullable(mapping),
                             Optional.ofNullable(rules),
                             Optional.ofNullable(suppressions),

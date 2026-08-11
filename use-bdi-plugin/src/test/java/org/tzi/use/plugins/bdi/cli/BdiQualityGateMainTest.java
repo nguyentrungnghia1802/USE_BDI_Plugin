@@ -119,6 +119,67 @@ class BdiQualityGateMainTest {
     }
 
     @Test
+    void analyzesJacamoProjectThroughTheSameHeadlessSnapshotAndReportsDiagnostics() throws Exception {
+        Path use = fixture("fixtures/casestudy/auction/Auction.use");
+        Path jcm = fixture("fixtures/casestudy/auction/auction.jcm");
+        Path report = tempDir.resolve("auction-jcm.json");
+
+        Invocation result = invoke(
+                "--use", use.toString(),
+                "--jcm", jcm.toString(),
+                "--json", report.toString(),
+                "--timestamp", "2026-08-11T00:00:00Z");
+
+        assertEquals(HeadlessExitCode.CONFIRMED_FINDINGS.code(), result.exitCode());
+        assertTrue(result.stdout().contains("JCM-005"));
+        assertTrue(Files.readString(report).contains("MAP-001"));
+    }
+
+    @Test
+    void rejectsConflictingProjectAndDirectAgentSpeakInputs() throws Exception {
+        Path use = fixture("fixtures/casestudy/auction/Auction.use");
+        Path jcm = fixture("fixtures/casestudy/auction/auction.jcm");
+        Path asl = fixture("fixtures/casestudy/auction/auctioneer.asl");
+
+        Invocation result = invoke(
+                "--use", use.toString(),
+                "--jcm", jcm.toString(),
+                "--asl", asl.toString(),
+                "--json", tempDir.resolve("conflict.json").toString());
+
+        assertEquals(HeadlessExitCode.INVALID_INPUT.code(), result.exitCode());
+        assertTrue(result.stderr().contains("Exactly one of --asl or --jcm is required"));
+        assertFalse(Files.exists(tempDir.resolve("conflict.json")));
+    }
+
+    @Test
+    void rejectsMissingAndWrongExtensionJacamoProjectsBeforeWritingReports() throws Exception {
+        Path use = fixture("fixtures/casestudy/auction/Auction.use");
+        Path missing = tempDir.resolve("missing.jcm");
+        Path missingReport = tempDir.resolve("missing-jcm.json");
+
+        Invocation missingResult = invoke(
+                "--use", use.toString(),
+                "--jcm", missing.toString(),
+                "--json", missingReport.toString());
+
+        assertEquals(HeadlessExitCode.INVALID_INPUT.code(), missingResult.exitCode());
+        assertTrue(missingResult.stderr().contains("Missing JaCaMo project file"));
+        assertFalse(Files.exists(missingReport));
+
+        Path wrongExtension = Files.writeString(tempDir.resolve("project.txt"), "mas auction {}");
+        Path wrongReport = tempDir.resolve("wrong-jcm.json");
+        Invocation wrongResult = invoke(
+                "--use", use.toString(),
+                "--jcm", wrongExtension.toString(),
+                "--json", wrongReport.toString());
+
+        assertEquals(HeadlessExitCode.INVALID_INPUT.code(), wrongResult.exitCode());
+        assertTrue(wrongResult.stderr().contains("JaCaMo project must use .jcm"));
+        assertFalse(Files.exists(wrongReport));
+    }
+
+    @Test
     void helpAndOutputFailureUseTheirDocumentedExitCodes() throws Exception {
         Invocation help = invoke("--help");
         assertEquals(HeadlessExitCode.CLEAN.code(), help.exitCode());

@@ -54,8 +54,10 @@ is the shaded `use-bdi-plugin-7.1.1.jar` produced by the package phase.
 1. Open `Plugins > AgentSpeak > Hello BDI Plugin`. A successful action confirms
    that USE loaded the descriptor and runtime class.
 2. Open `Plugins > AgentSpeak > Import AgentSpeak...`.
-3. Select an `.asl` fixture, then show the BDI Explorer tree.
-4. Open the `Problems` tab to inspect rule ID, certainty, source location, and
+3. Open `Plugins > AgentSpeak > Import JaCaMo Project...` to select one `.jcm`
+   fixture, then show the resolved project in the BDI Explorer tree.
+4. Select an `.asl` fixture when demonstrating direct source import.
+5. Open the `Problems` tab to inspect rule ID, certainty, source location, and
    evidence.
 
 The automated package/menu smoke is:
@@ -65,7 +67,7 @@ powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1
 ```
 
 The expected GUI marker is
-`GUI_SMOKE_OK: Plugins > AgentSpeak > Hello BDI Plugin + Import AgentSpeak...`.
+`GUI_SMOKE_OK: Plugins > AgentSpeak > Hello BDI Plugin + Import AgentSpeak... + Import JaCaMo Project...`.
 
 ## Install into an existing extracted USE home
 

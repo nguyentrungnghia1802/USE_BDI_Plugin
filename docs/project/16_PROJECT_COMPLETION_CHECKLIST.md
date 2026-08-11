@@ -35,6 +35,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Official JaCaMo 1.3.0 parses Auction `.jcm` into portable MAS IR.
 - [x] `.jcm` agent import preserves partial success and explicit unsupported resources.
 - [x] `.jcm` projects compose through the shared immutable analysis snapshot service.
+- [x] Explorer and headless CLI expose the shared `.jcm` project analysis path.
 - [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
 - [x] Static CArtAgO artifact pilot detects operation/arity/property mutants and preserves dynamic UNKNOWN.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
@@ -57,7 +58,7 @@ are complete. Do not append per-day implementation diaries.
 
 Latest validated baseline after the static CArtAgO environment pilot:
 
-- focused CLI/current-snapshot/report tests: 10 pass;
+- focused T12 GUI/CLI/project-worker tests: 22 pass;
 - plugin tests: 121 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo classes, excludes Moise, and
@@ -71,7 +72,16 @@ T11 project-analysis evidence:
 - `MasProjectAnalysisServiceTest`: 3 focused tests pass;
 - valid Auction composition, partial invalid/missing sources, and relocation
   identity are covered;
-- GUI/CLI `.jcm` entry-point wiring remains the next planned slice.
+
+T12 project-entry-point evidence:
+
+- `BdiQualityGateMainTest`, `BdiExplorerViewTest`, `BdiImportWorkerTest`, and
+  `ImportBdiActionTest`: 22 focused tests pass;
+- GUI action/menu and Explorer button select one `.jcm`, show resolved agents
+  and sorted project diagnostics, and export the held immutable snapshot;
+- CLI `--jcm` shares T11 composition, rejects conflicts/missing/wrong-extension
+  input with exit 3, and preserves deterministic JSON/HTML output behavior;
+- package smoke and root verification are required before release integration.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
@@ -99,7 +109,7 @@ The following are future work, not hidden completion claims:
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
-- JaCaMo GUI/CLI composition, persisted/live CArtAgO, Moise, and runtime integration.
+- Persisted/live CArtAgO, Moise, and runtime integration.
 
 The prioritized development candidates are maintained in
 [the idea backlog](../idea/idea.md).

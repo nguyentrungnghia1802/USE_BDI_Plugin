@@ -10,12 +10,13 @@ documentation. It intentionally traces groups instead of every Java record.
 
 | Requirement IDs | Primary source | Primary automated evidence | Detailed docs |
 | --- | --- | --- | --- |
-| FR-PLG-001..005 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction` | `HelloBdiActionTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | architecture, technical design, install/user guides |
+| FR-PLG-001..005 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction`, `ImportJaCaMoAction` | `HelloBdiActionTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | architecture, technical design, install/user guides |
 | FR-IMP-001..003 | `JasonAslParserAdapter`, `JasonAslImporter`, import result/diagnostics | `JasonAslParserAdapterTest`, `JasonAslImporterTest`, `AslImportReportTest` | technical design, ADR-0002..0008 |
 | FR-IMP-004..006 | `JasonAstToIrNormalizer`, `model/ir`, `BdiIndexBuilder` | `AgentModelTest`, `IrHierarchyTest`, golden and index tests | architecture, technical design |
 | FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | architecture, developer guide |
 | FR-IMP-009..011 | `JaCaMoProjectParserAdapter`, `MasProjectImportService`, `model/mas` | parser spike, golden IR, partial-success, diagnostic, and relocation tests | ADR-0026, architecture, parser-spike evidence |
 | FR-IMP-012 | `MasProjectAnalysisRequest`, `MasProjectAnalysisService`, `MasProjectAnalysisResult` | Auction composition, partial-success, relocation, and immutable snapshot tests | ADR-0029, project-analysis evidence |
+| FR-IMP-013 | `ImportJaCaMoAction`, `BdiProjectImportWorker`, `HeadlessAnalysisService` | Explorer project import, worker, CLI success/error/conflict tests | ADR-0030, project-entry-point evidence |
 | FR-MAP-001..002 | `UseUmlModelFacade`, `UseModelFingerprint` | `UseUmlModelFacadeTest` | architecture, technical design, ADR-0012 |
 | FR-MAP-003..006 | mapping domain/services/repository/editor | mapping suggestion/model/persistence/staleness/editor tests | technical design, ADR-0013/0014 |
 | FR-MAP-007 | `ProjectSourceId`, mapping/suppression repositories, `SourceSpan` | identity, v1 migration, byte-stability, invalid-root, and relocation tests | ADR-0021/0022, limitations |
@@ -26,12 +27,12 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-VAL-007..008 | `BdiExplorerView`, problem collector/panel | explorer/problem tests | architecture, user guide |
 | FR-OCL-001..006 | `UseSnapshotOclEvaluator`, snapshot result/status types | `UseSnapshotOclEvaluatorTest`, Auction OCL mutant test | architecture, technical design, ADR-0014 |
 | FR-OCL-007 | no implementation claimed | Optional checklist status | context, requirements, future work |
-| FR-UI-001..004 | `BdiExplorerView`, `LiveUseSnapshotProvider`, UI/problem/mapping models | UI/action/provider tests, stale-refresh and GUI smoke | user guide, ADR-0023, screenshot evidence |
+| FR-UI-001..005 | `BdiExplorerView`, `LiveUseSnapshotProvider`, `ImportJaCaMoAction`, UI/problem/mapping models | UI/action/provider/project-worker tests, stale-refresh and GUI smoke | user guide, ADR-0023/0030, screenshot evidence |
 | FR-REP-001..003 | report data/exporters and fingerprints | report/hash/suppression tests, Auction baseline | technical design, ADR-0015/0016/0018 |
 | FR-REP-004 | Explorer export action and `CurrentAnalysisReportService` | GUI/direct parity, atomic failure, UTF-8 and HTML escaping tests | user guide, ADR-0015/0024 |
 | FR-REP-005 | `ReportMain` zero-state serializer demonstration | report/package smoke tests | requirements, technical/developer guides |
 | FR-REP-006 | `CurrentAnalysisSnapshotService`, immutable aggregate | Auction, malformed, deterministic-time, state-safety, and Explorer parity tests | ADR-0024, architecture, technical design |
-| FR-REP-007 | `BdiQualityGateMain`, `HeadlessAnalysisService`, packaged smoke | Auction, invalid ASL/input/config, review-only, deterministic and process-exit tests | ADR-0025, developer guide |
+| FR-REP-007 | `BdiQualityGateMain`, `HeadlessAnalysisService`, packaged smoke | Auction, `.jcm`, invalid/conflicting input, review-only, deterministic and process-exit tests | ADR-0025/0030, developer guide |
 | FR-TRC-001..003 | `trace` graph values, builder, query, and serializer | `AuctionTraceabilityGraphTest` complete-chain, gap, deduplication, certainty, and portability tests | ADR-0027, architecture, technical design |
 | FR-ENV-001..004 | `CArtAgOArtifactAdapter`, `model.environment`, environment validator/trace contributor | adapter, Auction baseline, three mutants, boundary, catalog, and package tests | ADR-0028, CArtAgO spike evidence |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
@@ -80,7 +81,7 @@ documentation. It intentionally traces groups instead of every Java record.
 - One-click export of the current live GUI validation state.
 - Host model/snapshot change subscription for a long-lived BDI Explorer.
 - House Building or a second independent evaluation corpus.
-- GUI/CLI `.jcm` entry points plus live CArtAgO, Moise, and runtime-trace integration.
+- Live CArtAgO, Moise, and runtime-trace integration.
 - Complete external data/report/slides backup and release tag.
 
 These are intentionally Partial/Planned/Optional requirements, not missing

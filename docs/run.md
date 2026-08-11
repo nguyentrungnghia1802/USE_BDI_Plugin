@@ -107,3 +107,13 @@ java -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
   --suppressions .\.bdi-plugin\suppressions.json `
   --json .\analysis.json --html .\analysis.html
 ```
+
+For static JaCaMo project analysis, use one explicit project input instead of
+the repeatable AgentSpeak inputs:
+
+```powershell
+java -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
+  --use .\Auction.use --jcm .\auction.jcm `
+  --json .\auction-jcm.json --html .\auction-jcm.html `
+  --timestamp 2026-08-11T00:00:00Z
+```

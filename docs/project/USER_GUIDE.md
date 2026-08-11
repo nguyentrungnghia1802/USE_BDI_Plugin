@@ -15,6 +15,7 @@ The checked-in Auction files are under
 `use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/`:
 
 - `Auction.use` - UML/OCL model.
+- `auction.jcm` - static JaCaMo project declaration.
 - `auctioneer.asl` - auctioneer AgentSpeak source.
 - `bidder.asl` - bidder AgentSpeak source.
 
@@ -87,7 +88,34 @@ The `-H` value must be the extracted USE home. It lets USE resolve
    `Replace existing report?`; choosing No or cancelling keeps it unchanged.
    The status line displays the absolute output path or the failure cause.
 
-### 3. Review mappings
+### 3. Import the static JaCaMo project
+
+1. Click `Plugins > AgentSpeak > Import JaCaMo Project...`, or click
+   `Import .jcm...` in the BDI Explorer toolbar.
+2. Select `auction.jcm` from the Auction fixture directory. The chooser allows
+   one `.jcm` project and does not start a JaCaMo runtime.
+3. Expand the Explorer tree to show the resolved AgentSpeak files and three
+   agent instances. The status line reports the project diagnostic count;
+   expand `JaCaMo diagnostics (...)` to inspect retained resource warnings.
+4. Use `Export Current Analysis...` to export the exact immutable snapshot
+   displayed by the Explorer. A cancelled or superseded selection does not
+   replace the current result.
+
+For CI, pass the same project explicitly to the headless entry point:
+
+```powershell
+java -cp "$useHome\lib\plugins\use-bdi-plugin-7.1.1.jar;$useHome\lib\use-gui.jar" `
+  org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
+  --use .\Auction.use --jcm .\auction.jcm `
+  --json .\auction-jcm.json --html .\auction-jcm.html `
+  --timestamp 2026-08-11T00:00:00Z
+```
+
+`--jcm` and `--asl` are mutually exclusive. Missing or wrong-extension
+projects return exit `3` and do not create reports. The command performs the
+same static composition as the GUI and never launches JaCaMo.
+
+### 4. Review mappings
 
 1. Select the `Mapping` tab beside `Explorer` and `Problems`.
 2. Review the exact-name and operation-arity suggestions.
@@ -102,12 +130,13 @@ project. Loading a `0.1.0` mapping is supported and the next Save writes the
 portable format. A mapping cannot be loaded or saved for an unnamed/in-memory
 USE model because no trustworthy project root exists.
 
-### 4. Show USE views during the presentation
+### 5. Show USE views during the presentation
 
 - `View > Create View > Class diagram`: show the UML structure.
 - `View > Create View > Object diagram`: show the current object/link
   snapshot, after objects have been created.
 - `Plugins > AgentSpeak > Import AgentSpeak...`: show the import entry point.
+- `Plugins > AgentSpeak > Import JaCaMo Project...`: show static `.jcm` entry.
 - BDI Explorer `Explorer` tab: show beliefs, goals, plans, and ordered steps.
 - BDI Explorer `Problems` tab: show rule ID, severity, certainty, source, and
   evidence.

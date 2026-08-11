@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -33,14 +34,19 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.tzi.use.gui.views.View;
 import org.tzi.use.plugins.bdi.ImportBdiAction;
+import org.tzi.use.plugins.bdi.ImportJaCaMoAction;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
 import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
 import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.BdiSourceTracker;
 import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshot;
 import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshotService;
+import org.tzi.use.plugins.bdi.application.MasProjectAnalysisRequest;
+import org.tzi.use.plugins.bdi.application.MasProjectAnalysisResult;
+import org.tzi.use.plugins.bdi.application.MasProjectAnalysisService;
 import org.tzi.use.plugins.bdi.index.BdiIndex;
 import org.tzi.use.plugins.bdi.importer.AslDiagnostic;
+import org.tzi.use.plugins.bdi.importer.MasProjectDiagnostic;
 import org.tzi.use.plugins.bdi.model.ir.AchieveGoalStepModel;
 import org.tzi.use.plugins.bdi.model.ir.ActionStepModel;
 import org.tzi.use.plugins.bdi.model.ir.AgentModel;
@@ -55,6 +61,7 @@ import org.tzi.use.plugins.bdi.model.ir.PlanStepModel;
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.model.ir.TestStepModel;
 import org.tzi.use.plugins.bdi.model.mapping.MappingSuggestionService;
+import org.tzi.use.plugins.bdi.model.mas.MasProjectModel;
 import org.tzi.use.plugins.bdi.report.CurrentAnalysisReportService;
 import org.tzi.use.plugins.bdi.report.ReportFormat;
 import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
@@ -79,19 +86,23 @@ public final class BdiExplorerView extends JPanel implements View {
     private final MappingEditorPanel mapping;
     private final MappingSuggestionService mappingSuggestionService;
     private final CurrentAnalysisSnapshotService analysisService;
+    private final MasProjectAnalysisService projectAnalysisService;
     private final CurrentAnalysisReportService reportService = new CurrentAnalysisReportService();
     private final String configurationSummary;
     private final String projectName;
+    private final BdiProjectConfiguration configuration;
     private Optional<UseModelSnapshot> useModel;
     private Optional<SnapshotOclEvaluator> oclEvaluator;
     private final Optional<UseSnapshotProvider> useSnapshotProvider;
     private final JButton reimportButton;
+    private final JButton importProjectButton;
     private final JButton refreshUseButton;
     private final JButton exportButton;
     private final BdiSourceTracker sourceTracker;
     private BdiImportSnapshot snapshot;
     private Optional<CurrentAnalysisSnapshot> currentAnalysis = Optional.empty();
-    private BdiImportWorker worker;
+    private Optional<MasProjectModel> project = Optional.empty();
+    private SwingWorker<?, ?> worker;
     private long importGeneration;
     private final AtomicLong useRefreshGeneration = new AtomicLong();
 
@@ -208,6 +219,7 @@ public final class BdiExplorerView extends JPanel implements View {
                 Objects.requireNonNull(configuration, "configuration").newOrchestrator(),
                 configuration.summary(),
                 configuration.projectRoot(),
+                configuration,
                 useSnapshotProvider);
     }
 
@@ -219,6 +231,7 @@ public final class BdiExplorerView extends JPanel implements View {
             ValidationOrchestrator validationOrchestrator,
             String configurationSummary,
             Optional<Path> projectRoot,
+            BdiProjectConfiguration configuration,
             Optional<UseSnapshotProvider> useSnapshotProvider) {
         super(new BorderLayout(6, 6));
         this.importService = Objects.requireNonNull(importService, "importService");
@@ -226,7 +239,9 @@ public final class BdiExplorerView extends JPanel implements View {
         this.useModel = Objects.requireNonNull(useModel, "useModel");
         this.oclEvaluator = Objects.requireNonNull(oclEvaluator, "oclEvaluator");
         this.useSnapshotProvider = Objects.requireNonNull(useSnapshotProvider, "useSnapshotProvider");
+        this.configuration = Objects.requireNonNull(configuration, "configuration");
         this.mappingSuggestionService = new MappingSuggestionService();
+        this.projectAnalysisService = new MasProjectAnalysisService();
         ValidationOrchestrator configuredOrchestrator = Objects.requireNonNull(
                 validationOrchestrator, "validationOrchestrator");
         this.configurationSummary = Objects.requireNonNull(configurationSummary, "configurationSummary");
@@ -245,6 +260,9 @@ public final class BdiExplorerView extends JPanel implements View {
         JButton importButton = new JButton("Import .asl...");
         importButton.setToolTipText("Choose AgentSpeak source files");
         importButton.addActionListener(event -> ImportBdiAction.chooseAndImport(this));
+        importProjectButton = new JButton("Import .jcm...");
+        importProjectButton.setToolTipText("Choose a static JaCaMo project");
+        importProjectButton.addActionListener(event -> ImportJaCaMoAction.chooseAndImport(this));
         reimportButton = new JButton("Re-import changed");
         reimportButton.setToolTipText("Re-import all selected files after a source change");
         reimportButton.setEnabled(false);
@@ -260,6 +278,7 @@ public final class BdiExplorerView extends JPanel implements View {
         status = new JLabel("No AgentSpeak source imported; " + configurationSummary);
         JPanel buttons = new JPanel();
         buttons.add(importButton);
+        buttons.add(importProjectButton);
         buttons.add(reimportButton);
         buttons.add(refreshUseButton);
         buttons.add(exportButton);
@@ -300,6 +319,42 @@ public final class BdiExplorerView extends JPanel implements View {
         List<Path> selectedSources = List.copyOf(Objects.requireNonNull(sources, "sources"));
         sourceTracker.track(selectedSources);
         startImport(selectedSources, "Importing AgentSpeak...");
+    }
+
+    public void importProject(Path projectFile) {
+        Path normalized = Objects.requireNonNull(projectFile, "projectFile")
+                .toAbsolutePath().normalize();
+        try {
+            MasProjectAnalysisRequest request = MasProjectAnalysisRequest.of(
+                    normalized,
+                    Instant.now(),
+                    useModel,
+                    oclEvaluator,
+                    mapping.document(),
+                    configuration);
+            if (worker != null && !worker.isDone()) {
+                worker.cancel(true);
+            }
+            long generation = ++importGeneration;
+            status.setText("Importing JaCaMo project " + normalized.getFileName() + "...");
+            BdiProjectImportWorker projectWorker = new BdiProjectImportWorker(
+                    projectAnalysisService,
+                    request,
+                    result -> {
+                        if (generation == importGeneration) {
+                            applyProjectResult(result);
+                        }
+                    },
+                    failure -> {
+                        if (generation == importGeneration) {
+                            showFailure(failure);
+                        }
+                    });
+            worker = projectWorker;
+            projectWorker.execute();
+        } catch (RuntimeException error) {
+            showFailure(error);
+        }
     }
 
     public boolean reimportChangedFiles() {
@@ -397,6 +452,14 @@ public final class BdiExplorerView extends JPanel implements View {
         return currentAnalysis;
     }
 
+    Optional<MasProjectModel> projectForTest() {
+        return project;
+    }
+
+    JButton importProjectButtonForTest() {
+        return importProjectButton;
+    }
+
     Path exportCurrentAnalysisForTest(Path output, ReportFormat format, boolean overwrite) throws IOException {
         return exportCurrentAnalysis(output, format, overwrite);
     }
@@ -407,6 +470,7 @@ public final class BdiExplorerView extends JPanel implements View {
 
     private void applySnapshot(BdiImportSnapshot imported) {
         Runnable update = () -> {
+            project = Optional.empty();
             snapshot = imported;
             sourceTracker.markImported();
             useModel.filter(model -> mapping.document().useFingerprint().equals("unknown"))
@@ -426,6 +490,34 @@ public final class BdiExplorerView extends JPanel implements View {
             }
             message += "; " + configurationSummary;
             status.setText(message);
+            detail.setText("Select a BDI node to inspect its details and source span.");
+        };
+        if (SwingUtilities.isEventDispatchThread()) {
+            update.run();
+        } else {
+            SwingUtilities.invokeLater(update);
+        }
+    }
+
+    private void applyProjectResult(MasProjectAnalysisResult result) {
+        Runnable update = () -> {
+            project = result.project();
+            snapshot = result.snapshot().bdiImport();
+            currentAnalysis = Optional.of(result.snapshot());
+            sourceTracker.markImported();
+            mapping.setSuggestions(useModel
+                    .map(model -> mappingSuggestionService.suggest(snapshot.models(), snapshot.index(), model))
+                    .orElse(List.of()));
+            problems.setProblems(BdiProblemCollector.collectConsistencyIssues(result.snapshot().issues()));
+            exportButton.setEnabled(true);
+            tree.setModel(new DefaultTreeModel(createTree(snapshot, result.projectDiagnostics())));
+            String projectName = result.project().map(MasProjectModel::name).orElse("unknown");
+            status.setText("JaCaMo project " + projectName + ": "
+                    + snapshot.fileCount() + " AgentSpeak file(s), "
+                    + result.project().map(value -> value.agents().size()).orElse(0)
+                    + " agent instance(s), " + result.projectDiagnostics().size()
+                    + " project diagnostic(s); " + problems.problemCount()
+                    + " problem(s); " + configurationSummary);
             detail.setText("Select a BDI node to inspect its details and source span.");
         };
         if (SwingUtilities.isEventDispatchThread()) {
@@ -561,6 +653,22 @@ public final class BdiExplorerView extends JPanel implements View {
         return root;
     }
 
+    private DefaultMutableTreeNode createTree(
+            BdiImportSnapshot imported,
+            List<MasProjectDiagnostic> projectDiagnostics) {
+        DefaultMutableTreeNode root = createTree(imported);
+        if (!projectDiagnostics.isEmpty()) {
+            DefaultMutableTreeNode diagnostics = node(new BdiTreeEntry(
+                    "JaCaMo diagnostics (" + projectDiagnostics.size() + ")",
+                    "Project diagnostics retained with their source and severity.",
+                    Optional.empty()));
+            projectDiagnostics.forEach(diagnostic ->
+                    diagnostics.add(node(projectDiagnosticEntry(diagnostic))));
+            root.add(diagnostics);
+        }
+        return root;
+    }
+
     private DefaultMutableTreeNode createAgentNode(AgentModel model) {
         DefaultMutableTreeNode file = node(new BdiTreeEntry(
                 model.source().getFileName().toString(),
@@ -645,6 +753,21 @@ public final class BdiExplorerView extends JPanel implements View {
                 : SourceSpan.unknown(diagnostic.source());
         return new BdiTreeEntry(
                 diagnostic.code() + ": " + diagnostic.source().getFileName(),
+                diagnostic.message(),
+                Optional.of(span));
+    }
+
+    private static BdiTreeEntry projectDiagnosticEntry(MasProjectDiagnostic diagnostic) {
+        SourceSpan span = diagnostic.line() > 0
+                ? new SourceSpan(
+                        diagnostic.source(),
+                        diagnostic.line(),
+                        diagnostic.column(),
+                        diagnostic.line(),
+                        diagnostic.column())
+                : SourceSpan.unknown(diagnostic.source());
+        return new BdiTreeEntry(
+                diagnostic.code() + " [" + diagnostic.severity() + "]",
                 diagnostic.message(),
                 Optional.of(span));
     }

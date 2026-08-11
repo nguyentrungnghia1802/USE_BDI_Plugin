@@ -21,5 +21,14 @@
                 menuitem="Import AgentSpeak..."
                 toolbaritem="plugins">
         </action>
+        <action id="org.tzi.use.plugins.bdi.import-jacamo"
+                label="Import JaCaMo Project..."
+                icon="images/New.gif"
+                class="org.tzi.use.plugins.bdi.ImportJaCaMoAction"
+                tooltip="Import a static JaCaMo .jcm project into the BDI explorer"
+                menu="AgentSpeak"
+                menuitem="Import JaCaMo Project..."
+                toolbaritem="plugins">
+        </action>
     </actions>
 </plugin>

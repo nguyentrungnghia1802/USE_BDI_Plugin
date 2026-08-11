@@ -64,6 +64,11 @@ use-bdi-plugin/
   rather than duplicating validation/report composition. Its result keeps
   project diagnostics separate from BDI import diagnostics and sorts project
   diagnostics deterministically.
+- `ImportJaCaMoAction` provides a single-select `.jcm` chooser under
+  `Plugins > AgentSpeak`; `BdiExplorerView` exposes the same operation as
+  `Import .jcm...`. `BdiProjectImportWorker` keeps composition off the EDT and
+  applies only the current generation. Project diagnostics are visible in the
+  tree and status text; the view exports the snapshot already displayed.
 - `CArtAgOArtifactAdapter` reflects only official runtime-retained `@OPERATION`
   metadata. Observable properties use explicit descriptors because CArtAgO
   creates them imperatively through `defineObsProperty`; no Java parser or
@@ -172,13 +177,15 @@ text and cannot be converted into a successful analysis result.
 
 ## 7. Headless Quality Gate
 
-`BdiQualityGateMain` accepts explicit `--use`, repeatable `--asl`, optional
-`--mapping`/`--rules`/`--suppressions`, and one-or-more `--json`/`--html`
-outputs. It does not discover project files from the process CWD. The
-application-level `.jcm` analysis service is available to the next GUI/CLI
-entry-point slice; this current CLI contract remains `.asl`-only. The timestamp
-defaults to `Instant.EPOCH` or is supplied by
-`--timestamp` for byte-stable reports.
+`BdiQualityGateMain` accepts explicit `--use`, either repeatable `--asl` or one
+`--jcm`, optional `--mapping`/`--rules`/`--suppressions`, and one-or-more
+`--json`/`--html` outputs. It does not discover project files from the process
+CWD and rejects mixed `.asl`/`.jcm` input before report creation. The `.jcm`
+path delegates to `MasProjectAnalysisService`; direct `.asl` remains a
+compatibility path. The timestamp defaults to `Instant.EPOCH` or is supplied
+by `--timestamp` for byte-stable reports. Project diagnostics are printed in
+sorted order with source paths and the result uses the same documented exit
+codes as direct analysis.
 
 The runner compiles a private `MSystem`, uses existing import/projection/
 orchestrator/current-snapshot/report services, and compares state fingerprints.

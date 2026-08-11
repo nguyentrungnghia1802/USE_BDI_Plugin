@@ -7,7 +7,7 @@
   recoverable after the official parser expands named instances.
 - Workspaces, organizations, and institutions are retained as unsupported
   references. CArtAgO Java semantics, Moise semantics, runtime lifecycle,
-  execution traces, GUI project selection, and CLI `.jcm` inputs are absent.
+  and execution traces are absent. GUI and CLI `.jcm` selection is static only.
 - `REF-001` can still classify some literal-like terms too broadly, producing
   potential false positives. This is a known BDI index limitation.
 - Schema `0.2.0` makes new mapping and suppression identities portable. Legacy
@@ -24,9 +24,9 @@
   only for the supported `soil:` effect form; missing or unknown effects yield
   `OCL-004`/`UNKNOWN` rather than an optimistic PASS.
 - `ReportMain` remains serializer-demo output. Live users should use Explorer's
-  snapshot-backed export; CI users should use `BdiQualityGateMain`. The current
-  headless slice accepts `.asl` only and explicitly rejects `.jcm`, even though
-  application-level static project import is available.
+  snapshot-backed export; CI users should use `BdiQualityGateMain`. Its `.jcm`
+  option composes static project/agent evidence but does not imply runtime
+  JaCaMo support.
 - The Auction precision/recall/F1 result covers four targeted mutant
   instances, with no TN estimate and no claim for the whole rule catalog.
 - The performance result is a seven-iteration local baseline on the Smart Queue

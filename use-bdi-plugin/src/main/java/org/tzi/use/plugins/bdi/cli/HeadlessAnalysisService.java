@@ -12,8 +12,12 @@ import java.util.Optional;
 import org.tzi.use.parser.use.USECompiler;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
 import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
+import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshot;
 import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshotService;
+import org.tzi.use.plugins.bdi.application.MasProjectAnalysisRequest;
+import org.tzi.use.plugins.bdi.application.MasProjectAnalysisResult;
+import org.tzi.use.plugins.bdi.application.MasProjectAnalysisService;
 import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
 import org.tzi.use.plugins.bdi.persistence.MappingFileRepository;
 import org.tzi.use.plugins.bdi.persistence.RuleConfigurationRepository;
@@ -44,6 +48,13 @@ public final class HeadlessAnalysisService {
         if (projectRoot == null) {
             throw new HeadlessInputException("USE model has no project directory: " + useFile);
         }
+        Path projectFile;
+        if (request.projectFile().isPresent()) {
+            projectFile = requireFile(request.projectFile().orElseThrow(), "JaCaMo project");
+            requireExtension(projectFile, ".jcm", "JaCaMo project");
+        } else {
+            projectFile = null;
+        }
 
         MSystem system = compileSystem(useFile);
         UseUmlModelFacade facade = new UseUmlModelFacade();
@@ -52,26 +63,54 @@ public final class HeadlessAnalysisService {
         RuleConfiguration rules = loadRules(request.rulesFile());
         List<Suppression> suppressions = loadSuppressions(request.suppressionsFile(), projectRoot);
         MappingDocument mapping = loadMapping(request.mappingFile(), projectRoot, useModel);
-        String configurationOrigin = configurationOrigin(request, rules, suppressions);
-        CurrentAnalysisSnapshotService service = new CurrentAnalysisSnapshotService(
-                new ValidationOrchestrator(rules, suppressions, Optional.of(projectRoot)),
-                configurationOrigin,
-                "0.1.0",
-                "USE-7.1.1");
         String before = facade.snapshot(system).fingerprint();
-        CurrentAnalysisSnapshot snapshot = service.create(
-                request.timestamp(),
-                imported,
-                Optional.of(useModel),
-                Optional.of(new UseSnapshotOclEvaluator(system)),
-                mapping);
+        Optional<MasProjectAnalysisResult> projectResult = Optional.ofNullable(projectFile).map(normalized -> {
+            BdiProjectConfiguration configuration = new BdiProjectConfiguration(
+                    Optional.of(projectRoot),
+                    rules,
+                    suppressions,
+                    request.rulesFile().isPresent(),
+                    request.suppressionsFile().isPresent());
+            return new MasProjectAnalysisService().analyze(MasProjectAnalysisRequest.of(
+                    normalized,
+                    request.timestamp(),
+                    Optional.of(useModel),
+                    Optional.of(new UseSnapshotOclEvaluator(system)),
+                    mapping,
+                    configuration));
+        });
+        CurrentAnalysisSnapshot snapshot;
+        Optional<org.tzi.use.plugins.bdi.model.mas.MasProjectModel> project = Optional.empty();
+        List<org.tzi.use.plugins.bdi.importer.MasProjectDiagnostic> diagnostics = List.of();
+        if (projectResult.isPresent()) {
+            MasProjectAnalysisResult result = projectResult.orElseThrow();
+            snapshot = result.snapshot();
+            project = result.project();
+            diagnostics = result.projectDiagnostics();
+        } else {
+            String configurationOrigin = configurationOrigin(request, rules, suppressions);
+            CurrentAnalysisSnapshotService service = new CurrentAnalysisSnapshotService(
+                    new ValidationOrchestrator(rules, suppressions, Optional.of(projectRoot)),
+                    configurationOrigin,
+                    "0.1.0",
+                    "USE-7.1.1");
+            snapshot = service.create(
+                    request.timestamp(),
+                    imported,
+                    Optional.of(useModel),
+                    Optional.of(new UseSnapshotOclEvaluator(system)),
+                    mapping);
+        }
         String after = facade.snapshot(system).fingerprint();
         if (!before.equals(after)) {
             throw new IllegalStateException("Headless analysis changed its private USE state");
         }
         return new HeadlessAnalysisResult(
-                request.projectName().orElseGet(() -> projectName(useFile)),
-                snapshot);
+                request.projectName().orElseGet(() -> projectName(
+                        projectFile == null ? useFile : projectFile)),
+                snapshot,
+                project,
+                diagnostics);
     }
 
     private static MSystem compileSystem(Path useFile) throws HeadlessInputException {

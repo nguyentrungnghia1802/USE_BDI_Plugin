@@ -40,6 +40,8 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0026 | Use the official JaCaMo 1.3.0 parser/model behind an adapter, paired with Jason 3.3.0; shade only the JaCaMo artifact and exclude its runtime transitives | parser spike, dependency evidence, package smoke |
 | ADR-0027 | Derive an immutable traceability graph from `CurrentAnalysisSnapshot`; use project-relative source and qualified UML identities, preserve issue certainty, and represent missing mappings as explicit gaps | Auction graph/query/portability tests |
 | ADR-0028 | Inspect CArtAgO 3.1 `@OPERATION` metadata behind an adapter, model observable properties from explicit static descriptors, keep pilot mappings in memory, and return UNKNOWN without runtime state evidence | adapter/mutant/catalog/package tests |
+| ADR-0029 | Compose static `.jcm` imports and direct AgentSpeak imports through one immutable `MasProjectAnalysisService` and keep project diagnostics separate from BDI diagnostics | project-analysis service tests |
+| ADR-0030 | Route GUI and headless `.jcm` entry points through the shared project service; use a background Swing worker, reject mixed input before output, and never start JaCaMo runtime | Explorer/worker/CLI/package smoke |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -186,3 +188,24 @@ and making snapshot/report parity untestable. Direct `.asl` behavior remains
 unchanged because the new service consumes the existing `BdiImportSnapshot` and
 plugin-owned snapshot types. The next slice may add entry points, but must route
 both UI and headless execution through this service.
+
+## 10. ADR-0030: Static `.jcm` GUI And Headless Entry Points
+
+**Status:** Accepted. **Date:** 2026-08-11.
+
+The GUI and CLI are two presentations of the same T11 application boundary.
+`ImportJaCaMoAction` and `BdiExplorerView` create an immutable
+`MasProjectAnalysisRequest`; `BdiProjectImportWorker` executes it outside the
+Swing EDT and applies only the current generation. `BdiQualityGateMain --jcm`
+performs explicit input validation, delegates to the same service, prints
+sorted project diagnostics, and uses the existing snapshot-backed JSON/HTML
+exporters. Mixed `--asl` and `--jcm`, missing paths, and wrong extensions are
+input errors and cannot create reports.
+
+Option A, selected, keeps one importer/validator/snapshot policy and makes
+GUI/CLI parity testable. Option B, rejected, would duplicate project analysis
+inside Swing or the command parser. Runtime JaCaMo startup, live CArtAgO,
+Moise, subscriptions, and automatic project-resource execution remain outside
+this slice. Project diagnostics are visible in the Explorer tree/status and
+CLI output; the existing consistency report remains the immutable analysis
+snapshot supplied by the caller.

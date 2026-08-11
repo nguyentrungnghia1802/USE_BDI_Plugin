@@ -23,7 +23,7 @@ implemented.
 | ID | Requirement | Status |
 | --- | --- | --- |
 | FR-PLG-001 | Package a USE 7.1.1 plugin descriptor and shaded runtime JAR | Implemented |
-| FR-PLG-002 | Expose `Hello BDI Plugin` and `Import AgentSpeak...` under `Plugins > AgentSpeak` | Implemented |
+| FR-PLG-002 | Expose `Hello BDI Plugin`, `Import AgentSpeak...`, and `Import JaCaMo Project...` under `Plugins > AgentSpeak` | Implemented |
 | FR-PLG-003 | Open a USE `ViewFrame` and use the current `Session`/`MSystem` when available | Implemented |
 | FR-PLG-004 | Keep import available without a loaded UML model and degrade model-dependent checks safely | Implemented |
 | FR-PLG-005 | Reload a changed plugin without restarting USE | Planned |
@@ -44,6 +44,7 @@ implemented.
 | FR-IMP-010 | Resolve project-relative agent sources and preserve valid agents after missing, invalid, or duplicate declarations | Implemented |
 | FR-IMP-011 | Retain workspace/organization/institution declarations as explicit unsupported resources | Implemented |
 | FR-IMP-012 | Compose a `.jcm` project and its resolved AgentSpeak sources into the shared immutable analysis snapshot | Implemented |
+| FR-IMP-013 | Analyze one selected `.jcm` through the Explorer action or headless `--jcm` input without starting JaCaMo | Implemented |
 
 ### 2.3 USE projection and mapping
 
@@ -90,13 +91,14 @@ implemented.
 | FR-UI-002 | Display selected-node details, source span, and source excerpt | Implemented |
 | FR-UI-003 | Display filterable/groupable Problems and mapping editor tabs | Implemented |
 | FR-UI-004 | Surface partial import and unsupported syntax without crashing the view | Implemented |
+| FR-UI-005 | Select a `.jcm` project, inspect resolved agents/project diagnostics, and retain the immutable result in Explorer | Implemented |
 | FR-REP-001 | Export supplied analysis results as deterministic UTF-8 JSON and escaped HTML | Implemented |
 | FR-REP-002 | Include plugin/USE/Jason metadata, issues, evidence, and suppressions | Implemented |
 | FR-REP-003 | Include canonical model and mapping SHA-256 values when supplied | Implemented |
 | FR-REP-004 | Export the current live GUI analysis with one user action | Implemented |
 | FR-REP-005 | Generate a zero-state serializer smoke through `ReportMain` without claiming live analysis | Implemented |
 | FR-REP-006 | Compose one immutable current analysis snapshot for Problems, GUI export, and headless gates | Implemented |
-| FR-REP-007 | Run the same analysis headlessly with deterministic reports and distinct CI exit semantics | Implemented |
+| FR-REP-007 | Run direct `.asl` or `.jcm` analysis headlessly with deterministic reports and distinct CI exit semantics | Implemented |
 
 ### 2.7 Traceability
 
@@ -170,7 +172,11 @@ implemented.
 12. Unknown/unsupported behavior remains visible in docs and reports.
 13. Missing project configuration uses visible defaults; malformed or unknown-rule configuration prevents the Explorer from opening with an explicit error.
 14. Copying a relative Auction `.jcm` project to another checkout produces the
-    same portable project IR and imports the same two AgentSpeak sources.
+    same portable project IR and imports the same resolved AgentSpeak sources.
+15. Selecting Auction `.jcm` in Explorer and passing it to CLI `--jcm` use the
+    same application snapshot semantics; project diagnostics remain visible.
+16. Conflicting `--asl` and `--jcm`, missing files, wrong extensions, and
+    cancelled GUI work do not create misleading analysis output.
 
 ## 5. Non-functional requirements
 
@@ -220,6 +226,7 @@ implemented.
 | OCL compile/evaluation failure | Preserve status/evidence as `UNKNOWN` path |
 | Bounded SOIL failure | Restore variation and report failure/unknown evidence |
 | Cancelled/stale import worker | Ignore stale callback; retain newest generation |
+| Conflicting or invalid project input | Reject before report creation with exit 3 and an actionable input diagnostic |
 | Report path/write failure | Propagate/report I/O failure; do not claim success |
 | Invalid `.jcm` syntax | `JCM-001` with parser position when available; no partial project is fabricated |
 | Missing/invalid/duplicate `.jcm` agent | `JCM-002`/`JCM-004`/`JCM-003`; independent valid sources remain imported |

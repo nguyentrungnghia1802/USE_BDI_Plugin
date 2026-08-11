@@ -28,6 +28,14 @@ class ImportBdiActionTest {
     }
 
     @Test
+    void configuresSingleSelectJacamoProjectChooser() {
+        JFileChooser chooser = ImportJaCaMoAction.createFileChooser();
+
+        assertTrue(!chooser.isMultiSelectionEnabled());
+        assertEquals("JaCaMo projects (*.jcm)", chooser.getFileFilter().getDescription());
+    }
+
+    @Test
     void discoversConfigurationFromTheActiveUseModelFilename(@TempDir Path tempDir) throws Exception {
         Path configurationDirectory = Files.createDirectories(tempDir.resolve(".bdi-plugin"));
         RuleConfiguration expected = RuleConfiguration.of(List.of("ASL-001"));

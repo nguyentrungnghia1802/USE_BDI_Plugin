@@ -198,6 +198,25 @@ class BdiExplorerViewTest {
     }
 
     @Test
+    void importsJacamoProjectAndShowsResolvedAgentsAndProjectDiagnostics() throws Exception {
+        BdiExplorerView view = new BdiExplorerView(new BdiImportService());
+
+        view.importProject(fixture("fixtures/casestudy/auction/auction.jcm"));
+        waitForProjectImport(view);
+
+        assertEquals("auction", view.projectForTest().orElseThrow().name());
+        assertEquals(3, view.projectForTest().orElseThrow().agents().size());
+        assertTrue(view.statusForTest().getText().contains("3 agent instance(s)"));
+        assertTrue(view.statusForTest().getText().contains("3 project diagnostic(s)"));
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) view.treeForTest().getModel().getRoot();
+        assertTrue(java.util.stream.IntStream.range(0, root.getChildCount())
+                .mapToObj(root::getChildAt)
+                .map(Object::toString)
+                .anyMatch(value -> value.contains("JaCaMo diagnostics")));
+        assertTrue(view.exportButtonForTest().isEnabled());
+    }
+
+    @Test
     void refreshesUseSnapshotAndProblemsWithoutReimportingAsl() throws Exception {
         UseModelSnapshot before = useSnapshot("a".repeat(64), true);
         UseModelSnapshot after = useSnapshot("b".repeat(64));
@@ -348,6 +367,15 @@ class BdiExplorerViewTest {
         }
         flushEdt();
         assertEquals(1, view.snapshotForTest().fileCount());
+    }
+
+    private static void waitForProjectImport(BdiExplorerView view) throws Exception {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+        while (view.projectForTest().isEmpty() && System.nanoTime() < deadline) {
+            Thread.sleep(25);
+        }
+        flushEdt();
+        assertTrue(view.projectForTest().isPresent());
     }
 
     private static void flushEdt() throws Exception {

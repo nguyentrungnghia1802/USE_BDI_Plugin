@@ -76,6 +76,12 @@ Hard rules:
 12. `HeadlessAnalysisService` compiles an isolated USE system from explicit
     files and composes the same snapshot/report services without Swing or a
     live USE session. It verifies its private state fingerprint before/after.
+13. `ImportJaCaMoAction` and the Explorer `.jcm` button create the same
+    immutable project request. `BdiProjectImportWorker` runs composition off
+    the EDT and publishes only the current generation on the EDT.
+14. `BdiQualityGateMain --jcm` validates the explicit project input, delegates
+    to `MasProjectAnalysisService`, writes the existing JSON/HTML serializers,
+    and prints sorted project diagnostics with the documented exit code.
 
 Asynchronous imports carry a generation token so an older completion cannot
 replace a newer selection. Manual USE refresh resolves the current session
@@ -147,12 +153,18 @@ configuration inputs, runs the shared validator once, and returns one
 `MasProjectAnalysisResult` containing the project IR, snapshot, and sorted
 project diagnostics. Direct `.asl` analysis remains compatible because both
 paths consume the same `BdiImportSnapshot` and snapshot boundary.
+`ImportJaCaMoAction` registers the single-select `.jcm` chooser under
+`Plugins > AgentSpeak`; `BdiExplorerView` exposes the same action as
+`Import .jcm...`. Project analysis is asynchronous, project diagnostics are
+shown in the Explorer tree/status, and export uses the snapshot already held
+by the view. `BdiQualityGateMain --jcm` is the non-Swing equivalent and rejects
+mixed `.asl`/`.jcm` inputs before writing reports.
 Separately, `CArtAgOArtifactAdapter` can normalize a supplied artifact class's
 official `@OPERATION` metadata and explicit property descriptors. The plugin
 does not start a JaCaMo/CArtAgO runtime, model Moise semantics, dynamically
 inspect CArtAgO artifacts, or consume execution traces. The GUI/headless
-entry-point wiring remains a separate task; T11 only establishes the shared
-application service.
+entry points provide static `.jcm` composition only; they do not launch a
+JaCaMo runtime.
 
 ## 8. Traceability Boundary
 
@@ -168,4 +180,4 @@ source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
 - Automatic `.jcm` environment resolution, persisted environment mappings,
-  live CArtAgO state, Moise, GUI/CLI project selection, and runtime integration.
+  live CArtAgO state, Moise, and runtime integration.

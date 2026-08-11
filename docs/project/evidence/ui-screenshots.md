@@ -22,8 +22,11 @@ loading are verified independently by `PluginGuiSmoke`.
 1. Start the extracted USE distribution with `-nr` and `-H=<use-home>`.
 2. Click `Plugins > AgentSpeak > Hello BDI Plugin` to verify plugin loading.
 3. Click `Plugins > AgentSpeak > Import AgentSpeak...`.
-4. Select one or more `.asl` files and confirm the chooser.
-5. In the BDI view, show the tree first, then select a plan or action to show
+4. Optionally click `Plugins > AgentSpeak > Import JaCaMo Project...` and
+   select one `.jcm` file to show static project diagnostics.
+5. Select one or more `.asl` files and confirm the chooser when demonstrating
+   direct source import.
+6. In the BDI view, show the tree first, then select a plan or action to show
    the source/detail panel.
 6. Click the `Problems` tab and show rule ID, severity, certainty, and source
    evidence. Keep `UNKNOWN` findings visible; do not present them as PASS.
@@ -33,14 +36,14 @@ loading are verified independently by `PluginGuiSmoke`.
 
 ## Automated trace
 
-The GUI smoke entry point checks both menu items in the real USE runtime:
+The GUI smoke entry point checks all three menu/actions in the real USE runtime:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1
 ```
 
 The expected marker from the GUI probe is:
-`GUI_SMOKE_OK: Plugins > AgentSpeak > Hello BDI Plugin + Import AgentSpeak...`.
+`GUI_SMOKE_OK: Plugins > AgentSpeak > Hello BDI Plugin + Import AgentSpeak... + Import JaCaMo Project...`.
 
 The screenshots are intentionally kept under `docs/report/images` because
 they are also referenced by the existing thesis report. This document adds a

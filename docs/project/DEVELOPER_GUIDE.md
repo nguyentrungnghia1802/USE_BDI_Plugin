@@ -91,8 +91,19 @@ java -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
 Exit `0` means no open finding, `1` at least one confirmed finding, `2` only
 potential/unknown findings, `3` invalid input/config, and `4` infrastructure or
 output failure. CI must not treat exit `2` as semantic PASS. Omit optional file
-arguments rather than relying on CWD discovery. Current input is `.asl` only;
-`.jcm` is rejected until the JaCaMo importer task is complete.
+arguments rather than relying on CWD discovery. Exactly one direct `.asl` set
+or one `.jcm` project is required; mixed input is rejected before report
+creation.
+
+For a static JaCaMo project, replace the repeatable `--asl` options with one
+explicit `--jcm` option:
+
+```powershell
+java -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
+  --use .\Auction.use --jcm .\auction.jcm `
+  --json .\auction-jcm.json --html .\auction-jcm.html `
+  --timestamp 2026-08-11T00:00:00Z
+```
 
 ## Adding A Fixture And A Vertical Slice
 
@@ -104,6 +115,11 @@ arguments rather than relying on CWD discovery. Current input is `.asl` only;
 4. Add a smoke marker only when the check is useful through the assembled
    distribution.
 5. Add the result and any limitation to the checklist and decision log.
+
+For `.jcm` work, use `ImportJaCaMoAction`/`BdiProjectImportWorker` or
+`BdiQualityGateMain --jcm`; do not call the parser from Swing code or create a
+second validator. Project diagnostics remain explicit and static resources do
+not imply runtime JaCaMo support.
 
 For a mapping fixture, use `MappingSuggestionService` for candidate generation,
 confirm bindings explicitly, and use `MappingFileRepository` for persistence.

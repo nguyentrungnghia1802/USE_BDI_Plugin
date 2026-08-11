@@ -10,6 +10,7 @@ import java.util.Optional;
 public record HeadlessAnalysisRequest(
         Path useFile,
         List<Path> aslFiles,
+        Optional<Path> projectFile,
         Optional<Path> mappingFile,
         Optional<Path> rulesFile,
         Optional<Path> suppressionsFile,
@@ -18,8 +19,9 @@ public record HeadlessAnalysisRequest(
     public HeadlessAnalysisRequest {
         Objects.requireNonNull(useFile, "useFile");
         aslFiles = List.copyOf(Objects.requireNonNull(aslFiles, "aslFiles"));
-        if (aslFiles.isEmpty()) {
-            throw new IllegalArgumentException("At least one --asl file is required");
+        projectFile = Objects.requireNonNull(projectFile, "projectFile");
+        if (aslFiles.isEmpty() == projectFile.isEmpty()) {
+            throw new IllegalArgumentException("Exactly one of --asl or --jcm is required");
         }
         mappingFile = Objects.requireNonNull(mappingFile, "mappingFile");
         rulesFile = Objects.requireNonNull(rulesFile, "rulesFile");
@@ -31,5 +33,21 @@ public record HeadlessAnalysisRequest(
                 throw new IllegalArgumentException("projectName must not be blank");
             }
         });
+    }
+
+    /** Compatibility constructor for the direct AgentSpeak CLI contract. */
+    public HeadlessAnalysisRequest(
+            Path useFile,
+            List<Path> aslFiles,
+            Optional<Path> mappingFile,
+            Optional<Path> rulesFile,
+            Optional<Path> suppressionsFile,
+            Instant timestamp,
+            Optional<String> projectName) {
+        this(useFile, aslFiles, Optional.empty(), mappingFile, rulesFile, suppressionsFile, timestamp, projectName);
+    }
+
+    public boolean isProjectAnalysis() {
+        return projectFile.isPresent();
     }
 }

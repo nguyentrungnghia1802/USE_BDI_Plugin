@@ -35,7 +35,8 @@ public final class PluginGuiSmoke {
             JMenu agentSpeakMenu = findSubmenu(pluginsMenu, "AgentSpeak");
             findItem(agentSpeakMenu, "Hello BDI Plugin");
             findItem(agentSpeakMenu, "Import AgentSpeak...");
-            System.out.println("GUI_SMOKE_OK: Plugins > AgentSpeak > Hello BDI Plugin + Import AgentSpeak...");
+            findItem(agentSpeakMenu, "Import JaCaMo Project...");
+            System.out.println("GUI_SMOKE_OK: Plugins > AgentSpeak > Hello BDI Plugin + Import AgentSpeak... + Import JaCaMo Project...");
         } catch (Throwable error) {
             error.printStackTrace(System.err);
             exitCode = 1;
