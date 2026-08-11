@@ -181,7 +181,33 @@ targets against the current plugin-owned environment and USE snapshots. Only
 candidate is excluded, while a stale or unknown confirmed mapping emits
 `ENV-004` with source and target evidence.
 
-## 8. Traceability Boundary
+## 8. Scoped Evaluation Evidence
+
+`EvaluationManifestCodec` loads a versioned, closed-field manifest whose cases
+declare relative inputs, expected rule IDs/certainties, forbidden findings,
+evidence tokens, timeout, and an optional named state fixture. The manifest is
+the reviewed oracle; `EvaluationRunner` never derives expectations from its own
+findings. It rejects duplicate IDs, unknown fields, unsafe paths, missing input,
+ambiguous oracle entries, and unsupported schema versions before executing a
+case.
+
+Each case is copied to a unique temporary workspace and analyzed through the
+real `HeadlessAnalysisService` in a daemon worker with a bounded timeout. The
+only current fixture is `auction-populated`, which uses verified USE APIs to
+create a small Auction snapshot inside the private `MSystem`; it does not start
+JaCaMo, CArtAgO, Moise, or a runtime. The runner records a before/after USE
+fingerprint and cleans the workspace in `finally`.
+
+The runner reports semantic outcomes (`PASS`, `DETECTED`, `MISSED`,
+`UNEXPECTED`, `UNKNOWN`, `UNSUPPORTED`) separately from invalid-input,
+timeout, and execution-error outcomes. Rule matching is limited to the case's
+declared scope and evidence tokens, so unrelated standard diagnostics are
+retained in raw analysis but cannot change the reviewed corpus oracle. The
+atomic JSON/CSV/HTML output includes manifest, corpus, configuration, case
+input, and trace identities. Metrics therefore describe only the versioned
+Auction corpus and are not a general correctness proof.
+
+## 9. Traceability Boundary
 
 `TraceabilityGraphBuilder` consumes only `CurrentAnalysisSnapshot` plus an
 explicit project root. It derives portable source/BDI, confirmed mapping, UML,
@@ -190,7 +216,7 @@ backward traversal over the immutable graph. Raw Jason plan annotations are
 excluded from IDs and serialized labels because they may contain absolute
 source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 
-## 9. Known Architecture Gaps
+## 10. Known Architecture Gaps
 
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.

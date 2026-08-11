@@ -22,7 +22,7 @@ public final class MappingSourceId {
     public static String action(ActionCallSite action) {
         Objects.requireNonNull(action, "action");
         return normalizedPath(action.sourceSpan().source())
-                + "#plan:" + action.planLabel()
+                + "#plan:" + stablePlanLabel(action.planLabel())
                 + "#step:" + action.stepIndex();
     }
 
@@ -61,5 +61,19 @@ public final class MappingSourceId {
 
     private static String normalizedPath(Path source) {
         return Objects.requireNonNull(source, "source").toAbsolutePath().normalize().toString().replace('\\', '/');
+    }
+
+    /** Jason may include an absolute source URL in a generated plan label. */
+    public static String stablePlanLabel(String label) {
+        String value = Objects.requireNonNull(label, "label");
+        int marker = value.indexOf(",url(\"");
+        if (marker < 0) {
+            return value;
+        }
+        int end = value.indexOf("\")", marker + 6);
+        if (end < 0) {
+            return value;
+        }
+        return value.substring(0, marker) + value.substring(end + 2);
     }
 }

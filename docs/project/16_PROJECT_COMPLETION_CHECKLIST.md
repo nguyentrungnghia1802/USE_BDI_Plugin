@@ -40,6 +40,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
 - [x] Static CArtAgO artifact pilot detects operation/arity/property mutants and preserves dynamic UNKNOWN.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
+- [x] Versioned Auction evaluation manifest runs the real headless service in isolated workspaces and classifies one PASS plus four DETECTED cases with deterministic reports.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
 - [x] User, developer, install, license, limitation, and threat guides exist.
 
@@ -56,18 +57,21 @@ are complete. Do not append per-day implementation diaries.
 - [x] Analysis does not leave current USE state changed.
 - [x] No Jason/USE/Swing concrete types cross into normalized IR.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
+- [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after typed CArtAgO environment mapping persistence:
+Latest validated baseline after the scoped Auction evaluation slice:
 
-- focused T13 persistence/environment tests: 10 pass;
-- focused T12 GUI/CLI/project-worker tests: 22 pass;
-- plugin tests: 130 pass;
+- focused T16 codec/runner tests: 7 pass;
+- traceability regression plus T16 focused suite: 10 pass;
+- plugin tests: 145 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo classes, excludes Moise, and
   returns `GUI_SMOKE_OK`;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
-- root `mvn clean verify`: all five modules, 121 GUI integration tests, and
-  ZIP/TAR assembly succeed.
+- root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
+  integration tests, 145 plugin tests, and ZIP/TAR assembly succeed;
+- packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
+  compares deterministic JSON/CSV/HTML outputs.
 
 T11 project-analysis evidence:
 
@@ -110,6 +114,22 @@ T14 Moise spike evidence:
   claimed until an official Moise parser/API, license evidence, and fixture are
   available. This is recorded as ADR-0032 and remains an accepted residual.
 
+T16 evaluation evidence:
+
+- `EvaluationManifestCodecTest`: canonical round-trip, unknown-field,
+  duplicate-key, duplicate-ID, path-traversal, missing-oracle, and malformed
+  JSON-number validation pass;
+- `EvaluationRunnerTest`: real headless analysis, temporary-workspace
+  isolation, input immutability, fixed-timestamp report stability, missing input,
+  timeout, tool-error, and reviewed-manifest integration pass;
+- the reviewed manifest declares five Auction cases and the real integration
+  result is `1 PASS + 4 DETECTED`, with zero missed, unexpected, unknown,
+  unsupported, timeout, or execution-error cases;
+- [Auction evaluation evidence](evidence/auction-evaluation.md) records the
+  manifest/corpus/configuration hashes, deterministic JSON/CSV/HTML outputs,
+  state-fixture boundary, excluded `LIVE_CARTAGO`/`MOISE_ORGANIZATION_IR`
+  layers, and the packaged `AUCTION_EVALUATION_OK` smoke command.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
@@ -137,6 +157,8 @@ The following are future work, not hidden completion claims:
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
 - Live CArtAgO, Moise, and runtime integration.
+- General/statistical correctness beyond the five declared Auction evaluation
+  cases; the runner is scoped evidence, not a quality-proof generator.
 
 The prioritized development candidates are maintained in
 [the idea backlog](../idea/idea.md).

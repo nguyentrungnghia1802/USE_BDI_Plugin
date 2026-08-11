@@ -17,6 +17,7 @@ import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshot;
 import org.tzi.use.plugins.bdi.model.ir.SourceSpan;
 import org.tzi.use.plugins.bdi.model.mapping.MappingBinding;
 import org.tzi.use.plugins.bdi.model.mapping.MappingKind;
+import org.tzi.use.plugins.bdi.model.mapping.MappingSourceId;
 import org.tzi.use.plugins.bdi.model.source.ProjectSourceId;
 import org.tzi.use.plugins.bdi.validation.ConsistencyIssue;
 import org.tzi.use.plugins.bdi.validation.IssueCertainty;
@@ -105,7 +106,8 @@ public final class TraceabilityGraphBuilder {
                                 .orElse(false))
                 .filter(binding -> issue.planId().map(plan ->
                         !portableMappingSource(binding, root).contains("#plan:")
-                                || portableMappingSource(binding, root).contains("#plan:" + plan + "#"))
+                                || portableMappingSource(binding, root).contains("#plan:"
+                                        + MappingSourceId.stablePlanLabel(plan) + "#"))
                         .orElse(true))
                 .sorted(Comparator.comparing(MappingBinding::key))
                 .toList();

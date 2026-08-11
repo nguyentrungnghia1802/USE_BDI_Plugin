@@ -15,7 +15,8 @@ public record HeadlessAnalysisRequest(
         Optional<Path> rulesFile,
         Optional<Path> suppressionsFile,
         Instant timestamp,
-        Optional<String> projectName) {
+        Optional<String> projectName,
+        Optional<HeadlessStateFixture> stateFixture) {
     public HeadlessAnalysisRequest {
         Objects.requireNonNull(useFile, "useFile");
         aslFiles = List.copyOf(Objects.requireNonNull(aslFiles, "aslFiles"));
@@ -28,11 +29,25 @@ public record HeadlessAnalysisRequest(
         suppressionsFile = Objects.requireNonNull(suppressionsFile, "suppressionsFile");
         Objects.requireNonNull(timestamp, "timestamp");
         projectName = Objects.requireNonNull(projectName, "projectName");
+        stateFixture = Objects.requireNonNull(stateFixture, "stateFixture");
         projectName.ifPresent(value -> {
             if (value.isBlank()) {
                 throw new IllegalArgumentException("projectName must not be blank");
             }
         });
+    }
+
+    public HeadlessAnalysisRequest(
+            Path useFile,
+            List<Path> aslFiles,
+            Optional<Path> projectFile,
+            Optional<Path> mappingFile,
+            Optional<Path> rulesFile,
+            Optional<Path> suppressionsFile,
+            Instant timestamp,
+            Optional<String> projectName) {
+        this(useFile, aslFiles, projectFile, mappingFile, rulesFile, suppressionsFile,
+                timestamp, projectName, Optional.empty());
     }
 
     /** Compatibility constructor for the direct AgentSpeak CLI contract. */
@@ -44,7 +59,8 @@ public record HeadlessAnalysisRequest(
             Optional<Path> suppressionsFile,
             Instant timestamp,
             Optional<String> projectName) {
-        this(useFile, aslFiles, Optional.empty(), mappingFile, rulesFile, suppressionsFile, timestamp, projectName);
+        this(useFile, aslFiles, Optional.empty(), mappingFile, rulesFile, suppressionsFile,
+                timestamp, projectName, Optional.empty());
     }
 
     public boolean isProjectAnalysis() {

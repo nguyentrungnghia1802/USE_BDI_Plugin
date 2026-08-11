@@ -1,0 +1,6 @@
+caseId,family,layer,status,exitCode,inputHash,missingCount,violatedForbiddenCount,unexpectedCount,diagnostic
+"OCL-001-open-precondition","OCL","BDI_UML_OCL",DETECTED,1,1eaac89b8fd8a93d5787d4a36c4134a428f35dec6c436622d82d55cd11ba66d0,0,0,0,""
+"REF-001-bidder2","REFERENCE","BDI_UML_OCL",DETECTED,1,d25ebd14de0c318833a35812a588be6498e4971efaa4178efde91a9209ca6132,0,0,0,""
+"SIG-001-open-arity","SIGNATURE","BDI_UML_OCL",DETECTED,1,000f1d40881d8f2f5d13458d98567d9cc0917f0685d4d29a8ff7414153408866,0,0,0,""
+"STR-001-remove-bidder","STRUCTURAL","BDI_UML_OCL",DETECTED,1,1e25c58aefe9f964b6f6b2bc759f2cdcee0a4ff272646e0c441cc86cafb500aa,0,0,0,""
+"baseline","BASELINE","BDI_UML_OCL",PASS,1,67ffda34f15809073ef054582ef26bb627b3ebe5c3f31f5ecd1831a24f1696d7,0,0,0,""

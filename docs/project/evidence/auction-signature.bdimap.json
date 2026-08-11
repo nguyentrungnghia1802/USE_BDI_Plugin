@@ -1,0 +1,21 @@
+{
+  "schemaVersion":"0.2.0",
+  "bdiMetamodelVersion":"0.1.0",
+  "useFingerprint":"ac48937d70e7f21b02ae49526a1b4ad06d5c1b13e67b999690387d7b7f6a48fe",
+  "bindings": [
+    {"kind":"AGENT_CLASS","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0","target":"Auctioneer","expression":null,"evidence":["Exact normalized name match","Agent source filename"]},
+    {"kind":"AGENT_OBJECT","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0","target":"auction1","expression":null,"evidence":[]},
+    {"kind":"AGENT_CLASS","source":"bdi-source-v2:10:bidder.asl:0:0:0:0","target":"Bidder","expression":null,"evidence":["Exact normalized name match","Agent source filename"]},
+    {"kind":"AGENT_OBJECT","source":"bdi-source-v2:10:bidder.asl:0:0:0:0","target":"bidder1","expression":null,"evidence":["One normalized name contains the other","Agent source filename"]},
+    {"kind":"ACTION_OPERATION","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0#plan:run_auction[source(self)]#step:1","target":"Auction::open(flag:String)","expression":null,"evidence":[]},
+    {"kind":"ACTION_OPERATION","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0#plan:receive_bid[source(self)]#step:1","target":"Auction::placeBid(b:Bidder,amount:Real)","expression":null,"evidence":["Exact normalized name match","Action functor","Argument arity matches operation parameters"]},
+    {"kind":"PARAMETER","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0#plan:receive_bid[source(self)]#step:1/argument/0","target":"Auction::placeBid(b:Bidder,amount:Real)#parameter:b","expression":"argument[0]","evidence":["Argument position 0 matches UML parameter order"]},
+    {"kind":"PARAMETER","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0#plan:receive_bid[source(self)]#step:1/argument/1","target":"Auction::placeBid(b:Bidder,amount:Real)#parameter:amount","expression":"argument[1]","evidence":["Argument position 1 matches UML parameter order"]},
+    {"kind":"ACTION_OPERATION","source":"bdi-source-v2:14:auctioneer.asl:0:0:0:0#plan:finish_auction[source(self)]#step:1","target":"Auction::close()","expression":null,"evidence":["Exact normalized name match","Action functor","Argument arity matches operation parameters"]},
+    {"kind":"ACTION_OPERATION","source":"bdi-source-v2:10:bidder.asl:0:0:0:0#plan:submit_bid[source(self)]#step:1","target":"Bidder::submitBid(a:Auction,amount:Real)","expression":null,"evidence":["Exact normalized name match","Action functor","Argument arity matches operation parameters"]},
+    {"kind":"PARAMETER","source":"bdi-source-v2:10:bidder.asl:0:0:0:0#plan:submit_bid[source(self)]#step:1/argument/0","target":"Bidder::submitBid(a:Auction,amount:Real)#parameter:a","expression":"argument[0]","evidence":["Argument position 0 matches UML parameter order"]},
+    {"kind":"PARAMETER","source":"bdi-source-v2:10:bidder.asl:0:0:0:0#plan:submit_bid[source(self)]#step:1/argument/1","target":"Bidder::submitBid(a:Auction,amount:Real)#parameter:amount","expression":"argument[1]","evidence":["Argument position 1 matches UML parameter order"]},
+    {"kind":"BELIEF_ATTRIBUTE","source":"auction_status/1","target":"Auction::status","expression":null,"evidence":["One normalized name contains the other","Initial belief functor matches UML attribute"]},
+    {"kind":"BELIEF_ATTRIBUTE","source":"budget/1","target":"Bidder::budget","expression":null,"evidence":["Exact normalized name match","Initial belief functor matches UML attribute"]}
+  ]
+}

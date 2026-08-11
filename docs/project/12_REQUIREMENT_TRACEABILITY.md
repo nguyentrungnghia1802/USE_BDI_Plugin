@@ -37,6 +37,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-ENV-001..004 | `CArtAgOArtifactAdapter`, `model.environment`, environment validator/trace contributor | adapter, Auction baseline, three mutants, boundary, catalog, and package tests | ADR-0028, CArtAgO spike evidence |
 | FR-ENV-005..006 | `EnvironmentMappingDocument`, typed persisted records, strict codec/repository, staleness detector, validation service | round-trip/relocation, invalid-record, candidate/unknown, BDI regression, persisted Auction, stale-target, and catalog tests | ADR-0031, environment mapping persistence evidence |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
+| FR-CS-005..008 | `EvaluationManifestCodec`, `EvaluationRunner`, `EvaluationReportWriter`, `HeadlessStateFixture`, packaged evaluation script | manifest codec/runner tests, real Auction manifest integration, deterministic repeated outputs, timeout/tool-error tests, packaged smoke | ADR-0033, Auction evaluation manifest and result evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
 | FR-REL-001..002 | Maven POMs, smoke/clean-clone scripts | root verify and script markers | developer/install guides, release evidence |
 | FR-REL-003..004 | tag/backup process | open checklist and backup manifest behavior | decision log and checklist |
@@ -78,6 +79,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | Unified issue trace | Auction traceability graph test and ADR-0027 |
 | Static environment consistency | CArtAgO adapter/mutant tests and ADR-0028 |
 | Persisted environment mappings | strict environment codec/repository, relocation and stale-target tests, ADR-0031, and persistence evidence |
+| Scoped Auction evaluation | versioned manifest, four portable mapping fixtures, runner tests, deterministic JSON/CSV/HTML, and packaged `AUCTION_EVALUATION_OK` smoke |
 | Research limitations | threats, limitations, and future-work documents |
 
 ## 4. Known untraced end-to-end gaps

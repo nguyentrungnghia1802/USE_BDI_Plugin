@@ -214,6 +214,7 @@ mvn --batch-mode --no-transfer-progress clean verify
 | `scripts/smoke.ps1` | `GUI_SMOKE_OK` |
 | `scripts/headless-quality-gate.ps1` | `HEADLESS_QUALITY_GATE_OK` |
 | `scripts/auction-evidence.ps1` | `AUCTION_EVIDENCE_OK` |
+| `scripts/auction-evaluation.ps1` | `AUCTION_EVALUATION_OK` |
 | `scripts/performance.ps1` | `PERFORMANCE_BENCHMARK_OK` |
 | `scripts/clean-clone.ps1` | `CLEAN_CLONE_REPRODUCIBILITY_OK` |
 | `scripts/backup-thesis-artifacts.ps1` | `THESIS_BACKUP_OK` plus manifest |
@@ -221,6 +222,46 @@ mvn --batch-mode --no-transfer-progress clean verify
 Fixtures are separated into valid, invalid, unsupported, golden, Smart Queue,
 USE, and Auction/mutant groups. Tests do not require a network, database, or
 credentials. Fixed timestamps and canonical sorting protect reproducibility.
+
+### 8.1 Reviewed Evaluation Runner
+
+The T16 evaluation slice is implemented by
+`EvaluationManifestCodec`, `EvaluationRunner`, `EvaluationReportWriter`, and
+`EvaluationRunnerMain`. The manifest at
+`docs/project/evidence/auction-evaluation-manifest.json` is the versioned
+reviewed oracle for the Auction corpus. It declares five cases: one clean
+baseline and four controlled mutants for structural, signature, reference, and
+OCL findings. Relative input paths and evidence anchors are resolved below the
+explicit checkout root only.
+
+The runner validates every case before execution, copies source and optional
+mapping files to an isolated temporary directory, and invokes the real
+`HeadlessAnalysisService`. A case may request a named `HeadlessStateFixture`; the
+current `auction-populated` fixture creates only the objects/links required by
+the reviewed snapshot and never starts a JaCaMo/CArtAgO/Moise runtime. The
+runner compares USE state fingerprints, sanitizes temporary paths from evidence,
+and removes the workspace in a `finally` block.
+
+`EvaluationStatus` distinguishes semantic and process outcomes. `PASS` is a
+case with no declared finding; `DETECTED` contains all required findings with
+the declared certainty; `MISSED`, `UNEXPECTED`, and `UNKNOWN` are semantic
+oracle deviations. `UNSUPPORTED`, `INVALID_INPUT`, `TIMEOUT`, and
+`EXECUTION_ERROR` are not semantic detections. Evidence tokens scope matching
+to the reviewed oracle without hiding out-of-scope raw diagnostics.
+
+`EvaluationReportWriter` emits deterministic `evaluation-results.json`,
+`evaluation-results.csv`, and `evaluation-results.html` with fixed timestamp
+support and SHA-256 manifest/corpus/configuration/input identities. Run the
+packaged check with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\auction-evaluation.ps1
+```
+
+The script builds the assembly, launches `EvaluationRunnerMain` from the
+extracted shaded distribution, repeats the run, compares all three output
+hashes, and ends with `AUCTION_EVALUATION_OK` only for the reviewed `1 PASS + 4
+DETECTED` result. This evidence is bounded to the declared Auction cases.
 
 ## 9. Extension Rules
 

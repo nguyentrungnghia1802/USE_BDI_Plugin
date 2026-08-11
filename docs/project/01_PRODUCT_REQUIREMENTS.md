@@ -127,6 +127,10 @@ implemented.
 | FR-CS-002 | Provide structural, signature, reference, and OCL mutants with an oracle | Implemented |
 | FR-CS-003 | Produce reproducible baseline reports, metrics, diagrams, and limitation evidence | Implemented |
 | FR-CS-004 | Import the House Building case study | Optional |
+| FR-CS-005 | Execute the reviewed Auction baseline and mutants through the real headless analysis service in isolated temporary workspaces | Implemented |
+| FR-CS-006 | Emit deterministic JSON, CSV, and HTML evaluation results containing manifest, corpus, configuration, input, and trace identities | Implemented |
+| FR-CS-007 | Classify detected, missed, unexpected, PASS, UNKNOWN, unsupported, timeout, and execution-error outcomes with corpus-scoped metrics | Implemented |
+| FR-CS-008 | Reject malformed or unsafe manifests before execution and prove source fixtures and the current USE state remain unchanged | Implemented |
 | FR-REL-001 | Pass root `mvn clean verify` and plugin/package smoke checks | Implemented |
 | FR-REL-002 | Verify packaging from an exact clean committed tree | Implemented |
 | FR-REL-003 | Create `v1.0.0-thesis-rc` | Planned |
@@ -152,6 +156,7 @@ implemented.
 | BR-014 | The traceability graph is derived evidence, never a mutable or persisted source of truth. |
 | BR-015 | CArtAgO concrete APIs stop at the adapter; static declarations cannot imply runtime-state consistency. |
 | BR-016 | Environment mapping suggestions remain candidates; only confirmed current bindings enter environment rules, while stale and unknown states remain explicit. |
+| BR-017 | Evaluation oracles are declared outside the runner; missing/ambiguous input or evidence is invalid, unsupported, or unknown and never becomes a semantic PASS. |
 
 ## 4. Core acceptance criteria
 
@@ -177,9 +182,18 @@ implemented.
 14. Copying a relative Auction `.jcm` project to another checkout produces the
     same portable project IR and imports the same resolved AgentSpeak sources.
 15. Selecting Auction `.jcm` in Explorer and passing it to CLI `--jcm` use the
-    same application snapshot semantics; project diagnostics remain visible.
+     same application snapshot semantics; project diagnostics remain visible.
 16. Conflicting `--asl` and `--jcm`, missing files, wrong extensions, and
-    cancelled GUI work do not create misleading analysis output.
+     cancelled GUI work do not create misleading analysis output.
+17. A fixed-timestamp run of the reviewed Auction manifest produces one PASS,
+    four DETECTED cases, and byte-stable JSON/CSV/HTML on repetition.
+18. Duplicate IDs, unknown fields, path traversal, missing oracle entries,
+    malformed numbers, missing files, timeouts, and tool failures have explicit
+    diagnostics and do not contribute semantic detection counts.
+19. The evaluation runner applies only named static state fixtures inside its
+    private `MSystem`; the input files and caller's USE state are unchanged.
+20. Evaluation metrics identify the declared corpus and excluded layers and are
+    documented as evidence for this reviewed corpus, not general correctness.
 
 ## 5. Non-functional requirements
 

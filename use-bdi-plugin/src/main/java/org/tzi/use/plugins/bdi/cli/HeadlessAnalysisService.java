@@ -57,6 +57,7 @@ public final class HeadlessAnalysisService {
         }
 
         MSystem system = compileSystem(useFile);
+        request.stateFixture().ifPresent(fixture -> fixture.apply(system));
         UseUmlModelFacade facade = new UseUmlModelFacade();
         UseModelSnapshot useModel = facade.snapshot(system);
         BdiImportSnapshot imported = new BdiImportService().importFiles(aslFiles);

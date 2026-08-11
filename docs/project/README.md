@@ -51,7 +51,8 @@ repeat branch names, commit hashes, or last-verified dates.
 
 The plugin imports AgentSpeak through Jason, builds a plugin-owned BDI IR,
 maps it to a read-only USE UML/OCL projection, evaluates 22 standard rules plus
-three static CArtAgO pilot rules, and provides reproducible Auction evidence.
+three static CArtAgO pilot rules, and provides reproducible, corpus-scoped
+Auction evaluation evidence through a packaged manifest runner.
 It is not a full JaCaMo integration: `.jcm` and artifact declarations can be
 inspected statically, but there is no Moise or JaCaMo runtime lifecycle support.
 
