@@ -292,9 +292,12 @@ For a new rule:
 
 For a new JaCaMo layer, extend a separate adapter and plugin-owned IR. Current
 standard rules must not depend directly on `.jcm`, CArtAgO, Moise, or runtime
-classes. Static organization normalization is bounded by ADR-0034. Live
-CArtAgO state, organization enactment/monitoring, and Moise-to-UML/OCL rules
-remain separate changes and must preserve PASS/FAIL/UNKNOWN semantics.
+classes. Static organization normalization is bounded by ADR-0034. The separate
+`ORG-001..003` pilot consumes only confirmed plugin-owned mappings and immutable
+snapshots under ADR-0035. It compares reviewer-normalized cardinality bounds
+rather than guessing OCL semantics from expression text. Live CArtAgO state,
+organization enactment/monitoring, persisted organization mappings, and runtime
+traces remain separate changes and must preserve PASS/FAIL/UNKNOWN semantics.
 
 ## 10. Definition Of Done
 

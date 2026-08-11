@@ -10,9 +10,12 @@
   mission/norm/cardinality IR. Source line/column positions are unavailable
   from Moise 1.1 and remain explicit unknowns; links, preferences, plans,
   conditions, and other out-of-scope details produce `JCM-010`.
-- Organization-to-UML/OCL rules, enactment, runtime lifecycle, dynamic
-  membership, and execution traces are absent. GUI and CLI `.jcm` selection
-  remains static only.
+- Static organization-to-UML/OCL rules cover only explicit confirmed role/class,
+  mission/operation, and cardinality/invariant mappings. Cardinality bounds are
+  reviewer-normalized evidence; arbitrary OCL text is not reinterpreted.
+  Matching static bounds remain `UNKNOWN` without enactment/runtime membership.
+  Mapping persistence, runtime lifecycle, dynamic norm fulfillment, and execution
+  traces are absent. GUI and CLI `.jcm` selection remains static only.
 - `REF-001` can still classify some literal-like terms too broadly, producing
   potential false positives. This is a known BDI index limitation.
 - Schema `0.2.0` makes new mapping and suppression identities portable. Legacy

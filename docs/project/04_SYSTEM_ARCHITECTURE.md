@@ -184,6 +184,17 @@ targets against the current plugin-owned environment and USE snapshots. Only
 candidate is excluded, while a stale or unknown confirmed mapping emits
 `ENV-004` with source and target evidence.
 
+The static organization pilot consumes only `OrganizationModel`, explicit
+plugin-owned organization mappings, and `UseModelSnapshot`. `ORG-001` checks a
+confirmed role/class target, `ORG-002` checks a confirmed mission/operation
+target, and `ORG-003` compares a Moise role cardinality with reviewer-normalized
+bounds attached to a confirmed OCL-invariant mapping. The validator does not
+parse OCL text heuristically. Candidate mappings and missing reviewed bounds
+are `UNKNOWN`; matching static bounds are also `UNKNOWN` for enacted membership
+until runtime evidence exists. `OrganizationTraceabilityGraphBuilder`
+contributes portable organization/source/mapping/UML/OCL/gap/issue nodes to the
+same immutable graph contract without importing Moise types.
+
 ## 8. Scoped Evaluation Evidence
 
 `EvaluationManifestCodec` loads a versioned, closed-field manifest whose cases
@@ -223,5 +234,5 @@ source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
-- Automatic `.jcm` environment resolution, live CArtAgO state, Moise
-  enactment/monitoring, organization consistency rules, and runtime integration.
+- Automatic `.jcm` mapping resolution, live CArtAgO state, Moise
+  enactment/monitoring, persisted organization mappings, and runtime integration.

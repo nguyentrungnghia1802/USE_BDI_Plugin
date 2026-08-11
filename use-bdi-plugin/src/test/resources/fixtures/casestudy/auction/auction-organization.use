@@ -1,0 +1,19 @@
+model AuctionOrganizationModel
+
+class Auctioneer
+operations
+  openAuction()
+end
+
+class Bidder
+operations
+  submitBid()
+end
+
+constraints
+
+context Auctioneer
+  inv ExactlyOneAuctioneerRole: Auctioneer.allInstances()->size() = 1
+
+context Bidder
+  inv ParticipantCapacity: Bidder.allInstances()->size() <= 300

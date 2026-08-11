@@ -38,6 +38,8 @@ are complete. Do not append per-day implementation diaries.
 - [x] Explorer and headless CLI expose the shared `.jcm` project analysis path.
 - [x] Official Moise 1.1 normalizes the bounded Auction organization subset
   into immutable portable IR with explicit diagnostics.
+- [x] Static organization mappings and `ORG-001..003` detect Auction role/class,
+  mission/operation, and cardinality/OCL mutants with explicit runtime UNKNOWN.
 - [x] Typed CArtAgO environment mappings persist in a strict portable document and revalidate stale targets.
 - [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
 - [x] Static CArtAgO artifact pilot detects operation/arity/property mutants and preserves dynamic UNKNOWN.
@@ -61,17 +63,18 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the static Moise organization slice:
+Latest validated baseline after the static organization consistency slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
-- plugin tests: 147 pass;
+- focused T15 organization/catalog tests: 6 pass;
+- plugin tests: 152 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 147 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 152 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -115,6 +118,18 @@ T14 Moise organization evidence:
   relocation, partial failure, and direct AgentSpeak compatibility;
 - ADR-0034 supersedes ADR-0032 and explicitly excludes enactment/runtime/rules.
 
+T15 static organization consistency evidence:
+
+- `AuctionOrganizationConsistencyTest`: baseline, three rule mutants,
+  candidate/unavailable `UNKNOWN`, duplicate rejection, trace deduplication,
+  portable serialization, state fingerprint, source evidence, and Moise type
+  boundary are covered;
+- `RuleCatalogCompletenessTest` preserves the exact 22 standard IDs and checks
+  the separate `ORG-001..003` catalog;
+- [Static organization consistency evidence](evidence/organization-consistency-pilot.md)
+  records the reviewed-cardinality contract and runtime claim boundary;
+- ADR-0035 rejects heuristic OCL parsing and keeps enacted membership UNKNOWN.
+
 T16 evaluation evidence:
 
 - `EvaluationManifestCodecTest`: canonical round-trip, unknown-field,
@@ -157,7 +172,7 @@ The following are future work, not hidden completion claims:
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
-- Live CArtAgO, Moise enactment/monitoring, organization consistency rules,
+- Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
@@ -172,6 +187,7 @@ The prioritized development candidates are maintained in
 | Import/IR/index | importer, IR, golden, and index tests |
 | JaCaMo project import | parser spike, MAS golden, diagnostics, relocation, package smoke |
 | Static Moise organization import | official source/API/license/checksum, organization golden/diagnostic/boundary tests, ADR-0034 |
+| Static organization consistency | Auction baseline/three mutants, candidate/runtime UNKNOWN, portable trace, ADR-0035 |
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |

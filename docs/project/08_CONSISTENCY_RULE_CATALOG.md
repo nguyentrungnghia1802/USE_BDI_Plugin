@@ -121,6 +121,24 @@ excluded and stale/unknown confirmed records produce `ENV-004`. Without
 captured runtime values, `ENV-003` remains `UNKNOWN` and cannot be reported as
 PASS.
 
+## 2.3. Static organization pilot catalog
+
+These rules remain separate from the 22 `StandardConsistencyRules` and the
+environment catalog. They consume immutable `OrganizationModel`, explicit
+plugin-owned mappings, and `UseModelSnapshot`; no Moise type crosses the adapter.
+
+| Rule ID | Check | Default result | Test/evidence trace |
+|---|---|---|---|
+| ORG-001 | Confirmed organization role and mapped UML class both exist | ERROR / CONFIRMED for a missing source or target; INFO / UNKNOWN for a candidate | valid Auction role mappings and missing-class mutant |
+| ORG-002 | Confirmed organization mission and mapped UML operation both exist | ERROR / CONFIRMED for a missing source or target; INFO / UNKNOWN for a candidate | valid Auction mission mappings and missing-operation mutant |
+| ORG-003 | Confirmed role cardinality and OCL invariant exist and reviewed static bounds agree | ERROR / CONFIRMED for missing target or mismatched bounds; WARNING / UNKNOWN without reviewed bounds; INFO / UNKNOWN after a static match because enactment is unavailable | valid Auction bounds, mismatch mutant, and unavailable-evidence case |
+
+`ORG-003` does not parse or reinterpret arbitrary OCL expression text. A human
+review confirms the invariant target and normalized minimum/maximum evidence.
+The rule compares that evidence with the organization IR. Static equality is
+not runtime PASS: dynamic role membership and organization enactment remain
+unavailable and therefore `UNKNOWN`.
+
 ## 3. Goal support semantics
 
 Một plan hỗ trợ goal nếu:

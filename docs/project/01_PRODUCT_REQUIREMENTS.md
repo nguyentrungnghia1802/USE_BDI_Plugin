@@ -127,7 +127,7 @@ implemented.
 | FR-ORG-002 | Normalize roles, groups, goals, missions, norms, and cardinalities into immutable portable organization IR | Implemented |
 | FR-ORG-003 | Report missing, invalid, duplicate, and unsupported organization evidence explicitly | Implemented |
 | FR-ORG-004 | Preserve unavailable source coordinates as unknown rather than inventing positions | Implemented |
-| FR-ORG-005 | Evaluate Moise-to-UML/OCL consistency rules | Planned |
+| FR-ORG-005 | Evaluate confirmed role/class, mission/operation, and reviewed cardinality/OCL mappings with explicit UNKNOWN runtime semantics | Implemented |
 
 ### 2.10 Case study and release
 
@@ -168,6 +168,7 @@ implemented.
 | BR-016 | Environment mapping suggestions remain candidates; only confirmed current bindings enter environment rules, while stale and unknown states remain explicit. |
 | BR-017 | Evaluation oracles are declared outside the runner; missing/ambiguous input or evidence is invalid, unsupported, or unknown and never becomes a semantic PASS. |
 | BR-018 | Moise concrete classes stop at the organization adapter; static normalization does not imply enactment or runtime consistency. |
+| BR-019 | Organization suggestions remain candidates; static cardinality checks require a confirmed invariant target plus reviewer-normalized bounds, and matching bounds remain UNKNOWN without enactment evidence. |
 
 ## 4. Core acceptance criteria
 

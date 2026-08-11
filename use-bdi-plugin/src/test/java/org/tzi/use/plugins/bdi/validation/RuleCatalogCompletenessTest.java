@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.tzi.use.plugins.bdi.validation.environment.EnvironmentRuleCatalog;
+import org.tzi.use.plugins.bdi.validation.organization.OrganizationRuleCatalog;
 
 class RuleCatalogCompletenessTest {
     private static final Set<String> EXPECTED_RULE_IDS = Set.of(
@@ -31,6 +32,10 @@ class RuleCatalogCompletenessTest {
         assertEquals(22, phases.size());
         assertEquals(Set.of("ENV-001", "ENV-002", "ENV-003", "ENV-004"),
                 Set.copyOf(EnvironmentRuleCatalog.ids()));
+        assertEquals(Set.of("ORG-001", "ORG-002", "ORG-003"),
+                Set.copyOf(OrganizationRuleCatalog.ids()));
+        assertTrue(OrganizationRuleCatalog.definitions().stream()
+                .allMatch(definition -> definition.failureSeverity() == IssueSeverity.ERROR));
         assertEquals(RulePhase.PARSE, phases.get("ASL-001"));
         assertEquals(RulePhase.IR_WELL_FORMEDNESS, phases.get("BDI-001"));
         assertEquals(RulePhase.REFERENCE, phases.get("REF-001"));

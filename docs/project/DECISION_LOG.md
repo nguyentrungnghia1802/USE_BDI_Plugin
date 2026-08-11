@@ -46,6 +46,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0032 | Historical Moise blocker; superseded by ADR-0034 after official parser/API/license evidence became reproducible | original fallback and boundary tests |
 | ADR-0033 | Run the reviewed Auction corpus through an isolated real headless service with named static state fixtures and a declared external oracle; normalize Jason source URLs out of mapping identity for relocation | evaluation codec/runner tests, packaged Auction evaluation smoke |
 | ADR-0034 | Pin official Moise 1.1 behind one static adapter, normalize a bounded immutable organization IR, and keep enactment/rules outside this slice | organization adapter/golden/diagnostic/boundary/package tests |
+| ADR-0035 | Evaluate a separate static organization catalog over confirmed plugin-owned mappings; use reviewer-normalized OCL cardinality bounds and retain runtime enactment as UNKNOWN | Auction organization baseline/mutant/trace tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -85,14 +86,14 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 147 pass, including JaCaMo project import, portable
+- Plugin suite: 152 pass, including JaCaMo project import, portable
   traceability, CArtAgO adapter/environment mutants, Moise organization
-  normalization, and boundary tests.
+  normalization, static organization rules/traceability, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
 - Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
-  integration tests, 147 plugin tests, and
+  integration tests, 152 plugin tests, and
   ZIP/TAR distributions succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
@@ -326,3 +327,30 @@ The Moise artifact is monolithic, so its own classes are present in the shaded
 plugin; this does not authorize runtime use. No organization entity, board,
 workspace, enactment, dynamic membership, norm-fulfillment check, or launcher is
 created. Moise-to-UML/OCL rules remain a separate T15 slice over plugin-owned IR.
+
+## 15. ADR-0035: Confirmed Static Organization Mappings And Reviewed OCL Bounds
+
+**Status:** Accepted. **Date:** 2026-08-11.
+
+The T15 pilot needs explainable role/class, mission/operation, and
+cardinality/OCL checks without allowing rules to depend on Moise objects or
+claiming that string matching understands arbitrary OCL semantics.
+
+Option A, rejected, is to infer mappings and cardinality semantics from names or
+regular expressions over OCL source. That would turn suggestions into bindings
+and create false PASS results. Option B, selected, introduces plugin-owned
+candidate/confirmed mapping records. A cardinality mapping references one class
+invariant and optionally carries minimum/maximum bounds normalized by a human
+reviewer. `OrganizationConsistencyValidator` compares those reviewed bounds to
+the immutable organization IR and checks that all referenced UML/OCL targets
+exist.
+
+`ORG-001..003` are a separate catalog and do not alter the 22 standard rule
+IDs. Candidates and unavailable reviewed bounds are `UNKNOWN`. Even matching
+static bounds emit `UNKNOWN` for enacted membership because no runtime evidence
+exists. The organization trace contributor uses the common immutable graph
+values with portable source identity and explicit mapping/target gaps.
+
+This slice does not persist organization mappings, parse arbitrary OCL text,
+launch a runtime, monitor membership, or evaluate norm fulfillment. Those are
+separate future decisions.
