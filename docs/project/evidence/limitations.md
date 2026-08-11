@@ -6,8 +6,10 @@
   relative `.asl` links are normalized; declaration-template identity is not
   recoverable after the official parser expands named instances.
 - Workspaces, organizations, and institutions are retained as unsupported
-  references. CArtAgO Java semantics, Moise semantics, runtime lifecycle,
-  and execution traces are absent. GUI and CLI `.jcm` selection is static only.
+  references. The Moise organization reference is explicitly reported as
+  `JCM-005` because no verified parser/API is packaged. CArtAgO Java semantics,
+  Moise semantics, runtime lifecycle, and execution traces are absent. GUI and
+  CLI `.jcm` selection is static only.
 - `REF-001` can still classify some literal-like terms too broadly, producing
   potential false positives. This is a known BDI index limitation.
 - Schema `0.2.0` makes new mapping and suppression identities portable. Legacy

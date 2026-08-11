@@ -98,6 +98,18 @@ T13 environment-mapping evidence:
 - [CArtAgO environment mapping persistence evidence](evidence/cartago-environment-mapping-persistence.md)
   records schema, source identity, rejection policy, and limitations.
 
+T14 Moise spike evidence:
+
+- the official JaCaMo parser/API and local dependency/package boundary were
+  inspected with `javap`, `mvn dependency:tree`, JAR entry checks, and the
+  existing Auction `.jcm` parser test;
+- `MoiseOrganizationFallbackTest`: 2 tests prove organization references stay
+  `UNSUPPORTED`, emit `JCM-005` with an explicit no-parser/not-parsed reason,
+  and introduce no guessed Moise imports or direct Moise dependency;
+- organization role/mission/goal/permission/cardinality IR is intentionally not
+  claimed until an official Moise parser/API, license evidence, and fixture are
+  available. This is recorded as ADR-0032 and remains an accepted residual.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 

@@ -74,6 +74,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | UI availability | screenshot index and `PluginGuiSmoke` |
 | Package reproducibility | release-package evidence and clean-clone marker |
 | Static JaCaMo import | parser-spike evidence and Auction golden MAS project IR |
+| Moise organization boundary | JaCaMo API/dependency inspection, `JCM-005` fallback, and no-import/package-boundary tests; no organization IR is claimed |
 | Unified issue trace | Auction traceability graph test and ADR-0027 |
 | Static environment consistency | CArtAgO adapter/mutant tests and ADR-0028 |
 | Persisted environment mappings | strict environment codec/repository, relocation and stale-target tests, ADR-0031, and persistence evidence |

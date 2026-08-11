@@ -43,6 +43,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0029 | Compose static `.jcm` imports and direct AgentSpeak imports through one immutable `MasProjectAnalysisService` and keep project diagnostics separate from BDI diagnostics | project-analysis service tests |
 | ADR-0030 | Route GUI and headless `.jcm` entry points through the shared project service; use a background Swing worker, reject mixed input before output, and never start JaCaMo runtime | Explorer/worker/CLI/package smoke |
 | ADR-0031 | Persist CArtAgO operation/property bindings in a separate typed environment document; preserve BDI mapping schema `0.2.0` and reject unknown environment fields/versions | environment codec/repository/migration tests |
+| ADR-0032 | Block Moise organization normalization until an official parser/API and license/package evidence is available; retain `.jcm` organization references as explicit `JCM-005` unsupported diagnostics | Moise API/dependency spike, fallback and boundary tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -233,3 +234,28 @@ keys, invalid roots, and malformed records fail before a file is rewritten.
 Suggestions remain `CANDIDATE`; stale or unavailable targets are explicit
 `STALE`/`UNKNOWN` states and never silently become valid mappings. CArtAgO
 concrete types remain confined to the adapter.
+
+## 12. ADR-0032: Blocked Moise Organization Normalization
+
+**Status:** Accepted blocker. **Date:** 2026-08-11.
+
+The verified JaCaMo `1.3.0` parser accepts the `.jcm` `organisation`
+declaration and exposes `JaCaMoOrgParameters`, groups, and schemes as project
+configuration objects. It does not parse the referenced Moise organization
+file into roles, missions, goals, permissions, or cardinalities. The local
+`org.jacamo:jacamo:1.3.0` POM declares `org.jacamo:moise:1.1` upstream, but this
+plugin's dependency tree intentionally contains only the direct JaCaMo parser
+and CArtAgO API; the Moise artifact and `ora4mas/nopl` runtime marker are absent
+from the resolved and shaded package. `javap` confirms that
+`jacamo.platform.Moise` is a runtime platform class, not an organization-file
+parser entry point.
+
+Option A, rejected for this slice, would add the Moise runtime based only on the
+upstream POM and guess an XML/API boundary. That would change the package and
+license surface without a verified parser contract. Option B, selected, keeps
+the existing plugin-owned `MasResourceReference` with `UNSUPPORTED` status and
+emits `JCM-005` explaining that no verified Moise parser/API is packaged and the
+referenced file is not parsed. Invalid/missing/duplicate `.jcm` agent cases
+retain their existing positioned diagnostics. No organization IR, rules, or
+runtime claims are added until official parser/source/license evidence and a
+reviewed Auction organization fixture are available.

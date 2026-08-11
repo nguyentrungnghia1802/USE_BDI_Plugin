@@ -241,7 +241,8 @@ For a new rule:
 For a new JaCaMo layer, extend a separate adapter and plugin-owned IR. Current
 standard rules must not depend directly on `.jcm`, CArtAgO, Moise, or runtime
 classes. Live CArtAgO state capture and Moise each require a dedicated decision
-beyond ADR-0028/ADR-0031.
+beyond ADR-0028/ADR-0031; organization normalization is currently blocked by
+ADR-0032 because no verified Moise parser/API is packaged.
 
 ## 10. Definition Of Done
 

@@ -147,6 +147,10 @@ diagnostic outcomes rather than silent omissions.
 Workspace, organization, and institution declarations are retained as
 `MasResourceReference` with `UNSUPPORTED` status and `JCM-005`; the `.jcm`
 importer does not automatically resolve their implementation classes.
+The T14 Moise spike confirms that the organization reference remains an
+explicit fallback: JaCaMo project parameters do not parse the referenced
+organization file, and no verified Moise parser/API is packaged. See ADR-0032
+and the Moise spike evidence before changing this boundary.
 `MasProjectAnalysisService` composes the importer result with the existing
 `CurrentAnalysisSnapshotService`. It accepts immutable project/USE/mapping/
 configuration inputs, runs the shared validator once, and returns one
@@ -191,4 +195,4 @@ source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
 - Automatic `.jcm` environment resolution, live CArtAgO state, Moise, and
-  runtime integration.
+  runtime integration; Moise normalization is explicitly blocked by ADR-0032.

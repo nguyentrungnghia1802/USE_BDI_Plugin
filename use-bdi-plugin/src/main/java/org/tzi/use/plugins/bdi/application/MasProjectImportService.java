@@ -134,8 +134,7 @@ public final class MasProjectImportService {
                     MasProjectDiagnostic.UNSUPPORTED_RESOURCE,
                     MasProjectDiagnosticSeverity.WARNING,
                     resource.source().orElse(file),
-                    resource.kind() + " resource is retained but not semantically imported: "
-                            + resource.name()));
+                    unsupportedResourceMessage(resource)));
         }
 
         MasProjectModel project = new MasProjectModel(
@@ -177,5 +176,14 @@ public final class MasProjectImportService {
     private static MasProjectDiagnostic diagnostic(
             String code, MasProjectDiagnosticSeverity severity, Path source, String message) {
         return new MasProjectDiagnostic(code, severity, source, 0, 0, message);
+    }
+
+    private static String unsupportedResourceMessage(ParsedMasResource resource) {
+        if (resource.kind() == org.tzi.use.plugins.bdi.model.mas.MasResourceKind.ORGANIZATION) {
+            return "Organization resource is retained but no verified Moise parser/API is packaged; "
+                    + "the referenced organization file is not parsed: " + resource.name();
+        }
+        return resource.kind() + " resource is retained but not semantically imported: "
+                + resource.name();
     }
 }
