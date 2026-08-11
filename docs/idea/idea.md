@@ -1,24 +1,25 @@
-# Development Ideas After The Static CArtAgO Pilot
+# JaCaMo Research Roadmap After T11-T16
 
 Status: prioritized research candidates, not implemented requirements
 
 ## Current Baseline
 
-The project already supports Jason-based AgentSpeak import, immutable BDI IR,
-explicit UML mappings, 22 standard consistency rules, snapshot OCL evaluation,
-JSON/HTML evidence, headless quality gates, static `.jcm` project import,
-portable traceability, and a static CArtAgO/UML consistency pilot. It does not
-yet provide one end-to-end `.jcm` analysis workflow, persisted CArtAgO mappings,
-Moise semantics, or runtime trace conformance.
+T11-T16 are complete. The project supports Jason-based AgentSpeak import,
+immutable BDI IR, explicit UML mappings, 22 standard consistency rules,
+snapshot OCL evaluation, JSON/HTML evidence, shared GUI/headless `.jcm`
+analysis, portable traceability, persisted CArtAgO mappings, bounded Moise IR,
+static organization consistency, and a reproducible Auction evaluation runner.
+It does not provide JaCaMo runtime lifecycle, live environment/organization
+state, persisted organization mappings, or runtime trace conformance.
 
 ## Priority Summary
 
 | Rank | Idea | Value | Feasibility | Decision |
 | --- | --- | --- | --- | --- |
-| 1 | Unified JaCaMo project analysis entry | Very high | High | Selected |
-| 2 | Persisted CArtAgO environment mappings | Very high | High | Selected |
-| 3 | Static Moise organization consistency | Very high | Medium | Selected |
-| 4 | Reproducible mutation and evaluation runner | High | High | Selected |
+| 1 | Unified JaCaMo project analysis entry | Very high | High | Completed in T11-T12 |
+| 2 | Persisted CArtAgO environment mappings | Very high | High | Completed in T13 |
+| 3 | Static Moise organization consistency | Very high | Medium | Completed in T14-T15 |
+| 4 | Reproducible mutation and evaluation runner | High | High | Completed in T16 |
 | 5 | External runtime trace conformance sidecar | Very high | Medium-low | Later |
 | 6 | Dependency-aware incremental reanalysis | High | Medium | Later |
 | 7 | Automatic USE session change subscription | Medium | Medium | Later |
@@ -26,14 +27,15 @@ Moise semantics, or runtime trace conformance.
 
 ## Idea 1 - Unified JaCaMo Project Analysis Entry
 
+**Status:** implemented in T11-T12 through the shared project analysis service,
+Explorer action, and `BdiQualityGateMain --jcm` entry point.
+
 **Function:** let users select one `.jcm` file and run the complete static
 pipeline across its AgentSpeak sources, current USE model/state, mappings,
 rules, traceability, and reports.
 
-**Why it matters:** the `.jcm` importer currently produces project IR, while the
-main GUI and CLI still center on direct `.asl` inputs. Joining these paths turns
-the existing JaCaMo work into a demonstrable user workflow without starting a
-runtime.
+**Verified outcome:** the `.jcm` importer now feeds the same immutable analysis
+snapshot used by direct `.asl` input, without starting a runtime.
 
 **Practical slice:** add an application service shared by GUI and CLI, preserve
 partial-success diagnostics, expose resolved agent identities, and make report
@@ -47,11 +49,14 @@ workspace, Moise, or runtime lifecycle is implied.
 
 ## Idea 2 - Persisted CArtAgO Environment Mappings
 
+**Status:** implemented in T13 with a separate strict, portable
+`.cartago-map.json` document and explicit stale/unknown revalidation.
+
 **Function:** save confirmed artifact-operation/UML-operation and observable-
 property/UML-attribute bindings in the versioned mapping document.
 
-**Why it matters:** the CArtAgO pilot currently uses in-memory mappings, so
-reviewed environment decisions cannot survive restart, relocation, or CI use.
+**Verified outcome:** reviewed environment decisions survive restart and
+checkout relocation; candidate, stale, and unknown states remain explicit.
 
 **Practical slice:** introduce a schema migration, typed mapping kinds, portable
 source identity, strict validation, staleness detection, and deterministic
@@ -65,12 +70,15 @@ ambiguous legacy data must fail explicitly rather than broaden a binding.
 
 ## Idea 3 - Static Moise Organization Consistency
 
+**Status:** implemented in T14-T15 using the official Moise 1.1 parser boundary,
+plugin-owned organization IR, `ORG-001..003`, and portable trace evidence.
+
 **Function:** normalize Moise roles, groups, missions, goals, and permissions
 into plugin-owned organization IR and compare selected elements with UML/OCL.
 
-**Why it matters:** AgentSpeak and CArtAgO cover agent behavior and environment,
-but the organization layer of JaCaMo is still absent. A static adapter is the
-lowest-risk way to broaden JaCaMo coverage.
+**Verified outcome:** the Auction organization layer is available for bounded
+static role/class, mission/operation, and reviewed cardinality/OCL checks while
+runtime enactment remains `UNKNOWN`.
 
 **Practical slice:** first verify the official parser/API and package boundary;
 then implement a narrow Auction organization fixture and rules for role/class,
@@ -84,12 +92,15 @@ may depend on a Moise concrete type outside the adapter.
 
 ## Idea 4 - Reproducible Mutation And Evaluation Runner
 
+**Status:** implemented in T16 with a reviewed manifest, isolated workspaces,
+deterministic JSON/CSV/HTML output, and explicit semantic/process outcomes.
+
 **Function:** declare controlled model/BDI/environment/organization mutants and
 automatically execute the quality gate, collect findings, and compute scoped
 detection metrics.
 
-**Why it matters:** individual Auction mutants exist, but running and comparing
-them manually is slow and makes thesis evidence harder to reproduce.
+**Verified outcome:** one Auction baseline and four declared mutants run through
+the real headless service and reproduce `1 PASS + 4 DETECTED` byte-stably.
 
 **Practical slice:** use a manifest with expected rule/status/evidence, isolated
 temporary inputs, deterministic JSON/CSV summaries, and explicit timeout or

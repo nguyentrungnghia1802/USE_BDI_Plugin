@@ -7,7 +7,8 @@ are indexed in `README.md`.
 
 ## Prerequisites
 
-- Java 21 on `PATH`.
+- Java 21 through `JAVA_HOME` or on `PATH`. The examples prefer
+  `JAVA_HOME\bin\java.exe` so a legacy `java` earlier on `PATH` is not selected.
 - Maven 3.9 or newer for building from source.
 - A checkout of this repository on the plugin branch.
 
@@ -36,14 +37,19 @@ PowerShell:
 
 ```powershell
 $useHome = (Resolve-Path .\use-assembly\target\use-7.1.1).Path
-java -jar (Join-Path $useHome 'lib\use-gui.jar') `
+$javaExecutable = if ($env:JAVA_HOME) {
+  Join-Path $env:JAVA_HOME 'bin\java.exe'
+} else {
+  (Get-Command java -ErrorAction Stop).Source
+}
+& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') `
   '-nr' "-H=$useHome"
 ```
 
 Equivalent command prompt form:
 
 ```cmd
-java -jar "<use-home>\lib\use-gui.jar" -nr -H="<use-home>"
+"%JAVA_HOME%\bin\java.exe" -jar "<use-home>\lib\use-gui.jar" -nr -H="<use-home>"
 ```
 
 Do not place the test JAR in the runtime plugin directory. The runtime file

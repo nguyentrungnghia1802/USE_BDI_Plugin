@@ -68,6 +68,10 @@ class DocumentationContractTest {
         assertTrue(context.contains("USE `7.1.1`"));
         assertTrue(context.contains("Plugin | `use-bdi-plugin`, manifest version `0.1.0`"));
         assertTrue(context.contains("jason-interpreter:3.3.0"));
+        assertTrue(context.contains("org.jacamo:jacamo:1.3.0"));
+        assertTrue(context.contains("org.jacamo:cartago:3.1"));
+        assertTrue(context.contains("org.jacamo:moise:1.1"));
+        assertTrue(context.contains("Persisted typed mappings"));
 
         String requirements = read(project.resolve("01_PRODUCT_REQUIREMENTS.md"));
         assertTrue(requirements.contains("FR-PLG-001"));
@@ -116,6 +120,15 @@ class DocumentationContractTest {
         }
         assertTrue(ideas.contains("CArtAgO"));
         assertTrue(ideas.contains("Moise"));
+        assertTrue(ideas.contains("T11-T16 are complete"));
+
+        for (String guide : List.of("PLUGIN_INSTALL_GUIDE.md", "USER_GUIDE.md", "DEVELOPER_GUIDE.md")) {
+            String content = read(project.resolve(guide));
+            assertTrue(content.contains("$javaExecutable"),
+                    () -> "Guide does not resolve the Java executable safely: " + guide);
+            assertTrue(!content.matches("(?s).*(?m)^java -(jar|cp).*"),
+                    () -> "Guide invokes a potentially stale PATH Java directly: " + guide);
+        }
 
         String ignore = read(root.resolve(".gitignore"));
         assertTrue(ignore.lines().anyMatch(line -> line.trim().equals("/docs/agent/")));

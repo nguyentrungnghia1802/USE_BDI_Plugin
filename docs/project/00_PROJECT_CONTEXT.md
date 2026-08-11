@@ -112,6 +112,8 @@ Optional project artifacts:
 7. Every research claim is scoped to its fixture, oracle, and evidence.
 8. Static CArtAgO reflection establishes declarations only; it cannot establish
    runtime availability, scheduling, state values, or behavioral conformance.
+9. Static organization checks consume plugin-owned Moise IR and confirmed
+   reviewed mappings; matching bounds do not prove runtime enactment.
 
 ## 9. Technical baseline
 
@@ -121,7 +123,9 @@ Optional project artifacts:
 | Language/build | Java 21 and Maven reactor |
 | Plugin | `use-bdi-plugin`, manifest version `0.1.0` |
 | AgentSpeak parser | `io.github.jason-lang:jason-interpreter:3.3.0` |
+| JaCaMo project parser | `org.jacamo:jacamo:1.3.0` static `.jcm` composition |
 | Environment API | `org.jacamo:cartago:3.1` static artifact inspection |
+| Organization API | `org.jacamo:moise:1.1` static organization normalization |
 | UI | Swing action delegates and USE `ViewFrame` |
 | Persistence | Versioned UTF-8 JSON files; no database |
 | Packaging | Shaded plugin JAR inside the USE assembly ZIP |
@@ -136,13 +140,16 @@ Optional project artifacts:
 | Normalized IR and BDI indexes | Implemented | Explicit unsupported nodes/features |
 | USE model/snapshot projection | Implemented | Read-only adapter |
 | Mapping suggestions/editor/save/load | Implemented | Project-relative source identity v2 |
-| Static CArtAgO environment pilot | Implemented | In-memory mappings; no workspace/runtime |
-| Static and snapshot consistency rules | Implemented | 22 configured rule IDs |
+| Static `.jcm` project analysis | Implemented | Shared GUI/headless composition; no runtime launch |
+| Static CArtAgO environment pilot | Implemented | Persisted typed mappings; no workspace/runtime |
+| Static Moise organization pilot | Implemented | Role/mission/cardinality IR and `ORG-001..003`; no enactment |
+| Static and snapshot consistency rules | Implemented | 22 configured standard IDs plus separate environment/organization catalogs |
 | Rule/suppression JSON repositories | Implemented | Versioned persistence and validation tests |
 | Automatic GUI project configuration | Implemented | Loads `.bdi-plugin` beside the active `.use` model; missing files use visible defaults |
 | JSON/HTML report exporters | Implemented | Real reports are pipeline/test driven |
 | Live GUI report export | Implemented | current snapshot exports atomically as JSON or HTML |
 | Headless quality gate | Implemented | explicit `.use`/`.asl` inputs, deterministic reports, five exit classes |
+| Reviewed evaluation runner | Implemented | isolated Auction manifest, deterministic JSON/CSV/HTML, scoped metrics |
 | Auction case study and four mutants | Implemented | Scoped evidence only |
 | House Building import | Optional | Not required for MVP |
 | Release tag | Planned | `v1.0.0-thesis-rc` not created |

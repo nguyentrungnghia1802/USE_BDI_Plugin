@@ -49,7 +49,12 @@ Expand-Archive .\use-assembly\target\use-7.1.1.zip $extractRoot -Force
 $useHome = (Get-ChildItem $extractRoot -Directory |
   Where-Object { Test-Path (Join-Path $_.FullName 'lib\use-gui.jar') } |
   Select-Object -First 1).FullName
-java -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome"
+$javaExecutable = if ($env:JAVA_HOME) {
+  Join-Path $env:JAVA_HOME 'bin\java.exe'
+} else {
+  (Get-Command java -ErrorAction Stop).Source
+}
+& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome"
 ```
 
 The `-H` value must be the extracted USE home. It lets USE resolve
@@ -104,7 +109,12 @@ The `-H` value must be the extracted USE home. It lets USE resolve
 For CI, pass the same project explicitly to the headless entry point:
 
 ```powershell
-java -cp "$useHome\lib\plugins\use-bdi-plugin-7.1.1.jar;$useHome\lib\use-gui.jar" `
+$javaExecutable = if ($env:JAVA_HOME) {
+  Join-Path $env:JAVA_HOME 'bin\java.exe'
+} else {
+  (Get-Command java -ErrorAction Stop).Source
+}
+& $javaExecutable -cp "$useHome\lib\plugins\use-bdi-plugin-7.1.1.jar;$useHome\lib\use-gui.jar" `
   org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
   --use .\Auction.use --jcm .\auction.jcm `
   --json .\auction-jcm.json --html .\auction-jcm.html `

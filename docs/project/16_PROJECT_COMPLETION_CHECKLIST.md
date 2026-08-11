@@ -55,6 +55,8 @@ are complete. Do not append per-day implementation diaries.
 - [x] Extracted assembly contains the shaded plugin, JaCaMo/Jason parsers,
   CArtAgO artifact API, Moise OS parser/schema, and third-party notices.
 - [x] Package/parser/report/menu smoke returns `GUI_SMOKE_OK`.
+- [x] CI/release workflows use Node 24-compatible checkout/JDK actions and
+  artifact upload v4; release issue creation has no legacy Node action.
 - [x] Documentation links, stable facts, and evidence inventory are tested.
 - [x] Canonical documentation uses the compact inventory; redundant generic
   project documents are rejected by `DocumentationContractTest`.
@@ -68,13 +70,13 @@ Latest validated baseline after the static organization consistency slice:
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 152 pass;
+- plugin tests: 153 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 152 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 153 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 

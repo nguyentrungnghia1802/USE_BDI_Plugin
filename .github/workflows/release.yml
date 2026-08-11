@@ -16,15 +16,15 @@ jobs:
 
      steps:
        - name: Checkout
-         uses: actions/checkout@v3
+         uses: actions/checkout@v5
          with:
            fetch-depth: 0
 
        - name: Set up JDK
-         uses: actions/setup-java@v3
+         uses: actions/setup-java@v5
          with:
            java-version: '21'
-           distribution: 'adopt'
+           distribution: 'temurin'
            cache: maven
 
        - name: Build with Maven
@@ -37,10 +37,18 @@ jobs:
            generateReleaseNotes: true
 
        - name: Create "Bump Version" Issue
-         uses: JasonEtco/create-an-issue@v2
+         shell: pwsh
          env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           OLD_USE_VERSION: ${{github.ref_name}}
-         with:
-           filename: .github/ISSUE_TEMPLATE/version_update.md
-           
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+           OLD_USE_VERSION: ${{ github.ref_name }}
+         run: |
+           $template = Get-Content -Raw .github/ISSUE_TEMPLATE/version_update.md
+           $body = $template -replace '(?s)^---\r?\n.*?\r?\n---\r?\n', ''
+           $bodyFile = Join-Path $env:RUNNER_TEMP 'version-update-body.md'
+           Set-Content -LiteralPath $bodyFile -Value $body -Encoding utf8
+           gh issue create --repo $env:GITHUB_REPOSITORY `
+             --title "Update USE version after release $env:OLD_USE_VERSION" `
+             --body-file $bodyFile
+           if ($LASTEXITCODE -ne 0) {
+             throw "Could not create the version-update issue (exit $LASTEXITCODE)"
+           }

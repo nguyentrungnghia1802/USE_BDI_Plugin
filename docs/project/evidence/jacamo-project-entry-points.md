@@ -25,7 +25,12 @@ current view result.
 ## Headless path
 
 ```powershell
-java -cp "$useHome\lib\plugins\use-bdi-plugin-7.1.1.jar;$useHome\lib\use-gui.jar" `
+$javaExecutable = if ($env:JAVA_HOME) {
+  Join-Path $env:JAVA_HOME 'bin\java.exe'
+} else {
+  (Get-Command java -ErrorAction Stop).Source
+}
+& $javaExecutable -cp "$useHome\lib\plugins\use-bdi-plugin-7.1.1.jar;$useHome\lib\use-gui.jar" `
   org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
   --use .\use-bdi-plugin\src\test\resources\fixtures\casestudy\auction\Auction.use `
   --jcm .\use-bdi-plugin\src\test\resources\fixtures\casestudy\auction\auction.jcm `

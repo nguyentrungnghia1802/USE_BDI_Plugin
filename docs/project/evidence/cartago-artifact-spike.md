@@ -39,7 +39,8 @@ third-party notice records this dependency.
 - `AuctionEnvironmentConsistencyTest`: valid static baseline, dynamic UNKNOWN,
   missing-operation, wrong-arity, wrong-property, trace contribution, and API
   boundary.
-- `RuleCatalogCompletenessTest`: 22 standard IDs remain unchanged and the three
-  environment IDs are documented.
+- `RuleCatalogCompletenessTest`: 22 standard IDs remain unchanged and all four
+  environment IDs are documented. `ENV-004` was added later by ADR-0031 for
+  persisted stale/unknown mapping evidence.
 - Current package inspection requires `cartago/OPERATION.class`,
   `cartago/Artifact.class`, and the independently governed Moise parser marker.

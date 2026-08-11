@@ -6,17 +6,20 @@
    enum-like literals, context values, variables, and other term categories.
 2. Add dedicated positive and negative fixtures for the rules that currently
    rely on the aggregate validation test.
-3. Add a larger labeled mutant corpus covering communication, goal support,
-   contexts, types, ownership, and bounded OCL effects.
+3. Persist confirmed organization mappings with relocation and staleness
+   semantics equivalent to the environment mapping boundary.
+4. Add a larger labeled mutant corpus covering communication, goal support,
+   contexts, types, ownership, bounded OCL effects, and organization rules.
 
 ## Integration
 
-1. Make project-root and source identity handling portable so confirmed mapping
-   documents can be checked in and replayed on a clean machine.
-2. Add a live GUI report action composed from the current import snapshot,
-   mapping, USE fingerprint, rule configuration, and suppressions.
-3. Add an explicit refresh/subscription contract for USE model/snapshot changes.
-4. Integrate the report/evaluation commands into a CI job that records Java,
+1. Define a versioned external runtime trace sidecar before attempting live
+   JaCaMo/CArtAgO/Moise conformance.
+2. Add dependency-aware incremental reanalysis only after invalidation rules are
+   proved not to suppress diagnostics.
+3. Add an explicit automatic refresh/subscription contract for USE model/state
+   changes while retaining the manual fallback.
+4. Integrate the packaged report/evaluation commands into a CI job that records Java,
    Maven, USE, Jason, and host metadata.
 
 ## Evaluation

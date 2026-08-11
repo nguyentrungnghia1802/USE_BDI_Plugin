@@ -78,7 +78,12 @@ For a direct run against an extracted distribution, use its two packaged JARs:
 
 ```powershell
 $cp = "$useHome\lib\plugins\use-bdi-plugin-7.1.1.jar;$useHome\lib\use-gui.jar"
-java -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
+$javaExecutable = if ($env:JAVA_HOME) {
+  Join-Path $env:JAVA_HOME 'bin\java.exe'
+} else {
+  (Get-Command java -ErrorAction Stop).Source
+}
+& $javaExecutable -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
   --use .\Auction.use `
   --asl .\auctioneer.asl --asl .\bidder.asl `
   --mapping .\Auction.bdimap.json `
@@ -99,7 +104,7 @@ For a static JaCaMo project, replace the repeatable `--asl` options with one
 explicit `--jcm` option:
 
 ```powershell
-java -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
+& $javaExecutable -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
   --use .\Auction.use --jcm .\auction.jcm `
   --json .\auction-jcm.json --html .\auction-jcm.html `
   --timestamp 2026-08-11T00:00:00Z

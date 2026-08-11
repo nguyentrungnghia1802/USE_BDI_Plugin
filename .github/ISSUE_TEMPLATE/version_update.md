@@ -1,14 +1,14 @@
 ---
 name: Update USE version
 about: Template to update version after a release
-title: 'Update USE version after release of ${{env.OLD_USE_VERSION}}'
+title: 'Update USE version after release'
 assignees: ''
 ---
 
 ## Description
 
-After the release of USE version ${{env.OLD_USE_VERSION}} it is tiome to change
-the version to a new one. For this, please change the following files:
+After publishing a USE release, update the project to the next development
+version. Change the following files:
 
 * ./pom.xml
 * ./use-assembly/pom.xml
