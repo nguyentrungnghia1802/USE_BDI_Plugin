@@ -9,7 +9,7 @@ Verification: source-backed; see Git history and DocumentationContractTest
 | --- | --- |
 | Host | USE 7.1.1, Java 21, Maven reactor |
 | Plugin | `org.tzi.use.plugins.bdi`, manifest version `0.1.0` |
-| Parser/API | JaCaMo `1.3.0` for `.jcm`; Jason `3.3.0` for `.asl`; CArtAgO `3.1` artifact API |
+| Parser/API | JaCaMo `1.3.0` for `.jcm`; Jason `3.3.0` for `.asl`; CArtAgO `3.1`; Moise `1.1` for static organization XML |
 | Menu | `Plugins > AgentSpeak` |
 | Actions | `Hello BDI Plugin`, `Import AgentSpeak...` |
 | UI | Swing `ViewFrame` registered by USE `MainWindow` |
@@ -29,6 +29,7 @@ use-bdi-plugin/
     importer/     Jason/JaCaMo adapters and normalization
     model/ir/     immutable parser-independent BDI model
     model/mas/    immutable portable JaCaMo project IR
+    model/organization/ immutable Moise-independent organization IR
     model/environment/ immutable CArtAgO-independent environment IR
     model/mapping/ explicit mapping domain
     index/        IR-derived indexes
@@ -57,7 +58,17 @@ use-bdi-plugin/
   source through `BdiImportService`, and assigns `IMPORTED`, `INVALID`, or
   `MISSING` per instance.
 - `MasProjectModel` uses `ProjectSourceId` for relocation-stable project,
-  agent, and resource links. Resources remain explicit `UNSUPPORTED` values.
+  agent, resource, and organization links. Workspace/institution resources
+  remain explicit `UNSUPPORTED` values.
+- `MoiseOrganizationParserAdapter` is the only production class importing
+  `moise.*`. It calls the official `OS.loadOSFromURI` entry point and
+  immediately converts roles, groups, schemes, goals, missions, permission/
+  obligation norms, and cardinalities into immutable `OrganizationModel`.
+  The API does not expose line/column coordinates, so source spans use portable
+  file identity with explicit unknown positions.
+- Organization parse outcomes are `NORMALIZED`, `MISSING`, or `INVALID`.
+  Unsupported role/group/goal/mission/norm details remain
+  `UnsupportedFeature` plus `JCM-010`; they are never silently discarded.
 - `MasProjectAnalysisRequest` is the immutable input boundary for one `.jcm`
   analysis. `MasProjectAnalysisService` delegates import to
   `MasProjectImportService`, then reuses `CurrentAnalysisSnapshotService`
@@ -281,9 +292,9 @@ For a new rule:
 
 For a new JaCaMo layer, extend a separate adapter and plugin-owned IR. Current
 standard rules must not depend directly on `.jcm`, CArtAgO, Moise, or runtime
-classes. Live CArtAgO state capture and Moise each require a dedicated decision
-beyond ADR-0028/ADR-0031; organization normalization is currently blocked by
-ADR-0032 because no verified Moise parser/API is packaged.
+classes. Static organization normalization is bounded by ADR-0034. Live
+CArtAgO state, organization enactment/monitoring, and Moise-to-UML/OCL rules
+remain separate changes and must preserve PASS/FAIL/UNKNOWN semantics.
 
 ## 10. Definition Of Done
 

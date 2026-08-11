@@ -42,7 +42,7 @@ implemented.
 | FR-IMP-008 | Re-import tracked sources when their content changes | Implemented |
 | FR-IMP-009 | Parse a `.jcm` through JaCaMo 1.3.0 into portable project/agent/resource IR | Implemented |
 | FR-IMP-010 | Resolve project-relative agent sources and preserve valid agents after missing, invalid, or duplicate declarations | Implemented |
-| FR-IMP-011 | Retain workspace/organization/institution declarations as explicit unsupported resources | Implemented |
+| FR-IMP-011 | Retain workspace/institution declarations as explicit unsupported resources and expose organization normalization status | Implemented |
 | FR-IMP-012 | Compose a `.jcm` project and its resolved AgentSpeak sources into the shared immutable analysis snapshot | Implemented |
 | FR-IMP-013 | Analyze one selected `.jcm` through the Explorer action or headless `--jcm` input without starting JaCaMo | Implemented |
 
@@ -119,7 +119,17 @@ implemented.
 | FR-ENV-005 | Persist typed CArtAgO operation/property mappings in a portable deterministic `.cartago-map.json` document | Implemented |
 | FR-ENV-006 | Revalidate confirmed environment targets and preserve explicit candidate/stale/unknown status | Implemented |
 
-### 2.9 Case study and release
+### 2.9 Static organization import
+
+| ID | Requirement | Status |
+| --- | --- | --- |
+| FR-ORG-001 | Parse a referenced Moise 1.1 organization specification through the official API without starting a runtime | Implemented |
+| FR-ORG-002 | Normalize roles, groups, goals, missions, norms, and cardinalities into immutable portable organization IR | Implemented |
+| FR-ORG-003 | Report missing, invalid, duplicate, and unsupported organization evidence explicitly | Implemented |
+| FR-ORG-004 | Preserve unavailable source coordinates as unknown rather than inventing positions | Implemented |
+| FR-ORG-005 | Evaluate Moise-to-UML/OCL consistency rules | Planned |
+
+### 2.10 Case study and release
 
 | ID | Requirement | Status |
 | --- | --- | --- |
@@ -157,6 +167,7 @@ implemented.
 | BR-015 | CArtAgO concrete APIs stop at the adapter; static declarations cannot imply runtime-state consistency. |
 | BR-016 | Environment mapping suggestions remain candidates; only confirmed current bindings enter environment rules, while stale and unknown states remain explicit. |
 | BR-017 | Evaluation oracles are declared outside the runner; missing/ambiguous input or evidence is invalid, unsupported, or unknown and never becomes a semantic PASS. |
+| BR-018 | Moise concrete classes stop at the organization adapter; static normalization does not imply enactment or runtime consistency. |
 
 ## 4. Core acceptance criteria
 
@@ -247,7 +258,8 @@ implemented.
 | Report path/write failure | Propagate/report I/O failure; do not claim success |
 | Invalid `.jcm` syntax | `JCM-001` with parser position when available; no partial project is fabricated |
 | Missing/invalid/duplicate `.jcm` agent | `JCM-002`/`JCM-004`/`JCM-003`; independent valid sources remain imported |
-| JaCaMo environment/organization resource | Retain `UNSUPPORTED` reference and `JCM-005` warning |
+| JaCaMo workspace/institution resource | Retain `UNSUPPORTED` reference and `JCM-005` warning |
+| Moise organization resource | Normalize or emit `JCM-007..010` with source evidence; never silently ignore |
 
 ## 7. Requirement synchronization checklist
 

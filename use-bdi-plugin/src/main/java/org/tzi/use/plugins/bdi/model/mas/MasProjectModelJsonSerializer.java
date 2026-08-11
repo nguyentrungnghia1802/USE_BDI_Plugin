@@ -2,6 +2,8 @@ package org.tzi.use.plugins.bdi.model.mas;
 
 import java.util.Objects;
 
+import org.tzi.use.plugins.bdi.model.organization.OrganizationModel;
+
 /** Deterministic portable serialization used by golden and relocation tests. */
 public final class MasProjectModelJsonSerializer {
     public String serialize(MasProjectModel project) {
@@ -30,7 +32,37 @@ public final class MasProjectModelJsonSerializer {
                     () -> json.append("null"));
             json.append(",\"status\":\"").append(resource.status()).append("\"}");
         }
-        return json.append(project.resources().isEmpty() ? "]\n}\n" : "\n  ]\n}\n").toString();
+        json.append(project.resources().isEmpty() ? "],\n" : "\n  ],\n")
+                .append("  \"organizations\":[");
+        for (int index = 0; index < project.organizations().size(); index++) {
+            OrganizationModel organization = project.organizations().get(index);
+            json.append(index == 0 ? "\n" : ",\n")
+                    .append("    {\"id\":\"").append(escape(organization.id()))
+                    .append("\",\"source\":\"").append(escape(organization.source().canonical()))
+                    .append("\",\"positioned\":").append(organization.span().positioned())
+                    .append(",\"roles\":[");
+            appendIds(json, organization.roles().stream().map(OrganizationModel.Role::qualifiedId).toList());
+            json.append("],\"groups\":[");
+            appendIds(json, organization.groups().stream().map(OrganizationModel.Group::qualifiedId).toList());
+            json.append("],\"schemes\":[");
+            appendIds(json, organization.schemes().stream().map(OrganizationModel.Scheme::qualifiedId).toList());
+            json.append("],\"norms\":[");
+            appendIds(json, organization.norms().stream().map(OrganizationModel.Norm::qualifiedId).toList());
+            json.append("],\"unsupported\":[");
+            appendIds(json, organization.unsupportedFeatures().stream()
+                    .map(OrganizationModel.UnsupportedFeature::code).toList());
+            json.append("]}");
+        }
+        return json.append(project.organizations().isEmpty() ? "]\n}\n" : "\n  ]\n}\n").toString();
+    }
+
+    private static void appendIds(StringBuilder json, java.util.List<String> values) {
+        for (int index = 0; index < values.size(); index++) {
+            if (index > 0) {
+                json.append(',');
+            }
+            json.append('"').append(escape(values.get(index))).append('"');
+        }
     }
 
     private static String escape(String value) {

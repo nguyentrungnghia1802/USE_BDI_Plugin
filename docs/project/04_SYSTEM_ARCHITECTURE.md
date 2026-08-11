@@ -9,6 +9,8 @@ Verification: source-backed; see Git history and DocumentationContractTest
 flowchart LR
   JCM[JaCaMo .jcm] --> JP[JaCaMo 1.3.0 adapter]
   JP --> MAS[Portable MAS project IR]
+  MAS --> MO[Moise 1.1 static adapter]
+  MO --> ORG[Immutable organization IR]
   JP --> ASL
   CARTAGO[CArtAgO artifact class] --> CA[CArtAgO 3.1 static adapter]
   CA --> ENV[Immutable environment IR]
@@ -37,8 +39,8 @@ USE owns UML/OCL and snapshot semantics. Plugin-owned values connect them.
 | --- | --- | --- |
 | Integration/UI | plugin actions, `ui` | application services and USE GUI boundary |
 | Application | `application`, report composition | importer, index, mapping, validation abstractions |
-| Adapters | `importer`, `use` | Jason/JaCaMo/CArtAgO or USE concrete APIs, respectively |
-| Domain | `model.ir`, `model.mas`, `model.mapping`, issue values | Java/plugin-owned values only |
+| Adapters | `importer`, `use` | Jason/JaCaMo/CArtAgO/Moise or USE concrete APIs, respectively |
+| Domain | `model.ir`, `model.mas`, `model.organization`, `model.mapping`, issue values | Java/plugin-owned values only |
 | Analysis | `index`, `validation` | normalized IR, mappings, immutable USE projection |
 | Persistence | `persistence`, report exporters | versioned plugin-owned DTOs |
 
@@ -47,6 +49,7 @@ Hard rules:
 - Jason AST and exceptions stop in the importer/normalizer boundary.
 - JaCaMo project/parser types stop in `JaCaMoProjectParserAdapter`.
 - CArtAgO artifact/annotation types stop in `CArtAgOArtifactAdapter`.
+- Moise parser/model types stop in `MoiseOrganizationParserAdapter`.
 - Swing and USE concrete classes never enter normalized IR.
 - Rule evaluation consumes normalized IR and immutable projections, not parser
   AST or mutable GUI state.
@@ -144,13 +147,13 @@ to `BdiImportService`, and returns portable `MasProjectModel` plus the existing
 AgentSpeak snapshot. Duplicate, missing, invalid, and outside-root sources are
 diagnostic outcomes rather than silent omissions.
 
-Workspace, organization, and institution declarations are retained as
-`MasResourceReference` with `UNSUPPORTED` status and `JCM-005`; the `.jcm`
-importer does not automatically resolve their implementation classes.
-The T14 Moise spike confirms that the organization reference remains an
-explicit fallback: JaCaMo project parameters do not parse the referenced
-organization file, and no verified Moise parser/API is packaged. See ADR-0032
-and the Moise spike evidence before changing this boundary.
+Workspace and institution declarations remain `MasResourceReference` values
+with `UNSUPPORTED` status and `JCM-005`. A referenced organization file is
+passed to the official Moise 1.1 `OS.loadOSFromURI` API and normalized by
+`MoiseOrganizationParserAdapter` into immutable, portable
+`OrganizationModel` values. Missing, invalid, duplicate, and out-of-scope
+features use `JCM-007..010`; unavailable element coordinates remain explicit
+unknown source spans. ADR-0034 supersedes the earlier ADR-0032 blocker.
 `MasProjectAnalysisService` composes the importer result with the existing
 `CurrentAnalysisSnapshotService`. It accepts immutable project/USE/mapping/
 configuration inputs, runs the shared validator once, and returns one
@@ -165,7 +168,7 @@ by the view. `BdiQualityGateMain --jcm` is the non-Swing equivalent and rejects
 mixed `.asl`/`.jcm` inputs before writing reports.
 Separately, `CArtAgOArtifactAdapter` can normalize a supplied artifact class's
 official `@OPERATION` metadata and explicit property descriptors. The plugin
-does not start a JaCaMo/CArtAgO runtime, model Moise semantics, dynamically
+does not start a JaCaMo/CArtAgO runtime, model runtime Moise semantics, dynamically
 inspect CArtAgO artifacts, or consume execution traces. The GUI/headless
 entry points provide static `.jcm` composition only; they do not launch a
 JaCaMo runtime.
@@ -220,5 +223,5 @@ source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
-- Automatic `.jcm` environment resolution, live CArtAgO state, Moise, and
-  runtime integration; Moise normalization is explicitly blocked by ADR-0032.
+- Automatic `.jcm` environment resolution, live CArtAgO state, Moise
+  enactment/monitoring, organization consistency rules, and runtime integration.

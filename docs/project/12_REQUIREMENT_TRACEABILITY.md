@@ -36,6 +36,8 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-TRC-001..003 | `trace` graph values, builder, query, and serializer | `AuctionTraceabilityGraphTest` complete-chain, gap, deduplication, certainty, and portability tests | ADR-0027, architecture, technical design |
 | FR-ENV-001..004 | `CArtAgOArtifactAdapter`, `model.environment`, environment validator/trace contributor | adapter, Auction baseline, three mutants, boundary, catalog, and package tests | ADR-0028, CArtAgO spike evidence |
 | FR-ENV-005..006 | `EnvironmentMappingDocument`, typed persisted records, strict codec/repository, staleness detector, validation service | round-trip/relocation, invalid-record, candidate/unknown, BDI regression, persisted Auction, stale-target, and catalog tests | ADR-0031, environment mapping persistence evidence |
+| FR-ORG-001..004 | `MoiseOrganizationParserAdapter`, `OrganizationModel`, `MasProjectImportService` | Auction normalization, missing/invalid/duplicate/unsupported, relocation, boundary, and package tests | ADR-0034, Moise organization evidence |
+| FR-ORG-005 | no implementation claimed | T15 pending task status | limitations, ADR-0034 |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
 | FR-CS-005..008 | `EvaluationManifestCodec`, `EvaluationRunner`, `EvaluationReportWriter`, `HeadlessStateFixture`, packaged evaluation script | manifest codec/runner tests, real Auction manifest integration, deterministic repeated outputs, timeout/tool-error tests, packaged smoke | ADR-0033, Auction evaluation manifest and result evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
@@ -58,6 +60,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | BR-011 | ADR policy and focused `IntegrationModeIT`/`ShellIT` evidence |
 | BR-012 | Release checklist, package evidence, backup script/manifest |
 | BR-013 | JaCaMo adapter boundary scan, runtime exclusions, parser/import tests |
+| BR-018 | Moise adapter boundary scan, immutable organization IR, static-only package evidence |
 | BR-014 | Immutable graph constructors, snapshot-only builder, and graph portability tests |
 | BR-015 | Environment boundary test, UNKNOWN dynamic-state test, and package dependency smoke |
 | BR-016 | Environment document confirmation filter, `ENV-004`, candidate/stale/unknown tests, and deterministic persistence evidence |
@@ -75,7 +78,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | UI availability | screenshot index and `PluginGuiSmoke` |
 | Package reproducibility | release-package evidence and clean-clone marker |
 | Static JaCaMo import | parser-spike evidence and Auction golden MAS project IR |
-| Moise organization boundary | JaCaMo API/dependency inspection, `JCM-005` fallback, and no-import/package-boundary tests; no organization IR is claimed |
+| Moise organization boundary | official Moise 1.1 source/API/checksum/license evidence, Auction golden normalization, explicit diagnostics, and adapter/package boundary tests |
 | Unified issue trace | Auction traceability graph test and ADR-0027 |
 | Static environment consistency | CArtAgO adapter/mutant tests and ADR-0028 |
 | Persisted environment mappings | strict environment codec/repository, relocation and stale-target tests, ADR-0031, and persistence evidence |
@@ -87,7 +90,8 @@ documentation. It intentionally traces groups instead of every Java record.
 - One-click export of the current live GUI validation state.
 - Host model/snapshot change subscription for a long-lived BDI Explorer.
 - House Building or a second independent evaluation corpus.
-- Live CArtAgO, Moise, and runtime-trace integration.
+- Live CArtAgO, Moise enactment/monitoring, organization consistency rules,
+  and runtime-trace integration.
 - Complete external data/report/slides backup and release tag.
 
 These are intentionally Partial/Planned/Optional requirements, not missing

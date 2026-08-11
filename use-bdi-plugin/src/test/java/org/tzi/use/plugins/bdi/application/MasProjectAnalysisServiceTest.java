@@ -41,7 +41,7 @@ class MasProjectAnalysisServiceTest {
         assertEquals(2, result.snapshot().bdiImport().models().size());
         assertEquals(2, result.snapshot().importedFileCount());
         assertEquals(FIXED_TIME, result.snapshot().timestamp());
-        assertEquals(3, result.projectDiagnostics().size());
+        assertEquals(2, result.projectDiagnostics().size());
         assertTrue(result.projectDiagnostics().stream()
                 .allMatch(item -> item.code().equals(MasProjectDiagnostic.UNSUPPORTED_RESOURCE)));
     }

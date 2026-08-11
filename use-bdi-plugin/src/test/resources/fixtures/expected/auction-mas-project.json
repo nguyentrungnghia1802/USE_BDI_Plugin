@@ -8,7 +8,10 @@
   ],
   "resources":[
     {"kind":"WORKSPACE","name":"auction_environment","source":null,"status":"UNSUPPORTED"},
-    {"kind":"ORGANIZATION","name":"auction_organization","source":"bdi-source-v2:24:auction-organization.xml:0:0:0:0","status":"UNSUPPORTED"},
+    {"kind":"ORGANIZATION","name":"auction_organization","source":"bdi-source-v2:24:auction-organization.xml:0:0:0:0","status":"NORMALIZED"},
     {"kind":"INSTITUTION","name":"auction_institution","source":"bdi-source-v2:23:auction-institution.sai:0:0:0:0","status":"UNSUPPORTED"}
+  ],
+  "organizations":[
+    {"id":"auction","source":"bdi-source-v2:24:auction-organization.xml:0:0:0:0","positioned":false,"roles":["role:auctioneer","role:participant","role:soc"],"groups":["group:auctionGroup"],"schemes":["scheme:doAuction"],"norms":["norm:n1","norm:n2"],"unsupported":[]}
   ]
 }

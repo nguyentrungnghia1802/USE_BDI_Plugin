@@ -43,8 +43,9 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0029 | Compose static `.jcm` imports and direct AgentSpeak imports through one immutable `MasProjectAnalysisService` and keep project diagnostics separate from BDI diagnostics | project-analysis service tests |
 | ADR-0030 | Route GUI and headless `.jcm` entry points through the shared project service; use a background Swing worker, reject mixed input before output, and never start JaCaMo runtime | Explorer/worker/CLI/package smoke |
 | ADR-0031 | Persist CArtAgO operation/property bindings in a separate typed environment document; preserve BDI mapping schema `0.2.0` and reject unknown environment fields/versions | environment codec/repository/migration tests |
-| ADR-0032 | Block Moise organization normalization until an official parser/API and license/package evidence is available; retain `.jcm` organization references as explicit `JCM-005` unsupported diagnostics | Moise API/dependency spike, fallback and boundary tests |
+| ADR-0032 | Historical Moise blocker; superseded by ADR-0034 after official parser/API/license evidence became reproducible | original fallback and boundary tests |
 | ADR-0033 | Run the reviewed Auction corpus through an isolated real headless service with named static state fixtures and a declared external oracle; normalize Jason source URLs out of mapping identity for relocation | evaluation codec/runner tests, packaged Auction evaluation smoke |
+| ADR-0034 | Pin official Moise 1.1 behind one static adapter, normalize a bounded immutable organization IR, and keep enactment/rules outside this slice | organization adapter/golden/diagnostic/boundary/package tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -65,7 +66,7 @@ new ADR that explicitly supersedes the affected entry.
 | OD-004 | Closed unknown-field policy for mapping JSON | Validate required/current fields and document remaining leniency |
 | OD-005 | Automatic USE state-change subscription lifecycle | Use `Refresh USE Snapshot`; stale queued refreshes are discarded |
 | OD-006 | External thesis data/report/slides locations and release owner | Keep backup/tag gates open |
-| OD-007 | Scope of JaCaMo integration (`.jcm`, CArtAgO, Moise, runtime traces) | Static project/agent IR and CArtAgO artifact pilot resolved by ADR-0026/0028; Moise and runtime remain open |
+| OD-007 | Scope of JaCaMo runtime integration | Static project/agent, CArtAgO artifact, and Moise organization IR are resolved; enactment, live state, and runtime traces remain open |
 
 ## 4. Active Risks
 
@@ -78,21 +79,21 @@ new ADR that explicitly supersedes the affected entry.
 | Open Explorer does not update automatically after USE state changes | visible manual refresh with state-safety check | automatic subscription open via OD-005 |
 | Mapping JSON typo is tolerated | domain validation and tests | open via OD-004 |
 | Report is mistaken for live analysis | GUI export is snapshot-backed; `ReportMain` remains explicitly demo-only | mitigated |
-| JaCaMo scope is overclaimed from static project import | adapter boundary, runtime dependency exclusions, explicit resource status | open via OD-007 |
+| JaCaMo scope is overclaimed from static project import | adapter boundaries, explicit resource status, no launcher/enactment claim | open via OD-007 |
 | External thesis artifacts are omitted | backup manifest and open release gate | open via OD-006 |
 
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 121 pass, including JaCaMo project import, portable
-  traceability, CArtAgO adapter/environment mutants, and boundary tests.
+- Plugin suite: 147 pass, including JaCaMo project import, portable
+  traceability, CArtAgO adapter/environment mutants, Moise organization
+  normalization, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
-- Package smoke verifies CArtAgO/Jason/JaCaMo classes, excludes Moise, and
+- Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
-- Root `mvn clean verify`: all five modules, 121 GUI integration tests, and
+- Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
+  integration tests, 147 plugin tests, and
   ZIP/TAR distributions succeed.
-- Root `mvn clean verify` passed for the preceding host-refresh commit; current
-  application changes do not alter host or assembly wiring.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
 - Documentation contract checks the compact inventory, links, versions,
@@ -238,7 +239,7 @@ concrete types remain confined to the adapter.
 
 ## 12. ADR-0032: Blocked Moise Organization Normalization
 
-**Status:** Accepted blocker. **Date:** 2026-08-11.
+**Status:** Superseded by ADR-0034. **Date:** 2026-08-11.
 
 The verified JaCaMo `1.3.0` parser accepts the `.jcm` `organisation`
 declaration and exposes `JaCaMoOrgParameters`, groups, and schemes as project
@@ -294,5 +295,34 @@ the reviewed mapping fixtures remain portable when the checkout is copied.
 
 The resulting JSON/CSV/HTML metrics are evidence for the five declared Auction
 cases (`1 PASS + 4 DETECTED` in the fixed reviewed run), not statistical or
-general correctness claims. Moise organization IR and live CArtAgO remain
-excluded according to ADR-0031 and ADR-0032.
+general correctness claims. Moise organization findings and live CArtAgO remain
+excluded from this evaluation manifest according to ADR-0031 and ADR-0034.
+
+## 14. ADR-0034: Static Moise Parser Adapter And Organization IR
+
+**Status:** Accepted; supersedes ADR-0032. **Date:** 2026-08-11.
+
+The ADR-0032 stop condition was rechecked rather than bypassed. The official
+Moise repository tag `v1.1` verifies the LGPLv3 license, schema-valid Auction
+fixture, and `moise.os.OS.loadOSFromURI(String)` entry point. The official
+JaCaMo Maven repository now resolves `org.jacamo:moise:1.1`; its locally
+calculated JAR SHA-256 is recorded in the Moise spike evidence because that raw
+repository does not publish checksum sidecars.
+
+Option A, rejected, is a replacement XML parser or direct DOM interpretation.
+It would duplicate Moise syntax authority. Option B, selected, pins the official
+artifact with all Maven transitives excluded, confines `moise.*` to
+`MoiseOrganizationParserAdapter`, and converts parser objects immediately to
+immutable `OrganizationModel`. The bounded IR contains roles, groups, goals,
+missions, permission/obligation norms, and cardinalities with stable qualified
+IDs and portable source identity.
+
+The official model does not retain element line/column positions. Unknown
+coordinates are therefore explicit and are not fabricated. Missing, invalid,
+duplicate, and out-of-scope organization evidence uses `JCM-007..010`.
+Workspace/institution references retain `JCM-005`.
+
+The Moise artifact is monolithic, so its own classes are present in the shaded
+plugin; this does not authorize runtime use. No organization entity, board,
+workspace, enactment, dynamic membership, norm-fulfillment check, or launcher is
+created. Moise-to-UML/OCL rules remain a separate T15 slice over plugin-owned IR.

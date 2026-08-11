@@ -16,6 +16,10 @@ public record MasProjectDiagnostic(
     public static final String INVALID_AGENT_SOURCE = "JCM-004";
     public static final String UNSUPPORTED_RESOURCE = "JCM-005";
     public static final String SOURCE_OUTSIDE_ROOT = "JCM-006";
+    public static final String INVALID_ORGANIZATION = "JCM-007";
+    public static final String MISSING_ORGANIZATION = "JCM-008";
+    public static final String DUPLICATE_ORGANIZATION = "JCM-009";
+    public static final String UNSUPPORTED_ORGANIZATION_FEATURE = "JCM-010";
 
     public MasProjectDiagnostic {
         if (code == null || code.isBlank()) {

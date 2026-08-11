@@ -5,11 +5,14 @@
 - JaCaMo support is static `.jcm` project/agent import only. Named instances and
   relative `.asl` links are normalized; declaration-template identity is not
   recoverable after the official parser expands named instances.
-- Workspaces, organizations, and institutions are retained as unsupported
-  references. The Moise organization reference is explicitly reported as
-  `JCM-005` because no verified parser/API is packaged. CArtAgO Java semantics,
-  Moise semantics, runtime lifecycle, and execution traces are absent. GUI and
-  CLI `.jcm` selection is static only.
+- Workspaces and institutions are retained as unsupported references. Moise
+  organization XML is parsed statically into a bounded role/group/scheme/goal/
+  mission/norm/cardinality IR. Source line/column positions are unavailable
+  from Moise 1.1 and remain explicit unknowns; links, preferences, plans,
+  conditions, and other out-of-scope details produce `JCM-010`.
+- Organization-to-UML/OCL rules, enactment, runtime lifecycle, dynamic
+  membership, and execution traces are absent. GUI and CLI `.jcm` selection
+  remains static only.
 - `REF-001` can still classify some literal-like terms too broadly, producing
   potential false positives. This is a known BDI index limitation.
 - Schema `0.2.0` makes new mapping and suppression identities portable. Legacy

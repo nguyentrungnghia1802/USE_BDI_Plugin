@@ -18,6 +18,7 @@ import org.tzi.use.plugins.bdi.importer.MasProjectDiagnostic;
 import org.tzi.use.plugins.bdi.model.mas.MasAgentImportStatus;
 import org.tzi.use.plugins.bdi.model.mas.MasProjectModel;
 import org.tzi.use.plugins.bdi.model.mas.MasProjectModelJsonSerializer;
+import org.tzi.use.plugins.bdi.model.mas.MasResourceStatus;
 
 class MasProjectImportServiceTest {
     private final MasProjectImportService service = new MasProjectImportService();
@@ -36,8 +37,12 @@ class MasProjectImportServiceTest {
                 .allMatch(agent -> agent.status() == MasAgentImportStatus.IMPORTED));
         assertEquals(2, result.bdiSnapshot().models().size());
         assertEquals(3, project.resources().size());
+        assertEquals(1, project.organizations().size());
+        assertEquals(MasResourceStatus.NORMALIZED, project.resources().stream()
+                .filter(resource -> resource.kind()
+                        == org.tzi.use.plugins.bdi.model.mas.MasResourceKind.ORGANIZATION)
+                .findFirst().orElseThrow().status());
         assertEquals(List.of(
-                MasProjectDiagnostic.UNSUPPORTED_RESOURCE,
                 MasProjectDiagnostic.UNSUPPORTED_RESOURCE,
                 MasProjectDiagnostic.UNSUPPORTED_RESOURCE),
                 result.diagnostics().stream().map(MasProjectDiagnostic::code).toList());
@@ -122,7 +127,8 @@ class MasProjectImportServiceTest {
 
     private static void copyAuction(Path target) throws IOException, URISyntaxException {
         Files.createDirectories(target);
-        for (String file : List.of("auction.jcm", "auctioneer.asl", "bidder.asl")) {
+        for (String file : List.of(
+                "auction.jcm", "auctioneer.asl", "bidder.asl", "auction-organization.xml")) {
             Files.copy(fixture("fixtures/casestudy/auction/" + file), target.resolve(file));
         }
     }

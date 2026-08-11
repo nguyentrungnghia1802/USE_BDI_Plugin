@@ -206,8 +206,14 @@ class BdiExplorerViewTest {
 
         assertEquals("auction", view.projectForTest().orElseThrow().name());
         assertEquals(3, view.projectForTest().orElseThrow().agents().size());
+        assertEquals(1, view.projectForTest().orElseThrow().organizations().size());
+        assertTrue(view.projectForTest().orElseThrow().resources().stream()
+                .filter(resource -> resource.kind()
+                        == org.tzi.use.plugins.bdi.model.mas.MasResourceKind.ORGANIZATION)
+                .allMatch(resource -> resource.status()
+                        == org.tzi.use.plugins.bdi.model.mas.MasResourceStatus.NORMALIZED));
         assertTrue(view.statusForTest().getText().contains("3 agent instance(s)"));
-        assertTrue(view.statusForTest().getText().contains("3 project diagnostic(s)"));
+        assertTrue(view.statusForTest().getText().contains("2 project diagnostic(s)"));
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) view.treeForTest().getModel().getRoot();
         assertTrue(java.util.stream.IntStream.range(0, root.getChildCount())
                 .mapToObj(root::getChildAt)

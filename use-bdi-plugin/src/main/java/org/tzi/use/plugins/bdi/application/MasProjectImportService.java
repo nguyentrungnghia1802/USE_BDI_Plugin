@@ -15,6 +15,7 @@ import org.tzi.use.plugins.bdi.importer.JaCaMoProjectParserAdapter;
 import org.tzi.use.plugins.bdi.importer.MasProjectDiagnostic;
 import org.tzi.use.plugins.bdi.importer.MasProjectDiagnosticSeverity;
 import org.tzi.use.plugins.bdi.importer.MasProjectParseException;
+import org.tzi.use.plugins.bdi.importer.MoiseOrganizationParserAdapter;
 import org.tzi.use.plugins.bdi.importer.ParsedMasAgent;
 import org.tzi.use.plugins.bdi.importer.ParsedMasProject;
 import org.tzi.use.plugins.bdi.importer.ParsedMasResource;
@@ -23,20 +24,26 @@ import org.tzi.use.plugins.bdi.model.mas.MasAgentInstanceModel;
 import org.tzi.use.plugins.bdi.model.mas.MasProjectModel;
 import org.tzi.use.plugins.bdi.model.mas.MasResourceReference;
 import org.tzi.use.plugins.bdi.model.mas.MasResourceStatus;
+import org.tzi.use.plugins.bdi.model.organization.OrganizationModel;
 import org.tzi.use.plugins.bdi.model.source.ProjectSourceId;
 
 /** Imports static `.jcm` declarations and delegates every agent source to the ASL pipeline. */
 public final class MasProjectImportService {
     private final JaCaMoProjectParserAdapter parser;
     private final BdiImportService bdiImportService;
+    private final MoiseOrganizationParserAdapter organizationParser;
 
     public MasProjectImportService() {
-        this(new JaCaMoProjectParserAdapter(), new BdiImportService());
+        this(new JaCaMoProjectParserAdapter(), new BdiImportService(), new MoiseOrganizationParserAdapter());
     }
 
-    MasProjectImportService(JaCaMoProjectParserAdapter parser, BdiImportService bdiImportService) {
+    MasProjectImportService(
+            JaCaMoProjectParserAdapter parser,
+            BdiImportService bdiImportService,
+            MoiseOrganizationParserAdapter organizationParser) {
         this.parser = Objects.requireNonNull(parser, "parser");
         this.bdiImportService = Objects.requireNonNull(bdiImportService, "bdiImportService");
+        this.organizationParser = Objects.requireNonNull(organizationParser, "organizationParser");
     }
 
     public MasProjectImportResult importProject(Path projectFile) {
@@ -116,6 +123,10 @@ public final class MasProjectImportService {
                         status(agent.source(), invalidSources)))
                 .toList();
         List<MasResourceReference> resources = new ArrayList<>();
+        List<OrganizationModel> organizations = new ArrayList<>();
+        Set<String> organizationNames = new LinkedHashSet<>();
+        Set<String> organizationSources = new LinkedHashSet<>();
+        Set<String> organizationModelIds = new LinkedHashSet<>();
         for (ParsedMasResource resource : parsed.resources()) {
             Optional<ProjectSourceId> sourceId = resource.source().flatMap(source -> {
                 if (!source.startsWith(root) || source.equals(root)) {
@@ -128,17 +139,61 @@ public final class MasProjectImportService {
                 }
                 return Optional.of(ProjectSourceId.fromPath(root, source));
             });
-            resources.add(new MasResourceReference(
-                    resource.kind(), resource.name(), sourceId, MasResourceStatus.UNSUPPORTED));
-            diagnostics.add(diagnostic(
-                    MasProjectDiagnostic.UNSUPPORTED_RESOURCE,
-                    MasProjectDiagnosticSeverity.WARNING,
-                    resource.source().orElse(file),
-                    unsupportedResourceMessage(resource)));
+            MasResourceStatus resourceStatus = MasResourceStatus.UNSUPPORTED;
+            if (resource.kind() == org.tzi.use.plugins.bdi.model.mas.MasResourceKind.ORGANIZATION) {
+                boolean duplicateName = !organizationNames.add(resource.name());
+                boolean duplicateSource = sourceId.isPresent()
+                        && !organizationSources.add(sourceId.orElseThrow().canonical());
+                if (duplicateName || duplicateSource) {
+                    resourceStatus = MasResourceStatus.INVALID;
+                    diagnostics.add(diagnostic(
+                            MasProjectDiagnostic.DUPLICATE_ORGANIZATION,
+                            MasProjectDiagnosticSeverity.ERROR,
+                            resource.source().orElse(file),
+                            "Duplicate organization declaration: " + resource.name()));
+                } else if (resource.source().isEmpty()) {
+                    resourceStatus = MasResourceStatus.MISSING;
+                    diagnostics.add(diagnostic(
+                            MasProjectDiagnostic.MISSING_ORGANIZATION,
+                            MasProjectDiagnosticSeverity.ERROR,
+                            file,
+                            "Organization declaration has no source: " + resource.name()));
+                } else if (sourceId.isPresent()) {
+                    var imported = organizationParser.parse(root, resource.source().orElseThrow());
+                    diagnostics.addAll(imported.diagnostics());
+                    if (imported.organization().isPresent()
+                            && !organizationModelIds.add(imported.organization().orElseThrow().id())) {
+                        resourceStatus = MasResourceStatus.INVALID;
+                        diagnostics.add(diagnostic(
+                                MasProjectDiagnostic.DUPLICATE_ORGANIZATION,
+                                MasProjectDiagnosticSeverity.ERROR,
+                                resource.source().orElseThrow(),
+                                "Duplicate normalized organization ID: "
+                                        + imported.organization().orElseThrow().id()));
+                    } else if (imported.organization().isPresent()) {
+                        organizations.add(imported.organization().orElseThrow());
+                        resourceStatus = MasResourceStatus.NORMALIZED;
+                    } else {
+                        resourceStatus = imported.diagnostics().stream().anyMatch(value ->
+                                    MasProjectDiagnostic.MISSING_ORGANIZATION.equals(value.code()))
+                                ? MasResourceStatus.MISSING
+                                : MasResourceStatus.INVALID;
+                    }
+                } else {
+                    resourceStatus = MasResourceStatus.INVALID;
+                }
+            } else {
+                diagnostics.add(diagnostic(
+                        MasProjectDiagnostic.UNSUPPORTED_RESOURCE,
+                        MasProjectDiagnosticSeverity.WARNING,
+                        resource.source().orElse(file),
+                        unsupportedResourceMessage(resource)));
+            }
+            resources.add(new MasResourceReference(resource.kind(), resource.name(), sourceId, resourceStatus));
         }
 
         MasProjectModel project = new MasProjectModel(
-                parsed.name(), ProjectSourceId.fromPath(root, file), agents, resources);
+                parsed.name(), ProjectSourceId.fromPath(root, file), agents, resources, organizations);
         return new MasProjectImportResult(Optional.of(project), snapshot, diagnostics);
     }
 
@@ -179,10 +234,6 @@ public final class MasProjectImportService {
     }
 
     private static String unsupportedResourceMessage(ParsedMasResource resource) {
-        if (resource.kind() == org.tzi.use.plugins.bdi.model.mas.MasResourceKind.ORGANIZATION) {
-            return "Organization resource is retained but no verified Moise parser/API is packaged; "
-                    + "the referenced organization file is not parsed: " + resource.name();
-        }
         return resource.kind() + " resource is retained but not semantically imported: "
                 + resource.name();
     }

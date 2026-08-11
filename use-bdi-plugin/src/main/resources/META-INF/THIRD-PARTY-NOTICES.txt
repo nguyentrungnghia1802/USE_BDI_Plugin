@@ -14,6 +14,12 @@ License: GNU Lesser General Public License version 2.1 or later (LGPL-2.1-or-lat
 Project: https://github.com/CArtAgO-lang/cartago
 License: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
+Moise organization parser/model 1.1
+Artifact: org.jacamo:moise:1.1
+License: GNU Lesser General Public License version 3 (LGPLv3)
+Project: https://github.com/moise-lang/moise
+License: https://www.gnu.org/licenses/lgpl-3.0.html
+
 Jason interpreter 3.3.0
 Artifact: io.github.jason-lang:jason-interpreter:3.3.0
 License: GNU Lesser General Public License version 3 (LGPLv3)

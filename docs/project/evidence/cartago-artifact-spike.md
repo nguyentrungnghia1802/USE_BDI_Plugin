@@ -27,7 +27,8 @@ instantiate an artifact, create a workspace, call `CartagoService`, parse Java
 source, or infer dynamic values.
 
 The CArtAgO JAR is shaded so supplied artifact classes can link to its API; its
-POM has no transitives, and package smoke continues to reject Moise. Official
+POM has no transitives. At the time of ADR-0028, package smoke rejected Moise;
+ADR-0034 later added the independently pinned static OS parser. Official
 source headers identify the library license as LGPL 2.1 or later; the embedded
 third-party notice records this dependency.
 
@@ -40,5 +41,5 @@ third-party notice records this dependency.
   boundary.
 - `RuleCatalogCompletenessTest`: 22 standard IDs remain unchanged and the three
   environment IDs are documented.
-- Package inspection requires `cartago/OPERATION.class` and
-  `cartago/Artifact.class`, while rejecting the Moise marker.
+- Current package inspection requires `cartago/OPERATION.class`,
+  `cartago/Artifact.class`, and the independently governed Moise parser marker.

@@ -36,6 +36,8 @@ are complete. Do not append per-day implementation diaries.
 - [x] `.jcm` agent import preserves partial success and explicit unsupported resources.
 - [x] `.jcm` projects compose through the shared immutable analysis snapshot service.
 - [x] Explorer and headless CLI expose the shared `.jcm` project analysis path.
+- [x] Official Moise 1.1 normalizes the bounded Auction organization subset
+  into immutable portable IR with explicit diagnostics.
 - [x] Typed CArtAgO environment mappings persist in a strict portable document and revalidate stale targets.
 - [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
 - [x] Static CArtAgO artifact pilot detects operation/arity/property mutants and preserves dynamic UNKNOWN.
@@ -48,8 +50,8 @@ are complete. Do not append per-day implementation diaries.
 
 - [x] `mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test`.
 - [x] `mvn --batch-mode --no-transfer-progress clean verify`.
-- [x] Extracted assembly contains the shaded plugin, JaCaMo/Jason parsers, and
-  CArtAgO artifact API without Moise or other excluded runtime transitives.
+- [x] Extracted assembly contains the shaded plugin, JaCaMo/Jason parsers,
+  CArtAgO artifact API, Moise OS parser/schema, and third-party notices.
 - [x] Package/parser/report/menu smoke returns `GUI_SMOKE_OK`.
 - [x] Documentation links, stable facts, and evidence inventory are tested.
 - [x] Canonical documentation uses the compact inventory; redundant generic
@@ -59,17 +61,17 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the scoped Auction evaluation slice:
+Latest validated baseline after the static Moise organization slice:
 
-- focused T16 codec/runner tests: 7 pass;
-- traceability regression plus T16 focused suite: 10 pass;
-- plugin tests: 145 pass;
+- focused T14 organization/project-import tests: 9 pass;
+- focused documentation/Explorer regression tests: 11 pass;
+- plugin tests: 147 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
-- package smoke verifies CArtAgO/Jason/JaCaMo classes, excludes Moise, and
+- package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 145 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 147 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -102,17 +104,16 @@ T13 environment-mapping evidence:
 - [CArtAgO environment mapping persistence evidence](evidence/cartago-environment-mapping-persistence.md)
   records schema, source identity, rejection policy, and limitations.
 
-T14 Moise spike evidence:
+T14 Moise organization evidence:
 
-- the official JaCaMo parser/API and local dependency/package boundary were
-  inspected with `javap`, `mvn dependency:tree`, JAR entry checks, and the
-  existing Auction `.jcm` parser test;
-- `MoiseOrganizationFallbackTest`: 2 tests prove organization references stay
-  `UNSUPPORTED`, emit `JCM-005` with an explicit no-parser/not-parsed reason,
-  and introduce no guessed Moise imports or direct Moise dependency;
-- organization role/mission/goal/permission/cardinality IR is intentionally not
-  claimed until an official Moise parser/API, license evidence, and fixture are
-  available. This is recorded as ADR-0032 and remains an accepted residual.
+- official Moise tag `v1.1`, API, LGPLv3 license, dependency, local SHA-256,
+  schema, and Auction fixture are recorded in the spike evidence;
+- `MoiseOrganizationParserAdapterTest`: 4 tests cover deterministic roles,
+  groups, schemes, goals, missions, norms/cardinalities, explicit missing/
+  invalid/duplicate/unsupported outcomes, and the adapter-only type boundary;
+- `MasProjectImportServiceTest`: 5 tests cover normalized golden project IR,
+  relocation, partial failure, and direct AgentSpeak compatibility;
+- ADR-0034 supersedes ADR-0032 and explicitly excludes enactment/runtime/rules.
 
 T16 evaluation evidence:
 
@@ -156,7 +157,8 @@ The following are future work, not hidden completion claims:
 - OD-004: strict mapping JSON unknown-field policy;
 - OD-005: automatic subscription after USE state changes; manual refresh exists;
 - OD-006: external thesis artifact locations and release ownership;
-- Live CArtAgO, Moise, and runtime integration.
+- Live CArtAgO, Moise enactment/monitoring, organization consistency rules,
+  and runtime integration.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 
@@ -169,6 +171,7 @@ The prioritized development candidates are maintained in
 | --- | --- |
 | Import/IR/index | importer, IR, golden, and index tests |
 | JaCaMo project import | parser spike, MAS golden, diagnostics, relocation, package smoke |
+| Static Moise organization import | official source/API/license/checksum, organization golden/diagnostic/boundary tests, ADR-0034 |
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |

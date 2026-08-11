@@ -51,10 +51,11 @@ needed to parse the Auction agent declarations and would imply unsupported
 runtime capabilities. The plugin excludes all JaCaMo transitives and keeps its
 existing explicit Jason 3.3.0 dependency.
 
-Package smoke requires both
+The original package smoke required
 `jacamo/project/parser/JaCaMoProjectParser.class` and
-`jason/asSemantics/Agent.class`, and rejects representative CArtAgO/Moise
-runtime classes. `JaCaMoParserSpikeTest` parses `auction.jcm` with the official
+`jason/asSemantics/Agent.class` while rejecting CArtAgO/Moise classes.
+ADR-0028 and ADR-0034 later added those static APIs through independent adapter
+boundaries. `JaCaMoParserSpikeTest` parses `auction.jcm` with the official
 parser and checks deterministic instance/source expansion.
 
 ## Safe Fallback
@@ -62,4 +63,4 @@ parser and checks deterministic instance/source expansion.
 If a future `.jcm` construct triggers a missing runtime class, the importer
 must return an explicit unsupported/infrastructure diagnostic. It must not add
 a regex parser or silently package the full runtime. A dedicated dependency
-and adapter ADR is required before CArtAgO, Moise, or runtime launch support.
+and adapter ADR is required before any additional API or runtime launch support.
