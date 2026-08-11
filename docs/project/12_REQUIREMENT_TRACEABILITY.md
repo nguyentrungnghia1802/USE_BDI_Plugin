@@ -15,6 +15,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-IMP-004..006 | `JasonAstToIrNormalizer`, `model/ir`, `BdiIndexBuilder` | `AgentModelTest`, `IrHierarchyTest`, golden and index tests | architecture, technical design |
 | FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | architecture, developer guide |
 | FR-IMP-009..011 | `JaCaMoProjectParserAdapter`, `MasProjectImportService`, `model/mas` | parser spike, golden IR, partial-success, diagnostic, and relocation tests | ADR-0026, architecture, parser-spike evidence |
+| FR-IMP-012 | `MasProjectAnalysisRequest`, `MasProjectAnalysisService`, `MasProjectAnalysisResult` | Auction composition, partial-success, relocation, and immutable snapshot tests | ADR-0029, project-analysis evidence |
 | FR-MAP-001..002 | `UseUmlModelFacade`, `UseModelFingerprint` | `UseUmlModelFacadeTest` | architecture, technical design, ADR-0012 |
 | FR-MAP-003..006 | mapping domain/services/repository/editor | mapping suggestion/model/persistence/staleness/editor tests | technical design, ADR-0013/0014 |
 | FR-MAP-007 | `ProjectSourceId`, mapping/suppression repositories, `SourceSpan` | identity, v1 migration, byte-stability, invalid-root, and relocation tests | ADR-0021/0022, limitations |
@@ -79,7 +80,7 @@ documentation. It intentionally traces groups instead of every Java record.
 - One-click export of the current live GUI validation state.
 - Host model/snapshot change subscription for a long-lived BDI Explorer.
 - House Building or a second independent evaluation corpus.
-- GUI/CLI `.jcm` composition plus live CArtAgO, Moise, and runtime-trace integration.
+- GUI/CLI `.jcm` entry points plus live CArtAgO, Moise, and runtime-trace integration.
 - Complete external data/report/slides backup and release tag.
 
 These are intentionally Partial/Planned/Optional requirements, not missing

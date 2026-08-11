@@ -165,3 +165,24 @@ mapping kinds or silently extending their meaning. Selected: separate immutable
 in-memory operation/property mappings until a later persistence ADR. Moise,
 runtime execution, live property capture, and generic Java parsing remain out
 of scope.
+
+## 9. ADR-0029: Shared Static JaCaMo Project Analysis Service
+
+**Status:** Accepted. **Date:** 2026-08-11.
+
+The static `.jcm` importer and direct AgentSpeak importer must converge before
+GUI/CLI entry points are added. `MasProjectAnalysisService` accepts immutable
+project-root, project-file, USE projection, OCL evaluator, mapping, timestamp,
+and `BdiProjectConfiguration` inputs. It delegates parsing to
+`MasProjectImportService`, then invokes the existing
+`CurrentAnalysisSnapshotService` exactly once. The service returns project IR,
+sorted project diagnostics, and one immutable analysis snapshot; it does not
+start JaCaMo or introduce a second validator.
+
+Option A, selected, keeps project diagnostics separate from BDI import
+diagnostics while retaining valid partial results. Option B, rejected, would
+make the GUI or CLI call importer and validators directly, duplicating policy
+and making snapshot/report parity untestable. Direct `.asl` behavior remains
+unchanged because the new service consumes the existing `BdiImportSnapshot` and
+plugin-owned snapshot types. The next slice may add entry points, but must route
+both UI and headless execution through this service.

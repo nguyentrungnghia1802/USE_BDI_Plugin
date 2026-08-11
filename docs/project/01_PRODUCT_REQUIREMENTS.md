@@ -43,6 +43,7 @@ implemented.
 | FR-IMP-009 | Parse a `.jcm` through JaCaMo 1.3.0 into portable project/agent/resource IR | Implemented |
 | FR-IMP-010 | Resolve project-relative agent sources and preserve valid agents after missing, invalid, or duplicate declarations | Implemented |
 | FR-IMP-011 | Retain workspace/organization/institution declarations as explicit unsupported resources | Implemented |
+| FR-IMP-012 | Compose a `.jcm` project and its resolved AgentSpeak sources into the shared immutable analysis snapshot | Implemented |
 
 ### 2.3 USE projection and mapping
 

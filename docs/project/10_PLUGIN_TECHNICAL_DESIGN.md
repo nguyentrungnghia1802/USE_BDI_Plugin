@@ -58,6 +58,12 @@ use-bdi-plugin/
   `MISSING` per instance.
 - `MasProjectModel` uses `ProjectSourceId` for relocation-stable project,
   agent, and resource links. Resources remain explicit `UNSUPPORTED` values.
+- `MasProjectAnalysisRequest` is the immutable input boundary for one `.jcm`
+  analysis. `MasProjectAnalysisService` delegates import to
+  `MasProjectImportService`, then reuses `CurrentAnalysisSnapshotService`
+  rather than duplicating validation/report composition. Its result keeps
+  project diagnostics separate from BDI import diagnostics and sorts project
+  diagnostics deterministically.
 - `CArtAgOArtifactAdapter` reflects only official runtime-retained `@OPERATION`
   metadata. Observable properties use explicit descriptors because CArtAgO
   creates them imperatively through `defineObsProperty`; no Java parser or
@@ -168,9 +174,10 @@ text and cannot be converted into a successful analysis result.
 
 `BdiQualityGateMain` accepts explicit `--use`, repeatable `--asl`, optional
 `--mapping`/`--rules`/`--suppressions`, and one-or-more `--json`/`--html`
-outputs. It does not discover project files from the process CWD. Only `.asl`
-is accepted by this CLI slice; the application-level `.jcm` importer is not
-wired into the headless argument contract. The timestamp defaults to `Instant.EPOCH` or is supplied by
+outputs. It does not discover project files from the process CWD. The
+application-level `.jcm` analysis service is available to the next GUI/CLI
+entry-point slice; this current CLI contract remains `.asl`-only. The timestamp
+defaults to `Instant.EPOCH` or is supplied by
 `--timestamp` for byte-stable reports.
 
 The runner compiles a private `MSystem`, uses existing import/projection/

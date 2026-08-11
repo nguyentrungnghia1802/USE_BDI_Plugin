@@ -34,6 +34,7 @@ are complete. Do not append per-day implementation diaries.
 - [x] Headless gate composes the same snapshot and distinguishes CI outcomes.
 - [x] Official JaCaMo 1.3.0 parses Auction `.jcm` into portable MAS IR.
 - [x] `.jcm` agent import preserves partial success and explicit unsupported resources.
+- [x] `.jcm` projects compose through the shared immutable analysis snapshot service.
 - [x] Snapshot-derived traceability explains Auction issues with portable IDs and explicit mapping gaps.
 - [x] Static CArtAgO artifact pilot detects operation/arity/property mutants and preserves dynamic UNKNOWN.
 - [x] Auction baseline, four mutants, oracle, metrics, and diagrams are tracked.
@@ -64,6 +65,13 @@ Latest validated baseline after the static CArtAgO environment pilot:
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
 - root `mvn clean verify`: all five modules, 121 GUI integration tests, and
   ZIP/TAR assembly succeed.
+
+T11 project-analysis evidence:
+
+- `MasProjectAnalysisServiceTest`: 3 focused tests pass;
+- valid Auction composition, partial invalid/missing sources, and relocation
+  identity are covered;
+- GUI/CLI `.jcm` entry-point wiring remains the next planned slice.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.

@@ -141,11 +141,18 @@ diagnostic outcomes rather than silent omissions.
 Workspace, organization, and institution declarations are retained as
 `MasResourceReference` with `UNSUPPORTED` status and `JCM-005`; the `.jcm`
 importer does not automatically resolve their implementation classes.
+`MasProjectAnalysisService` composes the importer result with the existing
+`CurrentAnalysisSnapshotService`. It accepts immutable project/USE/mapping/
+configuration inputs, runs the shared validator once, and returns one
+`MasProjectAnalysisResult` containing the project IR, snapshot, and sorted
+project diagnostics. Direct `.asl` analysis remains compatible because both
+paths consume the same `BdiImportSnapshot` and snapshot boundary.
 Separately, `CArtAgOArtifactAdapter` can normalize a supplied artifact class's
 official `@OPERATION` metadata and explicit property descriptors. The plugin
 does not start a JaCaMo/CArtAgO runtime, model Moise semantics, dynamically
-inspect CArtAgO artifacts, or consume execution traces. `.jcm` is not wired
-into the GUI/headless CLI yet.
+inspect CArtAgO artifacts, or consume execution traces. The GUI/headless
+entry-point wiring remains a separate task; T11 only establishes the shared
+application service.
 
 ## 8. Traceability Boundary
 
@@ -158,7 +165,6 @@ source URLs. A missing mapping is a graph gap, not an inferred UML edge.
 
 ## 9. Known Architecture Gaps
 
-- Headless composition of file inputs into the shared current-analysis service.
 - Strict unknown-field policy for mapping JSON.
 - Automatic subscription when USE state changes; manual refresh is available.
 - Automatic `.jcm` environment resolution, persisted environment mappings,
