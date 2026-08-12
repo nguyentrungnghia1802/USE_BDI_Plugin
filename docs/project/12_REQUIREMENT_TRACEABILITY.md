@@ -38,6 +38,8 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-ENV-005..006 | `EnvironmentMappingDocument`, typed persisted records, strict codec/repository, staleness detector, validation service | round-trip/relocation, invalid-record, candidate/unknown, BDI regression, persisted Auction, stale-target, and catalog tests | ADR-0031, environment mapping persistence evidence |
 | FR-ORG-001..004 | `MoiseOrganizationParserAdapter`, `OrganizationModel`, `MasProjectImportService` | Auction normalization, missing/invalid/duplicate/unsupported, relocation, boundary, and package tests | ADR-0034, Moise organization evidence |
 | FR-ORG-005 | organization mapping records, `OrganizationConsistencyValidator`, `OrganizationRuleCatalog`, organization trace contributor | Auction baseline, role/mission/cardinality mutants, candidate/UNKNOWN, dedup/serialization, boundary tests | ADR-0035, organization consistency evidence, rule catalog |
+| FR-DIA-001 | `diagram` immutable values and constructor invariants | `DiagramModelTest`, `DiagramPackageBoundaryTest` ordering, duplicate, endpoint, immutability, relocation, and dependency-boundary tests | ADR-0036, architecture, technical design |
+| FR-DIA-002..008 | no implementation claimed | Planned requirements and open diagram task sequence | architecture, product requirements, checklist |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
 | FR-CS-005..008 | `EvaluationManifestCodec`, `EvaluationRunner`, `EvaluationReportWriter`, `HeadlessStateFixture`, packaged evaluation script | manifest codec/runner tests, real Auction manifest integration, deterministic repeated outputs, timeout/tool-error tests, packaged smoke | ADR-0033, Auction evaluation manifest and result evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
@@ -62,6 +64,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | BR-013 | JaCaMo adapter boundary scan, runtime exclusions, parser/import tests |
 | BR-018 | Moise adapter boundary scan, immutable organization IR, static-only package evidence |
 | BR-019 | Organization confirmation state, reviewed cardinality evidence, `ORG-003` UNKNOWN branches, and Auction pilot tests |
+| BR-020 | Immutable diagram constructors, portable semantic references, package boundary scan, and no diagram persistence/editor path |
 | BR-014 | Immutable graph constructors, snapshot-only builder, and graph portability tests |
 | BR-015 | Environment boundary test, UNKNOWN dynamic-state test, and package dependency smoke |
 | BR-016 | Environment document confirmation filter, `ENV-004`, candidate/stale/unknown tests, and deterministic persistence evidence |
@@ -82,6 +85,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | Moise organization boundary | official Moise 1.1 source/API/checksum/license evidence, Auction golden normalization, explicit diagnostics, and adapter/package boundary tests |
 | Static organization consistency | Auction role/class, mission/operation, cardinality/OCL baseline and mutant tests, portable trace serialization, ADR-0035 |
 | Unified issue trace | Auction traceability graph test and ADR-0027 |
+| Renderer-neutral diagram boundary | Diagram invariant/relocation/package tests and ADR-0036 |
 | Static environment consistency | CArtAgO adapter/mutant tests and ADR-0028 |
 | Persisted environment mappings | strict environment codec/repository, relocation and stale-target tests, ADR-0031, and persistence evidence |
 | Scoped Auction evaluation | versioned manifest, four portable mapping fixtures, runner tests, deterministic JSON/CSV/HTML, and packaged `AUCTION_EVALUATION_OK` smoke |
@@ -94,6 +98,8 @@ documentation. It intentionally traces groups instead of every Java record.
 - House Building or a second independent evaluation corpus.
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime-trace integration.
+- Snapshot-to-diagram projection, graph layout/rendering, diagram interaction,
+  export, performance evidence, and presentation fixtures.
 - Complete external data/report/slides backup and release tag.
 
 These are intentionally Partial/Planned/Optional requirements, not missing

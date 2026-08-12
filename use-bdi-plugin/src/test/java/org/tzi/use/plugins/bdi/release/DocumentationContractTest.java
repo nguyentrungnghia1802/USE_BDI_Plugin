@@ -109,6 +109,8 @@ class DocumentationContractTest {
         assertTrue(requirements.contains("FR-PLG-001"));
         assertTrue(requirements.contains("FR-PLG-006"));
         assertTrue(requirements.contains("FR-REP-004"));
+        assertTrue(requirements.contains("FR-DIA-001"));
+        assertTrue(requirements.contains("FR-DIA-008"));
         assertTrue(requirements.contains("FR-REL-004"));
 
         String design = read(project.resolve("10_PLUGIN_TECHNICAL_DESIGN.md"));
@@ -140,12 +142,14 @@ class DocumentationContractTest {
 
         String decisions = read(project.resolve("DECISION_LOG.md"));
         assertTrue(decisions.contains("ADR-0019"));
+        assertTrue(decisions.contains("ADR-0036"));
         assertTrue(decisions.contains("OD-004"));
 
         String architecture = read(project.resolve("04_SYSTEM_ARCHITECTURE.md"));
         assertTrue(architecture.contains("`JaCaMoProjectParserAdapter` uses the official JaCaMo 1.3.0 parser"));
         assertTrue(architecture.contains("`CArtAgOArtifactAdapter`"));
         assertTrue(architecture.contains("`MoiseOrganizationParserAdapter`"));
+        assertTrue(architecture.contains("The `diagram` package is a presentation-domain boundary"));
         String ideas = read(root.resolve("docs/idea/idea.md"));
         assertLocalLinksResolve(root.resolve("docs/idea/idea.md"), ideas);
         for (int idea = 1; idea <= 8; idea++) {

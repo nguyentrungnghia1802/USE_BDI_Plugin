@@ -51,6 +51,8 @@ are complete. Do not append per-day implementation diaries.
   self-contained under `use-bdi-plugin/demo` with GUI/headless walkthroughs.
 - [x] Plugin-owned file choosers open at the configured repository root and
   have a moved-checkout fallback.
+- [x] Renderer-neutral diagram values are immutable, portable, deterministically
+  ordered, and reject duplicate identities or missing node references.
 
 ## 2. Quality Gates
 
@@ -69,12 +71,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the static organization consistency slice:
+Latest validated baseline after the T17 diagram-domain slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 154 pass;
+- plugin tests: 162 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -83,7 +85,7 @@ Latest validated baseline after the static organization consistency slice:
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 154 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 162 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -155,17 +157,35 @@ T16 evaluation evidence:
   state-fixture boundary, excluded `LIVE_CARTAGO`/`MOISE_ORGANIZATION_IR`
   layers, and the packaged `AUCTION_EVALUATION_OK` smoke command.
 
+T17 diagram-domain evidence:
+
+- `DiagramModelTest`: 6 tests cover deterministic ordering and identity,
+  duplicate rejection, missing edge/group endpoints, immutable collection
+  ownership, issue state, relocation, and absolute-path rejection;
+- `DiagramPackageBoundaryTest`: 2 tests verify final public values and reject
+  parser, runtime, USE concrete, AWT, or Swing imports;
+- ADR-0036 keeps snapshot projection, rendering, UI navigation, export, and
+  persistence outside this domain-only slice.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
 ## 3. Open Must Tasks
 
+- [ ] Derive BDI and cross-model diagram projections from the exact current
+  analysis snapshot without reparsing or changing validation semantics.
+- [ ] Add deterministic layout/rendering and read-only USE interaction over the
+  renderer-neutral diagram model.
+- [ ] Complete diagram export, demo, mutant, screenshot, and performance
+  evidence before claiming the visualization initiative complete.
+
 - [ ] Create reviewed Git tag `v1.0.0-thesis-rc` after branch integration.
 - [ ] Complete and verify backup of source, data, generated report, and thesis
   slides; current source backup cannot fabricate absent external artifacts.
 
-These are release-owner tasks. Do not create a tag or claim a complete backup
-without the user's release decision and the external artifact locations.
+The tag and backup entries are release-owner tasks. Do not create a tag or
+claim a complete backup without the user's release decision and the external
+artifact locations.
 
 ## 4. Optional Task
 
@@ -183,6 +203,8 @@ The following are future work, not hidden completion claims:
 - OD-006: external thesis artifact locations and release ownership;
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
+- Diagram snapshot projection, rendering, navigation, export, demo, and
+  performance evidence beyond the completed renderer-neutral domain boundary.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 

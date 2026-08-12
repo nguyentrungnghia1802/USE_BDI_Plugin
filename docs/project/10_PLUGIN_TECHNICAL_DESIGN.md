@@ -47,6 +47,7 @@ use-bdi-plugin/
     problems/     issue presentation models
     report/       JSON/HTML serialization
     trace/        snapshot-derived explanatory graph
+    diagram/      immutable renderer-neutral visualization values
     ui/           Explorer, mapping, and Problems Swing views
 ```
 
@@ -306,6 +307,15 @@ snapshots under ADR-0035. It compares reviewer-normalized cardinality bounds
 rather than guessing OCL semantics from expression text. Live CArtAgO state,
 organization enactment/monitoring, persisted organization mappings, and runtime
 traces remain separate changes and must preserve PASS/FAIL/UNKNOWN semantics.
+
+For diagram visualization, `DiagramModel` owns only immutable nodes, edges,
+groups, portable semantic selection references, optional `ProjectSourceId` v2
+evidence, and issue markers. IDs use versioned length framing over node/edge
+types and semantic references rather than labels or absolute paths. The model
+rejects duplicate IDs, missing edge/group endpoints, null members, and mutable
+collection leakage before sorting content by ID. No adapter, USE concrete,
+runtime, AWT, or Swing type may cross this package boundary. ADR-0036 limits
+this slice to the domain contract; builders and renderers are separate tasks.
 
 ## 10. Definition Of Done
 

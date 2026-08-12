@@ -47,6 +47,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0033 | Run the reviewed Auction corpus through an isolated real headless service with named static state fixtures and a declared external oracle; normalize Jason source URLs out of mapping identity for relocation | evaluation codec/runner tests, packaged Auction evaluation smoke |
 | ADR-0034 | Pin official Moise 1.1 behind one static adapter, normalize a bounded immutable organization IR, and keep enactment/rules outside this slice | organization adapter/golden/diagnostic/boundary/package tests |
 | ADR-0035 | Evaluate a separate static organization catalog over confirmed plugin-owned mappings; use reviewer-normalized OCL cardinality bounds and retain runtime enactment as UNKNOWN | Auction organization baseline/mutant/trace tests |
+| ADR-0036 | Define a renderer-neutral immutable diagram domain with portable semantic identity and constructor-enforced graph integrity; keep projection, rendering, and interaction in later slices | diagram invariant, relocation, and package-boundary tests |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -86,14 +87,14 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 154 pass, including JaCaMo project import, portable
+- Plugin suite: 162 pass, including JaCaMo project import, portable
   traceability, CArtAgO adapter/environment mutants, Moise organization
   normalization, static organization rules/traceability, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
 - Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
-  integration tests, 154 plugin tests, and
+  integration tests, 162 plugin tests, and
   ZIP/TAR distributions succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
@@ -356,3 +357,29 @@ values with portable source identity and explicit mapping/target gaps.
 This slice does not persist organization mappings, parse arbitrary OCL text,
 launch a runtime, monitor membership, or evaluate norm fulfillment. Those are
 separate future decisions.
+
+## 16. ADR-0036: Renderer-Neutral Immutable Diagram Domain
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+The visualization initiative needs one stable presentation contract before a
+snapshot projector, layout library, or Swing view is selected. Option A,
+rejected, is to pass Jason, JaCaMo, CArtAgO, Moise, USE UML, or Swing graph
+objects directly into a renderer. That couples visualization to parser/runtime
+lifecycle and makes deterministic headless testing impractical. Option B,
+selected, introduces final plugin-owned diagram records with typed nodes,
+edges, groups, selection references, optional portable source evidence, and
+issue markers.
+
+Node, edge, and group IDs use versioned length framing over semantic references
+and typed endpoints. Labels and checkout roots do not define identity.
+`ProjectSourceId` v2 remains the source authority; qualified UML and existing
+trace IDs can enter through a portable `DiagramSelectionRef`. Constructors
+reject absolute path references, duplicate IDs, missing edge/group endpoints,
+null values, and mutable collection leakage, then sort model content by ID.
+
+This diagram is derived presentation data under BR-020. T17 adds no snapshot
+projector, source parser, validation rule, persistence schema, graph library,
+Swing view, navigation behavior, or export format. Those are later vertical
+slices and must not turn the diagram into an editable or semantic source of
+truth.

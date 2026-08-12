@@ -26,6 +26,7 @@ flowchart LR
   UA --> EVAL
   VAL --> SNAP[Immutable current analysis snapshot]
   SNAP --> TRACE[Derived traceability graph]
+  SNAP -. planned projection .-> DIA[Renderer-neutral diagram model]
   SNAP --> GUI[BDI Explorer and Problems]
   SNAP --> REP[JSON and HTML reports]
 ```
@@ -40,7 +41,7 @@ USE owns UML/OCL and snapshot semantics. Plugin-owned values connect them.
 | Integration/UI | plugin actions, `ui` | application services and USE GUI boundary |
 | Application | `application`, report composition | importer, index, mapping, validation abstractions |
 | Adapters | `importer`, `use` | Jason/JaCaMo/CArtAgO/Moise or USE concrete APIs, respectively |
-| Domain | `model.ir`, `model.mas`, `model.organization`, `model.mapping`, issue values | Java/plugin-owned values only |
+| Domain | `model.ir`, `model.mas`, `model.organization`, `model.mapping`, `diagram`, issue values | Java/plugin-owned values only |
 | Analysis | `index`, `validation` | normalized IR, mappings, immutable USE projection |
 | Persistence | `persistence`, report exporters | versioned plugin-owned DTOs |
 
@@ -101,6 +102,7 @@ and verifies the state fingerprint before and after analysis.
 | Mappings/config/suppressions | plugin/user files | versioned and validated |
 | Current analysis/Problems | application snapshot service | immutable, recomputed |
 | Traceability graph | trace builder | immutable, derived per snapshot, never persisted |
+| Diagram model | `diagram` package/caller | immutable, portable, renderer-neutral, validated before publication, never persisted |
 | Reports | GUI or headless caller | atomic serialization of supplied evidence only |
 
 OCL results are `PASS`, `FAIL`, or `UNKNOWN`; compile/evaluation errors cannot
@@ -172,6 +174,15 @@ does not start a JaCaMo/CArtAgO runtime, model runtime Moise semantics, dynamica
 inspect CArtAgO artifacts, or consume execution traces. The GUI/headless
 entry points provide static `.jcm` composition only; they do not launch a
 JaCaMo runtime.
+
+The `diagram` package is a presentation-domain boundary, not a renderer or a
+second analysis model. Its records contain only plugin-owned immutable values,
+portable `ProjectSourceId` v2 evidence, qualified semantic selection
+references, and issue enums. Length-framed node, edge, and group identities are
+deterministic; constructors reject duplicate identities, unknown endpoints,
+and checkout-absolute selection references. T17 establishes this boundary only.
+Snapshot projection, layout, Swing views, navigation, and export remain planned
+separate slices and must consume these records without reparsing sources.
 
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires

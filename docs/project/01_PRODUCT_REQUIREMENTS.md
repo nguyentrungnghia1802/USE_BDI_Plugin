@@ -130,7 +130,20 @@ implemented.
 | FR-ORG-004 | Preserve unavailable source coordinates as unknown rather than inventing positions | Implemented |
 | FR-ORG-005 | Evaluate confirmed role/class, mission/operation, and reviewed cardinality/OCL mappings with explicit UNKNOWN runtime semantics | Implemented |
 
-### 2.10 Case study and release
+### 2.10 Diagram visualization
+
+| ID | Requirement | Status |
+| --- | --- | --- |
+| FR-DIA-001 | Provide an immutable renderer-neutral diagram domain with portable deterministic identities and validated node, edge, and group references | Implemented |
+| FR-DIA-002 | Derive a read-only BDI structure diagram from the current immutable analysis snapshot without reparsing AgentSpeak | Planned |
+| FR-DIA-003 | Project confirmed mappings, UML/OCL targets, and explicit mapping gaps into the diagram | Planned |
+| FR-DIA-004 | Preserve issue status, certainty, and evidence associations in diagram projections | Planned |
+| FR-DIA-005 | Project static JaCaMo, CArtAgO, and Moise structures without implying runtime behavior | Planned |
+| FR-DIA-006 | Render diagrams in USE with deterministic layout, zoom, pan, fit, selection, and highlighting | Planned |
+| FR-DIA-007 | Navigate diagram selections to existing Explorer, Problems, source, and mapping details | Planned |
+| FR-DIA-008 | Provide validated diagram demos, mutants, screenshots, and performance evidence | Planned |
+
+### 2.11 Case study and release
 
 | ID | Requirement | Status |
 | --- | --- | --- |
@@ -170,6 +183,7 @@ implemented.
 | BR-017 | Evaluation oracles are declared outside the runner; missing/ambiguous input or evidence is invalid, unsupported, or unknown and never becomes a semantic PASS. |
 | BR-018 | Moise concrete classes stop at the organization adapter; static normalization does not imply enactment or runtime consistency. |
 | BR-019 | Organization suggestions remain candidates; static cardinality checks require a confirmed invariant target plus reviewer-normalized bounds, and matching bounds remain UNKNOWN without enactment evidence. |
+| BR-020 | A diagram is an immutable derived presentation, never a parser, validator, editable semantic model, persisted source of truth, or runtime claim. |
 
 ## 4. Core acceptance criteria
 
