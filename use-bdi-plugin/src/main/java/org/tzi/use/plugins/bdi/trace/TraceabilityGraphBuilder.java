@@ -44,7 +44,8 @@ public final class TraceabilityGraphBuilder {
         String issueId = issueId(issue, source);
         put(nodes, new TraceNode(
                 issueId, TraceNodeKind.ISSUE, issue.ruleId() + ": " + issue.message(), source,
-                Optional.of(issue.status()), Optional.of(issue.certainty()), issue.evidence()));
+                Optional.of(issue.status()), Optional.of(issue.certainty()), Optional.of(issue.ruleId()),
+                Optional.of(issue.severity()), issue.evidence()));
 
         String sourceNodeId = source.map(value -> "source:" + value.canonical()).orElse("source:unknown");
         put(nodes, new TraceNode(sourceNodeId, TraceNodeKind.SOURCE,
@@ -86,7 +87,8 @@ public final class TraceabilityGraphBuilder {
                 String oclId = "ocl:" + issue.ruleId() + ":" + mapping.target();
                 put(nodes, new TraceNode(oclId, TraceNodeKind.OCL_CONSTRAINT,
                         issue.ruleId() + " on " + mapping.target(), source,
-                        Optional.of(issue.status()), Optional.of(issue.certainty()), issue.evidence()));
+                        Optional.of(issue.status()), Optional.of(issue.certainty()), Optional.of(issue.ruleId()),
+                        Optional.of(issue.severity()), issue.evidence()));
                 edge(edges, umlId, oclId, TraceRelationKind.EVALUATED_BY, issue.certainty(), issue.evidence());
                 edge(edges, oclId, issueId, TraceRelationKind.PRODUCES, issue.certainty(), issue.evidence());
             } else {

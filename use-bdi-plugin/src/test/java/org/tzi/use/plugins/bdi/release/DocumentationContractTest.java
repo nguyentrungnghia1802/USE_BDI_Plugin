@@ -143,6 +143,7 @@ class DocumentationContractTest {
         String decisions = read(project.resolve("DECISION_LOG.md"));
         assertTrue(decisions.contains("ADR-0019"));
         assertTrue(decisions.contains("ADR-0036"));
+        assertTrue(decisions.contains("ADR-0037"));
         assertTrue(decisions.contains("OD-004"));
 
         String architecture = read(project.resolve("04_SYSTEM_ARCHITECTURE.md"));
@@ -151,6 +152,8 @@ class DocumentationContractTest {
         assertTrue(architecture.contains("`MoiseOrganizationParserAdapter`"));
         assertTrue(architecture.contains("The `diagram` package is a presentation-domain boundary"));
         assertTrue(architecture.contains("`BdiDiagramBuilder` reads the exact frozen snapshot"));
+        assertTrue(architecture.contains("`TraceabilityDiagramContributor`"));
+        assertTrue(design.contains("`TraceabilityDiagramContributor`"));
         String ideas = read(root.resolve("docs/idea/idea.md"));
         assertLocalLinksResolve(root.resolve("docs/idea/idea.md"), ideas);
         for (int idea = 1; idea <= 8; idea++) {

@@ -17,6 +17,8 @@ public final class TraceabilityGraphJsonSerializer {
                     .append("\",\"label\":\"").append(escape(node.label()))
                     .append("\",\"status\":\"").append(node.status().map(Enum::name).orElse(""))
                     .append("\",\"certainty\":\"").append(node.certainty().map(Enum::name).orElse(""))
+                    .append("\",\"ruleId\":\"").append(escape(node.ruleId().orElse("")))
+                    .append("\",\"severity\":\"").append(node.severity().map(Enum::name).orElse(""))
                     .append("\"}");
         }
         json.append("],\"edges\":[");

@@ -79,7 +79,7 @@ Latest validated baseline after the T17 diagram-domain slice:
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 167 pass;
+- plugin tests: 171 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -179,16 +179,20 @@ T18 BDI diagram-projection evidence:
   fingerprint preservation;
 - `BdiDiagramBuilder` consumes `CurrentAnalysisSnapshot`, `BdiIndex`, confirmed
   mappings, and immutable USE values without parsing or validating again;
-- OCL/issue trace contribution remains open for T19 and is not claimed by the
-  current `FR-DIA-003` Partial status.
+- `TraceabilityDiagramContributorTest`: 4 tests cover an Auction-shaped OCL
+  chain, explicit mapping gap, issue metadata/certainty, equivalent-edge
+  deduplication, portable labels, and relocation-stable output;
+- `TraceabilityDiagramContributor` consumes only the immutable
+  `TraceabilityGraph`, so diagram generation does not rerun validation or OCL;
+  `TraceNode` preserves issue rule ID, severity, status, certainty, and evidence;
+- FR-DIA-003 and FR-DIA-004 are Implemented; rendering, interaction, navigation,
+  export, demos, mutants, screenshots, and performance evidence remain open.
 
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
 ## 3. Open Must Tasks
 
-- [ ] Reuse the existing traceability graph for source-to-mapping-to-UML/OCL-to-
-  issue diagram evidence without rerunning validation.
 - [ ] Add deterministic layout/rendering and read-only USE interaction over the
   renderer-neutral diagram model.
 - [ ] Complete diagram export, demo, mutant, screenshot, and performance

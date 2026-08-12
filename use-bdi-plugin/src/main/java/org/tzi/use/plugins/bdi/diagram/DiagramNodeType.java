@@ -21,5 +21,9 @@ public enum DiagramNodeType {
     UML_OPERATION,
     OCL_CONSTRAINT,
     ISSUE,
-    GAP
+    GAP,
+    TRACE_SOURCE,
+    TRACE_ELEMENT,
+    TRACE_MAPPING,
+    TRACE_TARGET
 }

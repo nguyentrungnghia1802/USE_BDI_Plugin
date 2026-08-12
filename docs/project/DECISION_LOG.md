@@ -389,3 +389,27 @@ T18 implements the first projector within this boundary. It consumes only
 indexes, confirmed mappings, and immutable USE values. It does not change this
 ADR: trace/OCL issue contribution, rendering, interaction, and export remain
 separate decisions/slices.
+
+## 17. ADR-0037: Traceability Graph Is the Diagram Evidence Source
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+The diagram must explain an existing analysis result without creating a second
+semantic graph or changing the current USE state. Option A, rejected, is to
+rerun validation/OCL or reconstruct source-to-target edges while rendering.
+That would allow the diagram and Problems view to disagree and would make a
+presentation operation mutate or recompute analysis state. Option B, selected,
+adds `TraceabilityDiagramContributor`, which accepts only the immutable
+`TraceabilityGraph` and maps its existing node/edge identities to
+`DiagramModel`.
+
+Issue trace nodes carry typed rule ID, severity, status, certainty, and evidence.
+Confirmed mapping, UML/OCL, issue, and explicit gap nodes remain visible; visual
+edges are deduplicated by rendered type and endpoints while the trace graph
+remains the evidence authority. The contributor rejects incomplete issue
+metadata, retains portable `ProjectSourceId` values, and replaces labels that
+contain absolute paths or source URLs. It does not parse AgentSpeak, invoke a
+rule, evaluate OCL, access Swing/USE concrete state, or persist the diagram.
+
+Rendering, selection callbacks, navigation, export, and performance remain
+separate T20+ slices over the resulting immutable model.

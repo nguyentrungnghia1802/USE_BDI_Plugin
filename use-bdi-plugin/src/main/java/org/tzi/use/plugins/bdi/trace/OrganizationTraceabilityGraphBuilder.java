@@ -57,6 +57,7 @@ public final class OrganizationTraceabilityGraphBuilder {
                 finding.issue().ruleId() + ": " + finding.issue().message(),
                 finding.organizationSource().map(value -> value.source()),
                 Optional.of(finding.issue().status()), Optional.of(finding.issue().certainty()),
+                Optional.of(finding.issue().ruleId()), Optional.of(finding.issue().severity()),
                 finding.issue().evidence()));
         if (!sourceExists) {
             edges.add(edge(elementId, issueId, TraceRelationKind.PRODUCES, finding));

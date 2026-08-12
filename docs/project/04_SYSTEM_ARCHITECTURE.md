@@ -184,9 +184,14 @@ portable `ProjectSourceId` v2 evidence, qualified semantic selection
 references, and issue enums. Length-framed node, edge, and group identities are
 deterministic; constructors reject duplicate identities, unknown endpoints,
 and checkout-absolute selection references. `BdiDiagramBuilder` now projects
-the exact current snapshot into this contract. Trace/OCL issue contribution,
-layout, Swing views, navigation, and export remain planned separate slices and
-must consume these records without reparsing sources.
+the exact current snapshot into this contract. `TraceabilityDiagramContributor`
+projects the existing immutable `TraceabilityGraph` into the same model for
+source-to-mapping-to-UML/OCL-to-issue evidence. It does not invoke validation,
+OCL evaluation, or snapshot creation; it maps existing trace relations,
+preserves issue metadata, keeps explicit gap nodes, deduplicates equivalent
+visual edges, and replaces non-portable labels. Layout, Swing views, navigation,
+and export remain planned separate slices and must consume these records without
+reparsing sources.
 
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
@@ -243,7 +248,12 @@ explicit project root. It derives portable source/BDI, confirmed mapping, UML,
 OCL, gap, and issue nodes with deterministic evidence edges. Issue detail is a
 backward traversal over the immutable graph. Raw Jason plan annotations are
 excluded from IDs and serialized labels because they may contain absolute
-source URLs. A missing mapping is a graph gap, not an inferred UML edge.
+source URLs. Issue nodes retain rule ID, severity, status, certainty, and
+evidence as typed values. `TraceabilityDiagramContributor` consumes only this
+graph and maps its edges to `OWNS`, `MAPS_TO`, `CONSTRAINED_BY`,
+`MISSING_MAPPING`, and `HAS_ISSUE`; a missing mapping is a graph gap, not an
+inferred UML edge. Diagram selection references remain portable and do not
+expose absolute source URLs.
 
 ## 10. Known Architecture Gaps
 

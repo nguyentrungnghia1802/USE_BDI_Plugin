@@ -39,6 +39,7 @@ public final class EnvironmentTraceabilityGraphBuilder {
         nodes.add(new TraceNode(issueId, TraceNodeKind.ISSUE,
                 finding.issue().ruleId() + ": " + finding.issue().message(), Optional.empty(),
                 Optional.of(finding.issue().status()), Optional.of(finding.issue().certainty()),
+                Optional.of(finding.issue().ruleId()), Optional.of(finding.issue().severity()),
                 finding.issue().evidence()));
 
         Optional<ArtifactModel> artifact = context.environment()

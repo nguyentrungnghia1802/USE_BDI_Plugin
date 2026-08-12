@@ -327,8 +327,12 @@ become `MAPS_TO` edges only when confirmed. Missing required mappings become
 typed `GAP` nodes, while absent candidate suggestions cannot enter the snapshot
 or diagram. UML target state is read as `CURRENT`, `STALE`, or `UNKNOWN` from
 the immutable USE projection. Parameter-level and OCL/issue evidence projection
-remain T19 work; the builder performs no parsing, rule execution, OCL evaluation,
-or state mutation.
+is supplied by `TraceabilityDiagramContributor`, which accepts only the existing
+`TraceabilityGraph`. The contributor maps trace node kinds to diagram node types,
+preserves issue rule ID/severity/status/certainty/evidence, retains explicit
+mapping gaps, deduplicates equivalent visual edges, and sanitizes non-portable
+labels. It never reruns validation or OCL evaluation, reads live USE state, or
+mutates the analysis snapshot.
 
 ## 10. Definition Of Done
 
