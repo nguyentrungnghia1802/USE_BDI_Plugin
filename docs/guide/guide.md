@@ -160,6 +160,8 @@ và chạy từng dòng trong shell/command workflow; cách truyền `.cmd` ở 
    `SizeMatchesCustomers` được kiểm tra trên snapshot USE hiện tại.
 7. Thay đổi state trong USE, bấm lại `Refresh USE Snapshot` và giải thích rằng
    plugin không tự sửa `MSystem`, không tự chạy plan và không tự nhận event live.
+8. Sau khi chọn mode/layer/focus phù hợp trong `Diagram`, bấm `Export SVG...`
+   để lưu đúng graph đang hiển thị; chỉ xác nhận overwrite khi thực sự muốn.
 
 ## 6. Demo C: Family Person
 

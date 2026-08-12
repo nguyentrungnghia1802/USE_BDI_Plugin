@@ -135,6 +135,13 @@ effect remains `UNKNOWN`.
 
 ## Adding A UI Action Or View
 
+Diagram SVG export remains inside the presentation boundary:
+`DiagramSvgExporter` consumes the current visible immutable model, reuses
+`BdiDiagramLayout` and `DiagramPalette`, sanitizes labels, and atomically writes
+UTF-8 SVG. Keep file chooser/overwrite confirmation in `BdiDiagramPanel`; do
+not make SVG importable as semantic truth or add a renderer dependency without
+a new ADR and license review.
+
 The verified USE lifecycle is:
 
 1. Register the action in `useplugin.xml` below the `Plugins` menu.

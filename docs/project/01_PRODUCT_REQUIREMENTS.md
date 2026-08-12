@@ -141,7 +141,7 @@ implemented.
 | FR-DIA-005 | Project static JaCaMo, CArtAgO, and Moise structures without implying runtime behavior | Implemented |
 | FR-DIA-006 | Render diagrams in USE with deterministic layout, zoom, pan, fit, selection, and highlighting | Implemented |
 | FR-DIA-007 | Navigate diagram selections to existing Explorer, Problems, source, and mapping details | Partial |
-| FR-DIA-008 | Provide validated diagram demos, mutants, screenshots, and performance evidence | Partial: canonical demos and reviewed Auction mutant paths validated |
+| FR-DIA-008 | Provide validated diagram demos, mutants, screenshots, and performance evidence | Partial: canonical demos, reviewed Auction mutant paths, and SVG export validated |
 
 ### 2.11 Case study and release
 

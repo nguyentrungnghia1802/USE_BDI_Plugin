@@ -521,3 +521,23 @@ layers, and that complete model. Organization and Environment controls disable
 themselves when those layers are absent, so direct AgentSpeak imports remain
 honest about JaCaMo scope. Panel and Explorer tests cover source preservation,
 reset, direct `.asl`, and Auction `.jcm` behavior.
+
+## 23. ADR-0043: SVG Export Is A Current Presentation Artifact
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+T27 needs thesis-ready visual evidence without persisting a second semantic
+graph or adding a rendering dependency. Option A, rejected, is PNG-only canvas
+capture because it couples output to viewport scale and loses vector text.
+Option B, selected, writes deterministic SVG from the current derived
+`DiagramModel` using the existing layout and shared presentation palette.
+
+The export input is the panel's current mode/layer/focus projection, selected
+node, and highlight IDs, not the unfiltered source model or live USE state.
+SVG is a presentation artifact and cannot be imported as analysis truth.
+Labels are UTF-8/XML escaped and any label containing an absolute path or URL
+is replaced. Output is written to a temporary sibling and moved atomically
+when available; replacing an existing file requires explicit confirmation.
+Failure leaves the analysis and existing destination unchanged. The JDK-only
+implementation changes no dependency, package notice, parser, validator, OCL
+evaluator, JaCaMo boundary, or runtime claim.

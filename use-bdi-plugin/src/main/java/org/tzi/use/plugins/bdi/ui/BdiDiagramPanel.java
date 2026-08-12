@@ -2,6 +2,9 @@ package org.tzi.use.plugins.bdi.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -13,12 +16,15 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.tzi.use.plugins.bdi.diagram.DiagramModel;
 import org.tzi.use.plugins.bdi.diagram.DiagramNode;
@@ -33,6 +39,7 @@ public final class BdiDiagramPanel extends JPanel {
     private final JButton zoomOut;
     private final JButton fit;
     private final JButton reset;
+    private final JButton exportSvg;
     private final JButton focusAgent;
     private final JButton focusGoalPlan;
     private final JToggleButton showIssues;
@@ -62,6 +69,7 @@ public final class BdiDiagramPanel extends JPanel {
         zoomOut = button("Zoom -", "Zoom out");
         fit = button("Fit", "Fit diagram to the viewport");
         reset = button("Reset", "Restore the full diagram, layers, zoom, and pan");
+        exportSvg = button("Export SVG...", "Export the current filtered diagram as deterministic SVG");
         focusAgent = button("Focus Agent", "Show the selected agent and its bounded neighborhood");
         focusGoalPlan = button("Focus Goal/Plan", "Show the selected goal or plan and its bounded neighborhood");
         showIssues = toggle("Issues", "Show or hide issue nodes");
@@ -84,6 +92,7 @@ public final class BdiDiagramPanel extends JPanel {
         zoomOut.addActionListener(event -> canvas.zoomOut());
         fit.addActionListener(event -> canvas.fitToScreen());
         reset.addActionListener(event -> resetPresentation());
+        exportSvg.addActionListener(event -> chooseExportSvg());
         focusAgent.addActionListener(event -> focusSelected(Set.of(DiagramNodeType.AGENT)));
         focusGoalPlan.addActionListener(event -> focusSelected(Set.of(
                 DiagramNodeType.GOAL,
@@ -100,6 +109,7 @@ public final class BdiDiagramPanel extends JPanel {
         JPanel actions = new JPanel();
         actions.add(fit);
         actions.add(reset);
+        actions.add(exportSvg);
         actions.add(zoomIn);
         actions.add(zoomOut);
         actions.add(focusAgent);
@@ -164,6 +174,7 @@ public final class BdiDiagramPanel extends JPanel {
         DiagramModel visibleDiagram = DiagramNavigationProjector.project(
                 modeDiagram, hiddenLayers, Optional.ofNullable(focusNodeId));
         model = visibleDiagram;
+        updateControlAvailability();
         canvas.setModel(visibleDiagram);
         applyCurrentHighlight();
         long request = generation.incrementAndGet();
@@ -311,6 +322,14 @@ public final class BdiDiagramPanel extends JPanel {
         return reset;
     }
 
+    JButton exportSvgForTest() {
+        return exportSvg;
+    }
+
+    Path exportSvgForTest(Path output, boolean overwrite) throws IOException {
+        return exportSvg(output, overwrite);
+    }
+
     JButton focusAgentForTest() {
         return focusAgent;
     }
@@ -415,6 +434,52 @@ public final class BdiDiagramPanel extends JPanel {
         showUmlOcl.setEnabled(hasLayer(DiagramLayer.UML_OCL));
         showOrganization.setEnabled(hasLayer(DiagramLayer.ORGANIZATION));
         showEnvironment.setEnabled(hasLayer(DiagramLayer.ENVIRONMENT));
+        exportSvg.setEnabled(!model.nodes().isEmpty());
+    }
+
+    private void chooseExportSvg() {
+        JFileChooser chooser = BdiFileChooserSupport.create();
+        chooser.setDialogTitle("Export Current Diagram as SVG");
+        chooser.setFileFilter(new FileNameExtensionFilter("Scalable Vector Graphics (*.svg)", "svg"));
+        chooser.setSelectedFile(new java.io.File("bdi-diagram.svg"));
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        Path output = chooser.getSelectedFile().toPath();
+        if (!output.getFileName().toString().toLowerCase(java.util.Locale.ROOT).endsWith(".svg")) {
+            output = output.resolveSibling(output.getFileName() + ".svg");
+        }
+        boolean overwrite = false;
+        if (Files.exists(output)) {
+            int choice = JOptionPane.showConfirmDialog(
+                    this,
+                    "Replace existing diagram?\n" + output.toAbsolutePath().normalize(),
+                    "Confirm diagram overwrite",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+            overwrite = true;
+        }
+        try {
+            Path exported = exportSvg(output, overwrite);
+            state.setText("Exported current diagram: " + exported.getFileName());
+        } catch (IOException error) {
+            state.setText("Diagram export failed: " + error.getMessage());
+            JOptionPane.showMessageDialog(
+                    this, error.getMessage(), "Diagram export failed", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private Path exportSvg(Path output, boolean overwrite) throws IOException {
+        return new DiagramSvgExporter().export(
+                model,
+                canvas.highlightedNodeIds(),
+                canvas.highlightedEdgeIds(),
+                canvas.selectedNodeId(),
+                output,
+                overwrite);
     }
 
     private boolean hasLayer(DiagramLayer layer) {

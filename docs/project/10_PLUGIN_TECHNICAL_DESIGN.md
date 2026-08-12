@@ -411,6 +411,16 @@ from fabricating sibling issue highlights. Scoped baseline assertions use the
 same reviewed evidence tokens as evaluation; no validation or rendering rule
 is specialized for a mutant ID.
 
+T27 implements `DiagramSvgExporter` without a new dependency. It accepts only
+the current visible `DiagramModel`, highlight IDs, and optional selected node;
+therefore hidden layers, view modes, and focus are reflected exactly while the
+unfiltered `sourceModel` is not exported. It reuses `BdiDiagramLayout` and
+`DiagramPalette`, emits deterministic UTF-8 XML with escaped labels and a
+static arrow marker, replaces labels containing absolute paths/URLs, and writes
+through a temporary sibling followed by an atomic move when supported.
+`BdiDiagramPanel` owns the save chooser and overwrite confirmation. Empty
+models and unconfirmed overwrite fail without changing analysis state.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

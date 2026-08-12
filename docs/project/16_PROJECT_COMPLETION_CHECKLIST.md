@@ -79,7 +79,7 @@ Latest validated baseline after the T25 canonical-demo slice:
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 198 pass;
+- plugin tests: 201 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -304,6 +304,24 @@ T26 Auction mutant visualization evidence:
 - FR-DIA-008 remains Partial only for export, screenshot, and performance
   evidence.
 
+T27 deterministic SVG export evidence:
+
+- `DiagramSvgExporterTest`: 3 tests cover byte-stable output, UTF-8 and XML
+  escaping, absolute-label removal, selection/highlight styling, unconfirmed
+  overwrite refusal, existing-file preservation, and export of only the
+  current layer-filtered panel projection.
+- `DiagramSvgExporter` reuses deterministic `BdiDiagramLayout` and the shared
+  Swing/SVG `DiagramPalette`; it adds no rendering dependency or semantic
+  persistence format. Writes use a temporary sibling and atomic move where
+  supported.
+- `BdiDiagramPanel` exposes `Export SVG...`, appends `.svg`, confirms before
+  replacement, and reports failure without changing current/source analysis.
+- ADR-0043 records SVG, current-view scope, no-new-dependency, atomic-write,
+  portability, and non-semantic-output decisions. Third-party notices are
+  unchanged because the implementation uses only the JDK.
+- FR-DIA-008 remains Partial only for refreshed screenshots and dedicated
+  diagram performance evidence.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
@@ -358,6 +376,7 @@ The prioritized development candidates are maintained in
 | Diagram focus/navigation | `DiagramNavigationProjectorTest`, panel/Explorer `.asl` and `.jcm` controls, and ADR-0042 |
 | Canonical diagram demos | `CanonicalDemoDiagramTest`, four bundle READMEs, shared demo guide, and documentation contract |
 | Auction mutant visualization | `AuctionMutantDiagramTest`, reviewed manifest, trace contributor, and directed highlight traversal |
+| Diagram SVG export | `DiagramSvgExporterTest`, ADR-0043, shared layout/palette, and panel action |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |
 | Plugin GUI | action/Explorer/canvas tests and `scripts/smoke.ps1` |

@@ -258,6 +258,15 @@ cases, then project the existing trace graph. Baseline cleanliness remains
 bounded by the manifest's evidence tokens and does not erase known out-of-scope
 reference findings.
 
+T27 adds presentation-only SVG export under ADR-0043. `DiagramSvgExporter` receives
+the panel's current immutable mode/layer/focus projection plus selected and
+highlighted IDs, recomputes the same deterministic `BdiDiagramLayout`, and
+writes no semantic graph format. Shared `DiagramPalette` values keep Swing and
+SVG status colors aligned. UTF-8/XML escaping and non-portable label removal
+happen before an atomic file move; an existing file requires explicit UI
+confirmation. Export errors update presentation status only and cannot replace
+the current analysis or source model.
+
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
 an explicit project root, uses portable `ProjectSourceId` v2 provenance, emits

@@ -22,7 +22,6 @@ import javax.swing.SwingUtilities;
 import org.tzi.use.plugins.bdi.diagram.DiagramEdge;
 import org.tzi.use.plugins.bdi.diagram.DiagramModel;
 import org.tzi.use.plugins.bdi.diagram.DiagramNode;
-import org.tzi.use.plugins.bdi.diagram.DiagramNodeType;
 
 /** Lightweight Java2D canvas; it never edits the supplied semantic model. */
 @SuppressWarnings("serial")
@@ -209,11 +208,23 @@ final class BdiDiagramCanvas extends JComponent {
     }
 
     Set<String> highlightedNodeIdsForTest() {
-        return highlightedNodeIds;
+        return highlightedNodeIds();
     }
 
     Set<String> highlightedEdgeIdsForTest() {
+        return highlightedEdgeIds();
+    }
+
+    Set<String> highlightedNodeIds() {
+        return highlightedNodeIds;
+    }
+
+    Set<String> highlightedEdgeIds() {
         return highlightedEdgeIds;
+    }
+
+    Optional<String> selectedNodeId() {
+        return Optional.ofNullable(selectedNodeId);
     }
 
     @Override
@@ -299,12 +310,12 @@ final class BdiDiagramCanvas extends JComponent {
         DiagramVisualState state = DiagramVisualStateResolver.resolve(node);
         boolean selected = node.id().equals(selectedNodeId);
         boolean highlighted = highlightedNodeIds.contains(node.id());
-        Color fill = state == DiagramVisualState.CLEAN ? fillColor(node) : state.fill();
+        Color fill = state == DiagramVisualState.CLEAN ? DiagramPalette.fill(node) : state.fill();
         canvas.setColor(fill);
         canvas.fillRoundRect((int) box.x(), (int) box.y(), (int) box.width(), (int) box.height(), 10, 10);
         Color border = selected ? new Color(25, 87, 160)
                 : highlighted ? new Color(24, 91, 147)
-                : state == DiagramVisualState.CLEAN ? cleanBorder(node.type()) : state.border();
+                : state == DiagramVisualState.CLEAN ? DiagramPalette.cleanBorder(node.type()) : state.border();
         canvas.setColor(border);
         canvas.setStroke(selected || highlighted
                 ? new BasicStroke(selected ? 2.8f : 2.4f)
@@ -343,40 +354,6 @@ final class BdiDiagramCanvas extends JComponent {
         arrow.lineTo(x2 - size * Math.cos(angle + Math.PI / 6), y2 - size * Math.sin(angle + Math.PI / 6));
         arrow.closePath();
         canvas.fill(arrow);
-    }
-
-    private static Color fillColor(DiagramNode node) {
-        String layer = node.attributes().get("layer");
-        if (layer != null) {
-            return switch (layer) {
-                case "MAS" -> new Color(232, 236, 241);
-                case "BDI" -> new Color(224, 241, 229);
-                case "ORGANIZATION" -> new Color(250, 239, 205);
-                case "ENVIRONMENT" -> new Color(218, 241, 242);
-                case "UML" -> new Color(222, 235, 248);
-                case "ISSUE" -> new Color(255, 225, 225);
-                case "EVIDENCE" -> new Color(235, 226, 248);
-                default -> fillColor(node.type());
-            };
-        }
-        return fillColor(node.type());
-    }
-
-    private static Color fillColor(DiagramNodeType type) {
-        return switch (type) {
-            case ISSUE -> new Color(255, 225, 225);
-            case GAP -> new Color(255, 239, 208);
-            case UML_CLASS, UML_OBJECT, UML_ATTRIBUTE, UML_OPERATION, OCL_CONSTRAINT, TRACE_TARGET ->
-                    new Color(222, 235, 248);
-            case AGENT, MAS_PROJECT, ORGANIZATION, ROLE, MISSION -> new Color(224, 241, 229);
-            default -> new Color(239, 242, 245);
-        };
-    }
-
-    private static Color cleanBorder(DiagramNodeType type) {
-        return type == DiagramNodeType.ISSUE ? new Color(176, 45, 45)
-                : type == DiagramNodeType.GAP ? new Color(202, 116, 38)
-                : new Color(96, 105, 115);
     }
 
     private void selectAt(Point point) {

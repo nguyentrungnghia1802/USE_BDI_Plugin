@@ -17,6 +17,8 @@ automated tests. They are not another user-facing demo location.
 After import, use the BDI Explorer `Diagram` tab. `BDI Plan` is clearest for
 Family Person, Smart Queue, and the Smart Home decision path; `MAS Overview` is
 clearest for Smart Home's static environment and the full Auction project.
+Use `Export SVG...` after mode/layer/focus selection to save that current
+derived presentation for slides or thesis evidence.
 
 `family-person` and `smart-home` are clean teaching baselines. Their local rule
 configuration omits only the informational `OCL-004` bounded-effect check because

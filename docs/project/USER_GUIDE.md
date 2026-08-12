@@ -152,6 +152,12 @@ USE model because no trustworthy project root exists.
 
 ### 5. Show USE views during the presentation
 
+In the BDI Explorer, open `Diagram`, choose a view mode, optionally apply
+focus/layer filters, and click `Fit`. To include exactly that visible derived
+projection in the thesis, click `Export SVG...`, choose a `.svg` destination,
+and confirm replacement only when intended. Export preserves Unicode labels,
+does not include hidden layers, and never changes the imported analysis.
+
 - `View > Create View > Class diagram`: show the UML structure.
 - `View > Create View > Object diagram`: show the current object/link
   snapshot, after objects have been created.
@@ -161,6 +167,8 @@ USE model because no trustworthy project root exists.
 - BDI Explorer `Problems` tab: show rule ID, severity, certainty, source, and
   evidence.
 - BDI Explorer `Mapping` tab: show confirmed links and save/load controls.
+- BDI Explorer `Diagram` tab: show the derived graph, focus/layer controls,
+  and `Export SVG...` for the current presentation only.
 - BDI Explorer `Export Current Analysis...`: save the exact Problems snapshot,
   including configuration, hashes, issue evidence, and suppressions.
 
