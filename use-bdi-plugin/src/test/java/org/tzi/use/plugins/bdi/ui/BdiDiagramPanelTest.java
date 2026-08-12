@@ -145,9 +145,85 @@ class BdiDiagramPanelTest {
         assertTrue(panel.stateForTest().getText().contains("MAP-003"));
     }
 
+    @Test
+    void focusesSelectedPlanAndRestoresFullGraphOnReset() throws Exception {
+        DiagramNode agent = node(DiagramNodeType.AGENT, "agent", "auctioneer");
+        DiagramNode plan = node(DiagramNodeType.PLAN, "plan", "sell-plan");
+        DiagramNode action = node(DiagramNodeType.ACTION, "action", "sell-step");
+        DiagramNode uml = layeredNode(DiagramNodeType.UML_OPERATION, "uml", "Auctioneer.sell", "UML");
+        DiagramNode issue = node(DiagramNodeType.ISSUE, "issue", "SIG-001");
+        DiagramNode unrelated = node(DiagramNodeType.BELIEF, "belief", "unrelated");
+        DiagramModel source = new DiagramModel(
+                List.of(agent, plan, action, uml, issue, unrelated),
+                List.of(
+                        edge("owns", DiagramEdgeType.OWNS, agent, plan),
+                        edge("step", DiagramEdgeType.EXECUTES, plan, action),
+                        edge("mapping", DiagramEdgeType.MAPS_TO, action, uml),
+                        edge("issue", DiagramEdgeType.HAS_ISSUE, uml, issue)),
+                List.of());
+        BdiDiagramPanel panel = new BdiDiagramPanel();
+
+        SwingUtilities.invokeAndWait(() -> panel.setDiagram(source));
+        waitForLayout(panel);
+        SwingUtilities.invokeAndWait(() -> panel.canvasForTest().selectNodeForTest(plan.id()));
+        assertTrue(panel.focusGoalPlanForTest().isEnabled());
+        SwingUtilities.invokeAndWait(() -> panel.focusGoalPlanForTest().doClick());
+        waitForLayout(panel);
+
+        assertEquals(source, panel.sourceModelForTest());
+        assertTrue(panel.modelForTest().nodes().containsAll(List.of(agent, plan, action, uml, issue)));
+        assertFalse(panel.modelForTest().nodes().contains(unrelated));
+        assertTrue(panel.modelForTest().nodes().size() < source.nodes().size());
+
+        SwingUtilities.invokeAndWait(() -> panel.resetForTest().doClick());
+        waitForLayout(panel);
+        assertEquals(source, panel.modelForTest());
+        assertEquals(DiagramViewMode.ALL, panel.modeForTest());
+        assertTrue(panel.showIssuesForTest().isSelected());
+        assertTrue(panel.showUmlOclForTest().isSelected());
+    }
+
+    @Test
+    void layerTogglesFilterOnlyTheVisibleProjection() throws Exception {
+        DiagramNode agent = node(DiagramNodeType.AGENT, "agent", "auctioneer");
+        DiagramNode role = layeredNode(DiagramNodeType.ROLE, "role", "auctioneer-role", "ORGANIZATION");
+        DiagramNode artifact = layeredNode(DiagramNodeType.ARTIFACT, "artifact", "board", "ENVIRONMENT");
+        DiagramNode uml = layeredNode(DiagramNodeType.UML_CLASS, "uml", "Auctioneer", "UML");
+        DiagramNode issue = layeredNode(DiagramNodeType.ISSUE, "issue", "MAP-001", "ISSUE");
+        DiagramModel source = new DiagramModel(List.of(agent, role, artifact, uml, issue), List.of(), List.of());
+        BdiDiagramPanel panel = new BdiDiagramPanel();
+
+        SwingUtilities.invokeAndWait(() -> panel.setDiagram(source));
+        waitForLayout(panel);
+        assertTrue(panel.showOrganizationForTest().isEnabled());
+        assertTrue(panel.showEnvironmentForTest().isEnabled());
+        SwingUtilities.invokeAndWait(() -> {
+            panel.showOrganizationForTest().doClick();
+            panel.showEnvironmentForTest().doClick();
+            panel.showUmlOclForTest().doClick();
+            panel.showIssuesForTest().doClick();
+        });
+        waitForLayout(panel);
+
+        assertEquals(List.of(agent), panel.modelForTest().nodes());
+        assertEquals(source, panel.sourceModelForTest());
+    }
+
     private static DiagramNode node(DiagramNodeType type, String namespace, String reference) {
         return new DiagramNode(type, DiagramSelectionRef.of(namespace, reference), reference,
                 Optional.empty(), Optional.empty(), Map.of());
+    }
+
+    private static DiagramNode layeredNode(
+            DiagramNodeType type, String namespace, String reference, String layer) {
+        return new DiagramNode(type, DiagramSelectionRef.of(namespace, reference), reference,
+                Optional.empty(), Optional.empty(), Map.of("layer", layer));
+    }
+
+    private static DiagramEdge edge(
+            String reference, DiagramEdgeType type, DiagramNode source, DiagramNode target) {
+        return new DiagramEdge(type, source.id(), target.id(),
+                DiagramSelectionRef.of("panel-edge", reference), Optional.empty(), Map.of());
     }
 
     private static void waitForLayout(BdiDiagramPanel panel) throws Exception {

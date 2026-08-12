@@ -500,3 +500,24 @@ layer attributes plus a visible legend state: no JaCaMo runtime, no Moise
 enactment, and no live CArtAgO state. The builder and Explorer tests are the
 acceptance evidence. Runtime lifecycle, live state, and persisted organization
 mapping remain outside this ADR.
+
+## 22. ADR-0042: Focus And Layers Are Reversible Presentation Projections
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+T24 needs fast live-demo navigation while preserving the diagram and analysis
+as derived, immutable evidence. Option A, rejected, would delete nodes from the
+current model, rerun analysis for each toggle, or store a second mutable graph.
+Option B, selected, applies `DiagramNavigationProjector` after the existing
+`DiagramModeProjector`. Its inputs are the immutable diagram, a set of hidden
+presentation layers, and an optional stable focus node ID.
+
+Layer filtering removes only visible projection nodes and dangling edges/group
+members. Focus retains the selected node, direct predecessors/successors, and
+existing evidence paths to issue nodes, bounded to eight edges. It does not
+infer mappings, run validation/OCL, parse sources, or access USE state.
+`BdiDiagramPanel` retains the original `sourceModel`; Reset restores `ALL`, all
+layers, and that complete model. Organization and Environment controls disable
+themselves when those layers are absent, so direct AgentSpeak imports remain
+honest about JaCaMo scope. Panel and Explorer tests cover source preservation,
+reset, direct `.asl`, and Auction `.jcm` behavior.

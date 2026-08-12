@@ -148,6 +148,7 @@ class DocumentationContractTest {
         assertTrue(decisions.contains("ADR-0039"));
         assertTrue(decisions.contains("ADR-0040"));
         assertTrue(decisions.contains("ADR-0041"));
+        assertTrue(decisions.contains("ADR-0042"));
         assertTrue(decisions.contains("OD-004"));
 
         String architecture = read(project.resolve("04_SYSTEM_ARCHITECTURE.md"));
@@ -161,11 +162,13 @@ class DocumentationContractTest {
         assertTrue(architecture.contains("`DiagramViewMode`"));
         assertTrue(architecture.contains("`DiagramHighlightPath`"));
         assertTrue(architecture.contains("`MasOverviewDiagramBuilder`"));
+        assertTrue(architecture.contains("`DiagramNavigationProjector`"));
         assertTrue(design.contains("`TraceabilityDiagramContributor`"));
         assertTrue(design.contains("`BdiDiagramPanel`"));
         assertTrue(design.contains("`DiagramModeProjector`"));
         assertTrue(design.contains("`DiagramVisualStateResolver`"));
         assertTrue(design.contains("`MasOverviewDiagramBuilder`"));
+        assertTrue(design.contains("`DiagramNavigationProjector`"));
         String ideas = read(root.resolve("docs/idea/idea.md"));
         assertLocalLinksResolve(root.resolve("docs/idea/idea.md"), ideas);
         for (int idea = 1; idea <= 8; idea++) {

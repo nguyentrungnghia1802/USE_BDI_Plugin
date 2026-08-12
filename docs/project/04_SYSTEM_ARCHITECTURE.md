@@ -224,6 +224,20 @@ static-only legend distinguish BDI, organization, environment, UML/OCL, and
 issue/evidence content. Shared source nodes are de-duplicated in the group
 without changing their stable identity.
 
+T24 keeps live-presentation navigation inside the Swing presentation boundary.
+`DiagramNavigationProjector` receives the already selected `DiagramViewMode`
+projection, a set of hidden presentation layers, and an optional stable focus
+node ID. Layer filtering and bounded focus rebuild only immutable diagram
+values; the original `sourceModel` remains available for Reset and refresh.
+Focus retains the selected agent/goal/plan, its direct predecessors and
+successors, and bounded existing evidence paths to issue nodes. It does not
+discover new semantics or run rules. `BdiDiagramPanel` exposes Fit, Reset,
+Zoom, Focus Agent, Focus Goal/Plan, and Issues/UML-OCL/Organization/Environment
+toggles. Reset restores `ALL`, every layer, and the full source graph. Controls
+whose layer is absent are disabled, so direct `.asl` imports do not imply
+JaCaMo structures. Cross-tab mapping/source navigation beyond the existing
+selection detail and Problems-to-Diagram path remains separate work.
+
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
 an explicit project root, uses portable `ProjectSourceId` v2 provenance, emits

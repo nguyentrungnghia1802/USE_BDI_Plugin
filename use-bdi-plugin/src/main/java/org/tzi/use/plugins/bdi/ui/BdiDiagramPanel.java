@@ -2,22 +2,27 @@ package org.tzi.use.plugins.bdi.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 import org.tzi.use.plugins.bdi.diagram.DiagramModel;
 import org.tzi.use.plugins.bdi.diagram.DiagramNode;
+import org.tzi.use.plugins.bdi.diagram.DiagramNodeType;
 
 /** Read-only diagram controls and asynchronous canvas layout. */
 @SuppressWarnings("serial")
@@ -28,47 +33,91 @@ public final class BdiDiagramPanel extends JPanel {
     private final JButton zoomOut;
     private final JButton fit;
     private final JButton reset;
+    private final JButton focusAgent;
+    private final JButton focusGoalPlan;
+    private final JToggleButton showIssues;
+    private final JToggleButton showUmlOcl;
+    private final JToggleButton showOrganization;
+    private final JToggleButton showEnvironment;
     private final JComboBox<DiagramViewMode> modeSelector;
     private final AtomicLong generation = new AtomicLong();
     private DiagramModel model = DiagramModel.empty();
     private DiagramModel sourceModel = DiagramModel.empty();
     private DiagramViewMode mode = DiagramViewMode.ALL;
+    private final Set<DiagramLayer> hiddenLayers = EnumSet.noneOf(DiagramLayer.class);
+    private Consumer<DiagramNode> selectionListener = ignored -> {
+    };
+    private String selectedSourceNodeId;
+    private String focusNodeId;
     private String highlightedIssueRuleId;
+    private boolean updatingControls;
+    private boolean fitAfterLayout;
     private SwingWorker<BdiDiagramLayout.Layout, Void> layoutWorker;
 
     public BdiDiagramPanel() {
         super(new BorderLayout(6, 6));
         canvas = new BdiDiagramCanvas();
         state = new JLabel("No diagram data");
-        zoomIn = button("+", "Zoom in");
-        zoomOut = button("-", "Zoom out");
+        zoomIn = button("Zoom +", "Zoom in");
+        zoomOut = button("Zoom -", "Zoom out");
         fit = button("Fit", "Fit diagram to the viewport");
-        reset = button("Reset", "Reset zoom and pan");
+        reset = button("Reset", "Restore the full diagram, layers, zoom, and pan");
+        focusAgent = button("Focus Agent", "Show the selected agent and its bounded neighborhood");
+        focusGoalPlan = button("Focus Goal/Plan", "Show the selected goal or plan and its bounded neighborhood");
+        showIssues = toggle("Issues", "Show or hide issue nodes");
+        showUmlOcl = toggle("UML/OCL", "Show or hide UML and OCL targets");
+        showOrganization = toggle("Organization", "Show or hide static organization nodes");
+        showEnvironment = toggle("Environment", "Show or hide static environment nodes");
         modeSelector = new JComboBox<>(DiagramViewMode.values());
         modeSelector.setToolTipText("Choose a presentation-only diagram view");
         modeSelector.addActionListener(event -> {
+            if (updatingControls) {
+                return;
+            }
             DiagramViewMode selected = (DiagramViewMode) modeSelector.getSelectedItem();
             if (selected != null) {
                 setViewMode(selected);
             }
         });
+        canvas.setSelectionListener(this::handleSelection);
         zoomIn.addActionListener(event -> canvas.zoomIn());
         zoomOut.addActionListener(event -> canvas.zoomOut());
         fit.addActionListener(event -> canvas.fitToScreen());
-        reset.addActionListener(event -> canvas.resetView());
+        reset.addActionListener(event -> resetPresentation());
+        focusAgent.addActionListener(event -> focusSelected(Set.of(DiagramNodeType.AGENT)));
+        focusGoalPlan.addActionListener(event -> focusSelected(Set.of(
+                DiagramNodeType.GOAL,
+                DiagramNodeType.PLAN)));
+        showIssues.addActionListener(event -> setLayerVisible(DiagramLayer.ISSUES, showIssues.isSelected()));
+        showUmlOcl.addActionListener(event -> setLayerVisible(DiagramLayer.UML_OCL, showUmlOcl.isSelected()));
+        showOrganization.addActionListener(
+                event -> setLayerVisible(DiagramLayer.ORGANIZATION, showOrganization.isSelected()));
+        showEnvironment.addActionListener(
+                event -> setLayerVisible(DiagramLayer.ENVIRONMENT, showEnvironment.isSelected()));
 
-        JPanel controls = new JPanel(new BorderLayout(6, 0));
+        JPanel controls = new JPanel();
+        controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
         JPanel actions = new JPanel();
-        actions.add(zoomIn);
-        actions.add(zoomOut);
         actions.add(fit);
         actions.add(reset);
+        actions.add(zoomIn);
+        actions.add(zoomOut);
+        actions.add(focusAgent);
+        actions.add(focusGoalPlan);
         actions.add(new JLabel("View:"));
         actions.add(modeSelector);
-        controls.add(actions, BorderLayout.WEST);
-        controls.add(state, BorderLayout.CENTER);
+        JPanel layers = new JPanel();
+        layers.add(new JLabel("Show:"));
+        layers.add(showIssues);
+        layers.add(showUmlOcl);
+        layers.add(showOrganization);
+        layers.add(showEnvironment);
+        controls.add(actions);
+        controls.add(layers);
+        controls.add(state);
         controls.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         add(controls, BorderLayout.NORTH);
+        updateControlAvailability();
 
         JScrollPane scroll = new JScrollPane(canvas);
         scroll.setPreferredSize(new Dimension(900, 520));
@@ -82,6 +131,14 @@ public final class BdiDiagramPanel extends JPanel {
             return;
         }
         sourceModel = diagram;
+        if (focusNodeId != null && sourceModel.nodes().stream().noneMatch(node -> node.id().equals(focusNodeId))) {
+            focusNodeId = null;
+        }
+        if (selectedSourceNodeId != null
+                && sourceModel.nodes().stream().noneMatch(node -> node.id().equals(selectedSourceNodeId))) {
+            selectedSourceNodeId = null;
+        }
+        updateControlAvailability();
         publishCurrentMode();
     }
 
@@ -95,18 +152,25 @@ public final class BdiDiagramPanel extends JPanel {
         if (modeSelector.getSelectedItem() != requestedMode) {
             modeSelector.setSelectedItem(requestedMode);
         }
+        if (focusNodeId != null && DiagramModeProjector.project(sourceModel, mode).nodes().stream()
+                .noneMatch(node -> node.id().equals(focusNodeId))) {
+            focusNodeId = null;
+        }
         publishCurrentMode();
     }
 
     private void publishCurrentMode() {
-        DiagramModel visibleDiagram = DiagramModeProjector.project(sourceModel, mode);
+        DiagramModel modeDiagram = DiagramModeProjector.project(sourceModel, mode);
+        DiagramModel visibleDiagram = DiagramNavigationProjector.project(
+                modeDiagram, hiddenLayers, Optional.ofNullable(focusNodeId));
         model = visibleDiagram;
         canvas.setModel(visibleDiagram);
         applyCurrentHighlight();
         long request = generation.incrementAndGet();
+        String presentation = focusNodeId == null ? mode.toString() : "Focus";
         state.setText(visibleDiagram.nodes().isEmpty()
                 ? "No diagram data"
-                : mode + ": laying out " + visibleDiagram.nodes().size() + " node(s)...");
+                : presentation + ": laying out " + visibleDiagram.nodes().size() + " node(s)...");
         if (layoutWorker != null && !layoutWorker.isDone()) {
             layoutWorker.cancel(true);
         }
@@ -123,9 +187,13 @@ public final class BdiDiagramPanel extends JPanel {
                 }
                 try {
                     canvas.setLayoutSnapshot(get());
+                    if (fitAfterLayout) {
+                        fitAfterLayout = false;
+                        canvas.fitToScreen();
+                    }
                     state.setText(visibleDiagram.nodes().isEmpty()
                             ? "No diagram data"
-                            : mode + ": " + visibleDiagram.nodes().size() + " node(s), "
+                            : presentation + ": " + visibleDiagram.nodes().size() + " node(s), "
                                     + visibleDiagram.edges().size() + " edge(s)");
                 } catch (Exception error) {
                     state.setText("Diagram layout failed: " + error.getMessage());
@@ -147,7 +215,12 @@ public final class BdiDiagramPanel extends JPanel {
         }
         sourceModel = DiagramModel.empty();
         model = sourceModel;
+        selectedSourceNodeId = null;
+        focusNodeId = null;
+        hiddenLayers.clear();
         highlightedIssueRuleId = null;
+        setControlSelections();
+        updateControlAvailability();
         canvas.setModel(model);
         canvas.setHighlights(Set.of(), Set.of());
         state.setText("Diagram unavailable: " + message);
@@ -169,7 +242,7 @@ public final class BdiDiagramPanel extends JPanel {
         }
         model.nodes().stream()
                 .filter(node -> highlight.nodeIds().contains(node.id()))
-                .filter(node -> node.type() == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.ISSUE)
+                .filter(node -> node.type() == DiagramNodeType.ISSUE)
                 .findFirst()
                 .ifPresent(node -> canvas.selectNode(node.id()));
         state.setText("Highlighted evidence for " + ruleId + " (" + highlight.nodeIds().size()
@@ -187,7 +260,7 @@ public final class BdiDiagramPanel extends JPanel {
     }
 
     public void setSelectionListener(Consumer<DiagramNode> listener) {
-        canvas.setSelectionListener(Objects.requireNonNull(listener, "listener"));
+        selectionListener = Objects.requireNonNull(listener, "listener");
     }
 
     DiagramModel modelForTest() {
@@ -238,6 +311,30 @@ public final class BdiDiagramPanel extends JPanel {
         return reset;
     }
 
+    JButton focusAgentForTest() {
+        return focusAgent;
+    }
+
+    JButton focusGoalPlanForTest() {
+        return focusGoalPlan;
+    }
+
+    JToggleButton showIssuesForTest() {
+        return showIssues;
+    }
+
+    JToggleButton showUmlOclForTest() {
+        return showUmlOcl;
+    }
+
+    JToggleButton showOrganizationForTest() {
+        return showOrganization;
+    }
+
+    JToggleButton showEnvironmentForTest() {
+        return showEnvironment;
+    }
+
     private void applyCurrentHighlight() {
         if (highlightedIssueRuleId == null) {
             canvas.setHighlights(Set.of(), Set.of());
@@ -247,8 +344,91 @@ public final class BdiDiagramPanel extends JPanel {
         canvas.setHighlights(highlight.nodeIds(), highlight.edgeIds());
     }
 
+    private void handleSelection(DiagramNode node) {
+        selectedSourceNodeId = node.id();
+        updateControlAvailability();
+        selectionListener.accept(node);
+    }
+
+    private void focusSelected(Set<DiagramNodeType> allowedTypes) {
+        if (selectedSourceNodeId == null) {
+            return;
+        }
+        Optional<DiagramNode> selected = sourceModel.nodes().stream()
+                .filter(node -> node.id().equals(selectedSourceNodeId))
+                .filter(node -> allowedTypes.contains(node.type()))
+                .findFirst();
+        if (selected.isEmpty()) {
+            return;
+        }
+        focusNodeId = selectedSourceNodeId;
+        fitAfterLayout = true;
+        publishCurrentMode();
+    }
+
+    private void setLayerVisible(DiagramLayer layer, boolean visible) {
+        if (updatingControls) {
+            return;
+        }
+        if (visible) {
+            hiddenLayers.remove(layer);
+        } else {
+            hiddenLayers.add(layer);
+        }
+        publishCurrentMode();
+    }
+
+    private void resetPresentation() {
+        mode = DiagramViewMode.ALL;
+        focusNodeId = null;
+        hiddenLayers.clear();
+        highlightedIssueRuleId = null;
+        fitAfterLayout = false;
+        setControlSelections();
+        publishCurrentMode();
+        canvas.resetView();
+    }
+
+    private void setControlSelections() {
+        updatingControls = true;
+        try {
+            modeSelector.setSelectedItem(mode);
+            showIssues.setSelected(!hiddenLayers.contains(DiagramLayer.ISSUES));
+            showUmlOcl.setSelected(!hiddenLayers.contains(DiagramLayer.UML_OCL));
+            showOrganization.setSelected(!hiddenLayers.contains(DiagramLayer.ORGANIZATION));
+            showEnvironment.setSelected(!hiddenLayers.contains(DiagramLayer.ENVIRONMENT));
+        } finally {
+            updatingControls = false;
+        }
+    }
+
+    private void updateControlAvailability() {
+        DiagramNode selected = selectedSourceNodeId == null ? null : sourceModel.nodes().stream()
+                .filter(node -> node.id().equals(selectedSourceNodeId))
+                .findFirst()
+                .orElse(null);
+        focusAgent.setEnabled(selected != null
+                && selected.type() == DiagramNodeType.AGENT);
+        focusGoalPlan.setEnabled(selected != null
+                && (selected.type() == DiagramNodeType.GOAL || selected.type() == DiagramNodeType.PLAN));
+        showIssues.setEnabled(hasLayer(DiagramLayer.ISSUES));
+        showUmlOcl.setEnabled(hasLayer(DiagramLayer.UML_OCL));
+        showOrganization.setEnabled(hasLayer(DiagramLayer.ORGANIZATION));
+        showEnvironment.setEnabled(hasLayer(DiagramLayer.ENVIRONMENT));
+    }
+
+    private boolean hasLayer(DiagramLayer layer) {
+        return sourceModel.nodes().stream().anyMatch(layer::contains);
+    }
+
     private static JButton button(String label, String tooltip) {
         JButton button = new JButton(label);
+        button.setToolTipText(tooltip);
+        return button;
+    }
+
+    private static JToggleButton toggle(String label, String tooltip) {
+        JToggleButton button = new JToggleButton(label, true);
         button.setToolTipText(tooltip);
         return button;
     }

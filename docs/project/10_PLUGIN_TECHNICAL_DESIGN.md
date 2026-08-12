@@ -374,6 +374,21 @@ MAS group, while the immutable node and edge identities remain unchanged.
 organization mapping edges, explicit missing-operation gaps, determinism, and
 static-only metadata; `BdiExplorerViewTest` covers the actual `.jcm` UI path.
 
+T24 adds `DiagramLayer` and `DiagramNavigationProjector` after
+`DiagramModeProjector` in the presentation pipeline. The layer projector
+removes only nodes classified as Issues, UML/OCL, Organization, or Environment
+and then drops edges/groups whose endpoints are no longer visible. Optional
+focus keeps the selected node, all directly incident predecessors/successors,
+and shortest existing issue-evidence paths with a fixed depth bound of eight.
+It never changes `BdiDiagramPanel.sourceModelForTest()` or any analysis value.
+The panel owns only stable selection/focus IDs and toggle state. Reset clears
+focus/highlight, restores `ALL` and all layers, and republishes the original
+source model. Organization and Environment toggles are disabled when their
+layers are absent, which is the expected direct `.asl` behavior. Focus requests
+fit the completed asynchronous layout for presentation. Unit tests cover layer
+filtering, bounded focus, hidden/missing focus, reset, and source immutability;
+Explorer tests cover both direct `.asl` and Auction `.jcm` control behavior.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

@@ -74,12 +74,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the T23 static MAS overview slice:
+Latest validated baseline after the T24 focus/navigation slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 187 pass;
+- plugin tests: 192 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -88,7 +88,7 @@ Latest validated baseline after the T23 static MAS overview slice:
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 187 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 192 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -252,6 +252,22 @@ T23 static MAS overview evidence:
   runtime launch, Moise enactment, live CArtAgO state, and runtime traces stay
   outside the claim.
 
+T24 demo-oriented focus/navigation evidence:
+
+- `DiagramNavigationProjectorTest`: 3 tests cover independent layer filtering,
+  bounded selected-node neighborhoods plus existing issue paths, hidden or
+  missing focus fallback, and immutable source preservation.
+- `BdiDiagramPanelTest`: 7 tests now cover Focus Goal/Plan, source-model
+  preservation, all four layer toggles, and Reset restoring `ALL`, every layer,
+  and the complete graph in addition to prior zoom/fit/highlight behavior.
+- `BdiExplorerViewTest` verifies direct `.asl` imports disable unavailable
+  Organization/Environment toggles and `auction.jcm` enables them, focuses one
+  selected MAS agent, fits the result, filters an organization layer, and
+  restores the original node count.
+- FR-DIA-007 is Partial: Problems-to-Diagram, Diagram-to-detail, and bounded
+  agent/goal/plan focus are implemented. Direct cross-tab mapping/source
+  navigation remains open.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
@@ -284,9 +300,9 @@ The following are future work, not hidden completion claims:
 - OD-006: external thesis artifact locations and release ownership;
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
-- Broader navigation, export, demo, mutant, screenshot, and performance
-  evidence beyond the completed trace projection, canvas, T21 modes, and T22
-  issue/evidence highlighting.
+- Direct cross-tab mapping/source navigation plus export, demo, mutant,
+  screenshot, and performance evidence beyond the completed projections,
+  canvas, modes, highlighting, static MAS overview, and focus/layer controls.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 
@@ -303,6 +319,7 @@ The prioritized development candidates are maintained in
 | Static organization consistency | Auction baseline/three mutants, candidate/runtime UNKNOWN, portable trace, ADR-0035 |
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
 | Static MAS overview | `MasOverviewDiagramBuilderTest`, `.jcm` Explorer regression, layer rendering, and ADR-0041 |
+| Diagram focus/navigation | `DiagramNavigationProjectorTest`, panel/Explorer `.asl` and `.jcm` controls, and ADR-0042 |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |
 | Plugin GUI | action/Explorer/canvas tests and `scripts/smoke.ps1` |

@@ -104,6 +104,8 @@ class BdiExplorerViewTest {
         flushEdt();
 
         assertTrue(!view.diagramForTest().modelForTest().nodes().isEmpty());
+        assertFalse(view.diagramForTest().showOrganizationForTest().isEnabled());
+        assertFalse(view.diagramForTest().showEnvironmentForTest().isEnabled());
         SwingUtilities.invokeAndWait(() -> {
             view.diagramForTest().fitForTest().doClick();
             view.diagramForTest().resetForTest().doClick();
@@ -291,6 +293,40 @@ class BdiExplorerViewTest {
                 == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.MISSION));
         assertTrue(diagram.nodes().stream().anyMatch(node -> node.label().startsWith("Static analysis only:")));
         assertTrue(diagram.groups().stream().anyMatch(group -> "true".equals(group.attributes().get("staticOnly"))));
+        assertTrue(view.diagramForTest().showOrganizationForTest().isEnabled());
+        assertTrue(view.diagramForTest().showEnvironmentForTest().isEnabled());
+        int fullNodeCount = diagram.nodes().size();
+        var agent = diagram.nodes().stream()
+                .filter(node -> node.type() == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.AGENT)
+                .filter(node -> "BDI".equals(node.attributes().get("layer")))
+                .findFirst()
+                .orElseThrow();
+        SwingUtilities.invokeAndWait(() -> {
+            view.diagramForTest().canvasForTest().selectNodeForTest(agent.id());
+            assertTrue(view.diagramForTest().focusAgentForTest().isEnabled());
+            view.diagramForTest().focusAgentForTest().doClick();
+        });
+        waitForDiagram(view);
+        assertTrue(view.diagramForTest().modelForTest().nodes().size() < fullNodeCount);
+        assertTrue(view.diagramForTest().modelForTest().nodes().contains(agent));
+        assertEquals(fullNodeCount, view.diagramForTest().sourceModelForTest().nodes().size());
+        SwingUtilities.invokeAndWait(() -> {
+            view.diagramForTest().fitForTest().doClick();
+            view.diagramForTest().resetForTest().doClick();
+        });
+        waitForDiagram(view);
+        assertEquals(fullNodeCount, view.diagramForTest().modelForTest().nodes().size());
+        SwingUtilities.invokeAndWait(() -> view.diagramForTest().showOrganizationForTest().doClick());
+        waitForDiagram(view);
+        assertTrue(view.diagramForTest().modelForTest().nodes().stream()
+                .noneMatch(node -> "ORGANIZATION".equals(node.attributes().get("layer"))));
+        assertEquals(fullNodeCount, view.diagramForTest().sourceModelForTest().nodes().size());
+        SwingUtilities.invokeAndWait(() -> {
+            view.diagramForTest().resetForTest().doClick();
+            view.diagramForTest().fitForTest().doClick();
+        });
+        waitForDiagram(view);
+        assertEquals(fullNodeCount, view.diagramForTest().modelForTest().nodes().size());
         assertTrue(view.exportButtonForTest().isEnabled());
     }
 
