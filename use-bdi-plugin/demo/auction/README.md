@@ -35,6 +35,18 @@ start a JaCaMo, CArtAgO, or Moise runtime.
 7. For a visible negative case, open `mutants/ocl-open-closed.use`, import the
    two `.asl` files again, refresh the USE snapshot, and show `OCL-001`.
 
+## Reviewed mutant evidence
+
+The complete reviewed corpus is declared by
+[`auction-evaluation-manifest.json`](../../../docs/project/evidence/auction-evaluation-manifest.json).
+It covers the clean scoped baseline and four visual paths: structural stale
+targets (`MAP-003`), operation arity (`SIG-001`), absent `bidder2` references
+(`REF-001`), and the false open precondition (`OCL-001`). After running a case,
+select its row in `Problems`; `Diagram` highlights only the incoming evidence
+chain for that rule instead of unrelated sibling issues. The manifest's
+evidence tokens define the reviewed scope, so unrelated baseline `REF-001`
+limitations are not presented as mutant detections.
+
 ## Headless check
 
 From the repository root, use the command in `docs/guide/guide.md` with

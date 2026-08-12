@@ -400,6 +400,17 @@ bounded agent/organization/environment plus BDI, UML/OCL, and issue content.
 `DocumentationContractTest` requires every canonical walkthrough to document
 the Diagram tab and Fit control. These tests do not launch Jason or JaCaMo.
 
+T26 reuses `auction-evaluation-manifest.json` as the reviewed visual oracle.
+`AuctionMutantDiagramTest` copies each declared case into an isolated temporary
+workspace, invokes `HeadlessAnalysisService` with its static state fixture,
+builds `TraceabilityGraph`, and projects it through
+`TraceabilityDiagramContributor`. Highlight traversal follows only incoming
+`OWNS`, `MAPS_TO`, `MISSING_MAPPING`, `CONSTRAINED_BY`, and `HAS_ISSUE` edges.
+This retains the source-to-issue chain while preventing a shared source node
+from fabricating sibling issue highlights. Scoped baseline assertions use the
+same reviewed evidence tokens as evaluation; no validation or rendering rule
+is specialized for a mutant ID.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

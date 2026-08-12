@@ -34,20 +34,18 @@ final class DiagramHighlightPath {
 
         Set<String> edgeIds = new LinkedHashSet<>();
         boolean changed;
+        // Evidence edges point toward issues; walking backward avoids sibling issue branches.
         do {
             changed = false;
             for (DiagramEdge edge : model.edges()) {
                 if (!isEvidenceEdge(edge.type())
-                        || (!nodeIds.contains(edge.sourceNodeId()) && !nodeIds.contains(edge.targetNodeId()))) {
+                        || !nodeIds.contains(edge.targetNodeId())) {
                     continue;
                 }
                 if (edgeIds.add(edge.id())) {
                     changed = true;
                 }
                 if (nodeIds.add(edge.sourceNodeId())) {
-                    changed = true;
-                }
-                if (nodeIds.add(edge.targetNodeId())) {
                     changed = true;
                 }
             }

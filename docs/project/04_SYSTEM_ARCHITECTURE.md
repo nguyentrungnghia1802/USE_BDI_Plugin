@@ -248,6 +248,16 @@ runtime claims. The tests compile the canonical USE specifications where OCL
 evidence is required and build the existing BDI, MAS, and trace projections;
 they introduce no demo-specific parser or diagram model.
 
+T26 validates issue highlighting against the reviewed Auction evaluation
+manifest. `DiagramHighlightPath` starts at issue nodes and follows only
+incoming evidence edges toward their source; it does not traverse forward from
+a shared source or mapping into sibling issue branches. The generic traversal
+has no rule or mutant switch. Tests run the real headless snapshot/OCL pipeline
+for the scoped baseline plus `MAP-003`, `SIG-001`, `REF-001`, and `OCL-001`
+cases, then project the existing trace graph. Baseline cleanliness remains
+bounded by the manifest's evidence tokens and does not erase known out-of-scope
+reference findings.
+
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
 an explicit project root, uses portable `ProjectSourceId` v2 provenance, emits

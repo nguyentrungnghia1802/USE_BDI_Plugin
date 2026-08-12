@@ -79,7 +79,7 @@ Latest validated baseline after the T25 canonical-demo slice:
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 196 pass;
+- plugin tests: 198 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -287,6 +287,23 @@ T25 canonical-demo integration evidence:
 - FR-DIA-008 is Partial: canonical demo validation is implemented; mutant,
   screenshot, export, and performance evidence remain separate tasks.
 
+T26 Auction mutant visualization evidence:
+
+- `AuctionMutantDiagramTest`: 2 tests load the reviewed five-case evaluation
+  manifest, run each case through the real headless snapshot/OCL service in an
+  isolated workspace, and project its existing trace graph into Diagram.
+- The scoped baseline has no reviewed `MAP-003`, `SIG-001`, `REF-001`, or
+  `OCL-001` token. The four mutants expose the expected source/gap or
+  source/mapping/UML/OCL/issue node chains with reviewed certainty.
+- `DiagramHighlightPath` now walks only incoming evidence edges. Shared
+  source/mapping nodes cannot pull sibling issue branches into a selected
+  rule's highlight; existing synthetic highlight tests remain green.
+- No mutant ID or rule-specific rendering branch was added. Baseline scope
+  still follows manifest evidence tokens and retains documented out-of-scope
+  `REF-001` findings.
+- FR-DIA-008 remains Partial only for export, screenshot, and performance
+  evidence.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
@@ -340,6 +357,7 @@ The prioritized development candidates are maintained in
 | Static MAS overview | `MasOverviewDiagramBuilderTest`, `.jcm` Explorer regression, layer rendering, and ADR-0041 |
 | Diagram focus/navigation | `DiagramNavigationProjectorTest`, panel/Explorer `.asl` and `.jcm` controls, and ADR-0042 |
 | Canonical diagram demos | `CanonicalDemoDiagramTest`, four bundle READMEs, shared demo guide, and documentation contract |
+| Auction mutant visualization | `AuctionMutantDiagramTest`, reviewed manifest, trace contributor, and directed highlight traversal |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |
 | Plugin GUI | action/Explorer/canvas tests and `scripts/smoke.ps1` |
