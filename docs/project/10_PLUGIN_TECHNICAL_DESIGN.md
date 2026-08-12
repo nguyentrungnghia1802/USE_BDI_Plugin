@@ -358,6 +358,22 @@ stale highlight state. UNKNOWN is explicitly labeled UNKNOWN, never PASS.
 Navigation beyond this issue-to-evidence path, layout extensions beyond these
 modes, and export remain future slices.
 
+T23 adds `MasOverviewDiagramBuilder` as a static JaCaMo projection boundary.
+For a project import it receives the normalized `MasProjectModel` and the
+exact `CurrentAnalysisSnapshot`; optional `EnvironmentModel` and typed
+organization/environment mapping lists allow available CArtAgO and UML/OCL
+evidence to be shown without inventing a runtime model. The builder emits
+stable `MAS_PROJECT`, `AGENT`, `TRACE_SOURCE`, `ORGANIZATION`, `ROLE`,
+`MISSION`, `ARTIFACT`, `ARTIFACT_OPERATION`, UML/OCL, and `GAP` nodes plus
+typed edges. Unsupported `.jcm` resources and missing mapping sources are
+explicitly labeled. A `staticOnly` legend and per-node layer attributes make
+the no-runtime boundary visible; `BdiDiagramCanvas` uses those attributes for
+layer colors and tooltips. Repeated source references are included once in the
+MAS group, while the immutable node and edge identities remain unchanged.
+`MasOverviewDiagramBuilderTest` covers Auction projection, environment and
+organization mapping edges, explicit missing-operation gaps, determinism, and
+static-only metadata; `BdiExplorerViewTest` covers the actual `.jcm` UI path.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

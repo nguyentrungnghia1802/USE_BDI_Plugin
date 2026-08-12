@@ -276,6 +276,21 @@ class BdiExplorerViewTest {
                 .mapToObj(root::getChildAt)
                 .map(Object::toString)
                 .anyMatch(value -> value.contains("JaCaMo diagnostics")));
+        waitForDiagram(view);
+        var diagram = view.diagramForTest().modelForTest();
+        assertTrue(diagram.nodes().stream().anyMatch(node -> node.type()
+                == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.MAS_PROJECT
+                && node.label().startsWith("MAS Project:")));
+        assertEquals(3, diagram.nodes().stream()
+                .filter(node -> node.type() == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.AGENT)
+                .filter(node -> "BDI".equals(node.attributes().get("layer")))
+                .count());
+        assertTrue(diagram.nodes().stream().anyMatch(node -> node.type()
+                == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.ROLE));
+        assertTrue(diagram.nodes().stream().anyMatch(node -> node.type()
+                == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.MISSION));
+        assertTrue(diagram.nodes().stream().anyMatch(node -> node.label().startsWith("Static analysis only:")));
+        assertTrue(diagram.groups().stream().anyMatch(group -> "true".equals(group.attributes().get("staticOnly"))));
         assertTrue(view.exportButtonForTest().isEnabled());
     }
 

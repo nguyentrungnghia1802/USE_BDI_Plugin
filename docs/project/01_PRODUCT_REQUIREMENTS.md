@@ -138,7 +138,7 @@ implemented.
 | FR-DIA-002 | Derive a read-only BDI structure diagram from the current immutable analysis snapshot without reparsing AgentSpeak | Implemented |
 | FR-DIA-003 | Project confirmed mappings, UML/OCL targets, and explicit mapping gaps into the diagram | Implemented |
 | FR-DIA-004 | Preserve issue status, certainty, and evidence associations in diagram projections | Implemented |
-| FR-DIA-005 | Project static JaCaMo, CArtAgO, and Moise structures without implying runtime behavior | Planned |
+| FR-DIA-005 | Project static JaCaMo, CArtAgO, and Moise structures without implying runtime behavior | Implemented |
 | FR-DIA-006 | Render diagrams in USE with deterministic layout, zoom, pan, fit, selection, and highlighting | Implemented |
 | FR-DIA-007 | Navigate diagram selections to existing Explorer, Problems, source, and mapping details | Planned |
 | FR-DIA-008 | Provide validated diagram demos, mutants, screenshots, and performance evidence | Planned |

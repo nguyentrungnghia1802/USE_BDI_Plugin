@@ -476,3 +476,27 @@ active rule ID across a new immutable projection and reapplies the path when
 possible, clearing it when the finding is no longer present. No parser,
 validator, OCL evaluator, or live USE state is invoked by this presentation
 logic.
+
+## 21. ADR-0041: MAS Overview Is A Static Normalized Projection
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+T23 needs one presentation of a `.jcm` composition without turning static
+JaCaMo import into a runtime integration claim. Option A, rejected, would
+launch JaCaMo, enact Moise, or query CArtAgO while building a Swing diagram.
+Option B, selected, adds `MasOverviewDiagramBuilder`, which consumes the
+plugin-owned `MasProjectModel`, normalized organization values, the immutable
+`CurrentAnalysisSnapshot`, and optional `EnvironmentModel` plus typed mapping
+records. `BdiExplorerView` appends this projection to the existing BDI and
+traceability model only for project imports.
+
+The projection emits agent instances and source files, organization roles and
+missions, explicit `.jcm` resource status, optional artifact operations, and
+confirmed UML/OCL targets. Unsupported resources and missing mapping sources
+are visible as attributes or `GAP` nodes; they are never silently discarded.
+Stable source identities may be shared by multiple agent instances, so group
+membership is de-duplicated without changing node identity. `staticOnly` and
+layer attributes plus a visible legend state: no JaCaMo runtime, no Moise
+enactment, and no live CArtAgO state. The builder and Explorer tests are the
+acceptance evidence. Runtime lifecycle, live state, and persisted organization
+mapping remain outside this ADR.

@@ -210,6 +210,20 @@ Navigation beyond this issue-to-evidence path, export, and extensions beyond
 these modes remain planned separate slices and must consume these records
 without reparsing.
 
+T23 adds `MasOverviewDiagramBuilder` for the `.jcm` path. `BdiExplorerView`
+combines its immutable projection with the BDI and traceability projections,
+so the canvas can show the MAS project, every agent instance and source file,
+normalized organization roles/missions, visible project resources, and
+optional normalized CArtAgO artifacts/operations. Confirmed organization and
+environment mappings become UML/OCL target nodes; missing sources or operations
+become explicit `GAP` nodes rather than disappearing. The builder accepts
+`MasProjectModel`, `OrganizationModel`, `EnvironmentModel`, and the existing
+`CurrentAnalysisSnapshot`; it does not parse, validate, launch JaCaMo, enact
+Moise, inspect live CArtAgO state, or mutate USE state. Layer attributes and a
+static-only legend distinguish BDI, organization, environment, UML/OCL, and
+issue/evidence content. Shared source nodes are de-duplicated in the group
+without changing their stable identity.
+
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
 an explicit project root, uses portable `ProjectSourceId` v2 provenance, emits

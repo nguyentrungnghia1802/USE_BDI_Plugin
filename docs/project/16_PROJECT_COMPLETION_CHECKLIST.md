@@ -74,12 +74,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the T22 issue/highlighting slice:
+Latest validated baseline after the T23 static MAS overview slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 185 pass;
+- plugin tests: 187 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -88,7 +88,7 @@ Latest validated baseline after the T22 issue/highlighting slice:
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 185 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 187 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -232,6 +232,26 @@ T22 issue and mapping highlighting evidence:
 - FR-DIA-006 is now Implemented; broader navigation beyond the issue-to-
   evidence path remains open under FR-DIA-007.
 
+T23 static MAS overview evidence:
+
+- `MasOverviewDiagramBuilderTest`: 2 tests cover deterministic Auction
+  projection, three agent instances, normalized organization roles/missions,
+  unsupported project resources, optional CArtAgO artifact/operation nodes,
+  confirmed organization/environment mapping edges, static-only metadata, and
+  explicit missing-operation gaps.
+- `BdiExplorerViewTest` imports `auction.jcm` through the real project action
+  path and verifies the combined diagram contains the MAS project, all three
+  BDI agent instances, organization role/mission nodes, and the static-only
+  legend.
+- `MasOverviewDiagramBuilder` uses only normalized project/snapshot values;
+  shared source nodes are de-duplicated in the group and layer attributes are
+  rendered by the read-only canvas as distinct BDI, organization, environment,
+  UML/OCL, MAS, and issue/evidence colors. Missing environment mapping sources
+  remain visible as `GAP` nodes.
+- FR-DIA-005 is now Implemented for the bounded static projection. JaCaMo
+  runtime launch, Moise enactment, live CArtAgO state, and runtime traces stay
+  outside the claim.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
@@ -282,6 +302,7 @@ The prioritized development candidates are maintained in
 | Static Moise organization import | official source/API/license/checksum, organization golden/diagnostic/boundary tests, ADR-0034 |
 | Static organization consistency | Auction baseline/three mutants, candidate/runtime UNKNOWN, portable trace, ADR-0035 |
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
+| Static MAS overview | `MasOverviewDiagramBuilderTest`, `.jcm` Explorer regression, layer rendering, and ADR-0041 |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |
 | Plugin GUI | action/Explorer/canvas tests and `scripts/smoke.ps1` |

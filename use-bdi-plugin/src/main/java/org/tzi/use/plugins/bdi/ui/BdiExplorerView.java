@@ -49,6 +49,7 @@ import org.tzi.use.plugins.bdi.diagram.BdiDiagramBuilder;
 import org.tzi.use.plugins.bdi.diagram.DiagramEdge;
 import org.tzi.use.plugins.bdi.diagram.DiagramModel;
 import org.tzi.use.plugins.bdi.diagram.DiagramNode;
+import org.tzi.use.plugins.bdi.diagram.MasOverviewDiagramBuilder;
 import org.tzi.use.plugins.bdi.diagram.TraceabilityDiagramContributor;
 import org.tzi.use.plugins.bdi.index.BdiIndex;
 import org.tzi.use.plugins.bdi.importer.AslDiagnostic;
@@ -615,6 +616,12 @@ public final class BdiExplorerView extends JPanel implements View {
             edges.addAll(evidence.edges());
             List<org.tzi.use.plugins.bdi.diagram.DiagramGroup> groups = new ArrayList<>(structure.groups());
             groups.addAll(evidence.groups());
+            project.ifPresent(value -> {
+                DiagramModel overview = new MasOverviewDiagramBuilder().build(value, analysis, root);
+                nodes.addAll(overview.nodes());
+                edges.addAll(overview.edges());
+                groups.addAll(overview.groups());
+            });
             diagram.setDiagram(new DiagramModel(nodes, edges, groups));
         } catch (RuntimeException error) {
             diagram.setUnavailable("current analysis could not be projected");

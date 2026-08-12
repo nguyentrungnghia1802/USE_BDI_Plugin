@@ -227,7 +227,9 @@ final class BdiDiagramCanvas extends JComponent {
     public String getToolTipText(java.awt.event.MouseEvent event) {
         return nodeAt(event.getPoint()).map(node -> {
             DiagramVisualState state = DiagramVisualStateResolver.resolve(node);
-            return node.type() + ": " + node.label() + " [" + state.badge() + "]";
+            String layer = node.attributes().get("layer");
+            return node.type() + ": " + node.label() + " [" + state.badge() + "]"
+                    + (layer == null ? "" : " layer=" + layer);
         }).orElse(null);
     }
 
@@ -297,7 +299,7 @@ final class BdiDiagramCanvas extends JComponent {
         DiagramVisualState state = DiagramVisualStateResolver.resolve(node);
         boolean selected = node.id().equals(selectedNodeId);
         boolean highlighted = highlightedNodeIds.contains(node.id());
-        Color fill = state == DiagramVisualState.CLEAN ? fillColor(node.type()) : state.fill();
+        Color fill = state == DiagramVisualState.CLEAN ? fillColor(node) : state.fill();
         canvas.setColor(fill);
         canvas.fillRoundRect((int) box.x(), (int) box.y(), (int) box.width(), (int) box.height(), 10, 10);
         Color border = selected ? new Color(25, 87, 160)
@@ -341,6 +343,23 @@ final class BdiDiagramCanvas extends JComponent {
         arrow.lineTo(x2 - size * Math.cos(angle + Math.PI / 6), y2 - size * Math.sin(angle + Math.PI / 6));
         arrow.closePath();
         canvas.fill(arrow);
+    }
+
+    private static Color fillColor(DiagramNode node) {
+        String layer = node.attributes().get("layer");
+        if (layer != null) {
+            return switch (layer) {
+                case "MAS" -> new Color(232, 236, 241);
+                case "BDI" -> new Color(224, 241, 229);
+                case "ORGANIZATION" -> new Color(250, 239, 205);
+                case "ENVIRONMENT" -> new Color(218, 241, 242);
+                case "UML" -> new Color(222, 235, 248);
+                case "ISSUE" -> new Color(255, 225, 225);
+                case "EVIDENCE" -> new Color(235, 226, 248);
+                default -> fillColor(node.type());
+            };
+        }
+        return fillColor(node.type());
     }
 
     private static Color fillColor(DiagramNodeType type) {
