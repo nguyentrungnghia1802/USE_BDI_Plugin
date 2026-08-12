@@ -54,6 +54,7 @@ account, server, database, or remote authorization subsystem.
 | G-008 | Package and run as a USE 7.1.1 plugin | Assembly, smoke, and clean-clone checks |
 | G-009 | Import static JaCaMo `.jcm` agent declarations without claiming runtime integration | Auction project IR, diagnostics, and relocation tests |
 | G-010 | Pilot static CArtAgO artifact/UML consistency without starting a runtime | Adapter, environment mutant, trace, and package tests |
+| G-011 | Explain BDI/MAS structure and consistency evidence visually inside USE | Read-only diagram, canonical demos, Auction mutant paths, and SVG export tests |
 
 ## 5. Non-goals
 
@@ -94,6 +95,8 @@ Optional project artifacts:
   UML reference, evidence, and suggested fix;
 - static environment findings and artifact/property trace chains, with
   `UNKNOWN` when no dynamic CArtAgO state evidence exists;
+- read-only BDI/MAS diagrams with confirmed mappings, explicit gaps, issue
+  evidence paths, and deterministic current-view SVG export;
 - JSON/HTML reports with version and hash metadata when supplied;
 - reproducible Auction case-study and benchmark artifacts under `target/`.
 
@@ -151,6 +154,8 @@ Optional project artifacts:
 | Headless quality gate | Implemented | explicit `.use`/`.asl` inputs, deterministic reports, five exit classes |
 | Reviewed evaluation runner | Implemented | isolated Auction manifest, deterministic JSON/CSV/HTML, scoped metrics |
 | Auction case study and four mutants | Implemented | Scoped evidence only |
+| Read-only BDI/MAS visualization | Implemented | Derived from immutable snapshot/trace data; no parser, validator, editor, or runtime |
+| Deterministic diagram SVG export | Implemented | Current presentation only; no semantic persistence format |
 | House Building import | Optional | Not required for MVP |
 | Release tag | Planned | `v1.0.0-thesis-rc` not created |
 | Complete thesis artifact backup | Partial | Source backup works; external data/slides are absent |

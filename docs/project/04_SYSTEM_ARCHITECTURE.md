@@ -267,6 +267,15 @@ happen before an atomic file move; an existing file requires explicit UI
 confirmation. Export errors update presentation status only and cannot replace
 the current analysis or source model.
 
+T28 closes the visualization regression boundary with
+`VisualizationBoundaryContractTest`. Diagram projection and rendering sources
+cannot invoke parser, validator, OCL evaluator, or USE runtime implementations,
+while validation cannot depend back on diagram or Swing presentation packages.
+Immutable issue status/certainty values remain valid presentation input. This makes the no-second-
+parser/no-second-validator claim executable without changing any rule catalog
+or runtime behavior. Existing semantic, state-fingerprint, deterministic-report,
+canonical-demo, package, and reactor tests remain the behavioral gates.
+
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
 an explicit project root, uses portable `ProjectSourceId` v2 provenance, emits

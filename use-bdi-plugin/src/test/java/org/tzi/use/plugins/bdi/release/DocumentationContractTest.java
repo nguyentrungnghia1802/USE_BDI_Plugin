@@ -119,6 +119,10 @@ class DocumentationContractTest {
         assertTrue(requirements.contains("FR-DIA-008"));
         assertTrue(requirements.contains("FR-REL-004"));
 
+        String checklist = read(project.resolve("16_PROJECT_COMPLETION_CHECKLIST.md"));
+        assertTrue(checklist.contains("T28 visualization regression evidence"));
+        assertTrue(checklist.contains("plugin tests: 203 pass"));
+
         String design = read(project.resolve("10_PLUGIN_TECHNICAL_DESIGN.md"));
         assertTrue(design.contains("no database/network API"));
         assertTrue(design.contains("Current mapping and suppression schema: `0.2.0`"));
@@ -171,6 +175,7 @@ class DocumentationContractTest {
         assertTrue(architecture.contains("`MasOverviewDiagramBuilder`"));
         assertTrue(architecture.contains("`DiagramNavigationProjector`"));
         assertTrue(architecture.contains("`DiagramSvgExporter`"));
+        assertTrue(architecture.contains("`VisualizationBoundaryContractTest`"));
         assertTrue(design.contains("`TraceabilityDiagramContributor`"));
         assertTrue(design.contains("`BdiDiagramPanel`"));
         assertTrue(design.contains("`DiagramModeProjector`"));
@@ -178,6 +183,7 @@ class DocumentationContractTest {
         assertTrue(design.contains("`MasOverviewDiagramBuilder`"));
         assertTrue(design.contains("`DiagramNavigationProjector`"));
         assertTrue(design.contains("`DiagramSvgExporter`"));
+        assertTrue(design.contains("`VisualizationBoundaryContractTest`"));
         assertTrue(read(project.resolve("USER_GUIDE.md")).contains("`Export SVG...`"));
         String ideas = read(root.resolve("docs/idea/idea.md"));
         assertLocalLinksResolve(root.resolve("docs/idea/idea.md"), ideas);

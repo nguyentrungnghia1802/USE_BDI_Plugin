@@ -74,12 +74,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the T25 canonical-demo slice:
+Latest validated baseline after the T28 visualization regression slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 201 pass;
+- plugin tests: 203 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -87,9 +87,9 @@ Latest validated baseline after the T25 canonical-demo slice:
 - `Family.use`/`Family.cmd` and `SmartHome.use`/`SmartHome.cmd`, including
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
-- root `mvn verify`: the most recent isolated T24 run has all five modules, 1
-  USE core integration test, 121 GUI integration tests, 192 plugin tests, and
-  ZIP/TAR assembly succeed; T25 adds four module-level canonical demo tests;
+- isolated root `mvn clean verify`: all five modules, 1 USE core integration
+  test, 121 GUI integration tests, 203 plugin tests, and ZIP/TAR assembly
+  succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -322,13 +322,29 @@ T27 deterministic SVG export evidence:
 - FR-DIA-008 remains Partial only for refreshed screenshots and dedicated
   diagram performance evidence.
 
+T28 visualization regression evidence:
+
+- `VisualizationBoundaryContractTest`: 2 tests prevent diagram projection/
+  rendering from invoking parser, validator, OCL-evaluator, or USE runtime
+  implementations and prevent validation from depending back on Diagram/UI;
+- `RuleCatalogCompletenessTest` retains the exact 22 standard rule IDs plus
+  separate `ENV-001..004` and `ORG-001..003` catalogs; the full 203-test plugin
+  suite preserves their existing behavior and USE fingerprint assertions;
+- module reactor test, isolated root verification, package/GUI smoke, Auction
+  evidence, and packaged deterministic evaluation all pass;
+- package smoke returns `GUI_SMOKE_OK`, Auction evidence returns
+  `AUCTION_EVIDENCE_OK`, and evaluation repeats `1 PASS + 4 DETECTED` before
+  returning `AUCTION_EVALUATION_OK`;
+- no POM or runtime dependency changed, so existing third-party notices remain
+  current.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
 ## 3. Open Must Tasks
 
-- [ ] Complete diagram export, demo, mutant, screenshot, and performance
-  evidence before claiming the visualization initiative complete.
+- [ ] Capture refreshed raster screenshots and dedicated diagram-performance
+  evidence before claiming FR-DIA-008 complete.
 
 - [ ] Create reviewed Git tag `v1.0.0-thesis-rc` after branch integration.
 - [ ] Complete and verify backup of source, data, generated report, and thesis
@@ -354,9 +370,10 @@ The following are future work, not hidden completion claims:
 - OD-006: external thesis artifact locations and release ownership;
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
-- Direct cross-tab mapping/source navigation plus export, demo, mutant,
-  screenshot, and performance evidence beyond the completed projections,
-  canvas, modes, highlighting, static MAS overview, and focus/layer controls.
+- Direct cross-tab mapping/source navigation, refreshed raster screenshots,
+  and dedicated diagram-performance evidence beyond the completed projections,
+  canvas, modes, highlighting, static MAS overview, focus/layer controls,
+  canonical demos, mutant paths, and SVG export.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 

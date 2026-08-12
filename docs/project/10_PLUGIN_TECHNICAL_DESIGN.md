@@ -421,6 +421,16 @@ through a temporary sibling followed by an atomic move when supported.
 `BdiDiagramPanel` owns the save chooser and overwrite confirmation. Empty
 models and unconfirmed overwrite fail without changing analysis state.
 
+T28 adds `VisualizationBoundaryContractTest` as a release architecture guard.
+It scans production imports so projection/rendering cannot call Jason/JaCaMo,
+the AgentSpeak importer, USE UML runtime types, validators, or the OCL evaluator,
+and validation cannot depend back on diagram/UI. Immutable issue status and
+certainty values may cross into presentation. `RuleCatalogCompletenessTest` continues to
+lock the exact 22 standard IDs plus the separate `ENV-001..004` and
+`ORG-001..003` catalogs. Behavioral confidence comes from the existing focused
+tests and the module, root, package smoke, Auction evidence, and deterministic
+evaluation gates rather than a duplicate visualization validator.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/
