@@ -150,6 +150,7 @@ class DocumentationContractTest {
         assertTrue(architecture.contains("`CArtAgOArtifactAdapter`"));
         assertTrue(architecture.contains("`MoiseOrganizationParserAdapter`"));
         assertTrue(architecture.contains("The `diagram` package is a presentation-domain boundary"));
+        assertTrue(architecture.contains("`BdiDiagramBuilder` reads the exact frozen snapshot"));
         String ideas = read(root.resolve("docs/idea/idea.md"));
         assertLocalLinksResolve(root.resolve("docs/idea/idea.md"), ideas);
         for (int idea = 1; idea <= 8; idea++) {

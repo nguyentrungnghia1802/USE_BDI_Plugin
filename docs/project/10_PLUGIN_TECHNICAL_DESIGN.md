@@ -317,6 +317,19 @@ collection leakage before sorting content by ID. No adapter, USE concrete,
 runtime, AWT, or Swing type may cross this package boundary. ADR-0036 limits
 this slice to the domain contract; builders and renderers are separate tasks.
 
+`BdiDiagramBuilder.build(CurrentAnalysisSnapshot, Path)` is the T18 projection
+boundary. It reads normalized agent models, reuses `BdiIndex` supporting-plan
+relations and confirmed `MappingDocument` bindings, and emits one source group
+per imported model. Initial beliefs/goals, plans, triggers, contexts, and typed
+ordered steps retain portable source identity; `EXECUTES` edges carry one-based
+order metadata. Agent, external-action, belief, and message-receiver mappings
+become `MAPS_TO` edges only when confirmed. Missing required mappings become
+typed `GAP` nodes, while absent candidate suggestions cannot enter the snapshot
+or diagram. UML target state is read as `CURRENT`, `STALE`, or `UNKNOWN` from
+the immutable USE projection. Parameter-level and OCL/issue evidence projection
+remain T19 work; the builder performs no parsing, rule execution, OCL evaluation,
+or state mutation.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

@@ -39,7 +39,9 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-ORG-001..004 | `MoiseOrganizationParserAdapter`, `OrganizationModel`, `MasProjectImportService` | Auction normalization, missing/invalid/duplicate/unsupported, relocation, boundary, and package tests | ADR-0034, Moise organization evidence |
 | FR-ORG-005 | organization mapping records, `OrganizationConsistencyValidator`, `OrganizationRuleCatalog`, organization trace contributor | Auction baseline, role/mission/cardinality mutants, candidate/UNKNOWN, dedup/serialization, boundary tests | ADR-0035, organization consistency evidence, rule catalog |
 | FR-DIA-001 | `diagram` immutable values and constructor invariants | `DiagramModelTest`, `DiagramPackageBoundaryTest` ordering, duplicate, endpoint, immutability, relocation, and dependency-boundary tests | ADR-0036, architecture, technical design |
-| FR-DIA-002..008 | no implementation claimed | Planned requirements and open diagram task sequence | architecture, product requirements, checklist |
+| FR-DIA-002 | `BdiDiagramBuilder` snapshot/index projection | Minimal, Smart Queue, and Auction structure, ordering, support, determinism, candidate, and state-safety tests | architecture, technical design, checklist |
+| FR-DIA-003 | `BdiDiagramBuilder` confirmed UML mapping and gap projection; OCL evidence not yet projected | Auction confirmed/candidate mapping tests and Smart Queue receiver-gap test | architecture, technical design, open T19 gap |
+| FR-DIA-004..008 | no implementation claimed | Planned requirements and open diagram task sequence | architecture, product requirements, checklist |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
 | FR-CS-005..008 | `EvaluationManifestCodec`, `EvaluationRunner`, `EvaluationReportWriter`, `HeadlessStateFixture`, packaged evaluation script | manifest codec/runner tests, real Auction manifest integration, deterministic repeated outputs, timeout/tool-error tests, packaged smoke | ADR-0033, Auction evaluation manifest and result evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
@@ -85,7 +87,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | Moise organization boundary | official Moise 1.1 source/API/checksum/license evidence, Auction golden normalization, explicit diagnostics, and adapter/package boundary tests |
 | Static organization consistency | Auction role/class, mission/operation, cardinality/OCL baseline and mutant tests, portable trace serialization, ADR-0035 |
 | Unified issue trace | Auction traceability graph test and ADR-0027 |
-| Renderer-neutral diagram boundary | Diagram invariant/relocation/package tests and ADR-0036 |
+| Renderer-neutral BDI diagram | Diagram invariant/relocation/package tests, minimal/Smart Queue/Auction projection tests, and ADR-0036 |
 | Static environment consistency | CArtAgO adapter/mutant tests and ADR-0028 |
 | Persisted environment mappings | strict environment codec/repository, relocation and stale-target tests, ADR-0031, and persistence evidence |
 | Scoped Auction evaluation | versioned manifest, four portable mapping fixtures, runner tests, deterministic JSON/CSV/HTML, and packaged `AUCTION_EVALUATION_OK` smoke |
@@ -98,7 +100,7 @@ documentation. It intentionally traces groups instead of every Java record.
 - House Building or a second independent evaluation corpus.
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime-trace integration.
-- Snapshot-to-diagram projection, graph layout/rendering, diagram interaction,
+- Trace/OCL evidence projection, graph layout/rendering, diagram interaction,
   export, performance evidence, and presentation fixtures.
 - Complete external data/report/slides backup and release tag.
 

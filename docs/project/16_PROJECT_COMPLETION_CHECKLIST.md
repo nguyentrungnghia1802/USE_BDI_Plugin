@@ -53,6 +53,9 @@ are complete. Do not append per-day implementation diaries.
   have a moved-checkout fallback.
 - [x] Renderer-neutral diagram values are immutable, portable, deterministically
   ordered, and reject duplicate identities or missing node references.
+- [x] The current immutable snapshot projects BDI source groups, index-derived
+  goal support, ordered plan steps, confirmed UML mappings, and explicit gaps
+  without reparsing or changing USE state.
 
 ## 2. Quality Gates
 
@@ -76,7 +79,7 @@ Latest validated baseline after the T17 diagram-domain slice:
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 162 pass;
+- plugin tests: 167 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -85,7 +88,7 @@ Latest validated baseline after the T17 diagram-domain slice:
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 162 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 167 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -167,13 +170,25 @@ T17 diagram-domain evidence:
 - ADR-0036 keeps snapshot projection, rendering, UI navigation, export, and
   persistence outside this domain-only slice.
 
+T18 BDI diagram-projection evidence:
+
+- `BdiDiagramBuilderTest`: 5 tests cover minimal structure and supporting-plan
+  semantics, Smart Queue step order/message gaps, separate Auction source
+  groups and confirmed mappings, candidate exclusion, deterministic output,
+  portable labels, unknown-coordinate identity, target state, and USE
+  fingerprint preservation;
+- `BdiDiagramBuilder` consumes `CurrentAnalysisSnapshot`, `BdiIndex`, confirmed
+  mappings, and immutable USE values without parsing or validating again;
+- OCL/issue trace contribution remains open for T19 and is not claimed by the
+  current `FR-DIA-003` Partial status.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
 ## 3. Open Must Tasks
 
-- [ ] Derive BDI and cross-model diagram projections from the exact current
-  analysis snapshot without reparsing or changing validation semantics.
+- [ ] Reuse the existing traceability graph for source-to-mapping-to-UML/OCL-to-
+  issue diagram evidence without rerunning validation.
 - [ ] Add deterministic layout/rendering and read-only USE interaction over the
   renderer-neutral diagram model.
 - [ ] Complete diagram export, demo, mutant, screenshot, and performance
@@ -203,8 +218,8 @@ The following are future work, not hidden completion claims:
 - OD-006: external thesis artifact locations and release ownership;
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
-- Diagram snapshot projection, rendering, navigation, export, demo, and
-  performance evidence beyond the completed renderer-neutral domain boundary.
+- Diagram trace/OCL evidence, rendering, navigation, export, demo, and
+  performance evidence beyond the completed domain and BDI projection.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 

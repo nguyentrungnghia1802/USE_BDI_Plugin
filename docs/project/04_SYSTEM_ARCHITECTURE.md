@@ -26,7 +26,7 @@ flowchart LR
   UA --> EVAL
   VAL --> SNAP[Immutable current analysis snapshot]
   SNAP --> TRACE[Derived traceability graph]
-  SNAP -. planned projection .-> DIA[Renderer-neutral diagram model]
+  SNAP --> DIA[Renderer-neutral BDI diagram model]
   SNAP --> GUI[BDI Explorer and Problems]
   SNAP --> REP[JSON and HTML reports]
 ```
@@ -84,8 +84,11 @@ Hard rules:
     immutable project request. `BdiProjectImportWorker` runs composition off
     the EDT and publishes only the current generation on the EDT.
 14. `BdiQualityGateMain --jcm` validates the explicit project input, delegates
-    to `MasProjectAnalysisService`, writes the existing JSON/HTML serializers,
-    and prints sorted project diagnostics with the documented exit code.
+   to `MasProjectAnalysisService`, writes the existing JSON/HTML serializers,
+   and prints sorted project diagnostics with the documented exit code.
+15. `BdiDiagramBuilder` reads the exact frozen snapshot plus an explicit project
+    root and projects BDI structure, index-derived goal support, confirmed UML
+    mappings, and explicit gaps without parsing or validating again.
 
 Asynchronous imports carry a generation token so an older completion cannot
 replace a newer selection. Manual USE refresh resolves the current session
@@ -180,9 +183,10 @@ second analysis model. Its records contain only plugin-owned immutable values,
 portable `ProjectSourceId` v2 evidence, qualified semantic selection
 references, and issue enums. Length-framed node, edge, and group identities are
 deterministic; constructors reject duplicate identities, unknown endpoints,
-and checkout-absolute selection references. T17 establishes this boundary only.
-Snapshot projection, layout, Swing views, navigation, and export remain planned
-separate slices and must consume these records without reparsing sources.
+and checkout-absolute selection references. `BdiDiagramBuilder` now projects
+the exact current snapshot into this contract. Trace/OCL issue contribution,
+layout, Swing views, navigation, and export remain planned separate slices and
+must consume these records without reparsing sources.
 
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
