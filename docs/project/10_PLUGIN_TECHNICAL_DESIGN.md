@@ -334,6 +334,15 @@ mapping gaps, deduplicates equivalent visual edges, and sanitizes non-portable
 labels. It never reruns validation or OCL evaluation, reads live USE state, or
 mutates the analysis snapshot.
 
+The T20 Swing boundary is `BdiDiagramPanel` plus its private Java2D canvas. It
+uses no graph library or web server. A `SwingWorker` computes a deterministic
+renderer-owned layout from sorted immutable nodes; the EDT only publishes the
+result, paints, and handles bounded zoom, pan, fit/reset, selection, and
+tooltips. Controls are presentation-only, and the panel accepts a new
+`DiagramModel` rather than exposing mutable semantic state. T20 intentionally
+does not implement issue highlighting, Problems navigation, layout modes, or
+export.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

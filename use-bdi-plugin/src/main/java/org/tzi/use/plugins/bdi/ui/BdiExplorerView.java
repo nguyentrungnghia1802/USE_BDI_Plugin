@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,6 +45,11 @@ import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshotService;
 import org.tzi.use.plugins.bdi.application.MasProjectAnalysisRequest;
 import org.tzi.use.plugins.bdi.application.MasProjectAnalysisResult;
 import org.tzi.use.plugins.bdi.application.MasProjectAnalysisService;
+import org.tzi.use.plugins.bdi.diagram.BdiDiagramBuilder;
+import org.tzi.use.plugins.bdi.diagram.DiagramEdge;
+import org.tzi.use.plugins.bdi.diagram.DiagramModel;
+import org.tzi.use.plugins.bdi.diagram.DiagramNode;
+import org.tzi.use.plugins.bdi.diagram.TraceabilityDiagramContributor;
 import org.tzi.use.plugins.bdi.index.BdiIndex;
 import org.tzi.use.plugins.bdi.importer.AslDiagnostic;
 import org.tzi.use.plugins.bdi.importer.MasProjectDiagnostic;
@@ -67,6 +73,8 @@ import org.tzi.use.plugins.bdi.report.ReportFormat;
 import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
 import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
 import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
+import org.tzi.use.plugins.bdi.trace.TraceabilityGraph;
+import org.tzi.use.plugins.bdi.trace.TraceabilityGraphBuilder;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
 import org.tzi.use.plugins.bdi.use.LiveUseSnapshotProvider;
 import org.tzi.use.plugins.bdi.use.UseSnapshotContext;
@@ -84,6 +92,8 @@ public final class BdiExplorerView extends JPanel implements View {
     private final JLabel status;
     private final BdiProblemPanel problems;
     private final MappingEditorPanel mapping;
+    private final BdiDiagramPanel diagram;
+    private final JTabbedPane tabs;
     private final MappingSuggestionService mappingSuggestionService;
     private final CurrentAnalysisSnapshotService analysisService;
     private final MasProjectAnalysisService projectAnalysisService;
@@ -307,8 +317,11 @@ public final class BdiExplorerView extends JPanel implements View {
         problems = new BdiProblemPanel();
         mapping = new MappingEditorPanel(new org.tzi.use.plugins.bdi.persistence.MappingFileRepository(), projectRoot);
         mapping.setDocumentChangeListener(ignored -> refreshProblems());
-        JTabbedPane tabs = new JTabbedPane();
+        diagram = new BdiDiagramPanel();
+        diagram.setSelectionListener(this::showDiagramSelection);
+        tabs = new JTabbedPane();
         tabs.addTab("Explorer", split);
+        tabs.addTab("Diagram", diagram);
         tabs.addTab("Problems", problems);
         tabs.addTab("Mapping", mapping);
         add(tabs, BorderLayout.CENTER);
@@ -424,6 +437,14 @@ public final class BdiExplorerView extends JPanel implements View {
         return problems;
     }
 
+    BdiDiagramPanel diagramForTest() {
+        return diagram;
+    }
+
+    JTabbedPane tabsForTest() {
+        return tabs;
+    }
+
     boolean hasProblemCodeForTest(String code) {
         return problems.hasProblemCode(code);
     }
@@ -511,6 +532,7 @@ public final class BdiExplorerView extends JPanel implements View {
             problems.setProblems(BdiProblemCollector.collectConsistencyIssues(result.snapshot().issues()));
             exportButton.setEnabled(true);
             tree.setModel(new DefaultTreeModel(createTree(snapshot, result.projectDiagnostics())));
+            refreshDiagram(result.snapshot());
             String projectName = result.project().map(MasProjectModel::name).orElse("unknown");
             status.setText("JaCaMo project " + projectName + ": "
                     + snapshot.fileCount() + " AgentSpeak file(s), "
@@ -576,6 +598,57 @@ public final class BdiExplorerView extends JPanel implements View {
         problems.setProblems(BdiProblemCollector.collectConsistencyIssues(
                 currentAnalysis.orElseThrow().issues()));
         exportButton.setEnabled(true);
+        refreshDiagram(currentAnalysis.orElseThrow());
+    }
+
+    private void refreshDiagram(CurrentAnalysisSnapshot analysis) {
+        try {
+            Path root = diagramProjectRoot(analysis);
+            DiagramModel structure = new BdiDiagramBuilder().build(analysis, root);
+            TraceabilityGraph trace = new TraceabilityGraphBuilder().build(analysis, root);
+            DiagramModel evidence = new TraceabilityDiagramContributor().build(trace);
+            List<org.tzi.use.plugins.bdi.diagram.DiagramNode> nodes = new ArrayList<>(structure.nodes());
+            nodes.addAll(evidence.nodes());
+            List<DiagramEdge> edges = new ArrayList<>(structure.edges());
+            edges.addAll(evidence.edges());
+            List<org.tzi.use.plugins.bdi.diagram.DiagramGroup> groups = new ArrayList<>(structure.groups());
+            groups.addAll(evidence.groups());
+            diagram.setDiagram(new DiagramModel(nodes, edges, groups));
+        } catch (RuntimeException error) {
+            diagram.setUnavailable("current analysis could not be projected");
+        }
+    }
+
+    private Path diagramProjectRoot(CurrentAnalysisSnapshot analysis) {
+        if (configuration.projectRoot().isPresent()) {
+            return configuration.projectRoot().orElseThrow();
+        }
+        List<Path> sources = analysis.bdiImport().models().stream()
+                .map(AgentModel::source)
+                .toList();
+        if (sources.isEmpty()) {
+            return Path.of("").toAbsolutePath().normalize();
+        }
+        Path root = sources.get(0).getParent();
+        for (Path source : sources) {
+            while (root != null && !source.startsWith(root)) {
+                root = root.getParent();
+            }
+        }
+        return root == null ? Path.of("").toAbsolutePath().normalize() : root;
+    }
+
+    private void showDiagramSelection(DiagramNode node) {
+        StringBuilder selection = new StringBuilder();
+        selection.append("Diagram selection\n")
+                .append("Type: ").append(node.type()).append('\n')
+                .append("Label: ").append(node.label()).append('\n');
+        node.source().ifPresent(source -> selection.append("Source: ")
+                .append(source.projectPath()).append(':').append(source.beginLine()).append('\n'));
+        node.issueMarker().ifPresent(marker -> selection.append("Issue: ")
+                .append(marker.ruleId()).append(" [").append(marker.severity()).append(", ")
+                .append(marker.status()).append(", ").append(marker.certainty()).append("]\n"));
+        detail.setText(selection.toString());
     }
 
     private void chooseExportCurrentAnalysis() {

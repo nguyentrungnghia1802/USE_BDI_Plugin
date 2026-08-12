@@ -42,7 +42,9 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-DIA-002 | `BdiDiagramBuilder` snapshot/index projection | Minimal, Smart Queue, and Auction structure, ordering, support, determinism, candidate, and state-safety tests | architecture, technical design, checklist |
 | FR-DIA-003 | `BdiDiagramBuilder` plus `TraceabilityDiagramContributor` project confirmed UML/OCL targets and explicit gaps | `BdiDiagramBuilderTest`, `TraceabilityDiagramContributorTest` complete/gap/OCL-chain cases | ADR-0036/0037, architecture, technical design, checklist |
 | FR-DIA-004 | `TraceNode` rule/severity fields and `TraceabilityDiagramContributor` issue markers preserve status, certainty, and evidence | `TraceabilityDiagramContributorTest` metadata and certainty cases; Auction trace tests | ADR-0037, architecture, technical design |
-| FR-DIA-005..008 | no implementation claimed | Planned requirements and open diagram task sequence | architecture, product requirements, checklist |
+| FR-DIA-005 | no implementation claimed | Planned requirement and open static-MAS visualization task sequence | architecture, product requirements, checklist |
+| FR-DIA-006 | `BdiDiagramPanel`, `BdiDiagramCanvas`, and deterministic Swing layout | `BdiDiagramPanelTest`, `BdiExplorerViewTest` empty/populated/large/selection/zoom/state cases; highlighting remains open | ADR-0038, architecture, technical design |
+| FR-DIA-007..008 | no implementation claimed | Planned requirements and open navigation/export/evidence task sequence | architecture, product requirements, checklist |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
 | FR-CS-005..008 | `EvaluationManifestCodec`, `EvaluationRunner`, `EvaluationReportWriter`, `HeadlessStateFixture`, packaged evaluation script | manifest codec/runner tests, real Auction manifest integration, deterministic repeated outputs, timeout/tool-error tests, packaged smoke | ADR-0033, Auction evaluation manifest and result evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |

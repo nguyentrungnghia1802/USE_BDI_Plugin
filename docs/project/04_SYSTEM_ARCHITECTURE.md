@@ -189,9 +189,13 @@ projects the existing immutable `TraceabilityGraph` into the same model for
 source-to-mapping-to-UML/OCL-to-issue evidence. It does not invoke validation,
 OCL evaluation, or snapshot creation; it maps existing trace relations,
 preserves issue metadata, keeps explicit gap nodes, deduplicates equivalent
-visual edges, and replaces non-portable labels. Layout, Swing views, navigation,
-and export remain planned separate slices and must consume these records without
-reparsing sources.
+visual edges, and replaces non-portable labels. `BdiDiagramPanel` is a
+read-only Swing presentation boundary over the combined immutable model. Its
+custom Java2D canvas provides deterministic type-column layout, bounded zoom,
+shift/middle-button pan, fit/reset, selection, and tooltips. Layout computation
+runs in a `SwingWorker`; the canvas never edits the model or reruns analysis.
+Issue highlighting, navigation, export, and additional layout modes remain
+planned separate slices and must consume these records without reparsing.
 
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires

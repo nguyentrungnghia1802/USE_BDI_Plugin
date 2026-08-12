@@ -87,14 +87,15 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 167 pass, including JaCaMo project import, portable
+- Plugin suite: 175 pass, including JaCaMo project import, portable
   traceability, CArtAgO adapter/environment mutants, Moise organization
-  normalization, static organization rules/traceability, and boundary tests.
+  normalization, static organization rules/traceability, diagram projection,
+  read-only canvas, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
 - Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
-  integration tests, 167 plugin tests, and
+  integration tests, 175 plugin tests, and
   ZIP/TAR distributions succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
@@ -413,3 +414,24 @@ rule, evaluate OCL, access Swing/USE concrete state, or persist the diagram.
 
 Rendering, selection callbacks, navigation, export, and performance remain
 separate T20+ slices over the resulting immutable model.
+
+## 18. ADR-0038: Lightweight Custom Swing Diagram Canvas
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+T20 needs a visual USE presentation without turning the plugin into a graph
+editor or adding a dependency that complicates the shaded package. Option A,
+rejected, is to add JGraphX, GraphStream, or a web server before the rendering
+contract and license/package impact are justified. Option B, selected, uses a
+plugin-owned `BdiDiagramPanel` with a private Java2D `JComponent` canvas.
+
+The panel consumes only immutable `DiagramModel` values. A deterministic
+renderer-owned type-column layout runs in `SwingWorker`; the EDT publishes the
+layout and handles painting, bounded zoom, shift/middle-button pan, fit/reset,
+selection, and tooltips. Presentation controls never modify nodes, edges,
+groups, analysis snapshots, or USE state. Empty and large models have explicit
+states through the same scrollable canvas.
+
+Issue highlighting, Problems navigation, alternate layout modes, export, and
+performance evidence remain separate tasks and may not introduce semantic
+mutation into this boundary.

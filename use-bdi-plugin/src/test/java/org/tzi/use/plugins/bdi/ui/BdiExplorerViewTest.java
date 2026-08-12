@@ -86,6 +86,33 @@ class BdiExplorerViewTest {
     }
 
     @Test
+    void addsReadOnlyDiagramTabWithoutReplacingTheCurrentAnalysis() throws Exception {
+        BdiExplorerView view = new BdiExplorerView(new BdiImportService());
+
+        assertEquals(List.of("Explorer", "Diagram", "Problems", "Mapping"),
+                java.util.stream.IntStream.range(0, view.tabsForTest().getTabCount())
+                        .mapToObj(view.tabsForTest()::getTitleAt)
+                        .toList());
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+        var current = view.currentAnalysisForTest().orElseThrow();
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+        while (view.diagramForTest().modelForTest().nodes().isEmpty()
+                && System.nanoTime() < deadline) {
+            Thread.sleep(20);
+        }
+        flushEdt();
+
+        assertTrue(!view.diagramForTest().modelForTest().nodes().isEmpty());
+        SwingUtilities.invokeAndWait(() -> {
+            view.diagramForTest().fitForTest().doClick();
+            view.diagramForTest().resetForTest().doClick();
+        });
+        assertSame(current, view.currentAnalysisForTest().orElseThrow());
+        assertEquals(1, view.snapshotForTest().fileCount());
+    }
+
+    @Test
     void reimportsAllSelectedSourcesWhenOneSourceChanges(@TempDir Path tempDir) throws Exception {
         Path source = tempDir.resolve("changed.asl");
         Files.copy(fixture("fixtures/asl/valid/minimal.asl"), source);

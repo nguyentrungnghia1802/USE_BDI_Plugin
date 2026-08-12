@@ -74,12 +74,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the T17 diagram-domain slice:
+Latest validated baseline after the T20 read-only canvas slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 171 pass;
+- plugin tests: 175 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -88,7 +88,7 @@ Latest validated baseline after the T17 diagram-domain slice:
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 167 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 175 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -188,13 +188,28 @@ T18 BDI diagram-projection evidence:
 - FR-DIA-003 and FR-DIA-004 are Implemented; rendering, interaction, navigation,
   export, demos, mutants, screenshots, and performance evidence remain open.
 
+T20 read-only Swing canvas evidence:
+
+- `BdiDiagramPanelTest`: 3 tests cover explicit empty state, populated model,
+  asynchronous deterministic layout, selection callback, bounded zoom,
+  fit/reset controls, and a large scrollable preferred size;
+- `BdiExplorerViewTest`: the existing GUI regression suite now covers the
+  `Explorer | Diagram | Problems | Mapping` tabs, diagram update after import,
+  and preservation of the exact immutable analysis snapshot after canvas use;
+- `BdiDiagramPanel` uses a custom Java2D canvas with no external graph/web
+  dependency. Layout runs in `SwingWorker`; the panel is read-only and does not
+  rerun parsing, validation, OCL, or mutate USE state;
+- FR-DIA-006 is Partial: deterministic layout, rendering, zoom, pan, fit,
+  reset, selection, and tooltips are implemented; highlighting and navigation
+  remain T22/T24 work.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
 ## 3. Open Must Tasks
 
-- [ ] Add deterministic layout/rendering and read-only USE interaction over the
-  renderer-neutral diagram model.
+- [ ] Add BDI-focused plan, agent, and confirmed-mapping layout modes.
+- [ ] Add issue/mapping highlighting and Problems/diagram navigation.
 - [ ] Complete diagram export, demo, mutant, screenshot, and performance
   evidence before claiming the visualization initiative complete.
 
@@ -222,8 +237,8 @@ The following are future work, not hidden completion claims:
 - OD-006: external thesis artifact locations and release ownership;
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
-- Diagram trace/OCL evidence, rendering, navigation, export, demo, and
-  performance evidence beyond the completed domain and BDI projection.
+- Diagram highlighting, navigation, export, demo, mutant, screenshot, and
+  performance evidence beyond the completed trace projection and canvas.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 
@@ -241,7 +256,7 @@ The prioritized development candidates are maintained in
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |
-| Plugin GUI | action/Explorer tests and `scripts/smoke.ps1` |
+| Plugin GUI | action/Explorer/canvas tests and `scripts/smoke.ps1` |
 | Mapping/rules | mapping, orchestrator, catalog, config, suppression tests |
 | USE/OCL safety | facade/evaluator tests and fingerprint assertions |
 | Auction evaluation | `docs/project/evidence/` and case-study tests |
