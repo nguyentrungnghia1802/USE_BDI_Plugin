@@ -30,6 +30,7 @@ only when the selected task needs them.
 - [User guide](USER_GUIDE.md)
 - [Developer guide](DEVELOPER_GUIDE.md)
 - [Plugin install guide](PLUGIN_INSTALL_GUIDE.md)
+- [Demo guide](../guide/guide.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Thesis evidence](evidence/)
 - [Development ideas and JaCaMo roadmap](../idea/idea.md)

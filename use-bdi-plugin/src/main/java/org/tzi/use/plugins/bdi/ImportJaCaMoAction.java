@@ -12,6 +12,7 @@ import org.tzi.use.gui.main.ViewFrame;
 import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.application.BdiProjectConfigurationLoader;
 import org.tzi.use.plugins.bdi.ui.BdiExplorerView;
+import org.tzi.use.plugins.bdi.ui.BdiFileChooserSupport;
 import org.tzi.use.runtime.gui.IPluginAction;
 import org.tzi.use.runtime.gui.IPluginActionDelegate;
 import org.tzi.use.uml.sys.MSystem;
@@ -33,7 +34,7 @@ public final class ImportJaCaMoAction implements IPluginActionDelegate {
     }
 
     static JFileChooser createFileChooser() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = BdiFileChooserSupport.create();
         chooser.setDialogTitle("Import JaCaMo project");
         chooser.setMultiSelectionEnabled(false);
         chooser.setFileFilter(new FileNameExtensionFilter("JaCaMo projects (*.jcm)", "jcm"));

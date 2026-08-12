@@ -579,7 +579,7 @@ public final class BdiExplorerView extends JPanel implements View {
     }
 
     private void chooseExportCurrentAnalysis() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = BdiFileChooserSupport.create();
         chooser.setDialogTitle("Export current BDI analysis");
         FileNameExtensionFilter jsonFilter = new FileNameExtensionFilter(
                 ReportFormat.JSON.description(), ReportFormat.JSON.extension());

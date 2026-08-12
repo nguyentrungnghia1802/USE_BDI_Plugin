@@ -1,0 +1,94 @@
+model SmartQueueModel
+
+enum CounterStatus {free, busy}
+
+class Customer
+attributes
+  name : String
+end
+
+class Queue
+attributes
+  size : Integer
+operations
+  enqueue(item : String)
+  dequeue() : Customer
+end
+
+class Counter
+attributes
+  name : String
+  status : CounterStatus
+operations
+  serve(c : Customer)
+end
+
+class Manager
+attributes
+  name : String
+operations
+  reduceWaitingTime(q : Queue)
+  assignCustomer(q : Queue, c : Customer, counter : Counter)
+  requestOpenCounter(q : Queue)
+end
+
+class Staff
+attributes
+  name : String
+operations
+  openCounter(q : Queue)
+end
+
+association QueueCustomers between
+  Queue[1] role queue
+  Customer[*] role customers ordered
+end
+
+association QueueCounters between
+  Queue[1] role queue
+  Counter[*] role counters
+end
+
+association ManagerQueues between
+  Manager[1] role manager
+  Queue[*] role managedQueues
+end
+
+constraints
+
+context Queue
+  inv NonNegativeSize: self.size >= 0
+  inv SizeMatchesCustomers: self.size = self.customers->size()
+
+context Customer
+  inv NonEmptyName: self.name <> ''
+
+context Counter
+  inv NonEmptyName: self.name <> ''
+
+context Queue::enqueue(item : String)
+  pre NonEmptyItem: item <> ''
+  post SizeIncreased: self.size = self.size@pre + 1
+
+context Queue::dequeue() : Customer
+  pre QueueNotEmpty: self.size > 0
+  post SizeDecreased: self.size = self.size@pre - 1
+
+context Counter::serve(c : Customer)
+  pre CounterIsFree: self.status = #free
+  pre CustomerExists: c.isDefined()
+  post CounterBecomesBusy: self.status = #busy
+
+context Manager::assignCustomer(q : Queue, c : Customer, counter : Counter)
+  pre QueueNotEmpty: q.size > 0
+  pre CounterIsFree: counter.status = #free
+  pre CustomerInQueue: q.customers->includes(c)
+  post CounterBecomesBusy: counter.status = #busy
+  post QueueShrinks: q.size = q.size@pre - 1
+
+context Manager::requestOpenCounter(q : Queue)
+  pre QueueIsCrowded: q.size > 5
+  pre NoFreeCounter: q.counters->forAll(c | c.status = #busy)
+
+context Manager::reduceWaitingTime(q : Queue)
+  pre QueueExists: q.isDefined()

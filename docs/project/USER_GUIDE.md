@@ -11,13 +11,19 @@ the source of truth for the USE snapshot.
 - Maven 3.9 or newer when building from source.
 - This repository or a packaged USE 7.1.1 distribution.
 
-The checked-in Auction files are under
-`use-bdi-plugin/src/test/resources/fixtures/casestudy/auction/`:
+The canonical presentation-ready Auction files are under
+`use-bdi-plugin/demo/auction/`:
 
 - `Auction.use` - UML/OCL model.
+- `Auction.cmd` - deterministic object/link snapshot for the GUI.
 - `auction.jcm` - static JaCaMo project declaration.
 - `auctioneer.asl` - auctioneer AgentSpeak source.
 - `bidder.asl` - bidder AgentSpeak source.
+
+The original copies under `src/test/resources/fixtures` remain test-owned
+fixtures and are not the user-facing demo location. See the concise
+[demo guide](../guide/guide.md) for the Smart Queue walkthrough and exact UI
+buttons.
 
 Optional project configuration belongs beside the `.use` file:
 

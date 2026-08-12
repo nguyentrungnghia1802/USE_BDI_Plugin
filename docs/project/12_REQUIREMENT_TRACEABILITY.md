@@ -10,7 +10,7 @@ documentation. It intentionally traces groups instead of every Java record.
 
 | Requirement IDs | Primary source | Primary automated evidence | Detailed docs |
 | --- | --- | --- | --- |
-| FR-PLG-001..005 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction`, `ImportJaCaMoAction` | `HelloBdiActionTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | architecture, technical design, install/user guides |
+| FR-PLG-001..006 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction`, `ImportJaCaMoAction`, `BdiFileChooserSupport` | `HelloBdiActionTest`, `BdiPluginTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | architecture, technical design, install/user guides, demo guide |
 | FR-IMP-001..003 | `JasonAslParserAdapter`, `JasonAslImporter`, import result/diagnostics | `JasonAslParserAdapterTest`, `JasonAslImporterTest`, `AslImportReportTest` | technical design, ADR-0002..0008 |
 | FR-IMP-004..006 | `JasonAstToIrNormalizer`, `model/ir`, `BdiIndexBuilder` | `AgentModelTest`, `IrHierarchyTest`, golden and index tests | architecture, technical design |
 | FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | architecture, developer guide |

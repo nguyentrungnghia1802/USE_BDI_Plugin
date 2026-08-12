@@ -63,6 +63,24 @@ class DocumentationContractTest {
         }
 
         assertLocalLinksResolve(root.resolve("docs/README.md"), Files.readString(root.resolve("docs/README.md")));
+        Path demoGuide = root.resolve("docs/guide/guide.md");
+        assertTrue(Files.isRegularFile(demoGuide));
+        assertTrue(!Files.readString(demoGuide).isBlank());
+        assertLocalLinksResolve(demoGuide, Files.readString(demoGuide));
+        Path demoRoot = root.resolve("use-bdi-plugin/demo");
+        for (String demo : List.of("auction", "smart-queue")) {
+            Path directory = demoRoot.resolve(demo);
+            assertTrue(Files.isDirectory(directory), () -> "Missing canonical demo: " + directory);
+            assertTrue(Files.isRegularFile(directory.resolve("README.md")));
+            List<String> requiredFiles = demo.equals("auction")
+                    ? List.of("Auction.use", "Auction.cmd", "auctioneer.asl", "bidder.asl",
+                            "auction.jcm", "auction-organization.xml", "Auction.bdimap.json")
+                    : List.of("SmartQueue.use", "SmartQueue.cmd", "smart_queue_manager.asl");
+            for (String required : requiredFiles) {
+                assertTrue(Files.isRegularFile(directory.resolve(required)),
+                        () -> "Missing file in canonical demo: " + directory.resolve(required));
+            }
+        }
 
         String context = read(project.resolve("00_PROJECT_CONTEXT.md"));
         assertTrue(context.contains("USE `7.1.1`"));
@@ -75,6 +93,7 @@ class DocumentationContractTest {
 
         String requirements = read(project.resolve("01_PRODUCT_REQUIREMENTS.md"));
         assertTrue(requirements.contains("FR-PLG-001"));
+        assertTrue(requirements.contains("FR-PLG-006"));
         assertTrue(requirements.contains("FR-REP-004"));
         assertTrue(requirements.contains("FR-REL-004"));
 
@@ -83,6 +102,8 @@ class DocumentationContractTest {
         assertTrue(design.contains("Current mapping and suppression schema: `0.2.0`"));
         assertTrue(design.contains("Rule configuration remains"));
         assertTrue(design.contains("does not reject every unknown object field"));
+        assertTrue(design.contains("BdiFileChooserSupport"));
+        assertTrue(design.contains("Options.setLastDirectory"));
 
         String descriptor = read(root.resolve("use-bdi-plugin/src/main/resources/useplugin.xml"));
         for (String marker : List.of(

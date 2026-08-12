@@ -215,7 +215,7 @@ public final class MappingEditorPanel extends JPanel {
     }
 
     private void chooseSave() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = BdiFileChooserSupport.create();
         chooser.setDialogTitle("Save BDI mapping");
         chooser.setSelectedFile(new java.io.File("mapping.bdimap.json"));
         if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -228,7 +228,7 @@ public final class MappingEditorPanel extends JPanel {
     }
 
     private void chooseLoad() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = BdiFileChooserSupport.create();
         chooser.setDialogTitle("Load BDI mapping");
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {

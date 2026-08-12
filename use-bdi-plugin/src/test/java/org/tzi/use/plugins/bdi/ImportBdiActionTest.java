@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.tzi.use.plugins.bdi.application.BdiProjectConfiguration;
 import org.tzi.use.plugins.bdi.persistence.RuleConfigurationRepository;
+import org.tzi.use.plugins.bdi.ui.BdiFileChooserSupport;
 import org.tzi.use.plugins.bdi.validation.RuleConfiguration;
 import org.tzi.use.uml.mm.MModel;
 import org.tzi.use.uml.mm.ModelFactory;
@@ -25,6 +26,7 @@ class ImportBdiActionTest {
 
         assertTrue(chooser.isMultiSelectionEnabled());
         assertEquals("AgentSpeak files (*.asl)", chooser.getFileFilter().getDescription());
+        assertEquals(BdiFileChooserSupport.defaultDirectory().toFile(), chooser.getCurrentDirectory());
     }
 
     @Test
@@ -33,6 +35,7 @@ class ImportBdiActionTest {
 
         assertTrue(!chooser.isMultiSelectionEnabled());
         assertEquals("JaCaMo projects (*.jcm)", chooser.getFileFilter().getDescription());
+        assertEquals(BdiFileChooserSupport.defaultDirectory().toFile(), chooser.getCurrentDirectory());
     }
 
     @Test

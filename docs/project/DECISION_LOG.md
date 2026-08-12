@@ -86,14 +86,14 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 153 pass, including JaCaMo project import, portable
+- Plugin suite: 154 pass, including JaCaMo project import, portable
   traceability, CArtAgO adapter/environment mutants, Moise organization
   normalization, static organization rules/traceability, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
 - Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
-  integration tests, 153 plugin tests, and
+  integration tests, 154 plugin tests, and
   ZIP/TAR distributions succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.

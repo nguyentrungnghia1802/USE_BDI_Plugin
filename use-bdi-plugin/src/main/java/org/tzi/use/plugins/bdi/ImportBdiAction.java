@@ -16,6 +16,7 @@ import org.tzi.use.plugins.bdi.application.BdiProjectConfigurationLoader;
 import org.tzi.use.runtime.gui.IPluginAction;
 import org.tzi.use.runtime.gui.IPluginActionDelegate;
 import org.tzi.use.plugins.bdi.ui.BdiExplorerView;
+import org.tzi.use.plugins.bdi.ui.BdiFileChooserSupport;
 import org.tzi.use.uml.sys.MSystem;
 
 /** Opens the BDI explorer and starts a multi-file AgentSpeak import. */
@@ -38,7 +39,7 @@ public final class ImportBdiAction implements IPluginActionDelegate {
     }
 
     static JFileChooser createFileChooser() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = BdiFileChooserSupport.create();
         chooser.setDialogTitle("Import AgentSpeak source");
         chooser.setMultiSelectionEnabled(true);
         chooser.setFileFilter(new FileNameExtensionFilter("AgentSpeak files (*.asl)", "asl"));
