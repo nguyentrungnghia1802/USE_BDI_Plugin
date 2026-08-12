@@ -97,9 +97,11 @@ final class BdiDiagramCanvas extends JComponent {
 
     void setModel(DiagramModel model) {
         requireEdt();
+        String previousSelection = selectedNodeId;
         this.model = Objects.requireNonNull(model, "model");
         this.layout = BdiDiagramLayout.compute(DiagramModel.empty());
-        selectedNodeId = null;
+        selectedNodeId = this.model.nodes().stream()
+                .anyMatch(node -> node.id().equals(previousSelection)) ? previousSelection : null;
         zoom = 1.0;
         offsetX = 0.0;
         offsetY = 0.0;

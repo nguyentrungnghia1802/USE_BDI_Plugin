@@ -74,12 +74,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the T20 read-only canvas slice:
+Latest validated baseline after the T21 BDI layout-mode slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 175 pass;
+- plugin tests: 179 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -88,7 +88,7 @@ Latest validated baseline after the T20 read-only canvas slice:
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 175 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 179 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -203,12 +203,23 @@ T20 read-only Swing canvas evidence:
   reset, selection, and tooltips are implemented; highlighting and navigation
   remain T22/T24 work.
 
+T21 BDI-focused layout-mode evidence:
+
+- `DiagramModeProjectorTest`: 3 tests cover empty-model behavior, deterministic
+  BDI Plan filtering with preserved `EXECUTES` step order, and Mapping View
+  retention of confirmed mappings, explicit gaps, and related issue evidence;
+- `BdiDiagramPanelTest`: 4 tests now cover mode switching without dropping the
+  source snapshot or selection, plus fit-to-screen after a mode change;
+- `BdiDiagramPanel` exposes All, BDI Plan, Agent Overview, and Mapping modes
+  through a presentation-only selector. The projector consumes the existing
+  immutable `DiagramModel`; it never reparses, revalidates, evaluates OCL, or
+  mutates USE state.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
 ## 3. Open Must Tasks
 
-- [ ] Add BDI-focused plan, agent, and confirmed-mapping layout modes.
 - [ ] Add issue/mapping highlighting and Problems/diagram navigation.
 - [ ] Complete diagram export, demo, mutant, screenshot, and performance
   evidence before claiming the visualization initiative complete.
@@ -238,7 +249,8 @@ The following are future work, not hidden completion claims:
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
 - Diagram highlighting, navigation, export, demo, mutant, screenshot, and
-  performance evidence beyond the completed trace projection and canvas.
+  performance evidence beyond the completed trace projection, canvas, and T21
+  layout modes.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 

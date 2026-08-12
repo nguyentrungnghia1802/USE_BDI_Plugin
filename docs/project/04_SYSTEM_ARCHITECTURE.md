@@ -194,8 +194,14 @@ read-only Swing presentation boundary over the combined immutable model. Its
 custom Java2D canvas provides deterministic type-column layout, bounded zoom,
 shift/middle-button pan, fit/reset, selection, and tooltips. Layout computation
 runs in a `SwingWorker`; the canvas never edits the model or reruns analysis.
-Issue highlighting, navigation, export, and additional layout modes remain
-planned separate slices and must consume these records without reparsing.
+T21 adds `DiagramViewMode` and a renderer-side `DiagramModeProjector` for the
+BDI Plan, Agent Overview, and confirmed Mapping views. A mode filters the
+already-built immutable model, preserves `EXECUTES` step-order attributes,
+keeps explicit mapping gaps, and retains a selected node when it remains
+visible; it never reparses, revalidates, evaluates OCL, or mutates USE state.
+Issue highlighting, navigation, export, and extensions beyond these modes
+remain planned separate slices and must consume these records without
+reparsing.
 
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires

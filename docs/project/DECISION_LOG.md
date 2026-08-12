@@ -87,15 +87,15 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 175 pass, including JaCaMo project import, portable
+- Plugin suite: 179 pass, including JaCaMo project import, portable
   traceability, CArtAgO adapter/environment mutants, Moise organization
   normalization, static organization rules/traceability, diagram projection,
-  read-only canvas, and boundary tests.
+  read-only canvas, layout modes, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
 - Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
-  integration tests, 175 plugin tests, and
+  integration tests, 179 plugin tests, and
   ZIP/TAR distributions succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
@@ -432,6 +432,26 @@ selection, and tooltips. Presentation controls never modify nodes, edges,
 groups, analysis snapshots, or USE state. Empty and large models have explicit
 states through the same scrollable canvas.
 
-Issue highlighting, Problems navigation, alternate layout modes, export, and
-performance evidence remain separate tasks and may not introduce semantic
-mutation into this boundary.
+Issue highlighting, Problems navigation, layout extensions beyond the T21
+modes, export, and performance evidence remain separate tasks and may not
+introduce semantic mutation into this boundary.
+
+## 19. ADR-0039: Diagram Modes Are Immutable Projections
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+T21 needs explanation-oriented views without creating a second analysis path.
+Option A, rejected, is to reparse AgentSpeak or rerun validation/OCL whenever
+the user changes a view. Option B, selected, uses a package-private
+`DiagramModeProjector` over the current immutable `DiagramModel`, exposed by
+the `BdiDiagramPanel` selector as `ALL`, `BDI_PLAN`, `AGENT_OVERVIEW`, and
+`MAPPING`.
+
+The BDI Plan projection keeps the existing `EXECUTES` edge attributes so plan
+step order remains authoritative. Agent Overview selects the agent-centric
+BDI node types. Mapping View retains confirmed `MAPS_TO` relations,
+`MISSING_MAPPING` gaps, and related `HAS_ISSUE` evidence, while excluding
+unconfirmed candidate relations. A selected node is retained when its stable
+ID remains in the projection. These are presentation filters only: they do not
+change semantic snapshots, traceability evidence, current USE state, or
+validation results.

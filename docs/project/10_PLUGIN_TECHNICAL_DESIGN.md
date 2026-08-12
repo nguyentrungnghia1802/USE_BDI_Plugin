@@ -334,14 +334,20 @@ mapping gaps, deduplicates equivalent visual edges, and sanitizes non-portable
 labels. It never reruns validation or OCL evaluation, reads live USE state, or
 mutates the analysis snapshot.
 
-The T20 Swing boundary is `BdiDiagramPanel` plus its private Java2D canvas. It
+The T20/T21 Swing boundary is `BdiDiagramPanel` plus its private Java2D canvas. It
 uses no graph library or web server. A `SwingWorker` computes a deterministic
 renderer-owned layout from sorted immutable nodes; the EDT only publishes the
 result, paints, and handles bounded zoom, pan, fit/reset, selection, and
 tooltips. Controls are presentation-only, and the panel accepts a new
-`DiagramModel` rather than exposing mutable semantic state. T20 intentionally
-does not implement issue highlighting, Problems navigation, layout modes, or
-export.
+`DiagramModel` rather than exposing mutable semantic state. T21 adds a
+`DiagramViewMode` selector and `DiagramModeProjector`: BDI Plan filters to the
+Goal/Plan/Trigger/Context/Action path while retaining ordered `EXECUTES`
+attributes, Agent Overview keeps agent goals/plans/beliefs/messages/actions,
+and Mapping keeps confirmed `MAPS_TO` relations, `MISSING_MAPPING` gaps, and
+related issue evidence. Switching mode reuses the current model and preserves
+selection when the node remains visible; it does not parse, validate, run OCL,
+or change USE state. Issue highlighting, Problems navigation, layout
+extensions beyond these modes, and export remain future slices.
 
 ## 10. Definition Of Done
 

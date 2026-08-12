@@ -87,6 +87,25 @@ class BdiDiagramPanelTest {
         assertFalse(panel.stateForTest().getText().contains("failed"));
     }
 
+    @Test
+    void switchesModeWithoutDroppingSelectionOrSourceModel() throws Exception {
+        DiagramNode agent = node(DiagramNodeType.AGENT, "agent", "auctioneer");
+        DiagramNode action = node(DiagramNodeType.ACTION, "action", "sell-step");
+        DiagramModel source = new DiagramModel(List.of(agent, action), List.of(), List.of());
+        BdiDiagramPanel panel = new BdiDiagramPanel();
+
+        SwingUtilities.invokeAndWait(() -> panel.setDiagram(source));
+        waitForLayout(panel);
+        SwingUtilities.invokeAndWait(() -> panel.canvasForTest().selectNodeForTest(agent.id()));
+        SwingUtilities.invokeAndWait(() -> panel.setViewMode(DiagramViewMode.BDI_PLAN));
+        waitForLayout(panel);
+
+        assertEquals(DiagramViewMode.BDI_PLAN, panel.modeForTest());
+        assertEquals(source, panel.sourceModelForTest());
+        assertEquals(agent, panel.canvasForTest().selectedNodeForTest().orElseThrow());
+        SwingUtilities.invokeAndWait(() -> panel.fitForTest().doClick());
+    }
+
     private static DiagramNode node(DiagramNodeType type, String namespace, String reference) {
         return new DiagramNode(type, DiagramSelectionRef.of(namespace, reference), reference,
                 Optional.empty(), Optional.empty(), Map.of());

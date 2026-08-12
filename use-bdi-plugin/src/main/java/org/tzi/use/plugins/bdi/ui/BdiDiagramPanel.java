@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,8 +27,11 @@ public final class BdiDiagramPanel extends JPanel {
     private final JButton zoomOut;
     private final JButton fit;
     private final JButton reset;
+    private final JComboBox<DiagramViewMode> modeSelector;
     private final AtomicLong generation = new AtomicLong();
     private DiagramModel model = DiagramModel.empty();
+    private DiagramModel sourceModel = DiagramModel.empty();
+    private DiagramViewMode mode = DiagramViewMode.ALL;
     private SwingWorker<BdiDiagramLayout.Layout, Void> layoutWorker;
 
     public BdiDiagramPanel() {
@@ -38,6 +42,14 @@ public final class BdiDiagramPanel extends JPanel {
         zoomOut = button("-", "Zoom out");
         fit = button("Fit", "Fit diagram to the viewport");
         reset = button("Reset", "Reset zoom and pan");
+        modeSelector = new JComboBox<>(DiagramViewMode.values());
+        modeSelector.setToolTipText("Choose a presentation-only diagram view");
+        modeSelector.addActionListener(event -> {
+            DiagramViewMode selected = (DiagramViewMode) modeSelector.getSelectedItem();
+            if (selected != null) {
+                setViewMode(selected);
+            }
+        });
         zoomIn.addActionListener(event -> canvas.zoomIn());
         zoomOut.addActionListener(event -> canvas.zoomOut());
         fit.addActionListener(event -> canvas.fitToScreen());
@@ -49,6 +61,8 @@ public final class BdiDiagramPanel extends JPanel {
         actions.add(zoomOut);
         actions.add(fit);
         actions.add(reset);
+        actions.add(new JLabel("View:"));
+        actions.add(modeSelector);
         controls.add(actions, BorderLayout.WEST);
         controls.add(state, BorderLayout.CENTER);
         controls.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -65,19 +79,38 @@ public final class BdiDiagramPanel extends JPanel {
             SwingUtilities.invokeLater(() -> setDiagram(diagram));
             return;
         }
-        model = diagram;
-        canvas.setModel(diagram);
+        sourceModel = diagram;
+        publishCurrentMode();
+    }
+
+    public void setViewMode(DiagramViewMode requestedMode) {
+        Objects.requireNonNull(requestedMode, "requestedMode");
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> setViewMode(requestedMode));
+            return;
+        }
+        mode = requestedMode;
+        if (modeSelector.getSelectedItem() != requestedMode) {
+            modeSelector.setSelectedItem(requestedMode);
+        }
+        publishCurrentMode();
+    }
+
+    private void publishCurrentMode() {
+        DiagramModel visibleDiagram = DiagramModeProjector.project(sourceModel, mode);
+        model = visibleDiagram;
+        canvas.setModel(visibleDiagram);
         long request = generation.incrementAndGet();
-        state.setText(diagram.nodes().isEmpty()
+        state.setText(visibleDiagram.nodes().isEmpty()
                 ? "No diagram data"
-                : "Laying out " + diagram.nodes().size() + " node(s)...");
+                : mode + ": laying out " + visibleDiagram.nodes().size() + " node(s)...");
         if (layoutWorker != null && !layoutWorker.isDone()) {
             layoutWorker.cancel(true);
         }
         layoutWorker = new SwingWorker<>() {
             @Override
             protected BdiDiagramLayout.Layout doInBackground() {
-                return BdiDiagramLayout.compute(diagram);
+                return BdiDiagramLayout.compute(visibleDiagram);
             }
 
             @Override
@@ -87,9 +120,10 @@ public final class BdiDiagramPanel extends JPanel {
                 }
                 try {
                     canvas.setLayoutSnapshot(get());
-                    state.setText(diagram.nodes().isEmpty()
+                    state.setText(visibleDiagram.nodes().isEmpty()
                             ? "No diagram data"
-                            : diagram.nodes().size() + " node(s), " + diagram.edges().size() + " edge(s)");
+                            : mode + ": " + visibleDiagram.nodes().size() + " node(s), "
+                                    + visibleDiagram.edges().size() + " edge(s)");
                 } catch (Exception error) {
                     state.setText("Diagram layout failed: " + error.getMessage());
                 }
@@ -108,7 +142,8 @@ public final class BdiDiagramPanel extends JPanel {
         if (layoutWorker != null && !layoutWorker.isDone()) {
             layoutWorker.cancel(true);
         }
-        model = DiagramModel.empty();
+        sourceModel = DiagramModel.empty();
+        model = sourceModel;
         canvas.setModel(model);
         state.setText("Diagram unavailable: " + message);
     }
@@ -119,6 +154,18 @@ public final class BdiDiagramPanel extends JPanel {
 
     DiagramModel modelForTest() {
         return model;
+    }
+
+    DiagramModel sourceModelForTest() {
+        return sourceModel;
+    }
+
+    DiagramViewMode modeForTest() {
+        return mode;
+    }
+
+    JComboBox<DiagramViewMode> modeSelectorForTest() {
+        return modeSelector;
     }
 
     BdiDiagramCanvas canvasForTest() {
