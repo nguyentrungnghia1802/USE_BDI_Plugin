@@ -1,5 +1,7 @@
 mas smart_home {
     agent resident : resident.asl
+    workspace smart_home_environment {
+    }
     organisation smart_home_organization : smart-home-organization.xml {
     }
 }

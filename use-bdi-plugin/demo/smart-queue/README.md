@@ -7,6 +7,8 @@
   and requesting another counter when the queue is crowded.
 - A deterministic `SmartQueue.cmd` snapshot with six waiting customers and one
   free counter, so the OCL state can be inspected in the GUI.
+- A confirmed mapping from the manager's `assignCustomer` external action to
+  `Manager::assignCustomer(...)` in the USE model.
 - The separation between the immutable BDI import and the mutable USE state.
 
 The AgentSpeak source is an analysis input, not a live runtime. The plugin does
@@ -21,8 +23,12 @@ not execute the plans or synchronize a JaCaMo workspace in this demo.
    `View > Create View > Object diagram` to show the snapshot.
 4. Choose `Plugins > AgentSpeak > Import AgentSpeak...` and select
    `smart_queue_manager.asl`.
-5. Expand the BDI Explorer to show beliefs, the decision goal, conditions, and
-   action steps. Click `Refresh USE Snapshot` before showing `Problems`.
+5. In `Mapping`, click `Load...` and select `SmartQueue.bdimap.json`.
+6. Open `Diagram`, select `BDI Plan`, click `Fit`, and show
+   `reduce_waiting_time`, its crowded-queue context, `assign_customer`, and the
+   mapped `Manager::assignCustomer(...)` operation. Select a plan and use
+   `Focus Goal/Plan` to isolate the decision branch.
+7. Click `Refresh USE Snapshot` before showing `Problems`.
 
 ## Expected observation
 

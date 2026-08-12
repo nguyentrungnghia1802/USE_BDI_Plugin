@@ -74,12 +74,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the T24 focus/navigation slice:
+Latest validated baseline after the T25 canonical-demo slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 192 pass;
+- plugin tests: 196 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -87,8 +87,9 @@ Latest validated baseline after the T24 focus/navigation slice:
 - `Family.use`/`Family.cmd` and `SmartHome.use`/`SmartHome.cmd`, including
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
-- root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 192 plugin tests, and ZIP/TAR assembly succeed;
+- root `mvn verify`: the most recent isolated T24 run has all five modules, 1
+  USE core integration test, 121 GUI integration tests, 192 plugin tests, and
+  ZIP/TAR assembly succeed; T25 adds four module-level canonical demo tests;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -185,8 +186,8 @@ T18 BDI diagram-projection evidence:
 - `TraceabilityDiagramContributor` consumes only the immutable
   `TraceabilityGraph`, so diagram generation does not rerun validation or OCL;
   `TraceNode` preserves issue rule ID, severity, status, certainty, and evidence;
-- FR-DIA-003 and FR-DIA-004 are Implemented; rendering, interaction, navigation,
-  export, demos, mutants, screenshots, and performance evidence remain open.
+- FR-DIA-003 and FR-DIA-004 are Implemented; export, mutants, screenshots, and
+  performance evidence remain open.
 
 T20 read-only Swing canvas evidence:
 
@@ -268,6 +269,24 @@ T24 demo-oriented focus/navigation evidence:
   agent/goal/plan focus are implemented. Direct cross-tab mapping/source
   navigation remains open.
 
+T25 canonical-demo integration evidence:
+
+- `CanonicalDemoDiagramTest`: 4 tests build diagrams from the user-facing
+  Family Person, Smart Queue, Smart Home, and Auction bundles rather than
+  duplicate test fixtures.
+- Family asserts a compact goal/plan/`greet`/`Person::greet()` path; Smart
+  Queue asserts crowded-queue context, supporting plans, the external
+  `assignCustomer` action, and its confirmed `Manager::assignCustomer(...)`
+  mapping.
+- Smart Home's `.jcm` exposes the resident under BDI and a static workspace
+  under Environment. Auction asserts three agent instances, organization,
+  resource, action/message, UML/OCL, issue evidence, and a bounded MAS overview.
+- Each demo README and the shared guide now give exact Diagram mode, Fit,
+  focus/layer, and Reset steps. `DocumentationContractTest` requires the
+  Smart Queue mapping plus Diagram/Fit walkthrough markers for all four demos.
+- FR-DIA-008 is Partial: canonical demo validation is implemented; mutant,
+  screenshot, export, and performance evidence remain separate tasks.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
@@ -320,6 +339,7 @@ The prioritized development candidates are maintained in
 | Unified traceability | Auction complete-chain, explicit-gap, certainty, deduplication, and portability tests |
 | Static MAS overview | `MasOverviewDiagramBuilderTest`, `.jcm` Explorer regression, layer rendering, and ADR-0041 |
 | Diagram focus/navigation | `DiagramNavigationProjectorTest`, panel/Explorer `.asl` and `.jcm` controls, and ADR-0042 |
+| Canonical diagram demos | `CanonicalDemoDiagramTest`, four bundle READMEs, shared demo guide, and documentation contract |
 | CArtAgO environment pilot | official annotation adapter, three mutants, UNKNOWN state, trace, catalog, package smoke |
 | Persisted environment mappings | typed document codec/repository, relocation, candidate/unknown, stale-target, BDI regression, and catalog tests |
 | Plugin GUI | action/Explorer/canvas tests and `scripts/smoke.ps1` |

@@ -238,6 +238,16 @@ whose layer is absent are disabled, so direct `.asl` imports do not imply
 JaCaMo structures. Cross-tab mapping/source navigation beyond the existing
 selection detail and Problems-to-Diagram path remains separate work.
 
+T25 protects the presentation boundary with source-backed canonical demo
+integration tests. Family Person and Smart Queue use direct AgentSpeak
+projection; Smart Home and Auction also use the normalized static `.jcm` MAS
+overview. Their portable mapping files feed only confirmed bindings into the
+existing snapshot. Smart Home's workspace and Auction's workspace,
+institution, organization, action, and message are static source concepts, not
+runtime claims. The tests compile the canonical USE specifications where OCL
+evidence is required and build the existing BDI, MAS, and trace projections;
+they introduce no demo-specific parser or diagram model.
+
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires
 an explicit project root, uses portable `ProjectSourceId` v2 provenance, emits

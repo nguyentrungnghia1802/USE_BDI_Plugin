@@ -153,9 +153,12 @@ và chạy từng dòng trong shell/command workflow; cách truyền `.cmd` ở 
    trong BDI Explorer; chọn `smart_queue_manager.asl`.
 4. Mở rộng goal `reduce_waiting_time` và các plan để show nhánh quyết định
    `assign_customer` khi queue có sáu customer và `counter2` đang free.
-5. Bấm `Refresh USE Snapshot`, rồi mở `Problems`. Invariant
+5. Trong `Mapping`, bấm `Load...`, chọn `SmartQueue.bdimap.json`; mở
+   `Diagram`, chọn `BDI Plan`, bấm `Fit` và show đường đi tới
+   `Manager::assignCustomer(...)`. Có thể chọn plan rồi bấm `Focus Goal/Plan`.
+6. Bấm `Refresh USE Snapshot`, rồi mở `Problems`. Invariant
    `SizeMatchesCustomers` được kiểm tra trên snapshot USE hiện tại.
-6. Thay đổi state trong USE, bấm lại `Refresh USE Snapshot` và giải thích rằng
+7. Thay đổi state trong USE, bấm lại `Refresh USE Snapshot` và giải thích rằng
    plugin không tự sửa `MSystem`, không tự chạy plan và không tự nhận event live.
 
 ## 6. Demo C: Family Person
@@ -179,7 +182,9 @@ Mở thư mục [`demo/family-person`](../../use-bdi-plugin/demo/family-person/)
 2. Chọn `Plugins > AgentSpeak > Import JaCaMo Project...`, mở
    `family-person.jcm` và mở rộng `person.asl` trong BDI Explorer.
 3. Trong `Mapping`, bấm `Load...` và chọn `FamilyPerson.bdimap.json`; sau đó
-   bấm `Refresh USE Snapshot` và mở `Problems`.
+   mở `Diagram`, chọn `BDI Plan`, bấm `Fit` và show đường đi
+   `introduce_family -> greet -> Person::greet()`.
+4. Bấm `Refresh USE Snapshot` và mở `Problems`.
 
 Đây là ví dụ cơ bản nhất để giải thích quan hệ một `Person` thuộc một
 `Family`, rồi nối goal/plan/action AgentSpeak vào mô hình UML/OCL.
@@ -205,7 +210,8 @@ Mở thư mục [`demo/smart-home`](../../use-bdi-plugin/demo/smart-home/):
 2. Chọn `Plugins > AgentSpeak > Import JaCaMo Project...`, mở
    `smart-home.jcm`, rồi mở rộng `resident.asl`.
 3. Trong `Mapping`, load `SmartHome.bdimap.json`, bấm `Refresh USE Snapshot`
-   và show decision path `prepare_evening -> turn_on_lights`.
+   rồi mở `Diagram`. Dùng `MAS Overview` để tách BDI/Environment và dùng
+   `BDI Plan` để show `prepare_evening -> turn_on_lights`.
 
 Ví dụ này phù hợp để giải thích decision-making: goal/plan/action nằm ở BDI,
 còn Home/Resident/Light và trạng thái snapshot nằm ở USE. Các belief/context

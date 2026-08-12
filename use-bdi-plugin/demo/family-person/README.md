@@ -23,9 +23,11 @@ parser/OCL failure, and it does not start a JaCaMo runtime.
    and the family membership link.
 4. Choose `Plugins > AgentSpeak > Import JaCaMo Project...` and select
    `family-person.jcm`.
-5. In BDI Explorer, expand `person.asl` to show the goal, plan, and mapped
-   `greet` action. Open `Mapping` and load `FamilyPerson.bdimap.json`.
-6. Click `Refresh USE Snapshot`, then open `Problems` and
+5. Open `Mapping`, click `Load...`, and select `FamilyPerson.bdimap.json`.
+6. Open `Diagram`, choose `BDI Plan`, click `Fit`, and show the compact path
+   `introduce_family -> introduce_family plan -> greet -> Person::greet()`.
+   Use `Focus Goal/Plan` after selecting the goal or plan if needed.
+7. Click `Refresh USE Snapshot`, then open `Problems` and
    `Export Current Analysis...` to show the valid baseline result.
 
 The repository-level command and UI guide is

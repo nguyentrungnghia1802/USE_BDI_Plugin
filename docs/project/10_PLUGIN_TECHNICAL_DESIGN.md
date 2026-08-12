@@ -389,6 +389,17 @@ fit the completed asynchronous layout for presentation. Unit tests cover layer
 filtering, bounded focus, hidden/missing focus, reset, and source immutability;
 Explorer tests cover both direct `.asl` and Auction `.jcm` control behavior.
 
+T25 treats `use-bdi-plugin/demo` as executable presentation input.
+`CanonicalDemoDiagramTest` resolves each bundle from the repository, loads its
+portable `.bdimap.json`, and calls the same `BdiDiagramBuilder`,
+`MasOverviewDiagramBuilder`, and `TraceabilityDiagramContributor` boundaries
+used by Explorer. Family asserts a compact goal-plan-action-operation path;
+Smart Queue asserts decision context plus its confirmed manager operation;
+Smart Home asserts separate BDI and static environment layers; Auction asserts
+bounded agent/organization/environment plus BDI, UML/OCL, and issue content.
+`DocumentationContractTest` requires every canonical walkthrough to document
+the Diagram tab and Fit control. These tests do not launch Jason or JaCaMo.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

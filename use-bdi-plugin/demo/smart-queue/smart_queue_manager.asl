@@ -32,6 +32,7 @@ waiting_customer(queue1, customer6).
     : waiting_customer(Q, Customer)
 <-
     .print("Assigning ", Customer, " to ", Counter);
+    assignCustomer(Q, Customer, Counter);
     -waiting_customer(Q, Customer);
     -counter_status(Counter, free);
     +counter_status(Counter, busy);

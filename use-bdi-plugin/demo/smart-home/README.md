@@ -7,6 +7,8 @@
   `turn_on_lights` decision action.
 - A deterministic snapshot with one home, one resident, and one light.
 - Static JaCaMo/Moise project context alongside the UML/OCL and BDI sources.
+- A static `smart_home_environment` workspace reference that makes the agent
+  and environment layers distinct without starting CArtAgO.
 - `smart-home-organization.use` and `smart-home-organization.cmd` provide a
   valid standalone organization UML/OCL snapshot.
 
@@ -22,7 +24,11 @@ imports and checks the models statically; it does not execute a JaCaMo runtime.
    `smart-home.jcm`.
 4. In BDI Explorer, expand `resident.asl` to show the preparation goal, plan,
    and `turn_on_lights` action. Load `SmartHome.bdimap.json` in `Mapping`.
-5. Click `Refresh USE Snapshot`, inspect `Problems`, and export the current
+5. Open `Diagram`, select `MAS Overview`, and click `Fit`. Show the Resident
+   under the BDI layer, `smart_home_environment` under Environment, and the
+   static-analysis legend. Switch to `BDI Plan` to show
+   `prepare_evening -> turn_on_lights -> Resident::turn_on_lights()`.
+6. Click `Refresh USE Snapshot`, inspect `Problems`, and export the current
    analysis if a report is needed.
 
 The repository-level command and UI guide is

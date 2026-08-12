@@ -75,7 +75,8 @@ class DocumentationContractTest {
             List<String> requiredFiles = switch (demo) {
                 case "auction" -> List.of("Auction.use", "Auction.cmd", "auctioneer.asl", "bidder.asl",
                         "auction.jcm", "auction-organization.xml", "Auction.bdimap.json");
-                case "smart-queue" -> List.of("SmartQueue.use", "SmartQueue.cmd", "smart_queue_manager.asl");
+                case "smart-queue" -> List.of("SmartQueue.use", "SmartQueue.cmd", "smart_queue_manager.asl",
+                        "SmartQueue.bdimap.json");
                 case "family-person" -> List.of("Family.use", "Family.cmd", "person.asl",
                         "family-person.jcm", "family-organization.xml", "family-organization.use",
                         "family-organization.cmd",
@@ -90,6 +91,11 @@ class DocumentationContractTest {
                 assertTrue(Files.isRegularFile(directory.resolve(required)),
                         () -> "Missing file in canonical demo: " + directory.resolve(required));
             }
+            String walkthrough = Files.readString(directory.resolve("README.md"));
+            assertTrue(walkthrough.contains("`Diagram`"),
+                    () -> "Canonical demo walkthrough misses Diagram steps: " + directory);
+            assertTrue(walkthrough.contains("`Fit`"),
+                    () -> "Canonical demo walkthrough misses fit-to-screen guidance: " + directory);
             if (demo.equals("family-person") || demo.equals("smart-home")) {
                 assertTrue(Files.notExists(directory.resolve("mutants")),
                         () -> "Teaching baseline must not contain mutants: " + directory);
