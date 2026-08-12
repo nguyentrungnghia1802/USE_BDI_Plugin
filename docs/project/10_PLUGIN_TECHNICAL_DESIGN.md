@@ -346,8 +346,17 @@ attributes, Agent Overview keeps agent goals/plans/beliefs/messages/actions,
 and Mapping keeps confirmed `MAPS_TO` relations, `MISSING_MAPPING` gaps, and
 related issue evidence. Switching mode reuses the current model and preserves
 selection when the node remains visible; it does not parse, validate, run OCL,
-or change USE state. Issue highlighting, Problems navigation, layout
-extensions beyond these modes, and export remain future slices.
+or change USE state. T22 adds `DiagramVisualStateResolver` and
+`DiagramHighlightPath` as presentation-only consumers of node attributes,
+issue markers, and evidence edges. Confirmed/potential/unknown issue states
+and missing/stale mapping states use both a visible badge and a distinct
+border treatment, while selection remains an independent overlay. Selecting a
+Problems row focuses the matching rule ID in Diagram and selects its issue
+node; node details expose source, status, mapping state, and evidence. A new
+immutable projection reuses the active rule ID so mapping refresh never leaves
+stale highlight state. UNKNOWN is explicitly labeled UNKNOWN, never PASS.
+Navigation beyond this issue-to-evidence path, layout extensions beyond these
+modes, and export remain future slices.
 
 ## 10. Definition Of Done
 

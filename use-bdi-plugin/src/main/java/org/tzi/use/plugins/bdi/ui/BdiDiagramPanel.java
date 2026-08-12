@@ -3,6 +3,7 @@ package org.tzi.use.plugins.bdi.ui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
@@ -32,6 +33,7 @@ public final class BdiDiagramPanel extends JPanel {
     private DiagramModel model = DiagramModel.empty();
     private DiagramModel sourceModel = DiagramModel.empty();
     private DiagramViewMode mode = DiagramViewMode.ALL;
+    private String highlightedIssueRuleId;
     private SwingWorker<BdiDiagramLayout.Layout, Void> layoutWorker;
 
     public BdiDiagramPanel() {
@@ -100,6 +102,7 @@ public final class BdiDiagramPanel extends JPanel {
         DiagramModel visibleDiagram = DiagramModeProjector.project(sourceModel, mode);
         model = visibleDiagram;
         canvas.setModel(visibleDiagram);
+        applyCurrentHighlight();
         long request = generation.incrementAndGet();
         state.setText(visibleDiagram.nodes().isEmpty()
                 ? "No diagram data"
@@ -144,8 +147,43 @@ public final class BdiDiagramPanel extends JPanel {
         }
         sourceModel = DiagramModel.empty();
         model = sourceModel;
+        highlightedIssueRuleId = null;
         canvas.setModel(model);
+        canvas.setHighlights(Set.of(), Set.of());
         state.setText("Diagram unavailable: " + message);
+    }
+
+    /** Highlights an issue evidence path from the current immutable diagram projection. */
+    public boolean highlightIssue(String ruleId) {
+        Objects.requireNonNull(ruleId, "ruleId");
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> highlightIssue(ruleId));
+            return false;
+        }
+        highlightedIssueRuleId = ruleId;
+        DiagramHighlightPath.Highlight highlight = DiagramHighlightPath.forIssue(model, ruleId);
+        canvas.setHighlights(highlight.nodeIds(), highlight.edgeIds());
+        if (highlight.isEmpty()) {
+            state.setText("No diagram evidence for issue " + ruleId);
+            return false;
+        }
+        model.nodes().stream()
+                .filter(node -> highlight.nodeIds().contains(node.id()))
+                .filter(node -> node.type() == org.tzi.use.plugins.bdi.diagram.DiagramNodeType.ISSUE)
+                .findFirst()
+                .ifPresent(node -> canvas.selectNode(node.id()));
+        state.setText("Highlighted evidence for " + ruleId + " (" + highlight.nodeIds().size()
+                + " node(s), " + highlight.edgeIds().size() + " edge(s))");
+        return true;
+    }
+
+    public void clearHighlight() {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(this::clearHighlight);
+            return;
+        }
+        highlightedIssueRuleId = null;
+        canvas.setHighlights(Set.of(), Set.of());
     }
 
     public void setSelectionListener(Consumer<DiagramNode> listener) {
@@ -176,6 +214,14 @@ public final class BdiDiagramPanel extends JPanel {
         return state;
     }
 
+    Set<String> highlightedNodeIdsForTest() {
+        return canvas.highlightedNodeIdsForTest();
+    }
+
+    Set<String> highlightedEdgeIdsForTest() {
+        return canvas.highlightedEdgeIdsForTest();
+    }
+
     JButton zoomInForTest() {
         return zoomIn;
     }
@@ -190,6 +236,15 @@ public final class BdiDiagramPanel extends JPanel {
 
     JButton resetForTest() {
         return reset;
+    }
+
+    private void applyCurrentHighlight() {
+        if (highlightedIssueRuleId == null) {
+            canvas.setHighlights(Set.of(), Set.of());
+            return;
+        }
+        DiagramHighlightPath.Highlight highlight = DiagramHighlightPath.forIssue(model, highlightedIssueRuleId);
+        canvas.setHighlights(highlight.nodeIds(), highlight.edgeIds());
     }
 
     private static JButton button(String label, String tooltip) {

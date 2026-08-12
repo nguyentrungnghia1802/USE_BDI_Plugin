@@ -87,15 +87,15 @@ new ADR that explicitly supersedes the affected entry.
 ## 5. Current Validation Record
 
 - Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 179 pass, including JaCaMo project import, portable
+- Plugin suite: 185 pass, including JaCaMo project import, portable
   traceability, CArtAgO adapter/environment mutants, Moise organization
   normalization, static organization rules/traceability, diagram projection,
-  read-only canvas, layout modes, and boundary tests.
+  read-only canvas, layout modes, issue highlighting, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
 - Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
-  integration tests, 179 plugin tests, and
+  integration tests, 185 plugin tests, and
   ZIP/TAR distributions succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
@@ -455,3 +455,24 @@ unconfirmed candidate relations. A selected node is retained when its stable
 ID remains in the projection. These are presentation filters only: they do not
 change semantic snapshots, traceability evidence, current USE state, or
 validation results.
+
+## 20. ADR-0040: Diagram Highlighting Uses Immutable Evidence Paths
+
+**Status:** Accepted. **Date:** 2026-08-13.
+
+T22 needs to connect verification findings to the read-only canvas without
+creating a second validator or mutating the analysis snapshot. Option A,
+rejected, is to recalculate issue semantics in Swing or use color alone to
+represent status. Option B, selected, resolves a `DiagramVisualState` from
+immutable node issue markers and mapping attributes, and derives a
+`DiagramHighlightPath` by traversing existing `DiagramEdge` evidence links.
+
+Confirmed, potential, and unknown issue certainty are distinct badges and
+border treatments. Missing and stale mappings are also explicitly labeled;
+UNKNOWN can never render as PASS. A Problems row selects by stable rule ID,
+focuses the Diagram tab when a matching issue exists, and selects the issue
+node so source/detail/evidence is visible. `BdiDiagramPanel` retains the
+active rule ID across a new immutable projection and reapplies the path when
+possible, clearing it when the finding is no longer present. No parser,
+validator, OCL evaluator, or live USE state is invoked by this presentation
+logic.

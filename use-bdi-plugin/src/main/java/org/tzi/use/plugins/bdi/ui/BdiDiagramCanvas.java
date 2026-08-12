@@ -12,6 +12,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.Path2D;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.swing.JComponent;
@@ -37,6 +38,8 @@ final class BdiDiagramCanvas extends JComponent {
     private double offsetX = 0.0;
     private double offsetY = 0.0;
     private String selectedNodeId;
+    private Set<String> highlightedNodeIds = Set.of();
+    private Set<String> highlightedEdgeIds = Set.of();
     private Point lastPanPoint;
     private boolean panning;
     private boolean panMoved;
@@ -102,6 +105,10 @@ final class BdiDiagramCanvas extends JComponent {
         this.layout = BdiDiagramLayout.compute(DiagramModel.empty());
         selectedNodeId = this.model.nodes().stream()
                 .anyMatch(node -> node.id().equals(previousSelection)) ? previousSelection : null;
+        Set<String> nodeIds = this.model.nodes().stream().map(DiagramNode::id).collect(java.util.stream.Collectors.toSet());
+        Set<String> edgeIds = this.model.edges().stream().map(DiagramEdge::id).collect(java.util.stream.Collectors.toSet());
+        highlightedNodeIds = highlightedNodeIds.stream().filter(nodeIds::contains).collect(java.util.stream.Collectors.toUnmodifiableSet());
+        highlightedEdgeIds = highlightedEdgeIds.stream().filter(edgeIds::contains).collect(java.util.stream.Collectors.toUnmodifiableSet());
         zoom = 1.0;
         offsetX = 0.0;
         offsetY = 0.0;
@@ -118,6 +125,26 @@ final class BdiDiagramCanvas extends JComponent {
 
     void setSelectionListener(Consumer<DiagramNode> listener) {
         selectionListener = Objects.requireNonNull(listener, "listener");
+    }
+
+    void setHighlights(Set<String> nodeIds, Set<String> edgeIds) {
+        requireEdt();
+        highlightedNodeIds = Set.copyOf(Objects.requireNonNull(nodeIds, "nodeIds"));
+        highlightedEdgeIds = Set.copyOf(Objects.requireNonNull(edgeIds, "edgeIds"));
+        repaint();
+    }
+
+    void selectNode(String nodeId) {
+        requireEdt();
+        DiagramNode selected = model.nodes().stream()
+                .filter(node -> node.id().equals(nodeId))
+                .findFirst()
+                .orElse(null);
+        selectedNodeId = selected == null ? null : selected.id();
+        if (selected != null) {
+            selectionListener.accept(selected);
+        }
+        repaint();
     }
 
     void zoomIn() {
@@ -175,14 +202,18 @@ final class BdiDiagramCanvas extends JComponent {
     }
 
     void selectNodeForTest(String nodeId) {
-        requireEdt();
-        DiagramNode selected = model.nodes().stream()
-                .filter(node -> node.id().equals(nodeId))
-                .findFirst()
-                .orElseThrow();
-        selectedNodeId = selected.id();
-        selectionListener.accept(selected);
-        repaint();
+        if (model.nodes().stream().noneMatch(node -> node.id().equals(nodeId))) {
+            throw new IllegalArgumentException("Unknown diagram node: " + nodeId);
+        }
+        selectNode(nodeId);
+    }
+
+    Set<String> highlightedNodeIdsForTest() {
+        return highlightedNodeIds;
+    }
+
+    Set<String> highlightedEdgeIdsForTest() {
+        return highlightedEdgeIds;
     }
 
     @Override
@@ -194,7 +225,10 @@ final class BdiDiagramCanvas extends JComponent {
 
     @Override
     public String getToolTipText(java.awt.event.MouseEvent event) {
-        return nodeAt(event.getPoint()).map(node -> node.type() + ": " + node.label()).orElse(null);
+        return nodeAt(event.getPoint()).map(node -> {
+            DiagramVisualState state = DiagramVisualStateResolver.resolve(node);
+            return node.type() + ": " + node.label() + " [" + state.badge() + "]";
+        }).orElse(null);
     }
 
     @Override
@@ -242,8 +276,10 @@ final class BdiDiagramCanvas extends JComponent {
             double y1 = source.centerY();
             double x2 = target.centerX();
             double y2 = target.centerY();
-            canvas.setColor(edge.type() == org.tzi.use.plugins.bdi.diagram.DiagramEdgeType.MISSING_MAPPING
+            canvas.setColor(highlightedEdgeIds.contains(edge.id()) ? new Color(24, 91, 147)
+                    : edge.type() == org.tzi.use.plugins.bdi.diagram.DiagramEdgeType.MISSING_MAPPING
                     ? new Color(202, 116, 38) : new Color(126, 139, 153));
+            canvas.setStroke(new BasicStroke(highlightedEdgeIds.contains(edge.id()) ? 3.2f : 1.3f));
             canvas.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
             drawArrow(canvas, x1, y1, x2, y2);
             edge.label().ifPresent(label -> {
@@ -258,26 +294,41 @@ final class BdiDiagramCanvas extends JComponent {
         if (box == null) {
             return;
         }
-        Color fill = fillColor(node.type());
+        DiagramVisualState state = DiagramVisualStateResolver.resolve(node);
+        boolean selected = node.id().equals(selectedNodeId);
+        boolean highlighted = highlightedNodeIds.contains(node.id());
+        Color fill = state == DiagramVisualState.CLEAN ? fillColor(node.type()) : state.fill();
         canvas.setColor(fill);
         canvas.fillRoundRect((int) box.x(), (int) box.y(), (int) box.width(), (int) box.height(), 10, 10);
-        Color border = node.id().equals(selectedNodeId) ? new Color(25, 87, 160)
-                : node.type() == DiagramNodeType.ISSUE ? new Color(176, 45, 45)
-                : node.type() == DiagramNodeType.GAP ? new Color(202, 116, 38)
-                : new Color(96, 105, 115);
+        Color border = selected ? new Color(25, 87, 160)
+                : highlighted ? new Color(24, 91, 147)
+                : state == DiagramVisualState.CLEAN ? cleanBorder(node.type()) : state.border();
         canvas.setColor(border);
-        canvas.setStroke(new BasicStroke(node.id().equals(selectedNodeId) ? 2.8f : 1.2f));
+        canvas.setStroke(selected || highlighted
+                ? new BasicStroke(selected ? 2.8f : 2.4f)
+                : state.dashed()
+                        ? new BasicStroke(1.6f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                                10.0f, new float[] { 6.0f, 4.0f }, 0.0f)
+                        : new BasicStroke(1.2f));
         canvas.drawRoundRect((int) box.x(), (int) box.y(), (int) box.width(), (int) box.height(), 10, 10);
+        String badge = state == DiagramVisualState.CLEAN && selected ? "SELECTED" : state.badge();
+        if (state != DiagramVisualState.CLEAN || selected) {
+            canvas.setColor(border);
+            canvas.setFont(getFont().deriveFont(Font.BOLD, 8.5f));
+            canvas.drawString(badge, (int) box.x() + 6, (int) box.y() + 13);
+        }
         canvas.setColor(new Color(37, 43, 51));
         canvas.setFont(getFont().deriveFont(Font.PLAIN, 11f));
-        drawLabel(canvas, node.label(), box);
+        drawLabel(canvas, node.label(), box, state != DiagramVisualState.CLEAN || selected);
     }
 
-    private static void drawLabel(Graphics2D canvas, String label, BdiDiagramLayout.NodeBox box) {
+    private static void drawLabel(
+            Graphics2D canvas, String label, BdiDiagramLayout.NodeBox box, boolean hasBadge) {
         FontMetrics metrics = canvas.getFontMetrics();
         String text = label.length() > 28 ? label.substring(0, 25) + "..." : label;
         int x = (int) (box.x() + (box.width() - metrics.stringWidth(text)) / 2);
-        int y = (int) (box.y() + box.height() / 2 + metrics.getAscent() / 2 - 2);
+        int y = (int) (box.y() + (hasBadge ? box.height() * 0.68 : box.height() / 2)
+                + metrics.getAscent() / 2 - 2);
         canvas.drawString(text, Math.max((int) box.x() + 5, x), y);
     }
 
@@ -301,6 +352,12 @@ final class BdiDiagramCanvas extends JComponent {
             case AGENT, MAS_PROJECT, ORGANIZATION, ROLE, MISSION -> new Color(224, 241, 229);
             default -> new Color(239, 242, 245);
         };
+    }
+
+    private static Color cleanBorder(DiagramNodeType type) {
+        return type == DiagramNodeType.ISSUE ? new Color(176, 45, 45)
+                : type == DiagramNodeType.GAP ? new Color(202, 116, 38)
+                : new Color(96, 105, 115);
     }
 
     private void selectAt(Point point) {

@@ -199,9 +199,16 @@ BDI Plan, Agent Overview, and confirmed Mapping views. A mode filters the
 already-built immutable model, preserves `EXECUTES` step-order attributes,
 keeps explicit mapping gaps, and retains a selected node when it remains
 visible; it never reparses, revalidates, evaluates OCL, or mutates USE state.
-Issue highlighting, navigation, export, and extensions beyond these modes
-remain planned separate slices and must consume these records without
-reparsing.
+T22 adds presentation-only visual states for confirmed/potential/unknown
+issues, missing/stale mappings, and selection. `DiagramHighlightPath` follows
+the existing evidence edges from a selected rule ID, while the Problems table
+can select that rule and focus the Diagram tab; node details show source,
+status, mapping attributes, and evidence. Refreshing a derived diagram
+reprojects the same immutable snapshot and reapplies or clears the active
+highlight without reparsing. The canvas never treats UNKNOWN as PASS.
+Navigation beyond this issue-to-evidence path, export, and extensions beyond
+these modes remain planned separate slices and must consume these records
+without reparsing.
 
 Static environment bindings are persisted separately from `.bdimap.json` in a
 typed `.cartago-map.json` document. `EnvironmentMappingFileRepository` requires

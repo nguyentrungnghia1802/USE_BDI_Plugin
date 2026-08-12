@@ -71,6 +71,7 @@ import org.tzi.use.plugins.bdi.model.mas.MasProjectModel;
 import org.tzi.use.plugins.bdi.report.CurrentAnalysisReportService;
 import org.tzi.use.plugins.bdi.report.ReportFormat;
 import org.tzi.use.plugins.bdi.model.mapping.MappingDocument;
+import org.tzi.use.plugins.bdi.problems.BdiProblem;
 import org.tzi.use.plugins.bdi.problems.BdiProblemCollector;
 import org.tzi.use.plugins.bdi.problems.BdiProblemPanel;
 import org.tzi.use.plugins.bdi.trace.TraceabilityGraph;
@@ -315,6 +316,7 @@ public final class BdiExplorerView extends JPanel implements View {
         split.setResizeWeight(0.42);
         split.setPreferredSize(new Dimension(900, 520));
         problems = new BdiProblemPanel();
+        problems.setProblemSelectionListener(this::showProblemSelection);
         mapping = new MappingEditorPanel(new org.tzi.use.plugins.bdi.persistence.MappingFileRepository(), projectRoot);
         mapping.setDocumentChangeListener(ignored -> refreshProblems());
         diagram = new BdiDiagramPanel();
@@ -642,12 +644,34 @@ public final class BdiExplorerView extends JPanel implements View {
         StringBuilder selection = new StringBuilder();
         selection.append("Diagram selection\n")
                 .append("Type: ").append(node.type()).append('\n')
-                .append("Label: ").append(node.label()).append('\n');
+                .append("Label: ").append(node.label()).append('\n')
+                .append("Visual state: ").append(DiagramVisualStateResolver.resolve(node).badge()).append('\n');
         node.source().ifPresent(source -> selection.append("Source: ")
                 .append(source.projectPath()).append(':').append(source.beginLine()).append('\n'));
+        node.attributes().forEach((key, value) -> selection.append(key).append(": ").append(value).append('\n'));
         node.issueMarker().ifPresent(marker -> selection.append("Issue: ")
                 .append(marker.ruleId()).append(" [").append(marker.severity()).append(", ")
-                .append(marker.status()).append(", ").append(marker.certainty()).append("]\n"));
+                .append(marker.status()).append(", ").append(marker.certainty()).append("]\n")
+                .append("Evidence:\n")
+                .append(marker.evidence().stream().map(value -> "- " + value).collect(java.util.stream.Collectors.joining("\n")))
+                .append('\n'));
+        detail.setText(selection.toString());
+    }
+
+    private void showProblemSelection(BdiProblem problem) {
+        boolean highlighted = diagram.highlightIssue(problem.code());
+        if (highlighted) {
+            tabs.setSelectedComponent(diagram);
+        }
+        StringBuilder selection = new StringBuilder();
+        selection.append("Problem selection\n")
+                .append("Code: ").append(problem.code()).append('\n')
+                .append("Severity: ").append(problem.severity()).append('\n')
+                .append("Source: ").append(problem.source()).append(':').append(problem.location()).append('\n')
+                .append("Message: ").append(problem.message()).append('\n')
+                .append(highlighted
+                        ? "Evidence path: highlighted in Diagram tab.\n"
+                        : "Evidence path: no matching diagram issue in the current projection.\n");
         detail.setText(selection.toString());
     }
 

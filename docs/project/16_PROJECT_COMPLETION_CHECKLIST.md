@@ -74,12 +74,12 @@ are complete. Do not append per-day implementation diaries.
 - [x] No unsupported syntax or OCL uncertainty is silently ignored.
 - [x] Packaged scoped Auction evaluation repeats byte-stable JSON/CSV/HTML output, separates process failures, and ends with `AUCTION_EVALUATION_OK`.
 
-Latest validated baseline after the T21 BDI layout-mode slice:
+Latest validated baseline after the T22 issue/highlighting slice:
 
 - focused T14 organization/project-import tests: 9 pass;
 - focused documentation/Explorer regression tests: 11 pass;
 - focused T15 organization/catalog tests: 6 pass;
-- plugin tests: 179 pass;
+- plugin tests: 185 pass;
 - `mvn -pl use-bdi-plugin -am test`: all four reactor modules succeed;
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
@@ -88,7 +88,7 @@ Latest validated baseline after the T21 BDI layout-mode slice:
   both standalone organization snapshots, return USE exit 0; their static
   `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
-  integration tests, 179 plugin tests, and ZIP/TAR assembly succeed;
+  integration tests, 185 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and
   compares deterministic JSON/CSV/HTML outputs.
 
@@ -199,9 +199,9 @@ T20 read-only Swing canvas evidence:
 - `BdiDiagramPanel` uses a custom Java2D canvas with no external graph/web
   dependency. Layout runs in `SwingWorker`; the panel is read-only and does not
   rerun parsing, validation, OCL, or mutate USE state;
-- FR-DIA-006 is Partial: deterministic layout, rendering, zoom, pan, fit,
-  reset, selection, and tooltips are implemented; highlighting and navigation
-  remain T22/T24 work.
+- After T20, FR-DIA-006 was Partial: deterministic layout, rendering, zoom,
+  pan, fit, reset, selection, and tooltips were implemented; highlighting and
+  navigation remained T21/T22/T24 work.
 
 T21 BDI-focused layout-mode evidence:
 
@@ -215,12 +215,28 @@ T21 BDI-focused layout-mode evidence:
   immutable `DiagramModel`; it never reparses, revalidates, evaluates OCL, or
   mutates USE state.
 
+T22 issue and mapping highlighting evidence:
+
+- `DiagramVisualStateTest`: 1 test distinguishes confirmed, potential, and
+  unknown issue certainty plus clean, missing, stale, and unknown mapping
+  states. UNKNOWN is rendered as an explicit `UNKNOWN` badge, not PASS;
+- `DiagramHighlightPathTest`: 2 tests cover mapped evidence through source,
+  mapping, UML target, issue, and explicit missing-mapping gap paths while
+  excluding unrelated nodes;
+- `BdiDiagramPanelTest`: 5 tests now include issue-path highlighting,
+  selection of the issue node, and state feedback;
+- `BdiProblemPanelTest`: selecting a problem row emits the stable rule code;
+  `BdiExplorerViewTest`: Problems-to-Diagram focus/highlight and detail
+  evidence are covered. Diagram refresh reuses the immutable current analysis
+  and reapplies or clears the active rule highlight.
+- FR-DIA-006 is now Implemented; broader navigation beyond the issue-to-
+  evidence path remains open under FR-DIA-007.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
 ## 3. Open Must Tasks
 
-- [ ] Add issue/mapping highlighting and Problems/diagram navigation.
 - [ ] Complete diagram export, demo, mutant, screenshot, and performance
   evidence before claiming the visualization initiative complete.
 
@@ -248,9 +264,9 @@ The following are future work, not hidden completion claims:
 - OD-006: external thesis artifact locations and release ownership;
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime integration.
-- Diagram highlighting, navigation, export, demo, mutant, screenshot, and
-  performance evidence beyond the completed trace projection, canvas, and T21
-  layout modes.
+- Broader navigation, export, demo, mutant, screenshot, and performance
+  evidence beyond the completed trace projection, canvas, T21 modes, and T22
+  issue/evidence highlighting.
 - General/statistical correctness beyond the five declared Auction evaluation
   cases; the runner is scoped evidence, not a quality-proof generator.
 

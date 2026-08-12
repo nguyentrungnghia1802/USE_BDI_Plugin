@@ -113,6 +113,36 @@ class BdiExplorerViewTest {
     }
 
     @Test
+    void selectingAProblemHighlightsItsDiagramEvidencePath() throws Exception {
+        UseModelSnapshot useModel = new UseModelSnapshot(
+                "fixture",
+                "fixture.use",
+                List.of(new UmlClassRef("Minimal", false, List.of())),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                "fingerprint");
+        BdiExplorerView view = new BdiExplorerView(
+                new BdiImportService(),
+                new BdiSourceTracker(),
+                useModel);
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+
+        assertTrue(view.hasProblemCodeForTest("MAP-001"));
+        waitForDiagram(view);
+        selectProblem(view, "MAP-001");
+
+        assertEquals(view.diagramForTest(), view.tabsForTest().getSelectedComponent());
+        assertTrue(!view.diagramForTest().highlightedNodeIdsForTest().isEmpty());
+        assertTrue(view.detailForTest().getText().contains("MAP-001"));
+        assertTrue(view.detailForTest().getText().contains("Evidence path: highlighted"));
+    }
+
+    @Test
     void reimportsAllSelectedSourcesWhenOneSourceChanges(@TempDir Path tempDir) throws Exception {
         Path source = tempDir.resolve("changed.asl");
         Files.copy(fixture("fixtures/asl/valid/minimal.asl"), source);
@@ -400,6 +430,24 @@ class BdiExplorerViewTest {
         }
         flushEdt();
         assertEquals(1, view.snapshotForTest().fileCount());
+    }
+
+    private static void waitForDiagram(BdiExplorerView view) throws Exception {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+        while (view.diagramForTest().modelForTest().nodes().isEmpty()
+                && System.nanoTime() < deadline) {
+            Thread.sleep(25);
+        }
+        flushEdt();
+        assertTrue(!view.diagramForTest().modelForTest().nodes().isEmpty());
+    }
+
+    private static void selectProblem(BdiExplorerView view, String code) throws Exception {
+        SwingUtilities.invokeAndWait(() -> {
+            assertTrue(view.problemsForTest().selectProblem(code),
+                    "Problem row not found: " + code);
+        });
+        flushEdt();
     }
 
     private static void waitForProjectImport(BdiExplorerView view) throws Exception {

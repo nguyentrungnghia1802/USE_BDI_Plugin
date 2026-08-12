@@ -16,10 +16,14 @@ import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.Test;
 import org.tzi.use.plugins.bdi.diagram.DiagramEdge;
 import org.tzi.use.plugins.bdi.diagram.DiagramEdgeType;
+import org.tzi.use.plugins.bdi.diagram.DiagramIssueMarker;
 import org.tzi.use.plugins.bdi.diagram.DiagramModel;
 import org.tzi.use.plugins.bdi.diagram.DiagramNode;
 import org.tzi.use.plugins.bdi.diagram.DiagramNodeType;
 import org.tzi.use.plugins.bdi.diagram.DiagramSelectionRef;
+import org.tzi.use.plugins.bdi.validation.IssueCertainty;
+import org.tzi.use.plugins.bdi.validation.IssueSeverity;
+import org.tzi.use.plugins.bdi.validation.IssueStatus;
 
 class BdiDiagramPanelTest {
     @Test
@@ -104,6 +108,41 @@ class BdiDiagramPanelTest {
         assertEquals(source, panel.sourceModelForTest());
         assertEquals(agent, panel.canvasForTest().selectedNodeForTest().orElseThrow());
         SwingUtilities.invokeAndWait(() -> panel.fitForTest().doClick());
+    }
+
+    @Test
+    void highlightsIssuePathAndSelectsTheIssueNode() throws Exception {
+        DiagramNode element = node(DiagramNodeType.TRACE_ELEMENT, "element", "action");
+        DiagramNode target = node(DiagramNodeType.TRACE_TARGET, "target", "Auction.sell");
+        DiagramNode issue = new DiagramNode(
+                DiagramNodeType.ISSUE,
+                DiagramSelectionRef.of("issue", "MAP-003"),
+                "MAP-003: mismatch",
+                Optional.empty(),
+                Optional.of(new DiagramIssueMarker(
+                        "MAP-003", IssueSeverity.ERROR, IssueStatus.OPEN,
+                        IssueCertainty.CONFIRMED, List.of("precondition evidence"))),
+                Map.of());
+        DiagramModel model = new DiagramModel(
+                List.of(element, target, issue),
+                List.of(
+                        new DiagramEdge(DiagramEdgeType.MAPS_TO, element.id(), target.id(),
+                                DiagramSelectionRef.of("edge", "mapping"), Optional.empty(), Map.of()),
+                        new DiagramEdge(DiagramEdgeType.HAS_ISSUE, target.id(), issue.id(),
+                                DiagramSelectionRef.of("edge", "issue"), Optional.empty(), Map.of())),
+                List.of());
+        BdiDiagramPanel panel = new BdiDiagramPanel();
+
+        SwingUtilities.invokeAndWait(() -> panel.setDiagram(model));
+        waitForLayout(panel);
+        SwingUtilities.invokeAndWait(() -> {
+            assertTrue(panel.highlightIssue("MAP-003"));
+        });
+
+        assertEquals(3, panel.highlightedNodeIdsForTest().size());
+        assertEquals(2, panel.highlightedEdgeIdsForTest().size());
+        assertEquals(issue, panel.canvasForTest().selectedNodeForTest().orElseThrow());
+        assertTrue(panel.stateForTest().getText().contains("MAP-003"));
     }
 
     private static DiagramNode node(DiagramNodeType type, String namespace, String reference) {

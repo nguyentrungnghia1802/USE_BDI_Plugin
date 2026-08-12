@@ -3,6 +3,8 @@ package org.tzi.use.plugins.bdi.problems;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -22,6 +24,8 @@ public final class BdiProblemPanel extends JPanel {
     private final JTextField filter = new JTextField(24);
     private final JComboBox<BdiProblemSeverity> severity = new JComboBox<>();
     private final JComboBox<BdiProblemGrouping> grouping = new JComboBox<>(BdiProblemGrouping.values());
+    private Consumer<BdiProblem> selectionListener = ignored -> {
+    };
 
     public BdiProblemPanel() {
         super(new BorderLayout(6, 6));
@@ -45,6 +49,19 @@ public final class BdiProblemPanel extends JPanel {
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         add(new JScrollPane(table), BorderLayout.CENTER);
+        table.getSelectionModel().addListSelectionListener(event -> {
+            if (event.getValueIsAdjusting()) {
+                return;
+            }
+            int viewRow = table.getSelectedRow();
+            if (viewRow < 0) {
+                return;
+            }
+            int modelRow = table.convertRowIndexToModel(viewRow);
+            if (modelRow < tableModel.visibleProblems().size()) {
+                selectionListener.accept(tableModel.visibleProblems().get(modelRow));
+            }
+        });
 
         filter.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -77,6 +94,27 @@ public final class BdiProblemPanel extends JPanel {
     public boolean hasProblemCode(String code) {
         return tableModel.allProblems().stream()
                 .anyMatch(problem -> problem.code().equals(code));
+    }
+
+    /** Receives user row selections so the owning view can navigate to evidence. */
+    public void setProblemSelectionListener(Consumer<BdiProblem> listener) {
+        selectionListener = Objects.requireNonNull(listener, "listener");
+    }
+
+    /** Selects a visible problem by stable rule code for integrations and UI navigation. */
+    public boolean selectProblem(String code) {
+        Objects.requireNonNull(code, "code");
+        if (!javax.swing.SwingUtilities.isEventDispatchThread()) {
+            javax.swing.SwingUtilities.invokeLater(() -> selectProblem(code));
+            return false;
+        }
+        for (int row = 0; row < table.getRowCount(); row++) {
+            if (code.equals(table.getValueAt(row, 1))) {
+                table.setRowSelectionInterval(row, row);
+                return true;
+            }
+        }
+        return false;
     }
 
     JTable tableForTest() {
