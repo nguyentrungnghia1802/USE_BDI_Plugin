@@ -1,0 +1,5 @@
+mas smart_home {
+    agent resident : resident.asl
+    organisation smart_home_organization : smart-home-organization.xml {
+    }
+}

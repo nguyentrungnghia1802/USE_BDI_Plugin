@@ -158,7 +158,60 @@ và chạy từng dòng trong shell/command workflow; cách truyền `.cmd` ở 
 6. Thay đổi state trong USE, bấm lại `Refresh USE Snapshot` và giải thích rằng
    plugin không tự sửa `MSystem`, không tự chạy plan và không tự nhận event live.
 
-## 6. Headless validation
+## 6. Demo C: Family Person
+
+### Nội dung
+
+Mở thư mục [`demo/family-person`](../../use-bdi-plugin/demo/family-person/):
+
+- `Family.use` và `Family.cmd`: UML/OCL cùng snapshot có `family1`, `alice`,
+  `ben` và liên kết `FamilyMembers`.
+- `person.asl`: goal `introduce_family`, plan và action `greet`.
+- `family-person.jcm` và `family-organization.xml`: project JaCaMo/Moise tĩnh.
+- `family-organization.use` và `family-organization.cmd`: snapshot UML/OCL
+  độc lập cho organization layer.
+- `FamilyPerson.bdimap.json`: mapping AgentSpeak agent và `greet` action.
+
+### Kịch bản UI
+
+1. Mở `Family.use`, chạy `Family.cmd`, rồi chọn `View > Create View > Class
+   diagram` và `View > Create View > Object diagram`.
+2. Chọn `Plugins > AgentSpeak > Import JaCaMo Project...`, mở
+   `family-person.jcm` và mở rộng `person.asl` trong BDI Explorer.
+3. Trong `Mapping`, bấm `Load...` và chọn `FamilyPerson.bdimap.json`; sau đó
+   bấm `Refresh USE Snapshot` và mở `Problems`.
+
+Đây là ví dụ cơ bản nhất để giải thích quan hệ một `Person` thuộc một
+`Family`, rồi nối goal/plan/action AgentSpeak vào mô hình UML/OCL.
+
+## 7. Demo D: Smart Home
+
+### Nội dung
+
+Mở thư mục [`demo/smart-home`](../../use-bdi-plugin/demo/smart-home/):
+
+- `SmartHome.use` và `SmartHome.cmd`: UML/OCL cho `Home`, `Resident`, `Light`
+  với resident buổi tối và đèn đang tắt.
+- `resident.asl`: goal `prepare_evening`, plan và action `turn_on_lights`.
+- `smart-home.jcm` và `smart-home-organization.xml`: project JaCaMo/Moise tĩnh.
+- `smart-home-organization.use` và `smart-home-organization.cmd`: snapshot
+  UML/OCL độc lập cho organization layer.
+- `SmartHome.bdimap.json`: mapping Resident agent và decision operation.
+
+### Kịch bản UI
+
+1. Mở `SmartHome.use`, chạy `SmartHome.cmd`, sau đó tạo `Class diagram` và
+   `Object diagram` để show `home1`, `resident1`, `livingRoomLight`.
+2. Chọn `Plugins > AgentSpeak > Import JaCaMo Project...`, mở
+   `smart-home.jcm`, rồi mở rộng `resident.asl`.
+3. Trong `Mapping`, load `SmartHome.bdimap.json`, bấm `Refresh USE Snapshot`
+   và show decision path `prepare_evening -> turn_on_lights`.
+
+Ví dụ này phù hợp để giải thích decision-making: goal/plan/action nằm ở BDI,
+còn Home/Resident/Light và trạng thái snapshot nằm ở USE. Các belief/context
+mapping nâng cao được trình bày trong Auction và Smart Queue.
+
+## 8. Headless validation
 
 ### Auction static JaCaMo
 
@@ -204,7 +257,7 @@ USE returns `0` when the command file finishes with valid constraints and `1`
 when a constraint fails. This command is a validation check, not the visual
 BDI demo.
 
-## 7. Quality gates before presentation
+## 9. Quality gates before presentation
 
 ```powershell
 mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test
@@ -219,7 +272,7 @@ complete repository workflow, use
 [`docs/project/DEVELOPER_GUIDE.md`](../project/DEVELOPER_GUIDE.md) and the
 canonical [technical design](../project/10_PLUGIN_TECHNICAL_DESIGN.md).
 
-## 8. Troubleshooting
+## 10. Troubleshooting
 
 - **AgentSpeak menu is missing:** close USE, verify
   `lib\plugins\use-bdi-plugin-7.1.1.jar`, then relaunch with the same `-H`.

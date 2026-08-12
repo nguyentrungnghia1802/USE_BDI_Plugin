@@ -1,0 +1,42 @@
+model SmartHomeModel
+
+class Home
+attributes
+  address : String
+end
+
+class Resident
+attributes
+  name : String
+  evening : Boolean
+  lightsAvailable : Boolean
+operations
+  turn_on_lights()
+end
+
+class Light
+attributes
+  room : String
+  on : Boolean
+end
+
+association HomeResidents between
+  Home[1] role home
+  Resident[*] role residents
+end
+
+association HomeLights between
+  Home[1] role home
+  Light[*] role lights
+end
+
+constraints
+
+context Home
+  inv NonEmptyAddress: self.address <> ''
+
+context Resident
+  inv NonEmptyName: self.name <> ''
+
+context Light
+  inv NonEmptyRoom: self.room <> ''

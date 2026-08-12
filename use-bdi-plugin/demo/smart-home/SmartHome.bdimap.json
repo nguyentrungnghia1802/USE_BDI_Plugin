@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"0.2.0",
+  "bdiMetamodelVersion":"0.1.0",
+  "useFingerprint":"unknown",
+  "bindings": [
+    {"kind":"AGENT_CLASS","source":"bdi-source-v2:12:resident.asl:0:0:0:0","target":"Resident","expression":null,"evidence":["Agent source represents a Resident"]},
+    {"kind":"ACTION_OPERATION","source":"bdi-source-v2:12:resident.asl:0:0:0:0#plan:prepare_evening[source(self)]#step:1","target":"Resident::turn_on_lights()","expression":null,"evidence":["Exact operation name and zero-argument action"]}
+  ]
+}

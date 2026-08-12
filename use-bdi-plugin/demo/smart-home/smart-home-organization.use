@@ -1,0 +1,11 @@
+model SmartHomeOrganizationModel
+
+class ResidentRole
+operations
+  prepareHome()
+end
+
+constraints
+
+context ResidentRole
+  inv ResidentRoleExists: ResidentRole.allInstances()->size() >= 1

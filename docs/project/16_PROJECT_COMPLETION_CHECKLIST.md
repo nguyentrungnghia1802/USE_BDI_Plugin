@@ -47,8 +47,8 @@ are complete. Do not append per-day implementation diaries.
 - [x] Versioned Auction evaluation manifest runs the real headless service in isolated workspaces and classifies one PASS plus four DETECTED cases with deterministic reports.
 - [x] Performance, package, GUI smoke, and clean-clone evidence exist.
 - [x] User, developer, install, license, limitation, and threat guides exist.
-- [x] Canonical Auction and Smart Queue demos are self-contained under
-  `use-bdi-plugin/demo` with GUI/headless walkthroughs.
+- [x] Canonical Auction, Smart Queue, Family Person, and Smart Home demos are
+  self-contained under `use-bdi-plugin/demo` with GUI/headless walkthroughs.
 - [x] Plugin-owned file choosers open at the configured repository root and
   have a moved-checkout fallback.
 
@@ -79,6 +79,9 @@ Latest validated baseline after the static organization consistency slice:
 - package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`;
 - packaged process smoke verifies Auction JSON/HTML plus exits 1 and 3;
+- `Family.use`/`Family.cmd` and `SmartHome.use`/`SmartHome.cmd`, including
+  both standalone organization snapshots, return USE exit 0; their static
+  `.jcm` headless quality gates return `CLEAN` with zero findings;
 - root `mvn verify`: all five modules, 1 USE core integration test, 121 GUI
   integration tests, 154 plugin tests, and ZIP/TAR assembly succeed;
 - packaged `auction-evaluation.ps1` returns `AUCTION_EVALUATION_OK` twice and

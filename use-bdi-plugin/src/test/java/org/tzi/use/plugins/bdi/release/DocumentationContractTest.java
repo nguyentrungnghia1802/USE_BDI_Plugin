@@ -68,17 +68,31 @@ class DocumentationContractTest {
         assertTrue(!Files.readString(demoGuide).isBlank());
         assertLocalLinksResolve(demoGuide, Files.readString(demoGuide));
         Path demoRoot = root.resolve("use-bdi-plugin/demo");
-        for (String demo : List.of("auction", "smart-queue")) {
+        for (String demo : List.of("auction", "smart-queue", "family-person", "smart-home")) {
             Path directory = demoRoot.resolve(demo);
             assertTrue(Files.isDirectory(directory), () -> "Missing canonical demo: " + directory);
             assertTrue(Files.isRegularFile(directory.resolve("README.md")));
-            List<String> requiredFiles = demo.equals("auction")
-                    ? List.of("Auction.use", "Auction.cmd", "auctioneer.asl", "bidder.asl",
-                            "auction.jcm", "auction-organization.xml", "Auction.bdimap.json")
-                    : List.of("SmartQueue.use", "SmartQueue.cmd", "smart_queue_manager.asl");
+            List<String> requiredFiles = switch (demo) {
+                case "auction" -> List.of("Auction.use", "Auction.cmd", "auctioneer.asl", "bidder.asl",
+                        "auction.jcm", "auction-organization.xml", "Auction.bdimap.json");
+                case "smart-queue" -> List.of("SmartQueue.use", "SmartQueue.cmd", "smart_queue_manager.asl");
+                case "family-person" -> List.of("Family.use", "Family.cmd", "person.asl",
+                        "family-person.jcm", "family-organization.xml", "family-organization.use",
+                        "family-organization.cmd",
+                        "FamilyPerson.bdimap.json", ".bdi-plugin/rules.json", ".bdi-plugin/suppressions.json");
+                case "smart-home" -> List.of("SmartHome.use", "SmartHome.cmd", "resident.asl",
+                        "smart-home.jcm", "smart-home-organization.xml", "smart-home-organization.use",
+                        "smart-home-organization.cmd",
+                        "SmartHome.bdimap.json", ".bdi-plugin/rules.json", ".bdi-plugin/suppressions.json");
+                default -> throw new IllegalArgumentException("Unknown canonical demo: " + demo);
+            };
             for (String required : requiredFiles) {
                 assertTrue(Files.isRegularFile(directory.resolve(required)),
                         () -> "Missing file in canonical demo: " + directory.resolve(required));
+            }
+            if (demo.equals("family-person") || demo.equals("smart-home")) {
+                assertTrue(Files.notExists(directory.resolve("mutants")),
+                        () -> "Teaching baseline must not contain mutants: " + directory);
             }
         }
 

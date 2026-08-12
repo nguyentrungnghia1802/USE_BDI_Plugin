@@ -1,0 +1,29 @@
+model FamilyPersonModel
+
+class Person
+attributes
+  name : String
+  age : Integer
+operations
+  greet()
+end
+
+class Family
+attributes
+  name : String
+end
+
+association FamilyMembers between
+  Family[1] role family
+  Person[1..*] role members ordered
+end
+
+constraints
+
+context Person
+  inv NonEmptyName: self.name <> ''
+  inv NonNegativeAge: self.age >= 0
+
+context Family
+  inv NonEmptyName: self.name <> ''
+  inv HasAdult: self.members->exists(person | person.age >= 18)

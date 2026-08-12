@@ -1,0 +1,5 @@
+mas family_person {
+    agent person : person.asl
+    organisation family_organization : family-organization.xml {
+    }
+}

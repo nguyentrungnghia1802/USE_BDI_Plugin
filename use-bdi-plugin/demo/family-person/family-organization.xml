@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<organisational-specification
+    id="family"
+    os-version="0.7"
+    xmlns="http://moise.sourceforge.net/os"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://moise.sourceforge.net/os http://moise.sourceforge.net/xml/os.xsd">
+  <structural-specification>
+    <role-definitions>
+      <role id="family_member"/>
+    </role-definitions>
+    <group-specification id="familyGroup">
+      <roles>
+        <role id="family_member" min="1" max="20"/>
+      </roles>
+    </group-specification>
+  </structural-specification>
+  <functional-specification>
+    <scheme id="introduceFamily">
+      <goal id="introduce"/>
+      <mission id="mIntroduce" min="1" max="1">
+        <goal id="introduce"/>
+      </mission>
+    </scheme>
+  </functional-specification>
+  <normative-specification>
+    <norm id="nIntroduce" type="permission" role="family_member" mission="mIntroduce"/>
+  </normative-specification>
+</organisational-specification>

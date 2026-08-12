@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"0.2.0",
+  "bdiMetamodelVersion":"0.1.0",
+  "useFingerprint":"unknown",
+  "bindings": [
+    {"kind":"AGENT_CLASS","source":"bdi-source-v2:10:person.asl:0:0:0:0","target":"Person","expression":null,"evidence":["Agent source represents a Person"]},
+    {"kind":"ACTION_OPERATION","source":"bdi-source-v2:10:person.asl:0:0:0:0#plan:introduce_family[source(self)]#step:1","target":"Person::greet()","expression":null,"evidence":["Exact operation name and zero-argument action"]}
+  ]
+}

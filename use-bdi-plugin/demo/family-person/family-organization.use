@@ -1,0 +1,11 @@
+model FamilyOrganizationModel
+
+class FamilyMember
+operations
+  introduce()
+end
+
+constraints
+
+context FamilyMember
+  inv FamilyMemberRole: FamilyMember.allInstances()->size() >= 1

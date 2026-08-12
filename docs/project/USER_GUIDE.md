@@ -11,8 +11,7 @@ the source of truth for the USE snapshot.
 - Maven 3.9 or newer when building from source.
 - This repository or a packaged USE 7.1.1 distribution.
 
-The canonical presentation-ready Auction files are under
-`use-bdi-plugin/demo/auction/`:
+The canonical presentation-ready demos are under `use-bdi-plugin/demo/`:
 
 - `Auction.use` - UML/OCL model.
 - `Auction.cmd` - deterministic object/link snapshot for the GUI.
@@ -20,10 +19,15 @@ The canonical presentation-ready Auction files are under
 - `auctioneer.asl` - auctioneer AgentSpeak source.
 - `bidder.asl` - bidder AgentSpeak source.
 
-The original copies under `src/test/resources/fixtures` remain test-owned
-fixtures and are not the user-facing demo location. See the concise
-[demo guide](../guide/guide.md) for the Smart Queue walkthrough and exact UI
-buttons.
+The two short teaching examples are `demo/family-person/` (Person in a Family)
+and `demo/smart-home/` (Resident decision over Home and Light). Each folder
+contains a `.use`, `.cmd`, `.asl`, `.jcm`, organization XML, mapping document,
+and local `.bdi-plugin` configuration. The original copies under
+`src/test/resources/fixtures` remain test-owned fixtures and are not user-facing
+demo locations.
+
+See the concise [demo guide](../guide/guide.md) for the exact UI buttons and
+file import order.
 
 Optional project configuration belongs beside the `.use` file:
 
