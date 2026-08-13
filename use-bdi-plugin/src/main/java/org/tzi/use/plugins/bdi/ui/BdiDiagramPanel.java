@@ -2,6 +2,7 @@ package org.tzi.use.plugins.bdi.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +34,8 @@ import org.tzi.use.plugins.bdi.diagram.DiagramNodeType;
 /** Read-only diagram controls and asynchronous canvas layout. */
 @SuppressWarnings("serial")
 public final class BdiDiagramPanel extends JPanel {
+    private static final int AUTO_FIT_NODE_LIMIT = 12;
+
     private final BdiDiagramCanvas canvas;
     private final JLabel state;
     private final JButton zoomIn;
@@ -77,6 +80,7 @@ public final class BdiDiagramPanel extends JPanel {
         showOrganization = toggle("Organization", "Show or hide static organization nodes");
         showEnvironment = toggle("Environment", "Show or hide static environment nodes");
         modeSelector = new JComboBox<>(DiagramViewMode.values());
+        modeSelector.setPrototypeDisplayValue(DiagramViewMode.AGENT_OVERVIEW);
         modeSelector.setToolTipText("Choose a presentation-only diagram view");
         modeSelector.addActionListener(event -> {
             if (updatingControls) {
@@ -90,7 +94,14 @@ public final class BdiDiagramPanel extends JPanel {
         canvas.setSelectionListener(this::handleSelection);
         zoomIn.addActionListener(event -> canvas.zoomIn());
         zoomOut.addActionListener(event -> canvas.zoomOut());
-        fit.addActionListener(event -> canvas.fitToScreen());
+        fit.addActionListener(event -> {
+            if (layoutWorker != null && !layoutWorker.isDone()) {
+                fitAfterLayout = true;
+                state.setText("Fit queued until layout completes...");
+            } else {
+                canvas.fitToScreen();
+            }
+        });
         reset.addActionListener(event -> resetPresentation());
         exportSvg.addActionListener(event -> chooseExportSvg());
         focusAgent.addActionListener(event -> focusSelected(Set.of(DiagramNodeType.AGENT)));
@@ -106,24 +117,28 @@ public final class BdiDiagramPanel extends JPanel {
 
         JPanel controls = new JPanel();
         controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
-        JPanel actions = new JPanel();
-        actions.add(fit);
-        actions.add(reset);
-        actions.add(exportSvg);
-        actions.add(zoomIn);
-        actions.add(zoomOut);
-        actions.add(focusAgent);
-        actions.add(focusGoalPlan);
-        actions.add(new JLabel("View:"));
-        actions.add(modeSelector);
-        JPanel layers = new JPanel();
+        JPanel viewportActions = controlRow();
+        viewportActions.add(fit);
+        viewportActions.add(reset);
+        viewportActions.add(exportSvg);
+        viewportActions.add(zoomIn);
+        viewportActions.add(zoomOut);
+        JPanel navigation = controlRow();
+        navigation.add(focusAgent);
+        navigation.add(focusGoalPlan);
+        navigation.add(new JLabel("View:"));
+        navigation.add(modeSelector);
+        JPanel layers = controlRow();
         layers.add(new JLabel("Show:"));
         layers.add(showIssues);
         layers.add(showUmlOcl);
         layers.add(showOrganization);
         layers.add(showEnvironment);
-        controls.add(actions);
+        controls.add(viewportActions);
+        controls.add(navigation);
         controls.add(layers);
+        state.setBorder(BorderFactory.createEmptyBorder(2, 8, 3, 4));
+        state.setAlignmentX(LEFT_ALIGNMENT);
         controls.add(state);
         controls.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         add(controls, BorderLayout.NORTH);
@@ -141,6 +156,8 @@ public final class BdiDiagramPanel extends JPanel {
             return;
         }
         sourceModel = diagram;
+        // Keep compact demo flows immediately readable, but preserve scrolling for large graphs.
+        fitAfterLayout = diagram.nodes().size() <= AUTO_FIT_NODE_LIMIT;
         if (focusNodeId != null && sourceModel.nodes().stream().noneMatch(node -> node.id().equals(focusNodeId))) {
             focusNodeId = null;
         }
@@ -496,5 +513,11 @@ public final class BdiDiagramPanel extends JPanel {
         JToggleButton button = new JToggleButton(label, true);
         button.setToolTipText(tooltip);
         return button;
+    }
+
+    private static JPanel controlRow() {
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 2));
+        row.setAlignmentX(LEFT_ALIGNMENT);
+        return row;
     }
 }

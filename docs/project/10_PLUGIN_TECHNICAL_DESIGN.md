@@ -431,6 +431,18 @@ lock the exact 22 standard IDs plus the separate `ENV-001..004` and
 tests and the module, root, package smoke, Auction evidence, and deterministic
 evaluation gates rather than a duplicate visualization validator.
 
+The post-T28 Explorer usability hardening keeps the same immutable presentation
+boundary. Toolbars use explicit rows rather than relying on `FlowLayout` wrapping,
+tabs scroll when the host view is narrow, Mapping uses a vertical split, and
+Problems exposes a visible filtered/total count. Compact diagrams auto-fit only
+after their asynchronous layout is published; larger diagrams remain scrollable,
+and Fit/Reset clear stale viewport positions. Import state is mode-specific: a
+successful direct `.asl` import owns re-import tracking, while a successful `.jcm`
+import clears it. Failed imports retain the previous analysis, and mapping edits
+before the first successful import cannot manufacture an empty exportable analysis.
+These changes remain UI/application orchestration only and do not alter parser,
+IR, validation, OCL, or current USE state.
+
 ## 10. Definition Of Done
 
 A behavior change needs focused tests, module tests, updated requirements/

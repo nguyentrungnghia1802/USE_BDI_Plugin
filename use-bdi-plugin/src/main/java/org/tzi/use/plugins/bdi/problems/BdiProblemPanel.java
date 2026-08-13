@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,6 +25,7 @@ public final class BdiProblemPanel extends JPanel {
     private final JTextField filter = new JTextField(24);
     private final JComboBox<BdiProblemSeverity> severity = new JComboBox<>();
     private final JComboBox<BdiProblemGrouping> grouping = new JComboBox<>(BdiProblemGrouping.values());
+    private final JLabel summary = new JLabel("0 problems");
     private Consumer<BdiProblem> selectionListener = ignored -> {
     };
 
@@ -36,19 +38,28 @@ public final class BdiProblemPanel extends JPanel {
         severity.addItem(BdiProblemSeverity.WARNING);
         severity.addItem(BdiProblemSeverity.INFO);
 
-        JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 0));
-        controls.add(new JLabel("Filter:"));
-        controls.add(filter);
-        controls.add(new JLabel("Severity:"));
-        controls.add(severity);
-        controls.add(new JLabel("Group by:"));
-        controls.add(grouping);
+        JPanel controls = new JPanel();
+        controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+        JPanel filterRow = new JPanel(new BorderLayout(6, 0));
+        filterRow.add(new JLabel("Filter:"), BorderLayout.WEST);
+        filterRow.add(filter, BorderLayout.CENTER);
+        filterRow.setAlignmentX(LEFT_ALIGNMENT);
+        JPanel options = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 2));
+        options.add(new JLabel("Severity:"));
+        options.add(severity);
+        options.add(new JLabel("Group by:"));
+        options.add(grouping);
+        options.setAlignmentX(LEFT_ALIGNMENT);
+        controls.add(filterRow);
+        controls.add(options);
         add(controls, BorderLayout.NORTH);
 
         table.setAutoCreateRowSorter(true);
         table.setFillsViewportHeight(true);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         add(new JScrollPane(table), BorderLayout.CENTER);
+        summary.setBorder(BorderFactory.createEmptyBorder(2, 4, 0, 0));
+        add(summary, BorderLayout.SOUTH);
         table.getSelectionModel().addListSelectionListener(event -> {
             if (event.getValueIsAdjusting()) {
                 return;
@@ -79,12 +90,20 @@ public final class BdiProblemPanel extends JPanel {
                 applyFilter();
             }
         });
-        severity.addActionListener(event -> tableModel.setSeverity((BdiProblemSeverity) severity.getSelectedItem()));
-        grouping.addActionListener(event -> tableModel.setGrouping((BdiProblemGrouping) grouping.getSelectedItem()));
+        severity.addActionListener(event -> {
+            tableModel.setSeverity((BdiProblemSeverity) severity.getSelectedItem());
+            updateSummary();
+        });
+        grouping.addActionListener(event -> {
+            tableModel.setGrouping((BdiProblemGrouping) grouping.getSelectedItem());
+            updateSummary();
+        });
     }
 
     public void setProblems(List<BdiProblem> problems) {
+        table.clearSelection();
         tableModel.setProblems(problems);
+        updateSummary();
     }
 
     public int problemCount() {
@@ -137,7 +156,20 @@ public final class BdiProblemPanel extends JPanel {
         return tableModel;
     }
 
+    JLabel summaryForTest() {
+        return summary;
+    }
+
     private void applyFilter() {
         tableModel.setFilterText(filter.getText());
+        updateSummary();
+    }
+
+    private void updateSummary() {
+        int visible = tableModel.visibleProblems().size();
+        int total = tableModel.allProblems().size();
+        summary.setText(visible == total
+                ? total + (total == 1 ? " problem" : " problems")
+                : visible + " of " + total + " problems shown");
     }
 }

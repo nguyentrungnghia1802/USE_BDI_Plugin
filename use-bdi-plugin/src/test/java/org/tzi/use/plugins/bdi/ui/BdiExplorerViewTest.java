@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Rectangle;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -15,6 +18,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeModel;
@@ -39,6 +43,55 @@ import org.tzi.use.plugins.bdi.validation.RuleConfiguration;
 import org.tzi.use.plugins.bdi.validation.SnapshotOclEvaluator;
 
 class BdiExplorerViewTest {
+    @Test
+    void keepsPrimaryActionsVisibleAtTheNarrowExplorerWidth() throws Exception {
+        BdiExplorerView view = new BdiExplorerView(new BdiImportService());
+
+        SwingUtilities.invokeAndWait(() -> {
+            view.setSize(640, 700);
+            layoutRecursively(view);
+        });
+
+        for (String label : List.of(
+                "Import .asl...", "Import .jcm...", "Re-import changed",
+                "Refresh USE Snapshot", "Export Current Analysis...")) {
+            JButton button = findButton(view, label);
+            Rectangle bounds = SwingUtilities.convertRectangle(
+                    button.getParent(), button.getBounds(), view);
+            assertTrue(bounds.x >= 0 && bounds.x + bounds.width <= view.getWidth(),
+                    label + " is horizontally clipped");
+        }
+    }
+
+    @Test
+    void mappingChangesBeforeImportDoNotCreateAnEmptyAnalysis() throws Exception {
+        BdiExplorerView view = new BdiExplorerView(new BdiImportService());
+
+        view.mappingForTest().setDocument(
+                org.tzi.use.plugins.bdi.model.mapping.MappingDocument.empty("fingerprint"));
+        flushEdt();
+
+        assertTrue(view.currentAnalysisForTest().isEmpty());
+        assertFalse(view.exportButtonForTest().isEnabled());
+        assertTrue(view.diagramForTest().modelForTest().nodes().isEmpty());
+        assertTrue(view.diagramForTest().stateForTest().getText().contains("Import AgentSpeak"));
+    }
+
+    @Test
+    void switchingFromDirectSourceToProjectClearsDirectReimportState() throws Exception {
+        BdiExplorerView view = new BdiExplorerView(new BdiImportService());
+        view.importFiles(List.of(fixture("fixtures/asl/valid/minimal.asl")));
+        waitForImport(view);
+        assertTrue(view.reimportButtonForTest().isEnabled());
+
+        view.importProject(fixture("fixtures/casestudy/auction/auction.jcm"));
+        waitForProjectImport(view);
+
+        assertEquals("auction", view.projectForTest().orElseThrow().name());
+        assertFalse(view.reimportButtonForTest().isEnabled());
+        assertFalse(view.reimportChangedFiles());
+    }
+
     @Test
     void exportsTheExactCurrentAnalysisAndExposesTheGuiAction(@TempDir Path tempDir) throws Exception {
         BdiExplorerView view = new BdiExplorerView(new BdiImportService());
@@ -515,6 +568,31 @@ class BdiExplorerViewTest {
         SwingUtilities.invokeLater(flushed::countDown);
         if (!flushed.await(10, TimeUnit.SECONDS)) {
             throw new AssertionError("EDT did not flush in time");
+        }
+    }
+
+    private static JButton findButton(Container root, String text) {
+        for (Component component : root.getComponents()) {
+            if (component instanceof JButton button && text.equals(button.getText())) {
+                return button;
+            }
+            if (component instanceof Container child) {
+                try {
+                    return findButton(child, text);
+                } catch (IllegalArgumentException ignored) {
+                    // Continue searching sibling containers.
+                }
+            }
+        }
+        throw new IllegalArgumentException("Button not found: " + text);
+    }
+
+    private static void layoutRecursively(Container container) {
+        container.doLayout();
+        for (Component component : container.getComponents()) {
+            if (component instanceof Container child) {
+                layoutRecursively(child);
+            }
         }
     }
 

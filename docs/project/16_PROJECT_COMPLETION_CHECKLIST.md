@@ -338,6 +338,23 @@ T28 visualization regression evidence:
 - no POM or runtime dependency changed, so existing third-party notices remain
   current.
 
+Post-T28 BDI Explorer UI/logic hardening evidence:
+
+- `BdiDiagramPanelTest`: 10 tests now include a 640-pixel-wide control layout,
+  compact content bounds, large-graph scrolling, and viewport-origin reset after
+  Fit in addition to the existing mode/focus/layer behavior;
+- `BdiExplorerViewTest`: 15 tests include a 640-pixel-wide import toolbar,
+  no analysis/export before a successful import, and direct `.asl` to `.jcm`
+  mode switching without stale re-import state;
+- `BdiSourceTrackerTest`: 2 tests cover successful direct-source stamps and
+  explicit clearing when project import mode takes ownership;
+- `MappingEditorPanelTest` and `BdiProblemPanelTest`: 4 tests cover readable
+  mapping fields with a vertical split and accurate filtered/total issue counts;
+- the focused UI/application regression runs pass 31/31 tests and the full
+  module run passes 212/212 tests. Packaged parser/report/menu smoke also passes
+  and returns `GUI_SMOKE_OK`; no parser, IR, validation, OCL, POM, dependency,
+  or USE-core API changed.
+
 The isolated root run avoids local Java language-server writes/locks in Maven
 `target`; this is an environment race, not a source exception.
 
