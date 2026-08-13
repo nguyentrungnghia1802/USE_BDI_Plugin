@@ -68,6 +68,10 @@ class DocumentationContractTest {
         assertTrue(!Files.readString(demoGuide).isBlank());
         assertLocalLinksResolve(demoGuide, Files.readString(demoGuide));
         Path demoRoot = root.resolve("use-bdi-plugin/demo");
+        String demoIndex = Files.readString(demoRoot.resolve("README.md"));
+        assertTrue(demoIndex.contains("# Bộ demo USE BDI Plugin"));
+        assertTrue(demoIndex.contains("## 4. Flow UI chung"));
+        assertTrue(demoIndex.contains("`Export SVG...`"));
         for (String demo : List.of("auction", "smart-queue", "family-person", "smart-home")) {
             Path directory = demoRoot.resolve(demo);
             assertTrue(Files.isDirectory(directory), () -> "Missing canonical demo: " + directory);
@@ -92,10 +96,19 @@ class DocumentationContractTest {
                         () -> "Missing file in canonical demo: " + directory.resolve(required));
             }
             String walkthrough = Files.readString(directory.resolve("README.md"));
+            String normalizedWalkthrough = walkthrough.toLowerCase(java.util.Locale.ROOT);
             assertTrue(walkthrough.contains("`Diagram`"),
                     () -> "Canonical demo walkthrough misses Diagram steps: " + directory);
             assertTrue(walkthrough.contains("`Fit`"),
                     () -> "Canonical demo walkthrough misses fit-to-screen guidance: " + directory);
+            assertTrue(walkthrough.contains("## 2. Các file trong ví dụ"),
+                    () -> "Canonical demo walkthrough misses its Vietnamese file guide: " + directory);
+            assertTrue(normalizedWalkthrough.contains("flow demo"),
+                    () -> "Canonical demo walkthrough misses its presentation flow: " + directory);
+            assertTrue(normalizedWalkthrough.contains("kết quả"),
+                    () -> "Canonical demo walkthrough misses expected observations: " + directory);
+            assertTrue(normalizedWalkthrough.contains("nếu demo không đúng"),
+                    () -> "Canonical demo walkthrough misses troubleshooting: " + directory);
             if (demo.equals("family-person") || demo.equals("smart-home")) {
                 assertTrue(Files.notExists(directory.resolve("mutants")),
                         () -> "Teaching baseline must not contain mutants: " + directory);
