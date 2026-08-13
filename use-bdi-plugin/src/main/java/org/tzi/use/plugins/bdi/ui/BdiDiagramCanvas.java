@@ -252,6 +252,9 @@ final class BdiDiagramCanvas extends JComponent {
         super.paintComponent(graphics);
         Graphics2D canvas = (Graphics2D) graphics.create();
         try {
+            // A bare JComponent has no UI delegate to clear its background.
+            canvas.setColor(getBackground());
+            canvas.fillRect(0, 0, getWidth(), getHeight());
             canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (model.nodes().isEmpty()) {
                 paintEmptyState(canvas);

@@ -1,436 +1,347 @@
-# Báo Cáo Tiến Độ Phát Triển USE BDI Plugin
+# Bài trình bày: Mở rộng USE để kiểm tra tính nhất quán giữa BDI và UML/OCL
 
-* **Đề tài:** Nghiên cứu mở rộng công cụ USE hỗ trợ đặc tả và kiểm chứng hệ thống đa tác tử 
-* **Github:** [USE BDI Plugin](https://github.com/nguyentrungnghia1802/USE_BDI_Plugin)
-* **Đơn vị:** VNU SME Lab
-* **Giảng viên hướng dẫn:** PGS.TS. Đặng Đức Hạnh
+**Đề tài:** Mở rộng USE để nhập, ánh xạ và kiểm tra tính nhất quán giữa mô hình BDI AgentSpeak và mô hình UML/OCL
 
-## 1. Mục tiêu hiện tại
+**Sản phẩm:** `use-bdi-plugin` cho USE 7.1.1
 
-USE BDI Plugin được phát triển dưới dạng phần mở rộng cho **USE (UML-based Specification Environment)** nhằm hỗ trợ làm việc đồng thời với mô hình tác tử BDI và mô hình UML/OCL.
+**Đơn vị:** VNU SME Lab
 
-Trong giai đoạn hiện tại, plugin tập trung vào các chức năng nền tảng:
+**Giảng viên hướng dẫn:** PGS.TS. Đặng Đức Hạnh
 
-* đọc mã nguồn AgentSpeak (`.asl`) bằng parser của Jason;
-* chuyển kết quả phân tích sang mô hình BDI trung gian;
-* hiển thị cấu trúc BDI trực tiếp trong USE;
-* đọc mô hình và trạng thái UML hiện tại của USE;
-* thiết lập ánh xạ giữa một số thành phần BDI và UML;
-* thực hiện các kiểm tra bước đầu về tính nhất quán giữa hai phía;
-* hiển thị các lỗi và cảnh báo phát hiện được cho người dùng.
+**Repository:** [USE BDI Plugin](https://github.com/nguyentrungnghia1802/USE_BDI_Plugin)
 
-Mục tiêu dài hơn của phần phát triển này là từng bước hỗ trợ kiểm tra không chỉ ở mức cấu trúc và tham chiếu mà còn ở mức ngữ nghĩa, dựa trên trạng thái UML/OCL.
+> Tài liệu này là bài trình bày tổng quan khoảng 10-12 phút. Các tuyên bố kỹ
+> thuật được giới hạn theo code, test và tài liệu chuẩn trong `docs/project`.
 
-# 2. Những nội dung đã thực hiện
+## 1. Mở đầu
 
-## 2.1. Tích hợp plugin vào USE
+USE là công cụ đặc tả và kiểm chứng mô hình UML/OCL. Jason và AgentSpeak được
+dùng để mô tả tác tử BDI thông qua belief, goal, plan, context và action.
 
-Đã xây dựng module `use-bdi-plugin` và tích hợp vào cơ chế plugin hiện có của USE.
+Hai phía đang trả lời hai nhóm câu hỏi khác nhau:
 
-Plugin hiện có thể được truy cập từ giao diện USE và cung cấp giao diện riêng phục vụ việc import và quan sát mô hình BDI.
+- AgentSpeak mô tả tác tử tin gì, muốn đạt gì và lựa chọn kế hoạch nào;
+- UML/OCL mô tả cấu trúc miền, trạng thái đối tượng và các ràng buộc phải đúng;
+- chưa có một luồng thống nhất trong USE để đối chiếu hai mô hình và giải thích
+  một lỗi từ dòng AgentSpeak đến phần tử UML/OCL liên quan.
 
-Việc phát triển được thực hiện theo hướng plugin độc lập, hạn chế sửa đổi trực tiếp vào phần lõi của USE.
+**Câu hỏi nghiên cứu chính:** Làm thế nào mở rộng USE theo hướng plugin để nhập
+mô hình BDI thực, ánh xạ với UML/OCL và phát hiện các điểm không nhất quán mà
+vẫn giữ được bằng chứng, mức độ chắc chắn và an toàn trạng thái?
 
-## 2.2. Tích hợp Jason Parser và import AgentSpeak
+## 2. Mục tiêu của dự án
 
-Đã tích hợp parser của **Jason** để đọc file AgentSpeak (`.asl`).
+Dự án xây dựng một cầu nối kiểm chứng, không thay thế USE hoặc Jason.
 
-Luồng xử lý hiện tại:
+Các mục tiêu chính gồm:
 
-```text
-AgentSpeak (.asl)
-        ↓
-   Jason Parser
-        ↓
-      AST
-        ↓
-Normalized BDI IR
-```
+- nhập trực tiếp AgentSpeak `.asl` bằng parser chính thức của Jason;
+- nhập cấu trúc project JaCaMo `.jcm` ở mức tĩnh;
+- chuẩn hóa dữ liệu BDI thành mô hình độc lập với parser;
+- đọc mô hình và snapshot UML/OCL hiện tại của USE theo chế độ read-only;
+- cho phép người dùng xác nhận ánh xạ BDI sang UML/OCL;
+- chạy các luật kiểm tra cấu trúc, tham chiếu, mapping, signature và OCL;
+- trả về kết quả có rule ID, source span, evidence và certainty;
+- hiển thị kết quả trong USE và xuất báo cáo tái lập được.
 
-Plugin hiện hỗ trợ:
+## 3. Lõi nghiên cứu là gì?
 
-* chọn và import file `.asl`;
-* import nhiều file;
-* phân tích cú pháp bằng Jason;
-* nhận biết file AgentSpeak không hợp lệ;
-* lưu thông tin vị trí nguồn để phục vụ việc báo lỗi và hiển thị sau này.
-
-Việc sử dụng parser của Jason giúp plugin không phải xây dựng lại parser AgentSpeak riêng.
-
-## 2.3. Xây dựng mô hình BDI trung gian
-
-Kết quả từ Jason không được sử dụng trực tiếp trong toàn bộ plugin mà được chuyển sang một mô hình trung gian (**Normalized BDI Intermediate Representation – BDI IR**).
-
-Một số thành phần hiện đã được biểu diễn gồm:
-
-* Agent;
-* Belief;
-* Goal;
-* Plan;
-* Trigger;
-* Context;
-* Plan Step;
-* Term;
-* Source Span.
-
-Việc sử dụng BDI IR giúp tách phần phụ thuộc vào Jason khỏi phần mapping, kiểm tra tính nhất quán và giao diện của plugin.
-
-## 2.4. Xây dựng BDI Index
-
-Trên mô hình BDI trung gian, plugin đã xây dựng cơ chế lập chỉ mục để hỗ trợ việc truy xuất và kiểm tra.
-
-Hiện tại đã có các thông tin phục vụ tra cứu như:
-
-* Goal và các Plan liên quan;
-* Action và vị trí gọi;
-* Predicate occurrence;
-* các reference được phát hiện trong AgentSpeak;
-* Plan label.
-
-BDI Index hiện được sử dụng làm dữ liệu đầu vào cho một số bước mapping và consistency checking.
-
-## 2.5. Xây dựng BDI Explorer
-
-Đã xây dựng giao diện **BDI Explorer** bên trong USE.
-
-Sau khi import AgentSpeak, người dùng có thể quan sát cấu trúc của Agent dưới dạng cây, bao gồm các thành phần như:
+**Lõi của dự án không phải giao diện và cũng không phải parser.** Lõi là pipeline
+kiểm tra tính nhất quán dựa trên mô hình trung gian bất biến và bằng chứng có
+thể truy vết.
 
 ```text
-Agent
-├── Beliefs
-├── Goals
-└── Plans
-    ├── Trigger
-    ├── Context
-    └── Plan Steps
+AgentSpeak / JaCaMo
+        |
+        v
+Official parser adapters
+        |
+        v
+Normalized immutable BDI/MAS IR
+        |
+        +------> BDI Index
+        |
+USE UML/OCL read-only projection
+        |
+        v
+Explicit Mapping + Consistency Rules
+        |
+        v
+Immutable Current Analysis Snapshot
+        |
+        +------> Problems / Diagram
+        +------> Traceability
+        +------> JSON / HTML / Evaluation
 ```
 
-Quá trình import được thực hiện ở background để tránh làm treo giao diện chính của USE.
+Ba ý tưởng cốt lõi:
 
-Ngoài phần Explorer, plugin có tab **Problems** để hiển thị các vấn đề được phát hiện trong quá trình phân tích.
+1. **Normalized IR:** Jason AST, JaCaMo, CArtAgO, Moise và USE concrete types
+   dừng tại adapter; rule engine chỉ làm việc với dữ liệu do plugin sở hữu.
+2. **Evidence-preserving analysis:** mỗi finding gắn với nguồn, target UML/OCL,
+   certainty và đường bằng chứng thay vì chỉ trả về một chuỗi thông báo.
+3. **State safety:** USE là nguồn sự thật về UML/OCL; phân tích không được làm
+   thay đổi snapshot người dùng đang làm việc.
 
-## 2.6. Đọc mô hình và trạng thái UML từ USE
+## 4. Kiến trúc tổng thể
 
-Đã xây dựng lớp adapter để lấy thông tin từ model và state đang mở trong USE.
+```mermaid
+flowchart LR
+  ASL[AgentSpeak .asl] --> JASON[Jason 3.3 adapter]
+  JCM[JaCaMo .jcm] --> JACAMO[JaCaMo 1.3 adapter]
+  JACAMO --> ASL
+  JASON --> BDI[Normalized BDI IR]
+  JACAMO --> MAS[Portable MAS IR]
+  MAS --> MOISE[Moise 1.1 static adapter]
+  MOISE --> ORG[Organization IR]
+  ARTIFACT[CArtAgO artifact class] --> CARTAGO[CArtAgO 3.1 static adapter]
+  CARTAGO --> ENV[Environment IR]
 
-Các thông tin được sử dụng hiện gồm:
+  USE[USE UML/OCL + snapshot] --> UPROJ[Read-only USE projection]
+  BDI --> INDEX[BDI Index]
+  BDI --> MAP[Explicit mappings]
+  UPROJ --> MAP
+  INDEX --> RULES[Consistency orchestrator]
+  MAP --> RULES
+  UPROJ --> RULES
+  ORG --> RULES
+  ENV --> RULES
 
-* UML Classes;
-* Attributes;
-* Operations;
-* Associations;
-* Objects trong current state;
-* một số thông tin liên quan đến operation và OCL.
+  RULES --> SNAPSHOT[Immutable analysis snapshot]
+  SNAPSHOT --> UI[Explorer / Problems / Diagram]
+  SNAPSHOT --> TRACE[Traceability graph]
+  SNAPSHOT --> REPORT[JSON / HTML / Evaluation]
+```
 
-Các thông tin này được chuyển sang cấu trúc dữ liệu riêng của plugin trước khi sử dụng cho mapping và validation.
+Kiến trúc tuân thủ nguyên tắc **plugin-first**. Dự án không sửa lexer, parser
+hoặc AST lõi của USE để nhúng AgentSpeak vào ngôn ngữ USE.
 
-Luồng tổng quát hiện tại:
+## 5. Công nghệ và nền tảng sử dụng
+
+| Thành phần | Vai trò |
+| --- | --- |
+| USE 7.1.1 | Host UML/OCL, object snapshot và giao diện desktop |
+| Java 21, Maven | Ngôn ngữ và hệ thống build của plugin |
+| Jason 3.3.0 | Nguồn sự thật cú pháp AgentSpeak `.asl` |
+| JaCaMo 1.3.0 | Phân tích tĩnh project `.jcm` |
+| CArtAgO 3.1 | Đọc metadata operation/property của artifact ở mức tĩnh |
+| Moise 1.1 | Chuẩn hóa role, mission và cardinality tổ chức ở mức tĩnh |
+| Swing và Java2D | BDI Explorer, Problems, Mapping và diagram read-only |
+| JUnit 5 | Unit, integration, boundary và regression test |
+| PowerShell | Package smoke, quality gate và evaluation trên Windows |
+| JSON/HTML/SVG | Mapping, cấu hình, report và hình trình bày có thể tái lập |
+
+Dự án không sử dụng database, server hoặc dịch vụ cloud. Toàn bộ workflow là
+desktop và file-based.
+
+## 6. Luồng làm việc của người dùng
+
+1. Mở file `.use` trong USE và nạp object/link snapshot bằng `.cmd` nếu cần.
+2. Mở `Plugins > AgentSpeak > Import AgentSpeak...` hoặc BDI Explorer.
+3. Import trực tiếp một hay nhiều `.asl`, hoặc import một project `.jcm`.
+4. Plugin parse ở background, chuẩn hóa BDI IR và xây dựng BDI Index.
+5. Plugin chụp projection read-only của UML model và current USE state.
+6. Người dùng kiểm tra suggestion và xác nhận mapping cần thiết.
+7. Consistency orchestrator chạy các phase rule được bật.
+8. Problems hiển thị finding; Diagram hiển thị BDI, mapping, UML/OCL và evidence.
+9. Người dùng có thể refresh USE snapshot, lưu mapping, xuất JSON/HTML hoặc SVG.
+
+## 7. Các chức năng đã triển khai
+
+### 7.1. Import và mô hình trung gian
+
+- import nhiều `.asl` với partial success theo từng file;
+- giữ parser diagnostic, file, line, column và parser version;
+- biểu diễn belief, goal, plan, trigger, context, step, term và source span;
+- không silently ignore cú pháp chưa hỗ trợ;
+- xây dựng index cho goal support, action call, reference và signature.
+
+### 7.2. USE adapter và mapping
+
+- đọc class, attribute, operation, association, object và link hiện tại;
+- projection là immutable và read-only;
+- hỗ trợ mapping Agent-Class/Object, Belief-Attribute và Action-Operation;
+- suggestion chỉ là ứng viên; chỉ thao tác xác nhận mới tạo binding;
+- mapping được lưu bằng JSON có version và source identity tương đối.
+
+### 7.3. Consistency engine
+
+Catalog chuẩn hiện có 22 rule ID, thuộc các nhóm:
+
+- parse và unsupported syntax;
+- tính đúng đắn của BDI IR;
+- reference và message receiver;
+- mapping và stale target;
+- arity, type và operation owner;
+- OCL precondition và plan context;
+- bounded effect/invariant simulation.
+
+Ngoài catalog chuẩn còn có các pilot rule riêng:
+
+- `ENV-001..004` cho CArtAgO environment ở mức tĩnh;
+- `ORG-001..003` cho Moise organization và UML/OCL ở mức tĩnh.
+
+### 7.4. Mô hình kết quả
+
+Mỗi issue có các thông tin quan trọng:
 
 ```text
-AgentSpeak
-    ↓
-BDI IR
-    ↓
-BDI Index
-    ↓
-Mapping / Consistency Checking
-    ↑
-USE Model + Current State
+ruleId + severity + status + certainty
+sourceSpan + UML reference + evidence + suggested fix
 ```
 
-## 2.7. Xây dựng bước đầu cơ chế Mapping
+OCL và bằng chứng động luôn phân biệt:
 
-Plugin đã có nền tảng để thiết lập ánh xạ giữa mô hình BDI và mô hình UML.
+- `PASS`: có đủ bằng chứng và phép kiểm tra đúng;
+- `FAIL`: có đủ bằng chứng và phép kiểm tra sai;
+- `UNKNOWN`: thiếu binding, snapshot, runtime value hoặc gặp ngữ nghĩa chưa hỗ trợ.
 
-Các loại mapping đang được hỗ trợ hoặc sử dụng trong quá trình phát triển gồm:
+`UNKNOWN` không bao giờ được đổi thành `PASS` để làm kết quả đẹp hơn.
 
-* Agent → UML Class/Object;
-* Belief → UML Attribute;
-* Action → UML Operation;
-* Action Argument → Operation Parameter.
+### 7.5. Giao diện và trực quan hóa
 
-Plugin đã có giao diện phục vụ xem và xác nhận mapping, đồng thời có cơ chế lưu mapping để sử dụng lại.
+BDI Explorer có bốn tab chính:
 
-Cơ chế gợi ý mapping đã được xây dựng bước đầu và sẽ tiếp tục được điều chỉnh để giảm số lượng mapping phải khai báo thủ công.
+- **Explorer:** cây Agent, Belief, Goal, Plan, Context và Step;
+- **Diagram:** graph BDI/MAS, mapping, UML/OCL và evidence;
+- **Problems:** danh sách finding có filter và severity;
+- **Mapping:** suggestion, binding, save/load và revalidation.
 
-## 2.8. Xây dựng Consistency Engine ở mức ban đầu
+Diagram hỗ trợ `All`, `BDI Plan`, `Agent Overview`, `Mapping`, layer toggle,
+Focus Agent, Focus Goal/Plan, Fit, Reset, Zoom và Export SVG.
 
-Đã xây dựng kiến trúc cho **Consistency Engine**, trong đó các phép kiểm tra được tổ chức thành các rule và thực thi thông qua một luồng validation chung.
+## 8. Phạm vi JaCaMo hiện tại
 
-Một số nhóm kiểm tra đã được triển khai gồm:
+Dự án **chưa phải tích hợp JaCaMo đầy đủ**.
 
-* lỗi parse AgentSpeak;
-* một số kiểm tra cấu trúc BDI;
-* kiểm tra reference;
-* kiểm tra mapping;
-* kiểm tra chữ ký Action/Operation;
-* một số kiểm tra liên quan đến ownership.
+Đã có:
 
-Kết quả kiểm tra được biểu diễn dưới dạng `ConsistencyIssue` và hiển thị trong tab **Problems**.
+- parse `.jcm` bằng JaCaMo 1.3.0;
+- resolve agent instance và source `.asl`;
+- chuẩn hóa một bounded subset của Moise organization;
+- đọc metadata CArtAgO được cung cấp ở mức tĩnh;
+- kiểm tra một số quan hệ organization/environment với UML/OCL;
+- hiển thị MAS overview và static-only evidence trong Diagram.
 
-Ở thời điểm hiện tại, phần hoạt động rõ ràng nhất vẫn là các kiểm tra ở mức **cấu trúc, tham chiếu, mapping và signature**. Các kiểm tra ngữ nghĩa dựa trên OCL và trạng thái hệ thống vẫn cần tiếp tục hoàn thiện.
+Chưa có:
 
-# 3. Kết quả demo hiện tại
+- khởi chạy hoặc điều khiển JaCaMo runtime từ USE;
+- live CArtAgO workspace/artifact state;
+- Moise enactment, monitoring hoặc dynamic membership;
+- execution trace và đồng bộ state thời gian thực;
+- kết luận behavioral conformance của MAS đang chạy.
 
-Plugin hiện đã được chạy thử với **Smart Queue Case Study**.
+Ranh giới này là chủ ý nghiên cứu: hệ thống chỉ tuyên bố điều mà static evidence
+chứng minh được; phần thiếu runtime được đánh dấu `UNKNOWN`.
 
-Mô hình UML của case study có các thành phần như:
+## 9. Case study và bằng chứng
 
-* `Manager`;
-* `Counter`;
-* `Staff`;
-* `Queue`;
-* `Customer`.
+### Auction là case study MVP
 
-Một AgentSpeak fixture của Smart Queue đã được sử dụng để kiểm tra quá trình import.
+Auction được dùng để đánh giá end-to-end vì có nhiều agent, goal/plan, action,
+message, UML operation, OCL precondition, organization và environment.
 
-Plugin có thể:
+Bộ evaluation đã khai báo năm trường hợp:
 
-1. import file `.asl`;
-2. parse AgentSpeak bằng Jason;
-3. chuyển sang BDI IR;
-4. hiển thị Belief, Goal và Plan trong BDI Explorer;
-5. đọc UML model/state hiện tại;
-6. chạy các kiểm tra đã được triển khai;
-7. hiển thị kết quả trong Problems.
+- một baseline sạch;
+- bốn mutant có lỗi đã biết;
+- oracle và evidence token được review;
+- runner chạy headless trong workspace cô lập;
+- kết quả JSON, CSV và HTML có tính xác định theo fixture.
 
-Ví dụ fixture `Smart_manager_agent.asl` hiện được sử dụng để kiểm tra luồng trên.
+Kết quả này chỉ là bằng chứng trong phạm vi corpus Auction, không phải chứng
+minh tính đúng tổng quát cho mọi hệ thống AgentSpeak/UML.
 
-## 3.1. Kết quả trên BDI Explorer
+### Các demo phục vụ trình bày
 
-Sau khi import, plugin hiển thị được cấu trúc Agent dưới dạng Tree View.
+- **Family Person:** goal-plan-action-operation đơn giản;
+- **Smart Queue:** decision context và mapping operation;
+- **Smart Home:** BDI kết hợp static environment;
+- **Auction:** BDI, MAS, organization, environment, mapping, OCL và issue path.
 
-Với fixture Smart Queue hiện tại, parser nhận được các thành phần Belief, Goal và Plan và đưa chúng vào mô hình trung gian để hiển thị.
+## 10. Đóng góp chính của dự án
 
-![Hình 1 – BDI Explorer sau khi import Smart_manager_agent.asl](images/demo_bdi_explorer.png)
+1. Một kiến trúc plugin-first kết nối hai authority: Jason cho AgentSpeak và
+   USE cho UML/OCL.
+2. Normalized immutable BDI IR giúp rule engine độc lập với Jason AST.
+3. Mapping tường minh, có xác nhận và có thể lưu lại.
+4. Consistency engine nhiều phase với evidence và certainty rõ ràng.
+5. Kiểm tra snapshot OCL và bounded effect có bảo vệ state fingerprint.
+6. Traceability từ source BDI qua mapping tới UML/OCL và issue.
+7. Workflow GUI, headless quality gate và evaluation có thể tái lập.
+8. Mở rộng tĩnh sang JaCaMo, CArtAgO và Moise mà không tuyên bố quá mức runtime.
 
-*Hình 1. Kết quả import và hiển thị cấu trúc BDI của Smart Queue Agent.*
+## 11. Giới hạn và rủi ro còn lại
 
-## 3.2. Kết quả trên Problems
+- coverage của AgentSpeak là subset phục vụ rule/case study, không phải toàn bộ
+  ngữ nghĩa Jason;
+- mapping suggestion không phải mapping tự động có tính quyết định;
+- manual refresh vẫn cần thiết khi USE state thay đổi;
+- organization mapping chưa có persistence hoàn chỉnh;
+- chưa có live JaCaMo/CArtAgO/Moise runtime hoặc execution trace;
+- chưa chứng minh semantic equivalence giữa BDI và UML/OCL;
+- evaluation hiện giới hạn ở năm case Auction đã khai báo;
+- cần bổ sung screenshot chuẩn và diagram performance evidence cho release.
 
-Tab **Problems** hiển thị các vấn đề mà Consistency Engine phát hiện dựa trên AgentSpeak, mapping và trạng thái USE hiện tại.
+## 12. Hướng phát triển tiếp theo
 
-Ví dụ:
+Ưu tiên gần:
 
-### REF-001 – Named object reference absent
+1. Ổn định UI/UX và hoàn thiện bộ ảnh, flow demo có thể lặp lại.
+2. Bổ sung diagram performance evidence và kiểm thử ở graph lớn.
+3. Hoàn thiện persistence cho organization mapping và cross-tab navigation.
+4. Mở rộng fixture/corpus để tăng độ tin cậy ngoài Auction.
 
-Rule kiểm tra một object reference được nhận diện từ AgentSpeak có tồn tại trong current state của USE hay không.
+Hướng nghiên cứu dài hạn:
 
-Nếu AgentSpeak tham chiếu tới một tên như:
+1. Adapter runtime riêng cho JaCaMo thay vì đưa runtime types vào rule engine.
+2. Thu thập execution trace và ánh xạ event sang snapshot USE theo thời gian.
+3. Theo dõi live CArtAgO property và Moise enactment với semantics rõ ràng.
+4. So sánh static finding với runtime evidence mà vẫn giữ `UNKNOWN` khi thiếu dữ liệu.
+5. House Building có thể là corpus thứ hai nhưng không làm chậm Auction MVP.
 
-```text
-queue1
-```
+## 13. Flow trình bày và demo đề xuất
 
-nhưng current USE state chưa có object tương ứng, plugin sẽ tạo một `ConsistencyIssue`.
+### Phần nói, khoảng 7 phút
 
-### Mapping-related issues
+1. Nêu khoảng trống giữa AgentSpeak BDI và UML/OCL.
+2. Trình bày câu hỏi nghiên cứu và nguyên tắc plugin-first.
+3. Nhấn mạnh lõi: normalized IR, mapping, consistency engine và evidence.
+4. Đi qua sơ đồ kiến trúc và các technology adapter.
+5. Nêu ranh giới: static JaCaMo, chưa có runtime.
+6. Trình bày Auction evaluation và giới hạn claim.
 
-Nếu một thành phần BDI chưa có mapping cần thiết sang UML, plugin có thể sinh cảnh báo tương ứng để người dùng kiểm tra hoặc xác nhận mapping.
+### Phần demo, khoảng 4 phút
 
-![Hình 2 – Problems View](images/demo_bdi_problems.png)
+1. Mở một `.use` và chạy `.cmd` để tạo snapshot.
+2. Mở BDI Explorer và import `.asl` hoặc `.jcm`.
+3. Trong Explorer, chọn một plan để chỉ source span và cấu trúc IR.
+4. Trong Mapping, chỉ một confirmed binding và một suggestion chưa xác nhận.
+5. Trong Problems, chọn một issue để mở evidence path trên Diagram.
+6. Chuyển Diagram sang `BDI Plan`, bấm `Fit`, rồi `Focus Goal/Plan`.
+7. Giải thích `PASS/FAIL/UNKNOWN` và static-only legend.
+8. Xuất SVG hoặc current analysis report để chứng minh tính tái lập.
 
-*Hình 2. Các vấn đề được Consistency Engine phát hiện trong quá trình kiểm tra Smart Queue Agent.*
+## 14. Kết luận
 
-Các thông báo này là kết quả của quá trình kiểm tra tính nhất quán trên dữ liệu hiện tại. Tuy nhiên, một số rule vẫn đang được điều chỉnh để tránh trường hợp nhận diện sai và sinh cảnh báo không cần thiết.
+USE BDI Plugin hướng tới một môi trường kiểm chứng tích hợp, trong đó hành vi
+BDI không bị tách rời khỏi cấu trúc và ràng buộc UML/OCL.
 
-# 4. Ví dụ logic kiểm tra hiện tại
+Giá trị chính của dự án không nằm ở việc hiển thị thêm một cây AgentSpeak, mà
+ở khả năng tạo ra **kết quả kiểm tra có nguồn gốc, có mapping, có bằng chứng,
+có mức độ chắc chắn và có thể tái lập**.
 
-Một ví dụ là rule **REF-001**, dùng để kiểm tra object reference trong AgentSpeak với các object đang tồn tại trong current USE state.
+Thông điệp kết thúc:
 
-Logic chính có dạng:
+> Jason xác định AgentSpeak có nghĩa gì về mặt cú pháp, USE xác định UML/OCL và
+> snapshot có nghĩa gì, còn plugin cung cấp lớp IR, mapping và consistency
+> evidence để hai phía có thể được kiểm tra cùng nhau một cách có kiểm soát.
 
-```java
-Set<String> objectNames = context.uml().orElseThrow().objects().stream()
-        .map(UmlObjectRef::reference)
-        .collect(Collectors.toSet());
+## Tài liệu nguồn
 
-allReferences(context.index().objectReferencesByName().values()).stream()
-        .filter(reference -> !objectNames.contains(reference.name()))
-        .forEach(reference -> issues.add(issue(
-                "REF-001",
-                IssueSeverity.ERROR,
-                "Named object reference '" + reference.name()
-                        + "' is absent from the current USE state",
-                reference.sourceSpan()
-        )));
-```
-
-Ở bước này, rule thực hiện một phép kiểm tra tương đối trực tiếp:
-
-```text
-Object Reference trong BDI
-            ↓
-     BDI Reference Index
-            ↓
-Danh sách Object trong USE State
-            ↓
-      Có tồn tại hay không?
-```
-
-Nếu không tìm thấy object tương ứng, một issue được tạo và đưa ra Problems View.
-
-Đây là một trong các kiểm tra nền tảng hiện tại. Các kiểm tra có mức ngữ nghĩa cao hơn, đặc biệt liên quan tới Context, OCL và ảnh hưởng của Action lên trạng thái hệ thống, vẫn đang được tiếp tục phát triển.
-
-# 5. Vấn đề hiện tại
-
-## 5.1. Phân loại Object Reference chưa chính xác hoàn toàn
-
-Vấn đề rõ nhất hiện tại nằm ở rule **REF-001**.
-
-`BdiIndexBuilder` hiện vẫn có trường hợp nhận diện quá rộng các argument xuất hiện trong literal.
-
-Điều này có thể khiến một số giá trị như:
-
-```text
-free
-busy
-```
-
-hoặc thành phần xuất hiện trong Context bị xem như tên object.
-
-Kết quả là REF-001 có thể sinh false positive.
-
-Vấn đề này nằm ở bước phân loại reference trong BDI Index, không phải ở cơ chế hiển thị Problems.
-
-## 5.2. Các kiểm tra ngữ nghĩa chưa hoàn chỉnh
-
-Consistency Engine hiện đã có nền tảng cho việc tổ chức và thực thi rule, nhưng phần lớn các chức năng đã chạy ổn định vẫn tập trung vào:
-
-* cấu trúc;
-* reference;
-* mapping;
-* signature.
-
-Phần kiểm tra dựa trên OCL và current UML state đã có một số thành phần nền tảng, nhưng chưa xem là hoàn chỉnh ở thời điểm báo cáo.
-
-Do đó, giai đoạn tiếp theo cần tiếp tục phát triển phần này thay vì chỉ bổ sung thêm các rule kiểm tra đơn giản.
-
-## 5.3. Case study hiện còn ở mức phục vụ phát triển
-
-Smart Queue hiện được sử dụng chủ yếu để kiểm thử quá trình tích hợp và demo các chức năng đang có.
-
-Chưa thực hiện đầy đủ:
-
-* bộ dữ liệu lỗi có chủ đích;
-* ground truth;
-* thống kê khả năng phát hiện lỗi;
-* benchmark;
-* đánh giá định lượng.
-
-Các nội dung này sẽ cần được thực hiện ở giai đoạn thực nghiệm của khóa luận.
-
-# 6. Kế hoạch tuần tới
-
-## 6.1. Sửa vấn đề REF-001
-
-Ưu tiên trước mắt là điều chỉnh cách `BdiIndexBuilder` phân loại reference.
-
-Cần phân biệt tốt hơn giữa:
-
-* Object Reference;
-* Literal Value;
-* Enum-like Value;
-* Variable;
-* Context Expression.
-
-Mục tiêu là giảm các false positive hiện tại của REF-001.
-
-## 6.2. Tiếp tục hoàn thiện Mapping
-
-Tiếp tục kiểm tra và cải thiện cơ chế gợi ý mapping giữa BDI và UML.
-
-Tập trung vào:
-
-* Agent → UML Class/Object;
-* Belief → UML Attribute;
-* Action → UML Operation;
-* Action Argument → Operation Parameter.
-
-Việc cải thiện auto-mapping sẽ được thực hiện dựa trên các thông tin đang có như tên, signature và arity, đồng thời vẫn giữ khả năng để người dùng xác nhận hoặc chỉnh sửa mapping.
-
-## 6.3. Bắt đầu phát triển thêm các kiểm tra ngữ nghĩa
-
-Sau khi phần reference ổn định hơn, tiếp tục nghiên cứu và triển khai các phân tích dựa trên mô hình BDI thay vì chỉ bổ sung các phép kiểm tra tồn tại đơn giản.
-
-Trước mắt xem xét:
-
-* quan hệ giữa Goal và supporting Plan;
-* dependency giữa các Goal/Plan;
-* Context của Plan;
-* quan hệ giao tiếp giữa các Agent;
-* việc sử dụng UML/OCL state trong quá trình đánh giá.
-
-Phần này sẽ được triển khai từng bước và kiểm thử trên các case study cụ thể.
-
-## 6.4. Nghiên cứu Visualization cho mô hình BDI
-
-Khảo sát khả năng bổ sung biểu diễn đồ họa cho một số quan hệ hiện chỉ được hiển thị bằng Tree View.
-
-Trước mắt xem xét:
-
-* Goal–Plan Graph;
-* Plan Dependency Graph;
-* quan hệ giữa các Agent.
-
-Đây mới là nội dung nghiên cứu phương án, chưa đặt mục tiêu phải hoàn thành toàn bộ visualization trong tuần tới.
-
-## 6.5. Chuẩn bị Case Study tiếp theo
-
-Tiếp tục sử dụng Smart Queue để kiểm tra các chức năng đang phát triển.
-
-Đồng thời bắt đầu chuẩn bị **Auction Case Study** làm case study có cấu trúc rõ hơn cho việc đánh giá:
-
-* Goal/Plan;
-* nhiều Agent;
-* Action;
-* communication;
-* UML/OCL constraints.
-
-Phần đánh giá định lượng và mutant suite sẽ thực hiện ở giai đoạn sau khi các chức năng kiểm tra cần thiết đã ổn định.
-
-## 6.6. Bắt đầu viết nội dung khóa luận
-
-Song song với việc tiếp tục phát triển plugin, bắt đầu viết các phần của khóa luận đã có đủ cơ sở.
-
-Trước mắt tập trung vào:
-
-1. bối cảnh và bài toán nghiên cứu;
-2. tổng quan về hệ thống đa tác tử;
-3. kiến trúc BDI;
-4. AgentSpeak và Jason;
-5. tổng quan JaCaMo ở mức liên quan đến đề tài;
-6. UML/OCL và công cụ USE;
-7. bài toán liên kết mô hình BDI với UML/OCL;
-8. kiến trúc tổng thể của USE BDI Plugin;
-9. thiết kế Normalized BDI IR.
-
-Các phần liên quan đến kết quả thực nghiệm, đánh giá hiệu quả và kết luận sẽ được viết sau khi implementation và case study đạt trạng thái ổn định hơn.
-
-# 7. Tổng kết
-
-Trong giai đoạn vừa qua, công việc chủ yếu tập trung xây dựng nền tảng kỹ thuật cho USE BDI Plugin.
-
-Các thành phần chính đã có gồm:
-
-```text
-AgentSpeak Import
-        ↓
-Jason Parser
-        ↓
-Normalized BDI IR
-        ↓
-BDI Index
-        ↓
-Mapping
-        ↓
-Consistency Checking
-        ↓
-BDI Explorer / Problems
-```
-
-Plugin hiện đã có thể chạy trong USE, import AgentSpeak, hiển thị mô hình BDI, đọc mô hình/trạng thái UML và thực hiện một số kiểm tra cấu trúc, reference, mapping và signature.
-
-Tuy nhiên, hệ thống hiện vẫn đang trong giai đoạn phát triển. Các phần kiểm tra ngữ nghĩa dựa trên Goal/Plan, communication và OCL chưa được xem là hoàn chỉnh và sẽ là trọng tâm của các giai đoạn tiếp theo.
-
-Trong tuần tới, công việc tập trung vào sửa vấn đề phân loại reference, tiếp tục cải thiện mapping, bắt đầu mở rộng các kiểm tra ngữ nghĩa, nghiên cứu visualization, chuẩn bị case study tiếp theo và bắt đầu viết các phần nền tảng của khóa luận.
+- `docs/project/00_PROJECT_CONTEXT.md`
+- `docs/project/04_SYSTEM_ARCHITECTURE.md`
+- `docs/project/08_CONSISTENCY_RULE_CATALOG.md`
+- `docs/project/10_PLUGIN_TECHNICAL_DESIGN.md`
+- `docs/project/16_PROJECT_COMPLETION_CHECKLIST.md`
+- `docs/guide/guide.md`

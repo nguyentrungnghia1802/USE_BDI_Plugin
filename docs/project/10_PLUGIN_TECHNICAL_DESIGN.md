@@ -440,6 +440,10 @@ and Fit/Reset clear stale viewport positions. Import state is mode-specific: a
 successful direct `.asl` import owns re-import tracking, while a successful `.jcm`
 import clears it. Failed imports retain the previous analysis, and mapping edits
 before the first successful import cannot manufacture an empty exportable analysis.
+The private canvas also fills its background explicitly on every paint because a
+bare `JComponent` has no UI delegate that guarantees opaque background clearing;
+this prevents removed or repositioned nodes from remaining as stale pixels after
+mode, layer, focus, zoom, or asynchronous layout changes.
 These changes remain UI/application orchestration only and do not alter parser,
 IR, validation, OCL, or current USE state.
 

@@ -340,6 +340,9 @@ T28 visualization regression evidence:
 
 Post-T28 BDI Explorer UI/logic hardening evidence:
 
+- `BdiDiagramCanvasTest`: 1 test paints two successive immutable diagrams onto
+  the same frame and proves removed-node pixels are cleared to the canvas
+  background instead of leaving stale visual artifacts;
 - `BdiDiagramPanelTest`: 10 tests now include a 640-pixel-wide control layout,
   compact content bounds, large-graph scrolling, and viewport-origin reset after
   Fit in addition to the existing mode/focus/layer behavior;
@@ -350,8 +353,8 @@ Post-T28 BDI Explorer UI/logic hardening evidence:
   explicit clearing when project import mode takes ownership;
 - `MappingEditorPanelTest` and `BdiProblemPanelTest`: 4 tests cover readable
   mapping fields with a vertical split and accurate filtered/total issue counts;
-- the focused UI/application regression runs pass 31/31 tests and the full
-  module run passes 212/212 tests. Packaged parser/report/menu smoke also passes
+- the focused UI/application regression runs pass 32/32 tests and the isolated
+  full reactor run passes 213/213 plugin tests. Packaged parser/report/menu smoke also passes
   and returns `GUI_SMOKE_OK`; no parser, IR, validation, OCL, POM, dependency,
   or USE-core API changed.
 
