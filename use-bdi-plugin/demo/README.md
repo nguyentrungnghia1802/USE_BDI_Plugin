@@ -36,31 +36,19 @@ kết quả phân tích tĩnh từ immutable snapshot, không phải runtime tra
 
 ## 3. Chuẩn bị USE trước buổi demo
 
-Từ thư mục gốc repository, dùng Java 21 và build distribution:
+Từ thư mục gốc repository, dùng launcher để tự tìm Java, build khi chưa có
+distribution, giải nén và đặt đúng `USE_HOME`:
 
 ```powershell
 Set-Location 'D:\_CODE_BANK\Project_\vnu-sme-lab\use'
-mvn --batch-mode --no-transfer-progress -pl use-assembly -am package
-
-$repo = (Resolve-Path '.').Path
-$zip = Join-Path $repo 'use-assembly\target\use-7.1.1.zip'
-$runtime = Join-Path $repo 'use-assembly\target\demo-runtime'
-Expand-Archive -LiteralPath $zip -DestinationPath $runtime -Force
-$useHome = (Get-ChildItem $runtime -Directory |
-    Where-Object { Test-Path (Join-Path $_.FullName 'lib\use-gui.jar') } |
-    Select-Object -First 1).FullName
-$javaExecutable = if ($env:JAVA_HOME) {
-    Join-Path $env:JAVA_HOME 'bin\java.exe'
-} else {
-    (Get-Command java -ErrorAction Stop).Source
-}
+.\run-use-gui.ps1 -ValidateOnly
 ```
 
-Không chạy riêng `use-gui.jar` trong source tree khi demo package. Distribution
-đã giải nén chứa đúng `lib/plugins/use-bdi-plugin-7.1.1.jar` và cần tham số
-`-H=$useHome`.
+Nếu vừa sửa source/plugin, dùng `.\run-use-gui.ps1 -Rebuild`. Không chạy riêng
+`use-gui\target\use-gui.jar`: launcher luôn dùng packaged distribution có đúng
+`oclextensions`, plugin JAR và `-H=<USE_HOME>`.
 
-## 4. Flow UI chung
+## 4. Kịch bản 1 - chạy nhanh bằng snapshot có sẵn
 
 Mỗi README con có lệnh mở đúng model và snapshot. Sau khi USE hiện lên, flow
 chuẩn là:
@@ -80,14 +68,83 @@ chuẩn là:
     để xuất JSON/HTML.
 
 `View > Create View > Object diagram` chỉ tạo cửa sổ hiển thị. Object phải được
-tạo trước bằng file `.cmd`. Nếu mở model thủ công, gõ lệnh sau trong shell ở
-đáy cửa sổ USE:
+tạo trước bằng file `.cmd`. Launcher luôn nạp `.use` trước `.cmd`; không mở
+`.cmd` khi log còn báo `No System available`.
 
 ```text
 open "D:\...\demo-name\Model.cmd"
 ```
 
-## 5. Kết quả mong đợi
+## 5. Kịch bản 2 - dựng toàn bộ thủ công từ GUI
+
+Kịch bản này phù hợp khi cần chứng minh USE đang tạo state thật, thay vì chỉ
+đọc một snapshot chuẩn bị sẵn. Không truyền `.use`/`.cmd` và không chạy
+`open "...cmd"`:
+
+```powershell
+.\run-use-gui.ps1
+```
+
+### A. Mở UML/OCL và tạo object
+
+1. Chọn `File > Open specification...`, vào thư mục demo và mở file `.use`.
+2. Chọn `View > Create View > Class diagram` để xác nhận model đã compile.
+3. Với từng object trong bảng của README con, chọn `State > Create object...`.
+4. Chọn class, nhập `Object name`, bấm `Create`; lặp lại rồi bấm `Close`.
+5. Chọn `View > Create View > Object diagram`. Object mới tạo sẽ xuất hiện.
+
+### B. Nhập từng thuộc tính bằng chuột
+
+1. Nhấp đúp object trong Object diagram. USE mở cửa sổ `Object properties`.
+2. Sửa ô ở cột giá trị, dùng đúng literal OCL: chuỗi `'Alice'`, số `28` hoặc
+   `100.0`, Boolean `true`/`false`, enum `#open`.
+3. Bấm `Apply` sau khi nhập xong một object. Có thể chọn object tiếp theo trong
+   hộp chọn ở đầu cửa sổ thay vì đóng cửa sổ.
+4. Nếu nhập sai, bấm `Reset`, sửa literal rồi `Apply` lại.
+
+### C. Nối từng association bằng chuột
+
+1. Trong Object diagram, giữ `Ctrl` và bấm các object tham gia association.
+2. Nhấp phải vùng đang chọn. Chọn đúng mục có dạng
+   `insert (object1,object2) into AssociationName`.
+3. Lặp lại cho từng link trong bảng của README con. Link xuất hiện ngay trên
+   Object diagram; nếu không thấy mục `insert`, kiểm tra class và số object đã
+   chọn.
+4. Chọn `State > Check structure now`. Cửa sổ log phải không báo vi phạm
+   invariant hoặc multiplicity.
+
+Nếu thao tác chọn node khó khi trình chiếu, vẫn giữ GUI mở và nhập từng lệnh
+riêng lẻ trong shell dưới cùng. Đây vẫn là dựng state thủ công, không chạy file
+`.cmd`:
+
+```text
+!create alice : Person
+!set alice.name := 'Alice'
+!insert (family1, alice) into FamilyMembers
+check
+```
+
+### D. Import từng đầu vào BDI và xác nhận mapping
+
+1. Chọn `Plugins > AgentSpeak > Import AgentSpeak...` và chọn file `.asl` được
+   ghi trong README con. Với nhiều source, có thể mở từng source để giới thiệu;
+   khi cần phân tích chung, chọn các source cùng lúc trong file chooser.
+2. Nếu demo có `.jcm`, chọn `Plugins > AgentSpeak > Import JaCaMo Project...`
+   và mở `.jcm` để có MAS instance, organization và environment tĩnh. XML/SAI
+   được `.jcm` tham chiếu, không có nút import XML/SAI riêng.
+3. Vào tab `Mapping`. Để nối thủ công, chọn từng candidate trong
+   `Suggestions` rồi bấm `Apply selected suggestion`. Nếu thiếu candidate,
+   chọn `Kind`, nhập `Source`/`Target` và bấm `Add / update`.
+4. Không bấm `Load...` file `.bdimap.json` trong kịch bản này; file đó chỉ là
+   baseline để đối chiếu. Bấm `Save...` nếu muốn lưu mapping vừa xác nhận.
+5. Bấm `Refresh USE Snapshot`, mở `Diagram`, chọn mode, bấm `Fit`, rồi kiểm tra
+   `Problems`. Mọi thay đổi state sau đó đều cần `Refresh USE Snapshot` lại.
+
+README từng demo cung cấp danh sách object, literal, link và mapping tối thiểu.
+Nên tập trước bằng `family-person`; `smart-queue` và `auction` có nhiều object
+nên cần nhiều thời gian hơn kịch bản chạy nhanh.
+
+## 6. Kết quả mong đợi
 
 - Class/Object diagram của USE hiển thị đúng model và snapshot.
 - BDI Explorer giữ cấu trúc AgentSpeak, mapping và finding có source/evidence.
@@ -98,7 +155,7 @@ open "D:\...\demo-name\Model.cmd"
 - `auction` có thể có finding ngoài scope mutant. Luôn đọc rule ID, certainty
   và evidence thay vì coi mọi finding là lỗi parser.
 
-## 6. Trước khi lên trình bày
+## 7. Trước khi lên trình bày
 
 ```powershell
 mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin -am test

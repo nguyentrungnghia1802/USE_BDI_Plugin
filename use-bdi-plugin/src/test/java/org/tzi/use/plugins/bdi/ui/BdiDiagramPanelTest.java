@@ -4,6 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 
 import org.junit.jupiter.api.Test;
@@ -209,6 +214,67 @@ class BdiDiagramPanelTest {
         assertEquals(source, panel.sourceModelForTest());
     }
 
+    @Test
+    void keepsDiagramControlsVisibleAtTheNarrowExplorerWidth() throws Exception {
+        BdiDiagramPanel panel = new BdiDiagramPanel();
+
+        SwingUtilities.invokeAndWait(() -> {
+            panel.setSize(640, 520);
+            layoutRecursively(panel);
+        });
+
+        for (Component control : List.of(
+                panel.fitForTest(), panel.resetForTest(), panel.exportSvgForTest(),
+                panel.zoomInForTest(), panel.zoomOutForTest(), panel.focusAgentForTest(),
+                panel.focusGoalPlanForTest(), panel.modeSelectorForTest(),
+                panel.showIssuesForTest(), panel.showUmlOclForTest(),
+                panel.showOrganizationForTest(), panel.showEnvironmentForTest())) {
+            Rectangle bounds = SwingUtilities.convertRectangle(
+                    control.getParent(), control.getBounds(), panel);
+            assertTrue(bounds.x >= 0 && bounds.y >= 0, control + " starts outside the panel");
+            assertTrue(bounds.x + bounds.width <= panel.getWidth(), control + " is horizontally clipped");
+            assertTrue(bounds.y + bounds.height <= panel.getHeight(), control + " is vertically clipped");
+        }
+    }
+
+    @Test
+    void usesContentBoundsForACompactThreeNodeFlow() {
+        DiagramNode agent = node(DiagramNodeType.AGENT, "agent", "person");
+        DiagramNode goal = node(DiagramNodeType.GOAL, "goal", "introduce_family");
+        DiagramNode plan = node(DiagramNodeType.PLAN, "plan", "introduce_family[source]");
+        DiagramModel model = new DiagramModel(List.of(agent, goal, plan), List.of(), List.of());
+
+        BdiDiagramLayout.Layout layout = BdiDiagramLayout.compute(model);
+
+        assertEquals(3, layout.boxes().size());
+        assertTrue(layout.height() < 200, "a single-row flow must not reserve a 420px canvas");
+        assertTrue(layout.width() < 800, "a three-node flow must remain presentation-sized");
+    }
+
+    @Test
+    void fitRestoresTheViewportOriginAfterScrolling() throws Exception {
+        List<DiagramNode> nodes = new ArrayList<>();
+        for (int index = 0; index < 30; index++) {
+            nodes.add(node(DiagramNodeType.ACTION, "action", "step-" + index));
+        }
+        BdiDiagramPanel panel = new BdiDiagramPanel();
+        SwingUtilities.invokeAndWait(() -> {
+            panel.setSize(640, 520);
+            layoutRecursively(panel);
+            panel.setDiagram(new DiagramModel(nodes, List.of(), List.of()));
+        });
+        waitForLayout(panel);
+
+        JViewport viewport = (JViewport) SwingUtilities.getAncestorOfClass(
+                JViewport.class, panel.canvasForTest());
+        SwingUtilities.invokeAndWait(() -> {
+            viewport.setViewPosition(new Point(0, 320));
+            panel.fitForTest().doClick();
+        });
+
+        assertEquals(new Point(0, 0), viewport.getViewPosition());
+    }
+
     private static DiagramNode node(DiagramNodeType type, String namespace, String reference) {
         return new DiagramNode(type, DiagramSelectionRef.of(namespace, reference), reference,
                 Optional.empty(), Optional.empty(), Map.of());
@@ -234,5 +300,14 @@ class BdiDiagramPanelTest {
         SwingUtilities.invokeAndWait(() -> {
         });
         assertTrue(panel.canvasForTest().layoutReadyForTest(), "diagram layout did not complete");
+    }
+
+    private static void layoutRecursively(Container container) {
+        container.doLayout();
+        for (Component component : container.getComponents()) {
+            if (component instanceof Container child) {
+                layoutRecursively(child);
+            }
+        }
     }
 }

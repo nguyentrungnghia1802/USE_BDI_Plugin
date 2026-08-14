@@ -36,6 +36,13 @@ public final class BdiSourceTracker {
         return sources;
     }
 
+    /** Clears direct AgentSpeak tracking when the Explorer switches to project import mode. */
+    public void clear() {
+        sources = List.of();
+        importedStamps = Map.of();
+        imported = false;
+    }
+
     public boolean hasImportedSnapshot() {
         return imported;
     }

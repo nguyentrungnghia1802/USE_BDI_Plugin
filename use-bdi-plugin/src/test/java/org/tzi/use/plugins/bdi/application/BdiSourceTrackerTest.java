@@ -1,6 +1,7 @@
 package org.tzi.use.plugins.bdi.application;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
@@ -30,5 +31,20 @@ class BdiSourceTrackerTest {
         tracker.markImported();
         Files.delete(source);
         assertEquals(List.of(source.toAbsolutePath().normalize()), tracker.changedSources());
+    }
+
+    @Test
+    void clearsDirectSourcesWhenSwitchingToProjectImportMode() throws Exception {
+        Path source = tempDir.resolve("agent.asl");
+        Files.writeString(source, "+ready.");
+        BdiSourceTracker tracker = new BdiSourceTracker();
+        tracker.track(List.of(source));
+        tracker.markImported();
+
+        tracker.clear();
+
+        assertTrue(tracker.sources().isEmpty());
+        assertTrue(tracker.changedSources().isEmpty());
+        assertFalse(tracker.hasImportedSnapshot());
     }
 }

@@ -112,6 +112,7 @@ final class BdiDiagramCanvas extends JComponent {
         offsetX = 0.0;
         offsetY = 0.0;
         updatePreferredSize();
+        resetViewportOrigin();
         repaint();
     }
 
@@ -172,6 +173,7 @@ final class BdiDiagramCanvas extends JComponent {
         offsetX = Math.max(24.0, (available.width - layout.width() * zoom) / 2.0);
         offsetY = Math.max(24.0, (available.height - layout.height() * zoom) / 2.0);
         updatePreferredSize();
+        resetViewportOrigin();
         repaint();
     }
 
@@ -181,6 +183,7 @@ final class BdiDiagramCanvas extends JComponent {
         offsetX = 0.0;
         offsetY = 0.0;
         updatePreferredSize();
+        resetViewportOrigin();
         repaint();
     }
 
@@ -249,6 +252,9 @@ final class BdiDiagramCanvas extends JComponent {
         super.paintComponent(graphics);
         Graphics2D canvas = (Graphics2D) graphics.create();
         try {
+            // A bare JComponent has no UI delegate to clear its background.
+            canvas.setColor(getBackground());
+            canvas.fillRect(0, 0, getWidth(), getHeight());
             canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             if (model.nodes().isEmpty()) {
                 paintEmptyState(canvas);
@@ -285,10 +291,12 @@ final class BdiDiagramCanvas extends JComponent {
             if (source == null || target == null) {
                 continue;
             }
-            double x1 = source.centerX();
-            double y1 = source.centerY();
-            double x2 = target.centerX();
-            double y2 = target.centerY();
+            double[] start = boundaryPoint(source, target.centerX(), target.centerY());
+            double[] end = boundaryPoint(target, source.centerX(), source.centerY());
+            double x1 = start[0];
+            double y1 = start[1];
+            double x2 = end[0];
+            double y2 = end[1];
             canvas.setColor(highlightedEdgeIds.contains(edge.id()) ? new Color(24, 91, 147)
                     : edge.type() == org.tzi.use.plugins.bdi.diagram.DiagramEdgeType.MISSING_MAPPING
                     ? new Color(202, 116, 38) : new Color(126, 139, 153));
@@ -356,6 +364,19 @@ final class BdiDiagramCanvas extends JComponent {
         canvas.fill(arrow);
     }
 
+    private static double[] boundaryPoint(
+            BdiDiagramLayout.NodeBox box, double targetX, double targetY) {
+        double dx = targetX - box.centerX();
+        double dy = targetY - box.centerY();
+        if (dx == 0.0 && dy == 0.0) {
+            return new double[] { box.centerX(), box.centerY() };
+        }
+        double horizontalScale = dx == 0.0 ? Double.POSITIVE_INFINITY : box.width() / (2.0 * Math.abs(dx));
+        double verticalScale = dy == 0.0 ? Double.POSITIVE_INFINITY : box.height() / (2.0 * Math.abs(dy));
+        double scale = Math.min(horizontalScale, verticalScale);
+        return new double[] { box.centerX() + dx * scale, box.centerY() + dy * scale };
+    }
+
     private void selectAt(Point point) {
         Optional<DiagramNode> selected = nodeAt(point);
         selectedNodeId = selected.map(DiagramNode::id).orElse(null);
@@ -388,6 +409,13 @@ final class BdiDiagramCanvas extends JComponent {
     private void updatePreferredSize() {
         setPreferredSize(getPreferredSize());
         revalidate();
+    }
+
+    private void resetViewportOrigin() {
+        JViewport viewport = (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, this);
+        if (viewport != null) {
+            viewport.setViewPosition(new Point(0, 0));
+        }
     }
 
     private static void requireEdt() {

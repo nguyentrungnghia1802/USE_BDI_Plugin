@@ -30,14 +30,11 @@ snapshot USE.
 Sau bước chuẩn bị trong [README bộ demo](../README.md), chạy từ repository root:
 
 ```powershell
-$demo = Join-Path $repo 'use-bdi-plugin\demo\smart-queue'
-& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome" `
-    (Join-Path $demo 'SmartQueue.use') `
-    (Join-Path $demo 'SmartQueue.cmd')
+.\run-use-gui.ps1 -Demo smart-queue
 ```
 
-Nếu USE đã mở, chọn `File > Open specification...` và mở `SmartQueue.use`, sau
-đó gõ vào shell dưới cùng:
+Nếu USE đã mở, chọn `File > Open specification...` và mở `SmartQueue.use` trước.
+Chỉ khi model đã hiện trong cây bên trái mới gõ vào shell dưới cùng:
 
 ```text
 open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\smart-queue\SmartQueue.cmd"
@@ -45,7 +42,7 @@ open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\smart-queue\Sma
 
 Đợi log báo command file hoàn tất trước khi tạo Object diagram.
 
-## 4. Flow demo trực quan (7-10 phút)
+## 4. Kịch bản 1 - flow demo nhanh (7-10 phút)
 
 1. Chọn `View > Create View > Class diagram`.
    Chỉ `Queue`, `Customer`, `Counter`, `Manager`; mở node `Queue` để nói về
@@ -70,7 +67,67 @@ open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\smart-queue\Sma
 10. Chọn lại mode/layer/focus mong muốn và bấm `Export SVG...` nếu cần ảnh cho
     slide; `Reset` khôi phục toàn graph.
 
-## 5. Lời thoại gợi ý
+## 5. Kịch bản 2 - dựng Smart Queue thủ công từ GUI (15-20 phút)
+
+Khởi động USE không kèm model theo [kịch bản GUI thủ công](../README.md#5-kịch-bản-2---dựng-toàn-bộ-thủ-công-từ-gui),
+sau đó không mở `SmartQueue.cmd`.
+
+### A. Mở model và tạo từng object
+
+1. Chọn `File > Open specification...`, mở `SmartQueue.use`, rồi mở
+   `View > Create View > Class diagram`.
+2. Qua `State > Create object...`, tạo từng object sau:
+
+   | Class | Object name |
+   | --- | --- |
+   | `Queue` | `queue1` |
+   | `Customer` | `customer1` đến `customer6` |
+   | `Counter` | `counter1`, `counter2` |
+   | `Manager` | `manager1` |
+
+3. Không cần tạo `Staff` trong snapshot này. Chọn
+   `View > Create View > Object diagram`.
+
+### B. Nhập từng giá trị
+
+Nhấp đúp node, nhập giá trị OCL trong `Object properties`, bấm `Apply`:
+
+| Object | Giá trị OCL cần nhập |
+| --- | --- |
+| `queue1` | `size = 6` |
+| `customer1` ... `customer6` | `name = 'customer1'` ... `name = 'customer6'` |
+| `counter1` | `name = 'counter1'`, `status = #busy` |
+| `counter2` | `name = 'counter2'`, `status = #free` |
+| `manager1` | `name = 'manager1'` |
+
+### C. Nối từng quan hệ
+
+1. Lần lượt giữ `Ctrl`, chọn `queue1` với từng `customer1` ... `customer6`,
+   nhấp phải và chọn `insert (queue1,customerN) into QueueCustomers`.
+2. Nối `queue1` với `counter1` và `counter2` bằng hai mục
+   `insert (...) into QueueCounters`.
+3. Nối `manager1` với `queue1` bằng
+   `insert (manager1,queue1) into ManagerQueues`.
+4. Chọn `State > Check structure now`. `SizeMatchesCustomers` phải hợp lệ vì
+   `size = 6` và có đúng sáu link `QueueCustomers`.
+
+### D. Import AgentSpeak và tạo mapping thủ công
+
+1. Chọn `Plugins > AgentSpeak > Import AgentSpeak...`, mở
+   `smart_queue_manager.asl`.
+2. Trong `Explorer`, bung ba plan của goal `reduce_waiting_time` để đối chiếu
+   với `queue1.size = 6` và `counter2.status = #free`.
+3. Trong `Mapping > Suggestions`, áp dụng candidate agent sang `Manager`, sau
+   đó candidate action `assignCustomer` sang
+   `Manager::assignCustomer(q:Queue,c:Customer,counter:Counter)` bằng
+   `Apply selected suggestion`.
+4. Nếu cần nhập trực tiếp, chọn đúng `Kind`, chép `Source` đang hiển thị trong
+   suggestion, nhập `Target`, rồi bấm `Add / update`.
+5. Bấm `Refresh USE Snapshot`, chọn `Diagram > BDI Plan > Fit`; mở `Problems`
+   và đọc certainty/evidence. Không bấm `Load...` `SmartQueue.bdimap.json` vì
+   file đó chỉ dùng để đối chiếu mapping vừa tạo.
+
+## 6. Lời thoại gợi ý
 
 - "UML/OCL mô tả cấu trúc và ràng buộc của hệ thống hàng đợi."
 - "AgentSpeak mô tả goal, context và cách agent lựa chọn plan."
@@ -78,7 +135,7 @@ open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\smart-queue\Sma
   xác nhận mới được dùng để kiểm tra nhất quán."
 - "Plugin đọc snapshot USE; nó không chạy agent và không thay đổi `MSystem`."
 
-## 6. Kết quả cần quan sát
+## 7. Kết quả cần quan sát
 
 - `queue1.size = 6` và có đúng 6 link `QueueCustomers`, nên
   `SizeMatchesCustomers` hợp lệ.
@@ -88,10 +145,10 @@ open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\smart-queue\Sma
 - Sau khi đổi state thủ công, phải bấm `Refresh USE Snapshot`; điều này thể hiện
   boundary read-only và refresh có chủ đích.
 
-## 7. Nếu demo không đúng
+## 8. Nếu demo không đúng
 
-- Object diagram trống: `SmartQueue.cmd` chưa chạy; dùng lệnh `open "...cmd"`.
-- Không thấy menu AgentSpeak: đóng USE, build lại assembly và mở bằng đúng
-  `-H=$useHome`.
+- Object diagram trống: chạy lại `.\run-use-gui.ps1 -Demo smart-queue`; nếu làm
+  thủ công, phải mở `SmartQueue.use` trước lệnh `open "...cmd"`.
+- Không thấy menu AgentSpeak: đóng USE và chạy `.\run-use-gui.ps1 -Rebuild`.
 - Mapping không hiện: phải import `.asl` trước rồi mới `Load...` mapping.
 - Graph quá rộng: chọn `BDI Plan`, bấm `Fit`, sau đó `Focus Goal/Plan`.

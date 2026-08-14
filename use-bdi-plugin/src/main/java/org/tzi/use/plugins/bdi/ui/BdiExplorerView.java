@@ -2,6 +2,7 @@ package org.tzi.use.plugins.bdi.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -114,6 +116,7 @@ public final class BdiExplorerView extends JPanel implements View {
     private BdiImportSnapshot snapshot;
     private Optional<CurrentAnalysisSnapshot> currentAnalysis = Optional.empty();
     private Optional<MasProjectModel> project = Optional.empty();
+    private boolean analysisInputAvailable;
     private SwingWorker<?, ?> worker;
     private long importGeneration;
     private final AtomicLong useRefreshGeneration = new AtomicLong();
@@ -287,16 +290,26 @@ public final class BdiExplorerView extends JPanel implements View {
         exportButton.setToolTipText("Export the currently displayed Problems analysis as JSON or HTML");
         exportButton.setEnabled(false);
         exportButton.addActionListener(event -> chooseExportCurrentAnalysis());
-        status = new JLabel("No AgentSpeak source imported; " + configurationSummary);
-        JPanel buttons = new JPanel();
-        buttons.add(importButton);
-        buttons.add(importProjectButton);
-        buttons.add(reimportButton);
-        buttons.add(refreshUseButton);
-        buttons.add(exportButton);
-        JPanel toolbar = new JPanel(new BorderLayout(6, 0));
-        toolbar.add(buttons, BorderLayout.WEST);
-        toolbar.add(status, BorderLayout.CENTER);
+        status = new JLabel();
+        setStatus("No AgentSpeak source imported; " + configurationSummary);
+        JPanel importActions = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 2));
+        importActions.add(importButton);
+        importActions.add(importProjectButton);
+        importActions.add(reimportButton);
+        importActions.setAlignmentX(LEFT_ALIGNMENT);
+        JPanel analysisActions = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 2));
+        analysisActions.add(refreshUseButton);
+        analysisActions.add(exportButton);
+        analysisActions.setAlignmentX(LEFT_ALIGNMENT);
+        JPanel statusRow = new JPanel(new BorderLayout());
+        statusRow.add(status, BorderLayout.CENTER);
+        statusRow.setBorder(BorderFactory.createEmptyBorder(0, 6, 3, 6));
+        statusRow.setAlignmentX(LEFT_ALIGNMENT);
+        JPanel toolbar = new JPanel();
+        toolbar.setLayout(new BoxLayout(toolbar, BoxLayout.Y_AXIS));
+        toolbar.add(importActions);
+        toolbar.add(analysisActions);
+        toolbar.add(statusRow);
         add(toolbar, BorderLayout.NORTH);
 
         tree = new JTree(createTree(snapshot));
@@ -306,7 +319,8 @@ public final class BdiExplorerView extends JPanel implements View {
 
         detail = new JTextArea();
         detail.setEditable(false);
-        detail.setLineWrap(false);
+        detail.setLineWrap(true);
+        detail.setWrapStyleWord(true);
         detail.setFont(new java.awt.Font(java.awt.Font.MONOSPACED, java.awt.Font.PLAIN, 12));
         detail.setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 
@@ -315,6 +329,7 @@ public final class BdiExplorerView extends JPanel implements View {
                 new JScrollPane(tree),
                 new JScrollPane(detail));
         split.setResizeWeight(0.42);
+        split.setContinuousLayout(true);
         split.setPreferredSize(new Dimension(900, 520));
         problems = new BdiProblemPanel();
         problems.setProblemSelectionListener(this::showProblemSelection);
@@ -327,13 +342,13 @@ public final class BdiExplorerView extends JPanel implements View {
         tabs.addTab("Diagram", diagram);
         tabs.addTab("Problems", problems);
         tabs.addTab("Mapping", mapping);
+        tabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         add(tabs, BorderLayout.CENTER);
         detail.setText("Select a BDI node to inspect its details and source span.");
     }
 
     public void importFiles(List<Path> sources) {
         List<Path> selectedSources = List.copyOf(Objects.requireNonNull(sources, "sources"));
-        sourceTracker.track(selectedSources);
         startImport(selectedSources, "Importing AgentSpeak...");
     }
 
@@ -341,6 +356,7 @@ public final class BdiExplorerView extends JPanel implements View {
         Path normalized = Objects.requireNonNull(projectFile, "projectFile")
                 .toAbsolutePath().normalize();
         try {
+            alignMappingFingerprint();
             MasProjectAnalysisRequest request = MasProjectAnalysisRequest.of(
                     normalized,
                     Instant.now(),
@@ -352,7 +368,7 @@ public final class BdiExplorerView extends JPanel implements View {
                 worker.cancel(true);
             }
             long generation = ++importGeneration;
-            status.setText("Importing JaCaMo project " + normalized.getFileName() + "...");
+            setStatus("Importing JaCaMo project " + normalized.getFileName() + "...");
             BdiProjectImportWorker projectWorker = new BdiProjectImportWorker(
                     projectAnalysisService,
                     request,
@@ -376,7 +392,7 @@ public final class BdiExplorerView extends JPanel implements View {
     public boolean reimportChangedFiles() {
         List<Path> changed = sourceTracker.changedSources();
         if (changed.isEmpty()) {
-            status.setText("No changed AgentSpeak source files");
+            setStatus("No changed AgentSpeak source files");
             return false;
         }
         startImport(sourceTracker.sources(), "Re-importing " + changed.size() + " changed file(s)...");
@@ -398,13 +414,13 @@ public final class BdiExplorerView extends JPanel implements View {
             worker.cancel(true);
         }
         long generation = ++importGeneration;
-        status.setText(message);
+        setStatus(message);
         worker = new BdiImportWorker(
                 importService,
                 sources,
                 imported -> {
                     if (generation == importGeneration) {
-                        applySnapshot(imported);
+                        applySnapshot(imported, sources);
                     }
                 },
                 failure -> {
@@ -492,14 +508,14 @@ public final class BdiExplorerView extends JPanel implements View {
         return status;
     }
 
-    private void applySnapshot(BdiImportSnapshot imported) {
+    private void applySnapshot(BdiImportSnapshot imported, List<Path> importedSources) {
         Runnable update = () -> {
             project = Optional.empty();
             snapshot = imported;
+            analysisInputAvailable = true;
+            sourceTracker.track(importedSources);
             sourceTracker.markImported();
-            useModel.filter(model -> mapping.document().useFingerprint().equals("unknown"))
-                    .ifPresent(model -> mapping.setDocumentWithoutNotification(
-                            MappingDocument.empty(model.fingerprint())));
+            alignMappingFingerprint();
             mapping.setSuggestions(useModel
                     .map(model -> mappingSuggestionService.suggest(imported.models(), imported.index(), model))
                     .orElse(List.of()));
@@ -513,7 +529,7 @@ public final class BdiExplorerView extends JPanel implements View {
                 message += ", " + problemCount + " problem(s)";
             }
             message += "; " + configurationSummary;
-            status.setText(message);
+            setStatus(message);
             detail.setText("Select a BDI node to inspect its details and source span.");
         };
         if (SwingUtilities.isEventDispatchThread()) {
@@ -528,7 +544,9 @@ public final class BdiExplorerView extends JPanel implements View {
             project = result.project();
             snapshot = result.snapshot().bdiImport();
             currentAnalysis = Optional.of(result.snapshot());
-            sourceTracker.markImported();
+            analysisInputAvailable = true;
+            sourceTracker.clear();
+            reimportButton.setEnabled(false);
             mapping.setSuggestions(useModel
                     .map(model -> mappingSuggestionService.suggest(snapshot.models(), snapshot.index(), model))
                     .orElse(List.of()));
@@ -537,7 +555,7 @@ public final class BdiExplorerView extends JPanel implements View {
             tree.setModel(new DefaultTreeModel(createTree(snapshot, result.projectDiagnostics())));
             refreshDiagram(result.snapshot());
             String projectName = result.project().map(MasProjectModel::name).orElse("unknown");
-            status.setText("JaCaMo project " + projectName + ": "
+            setStatus("JaCaMo project " + projectName + ": "
                     + snapshot.fileCount() + " AgentSpeak file(s), "
                     + result.project().map(value -> value.agents().size()).orElse(0)
                     + " agent instance(s), " + result.projectDiagnostics().size()
@@ -553,14 +571,16 @@ public final class BdiExplorerView extends JPanel implements View {
     }
 
     private void showFailure(Throwable failure) {
-        status.setText("Import failed: " + failure.getMessage());
+        String message = failure.getMessage() == null ? failure.getClass().getSimpleName() : failure.getMessage();
+        setStatus("Import failed: " + message
+                + (analysisInputAvailable ? "; previous analysis retained" : ""));
     }
 
     private void refreshUseSnapshotOnEdt(long generation) {
         if (generation != useRefreshGeneration.get()) {
             return;
         }
-        status.setText("Refreshing USE snapshot...");
+        setStatus("Refreshing USE snapshot...");
         try {
             UseSnapshotProvider provider = useSnapshotProvider.orElseThrow(
                     () -> new IllegalStateException("No live USE system is available"));
@@ -580,18 +600,25 @@ public final class BdiExplorerView extends JPanel implements View {
             }
             if (generation == useRefreshGeneration.get()) {
                 String shortFingerprint = beforeAnalysis.substring(0, Math.min(12, beforeAnalysis.length()));
-                status.setText("USE snapshot refreshed [" + shortFingerprint
+                setStatus("USE snapshot refreshed [" + shortFingerprint
                         + "]; " + problems.problemCount() + " problem(s); " + configurationSummary);
             }
         } catch (RuntimeException error) {
             if (generation == useRefreshGeneration.get()) {
                 String message = error.getMessage() == null ? error.getClass().getSimpleName() : error.getMessage();
-                status.setText("USE snapshot refresh failed: " + message + "; " + configurationSummary);
+                setStatus("USE snapshot refresh failed: " + message + "; " + configurationSummary);
             }
         }
     }
 
     private void refreshProblems() {
+        if (!analysisInputAvailable) {
+            currentAnalysis = Optional.empty();
+            problems.setProblems(List.of());
+            exportButton.setEnabled(false);
+            diagram.setUnavailable("Import AgentSpeak or a JaCaMo project to create an analysis");
+            return;
+        }
         currentAnalysis = Optional.of(analysisService.create(
                 Instant.now(),
                 snapshot,
@@ -602,6 +629,12 @@ public final class BdiExplorerView extends JPanel implements View {
                 currentAnalysis.orElseThrow().issues()));
         exportButton.setEnabled(true);
         refreshDiagram(currentAnalysis.orElseThrow());
+    }
+
+    private void alignMappingFingerprint() {
+        useModel.filter(model -> mapping.document().useFingerprint().equals("unknown"))
+                .ifPresent(model -> mapping.setDocumentWithoutNotification(
+                        MappingDocument.empty(model.fingerprint())));
     }
 
     private void refreshDiagram(CurrentAnalysisSnapshot analysis) {
@@ -624,7 +657,8 @@ public final class BdiExplorerView extends JPanel implements View {
             });
             diagram.setDiagram(new DiagramModel(nodes, edges, groups));
         } catch (RuntimeException error) {
-            diagram.setUnavailable("current analysis could not be projected");
+            String message = error.getMessage() == null ? error.getClass().getSimpleName() : error.getMessage();
+            diagram.setUnavailable("Current analysis could not be projected: " + message);
         }
     }
 
@@ -695,7 +729,7 @@ public final class BdiExplorerView extends JPanel implements View {
         chooser.setFileFilter(jsonFilter);
         chooser.setSelectedFile(new java.io.File("bdi-analysis.json"));
         if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
-            status.setText("Analysis export cancelled; " + configurationSummary);
+            setStatus("Analysis export cancelled; " + configurationSummary);
             return;
         }
 
@@ -710,17 +744,22 @@ public final class BdiExplorerView extends JPanel implements View {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
             if (choice != JOptionPane.YES_OPTION) {
-                status.setText("Analysis export cancelled; existing file retained: " + output.toAbsolutePath());
+                setStatus("Analysis export cancelled; existing file retained: " + output.toAbsolutePath());
                 return;
             }
             overwrite = true;
         }
         try {
             Path exported = exportCurrentAnalysis(output, format, overwrite);
-            status.setText("Exported current analysis to " + exported);
+            setStatus("Exported current analysis to " + exported);
         } catch (IOException | RuntimeException error) {
-            status.setText("Analysis export failed for " + output.toAbsolutePath() + ": " + error.getMessage());
+            setStatus("Analysis export failed for " + output.toAbsolutePath() + ": " + error.getMessage());
         }
+    }
+
+    private void setStatus(String message) {
+        status.setText(message);
+        status.setToolTipText(message);
     }
 
     private Path exportCurrentAnalysis(Path output, ReportFormat format, boolean overwrite) throws IOException {

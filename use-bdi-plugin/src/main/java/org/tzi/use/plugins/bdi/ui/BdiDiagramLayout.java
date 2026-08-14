@@ -13,8 +13,8 @@ import org.tzi.use.plugins.bdi.diagram.DiagramNodeType;
 
 /** Deterministic, renderer-owned layout snapshot for the Swing canvas. */
 final class BdiDiagramLayout {
-    private static final int NODE_WIDTH = 180;
-    private static final int NODE_HEIGHT = 52;
+    private static final int NODE_WIDTH = 190;
+    private static final int NODE_HEIGHT = 58;
     private static final int COLUMN_GAP = 40;
     private static final int ROW_GAP = 28;
     private static final int MARGIN = 36;
@@ -34,8 +34,8 @@ final class BdiDiagramLayout {
                 .sorted(Comparator.comparingInt(DiagramNodeType::ordinal))
                 .toList();
         Map<String, NodeBox> boxes = new LinkedHashMap<>();
-        int width = 640;
-        int height = 420;
+        int width = 0;
+        int height = 0;
         for (int column = 0; column < columns.size(); column++) {
             DiagramNodeType type = columns.get(column);
             List<DiagramNode> nodes = model.nodes().stream()

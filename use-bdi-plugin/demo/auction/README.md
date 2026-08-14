@@ -48,14 +48,11 @@ trong evidence/test corpus để bảo đảm tái lập.
 Sau bước chuẩn bị trong [README bộ demo](../README.md), chạy từ repository root:
 
 ```powershell
-$demo = Join-Path $repo 'use-bdi-plugin\demo\auction'
-& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome" `
-    (Join-Path $demo 'Auction.use') `
-    (Join-Path $demo 'Auction.cmd')
+.\run-use-gui.ps1 -Demo auction
 ```
 
-Nếu USE đã mở, chọn `File > Open specification...`, mở `Auction.use`, rồi gõ
-trong shell dưới cùng:
+Nếu USE đã mở, chọn `File > Open specification...` và mở `Auction.use` trước.
+Chỉ khi model đã hiện trong cây bên trái mới gõ trong shell dưới cùng:
 
 ```text
 open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\auction\Auction.cmd"
@@ -64,7 +61,7 @@ open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\auction\Auction
 Đợi `check` hoàn tất. Snapshot baseline có `auction1.status = #open`, reserve
 price 100, bidder budget 150 và bid amount 120.
 
-## 4. Flow demo baseline (12-15 phút)
+## 4. Kịch bản 1 - flow demo baseline (12-15 phút)
 
 ### Bước A - UML/OCL và snapshot
 
@@ -111,14 +108,84 @@ price 100, bidder budget 150 và bid amount 120.
 16. Bấm `Export SVG...` để lưu đúng mode/layer/focus hiện tại. Dùng
     `Export Current Analysis...` nếu cần JSON hoặc HTML đầy đủ.
 
-## 5. Flow negative case `OCL-001` (5 phút)
+## 5. Kịch bản 2 - dựng Auction thủ công từ GUI (18-25 phút)
+
+Khởi động USE không kèm model theo [kịch bản GUI thủ công](../README.md#5-kịch-bản-2---dựng-toàn-bộ-thủ-công-từ-gui),
+và không mở `Auction.cmd`.
+
+### A. Mở model và tạo từng object
+
+1. Chọn `File > Open specification...`, mở `Auction.use`, rồi tạo Class
+   diagram.
+2. Qua `State > Create object...`, tạo:
+
+   | Class | Object name |
+   | --- | --- |
+   | `Auctioneer` | `auctioneer1` |
+   | `Auction` | `auction1` |
+   | `Bidder` | `bidder1` |
+   | `Bid` | `bid1` |
+
+3. Chọn `View > Create View > Object diagram`.
+
+### B. Nhập từng giá trị
+
+Nhấp đúp node, nhập giá trị trong `Object properties`, bấm `Apply`:
+
+| Object | Giá trị OCL cần nhập |
+| --- | --- |
+| `auctioneer1` | `name = 'auctioneer'` |
+| `auction1` | `title = 'Demo auction'`, `status = #open`, `reservePrice = 100.0` |
+| `bidder1` | `name = 'bidder1'`, `budget = 150.0` |
+| `bid1` | `amount = 120.0` |
+
+### C. Nối từng quan hệ
+
+Giữ `Ctrl`, chọn đúng hai object, nhấp phải và tạo lần lượt:
+
+| Objects | Mục menu cần chọn |
+| --- | --- |
+| `auctioneer1`, `auction1` | `insert (auctioneer1,auction1) into AuctioneerAuctions` |
+| `auction1`, `bidder1` | `insert (auction1,bidder1) into AuctionBidders` |
+| `auction1`, `bid1` | `insert (auction1,bid1) into AuctionBids` |
+| `bidder1`, `bid1` | `insert (bidder1,bid1) into BidderBids` |
+
+Chọn `State > Check structure now`. Log phải xác nhận snapshot thỏa invariant
+và multiplicity.
+
+### D. Import từng source và xác nhận mapping
+
+1. Để giới thiệu từng file, chọn
+   `Plugins > AgentSpeak > Import AgentSpeak...`, mở `auctioneer.asl`; lặp lại
+   thao tác và mở `bidder.asl` trong Explorer thứ hai.
+2. Để phân tích hai source cùng nhau, gọi `Import AgentSpeak...` lần nữa và
+   chọn đồng thời `auctioneer.asl`, `bidder.asl` trong file chooser. Cách này
+   chỉ có source-level agents, chưa có ba MAS instance.
+3. Trong `Mapping > Suggestions`, lần lượt áp dụng các candidate chính:
+   `auctioneer -> Auctioneer`, `bidder -> Bidder`, `open -> Auction::open()`,
+   `placeBid -> Auction::placeBid(...)`, `close -> Auction::close()` và
+   `submitBid -> Bidder::submitBid(...)`. Tiếp tục với parameter/belief
+   candidate nếu muốn tái tạo đủ 14 binding.
+4. Dùng `Apply selected suggestion` cho từng candidate. Nếu nhập trực tiếp,
+   chọn `Kind`, chép stable `Source` đang hiển thị, nhập qualified `Target`,
+   rồi bấm `Add / update`.
+5. Bấm `Refresh USE Snapshot`, mở `Diagram > BDI Plan`, bấm `Fit`, rồi kiểm tra
+   `Problems`. Không `Load...` `Auction.bdimap.json` trong kịch bản này.
+6. Cuối cùng, chọn `Plugins > AgentSpeak > Import JaCaMo Project...` và mở
+   `auction.jcm` để chuyển sang `MAS Overview`. `.jcm` tự tham chiếu hai `.asl`,
+   XML và SAI; plugin không có nút import riêng cho XML/SAI.
+
+Lưu ý: import từng `.asl` chứng minh parser/source flow; import `.jcm` mới cho
+thấy 1 auctioneer, 2 bidder instance và các layer MAS tĩnh.
+
+## 6. Flow negative case `OCL-001` (5 phút)
 
 Nên chạy trong một phiên USE mới để tránh lẫn model/snapshot baseline:
 
 ```powershell
-$mutant = Join-Path $demo 'mutants\ocl-open-closed.use'
-& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome" `
-    $mutant (Join-Path $demo 'Auction.cmd')
+.\run-use-gui.ps1 `
+    -Specification '.\use-bdi-plugin\demo\auction\mutants\ocl-open-closed.use' `
+    -CommandFile '.\use-bdi-plugin\demo\auction\Auction.cmd'
 ```
 
 Sau đó:
@@ -143,7 +210,7 @@ Sau đó:
    bởi manifest và evidence token; baseline có thể chứa finding tiềm năng ngoài
    scope do static reference/runtime evidence chưa đủ.
 
-## 6. Lời thoại gợi ý
+## 7. Lời thoại gợi ý
 
 - "Jason/JaCaMo parser là syntax authority; plugin không viết parser thứ hai."
 - "Normalized IR và current analysis snapshot là immutable; Diagram không chạy
@@ -153,7 +220,7 @@ Sau đó:
 - "Kết quả mutant là evidence có scope, không phải tuyên bố chứng minh đúng cho
   mọi mô hình BDI/UML."
 
-## 7. Kết quả mong đợi
+## 8. Kết quả mong đợi
 
 - Class/Object diagram compile và snapshot baseline thỏa invariant cấu trúc.
 - Explorer hiển thị hai source và ba MAS agent instance.
@@ -162,7 +229,7 @@ Sau đó:
 - Mutant OCL tạo đường evidence có `OCL-001` trong reviewed flow.
 - Đóng/mở Diagram, đổi filter hoặc export không thay đổi USE state fingerprint.
 
-## 8. Kiểm tra headless trước buổi demo
+## 9. Kiểm tra headless trước buổi demo
 
 ```powershell
 $reportDir = Join-Path $repo 'target\demo-reports'
@@ -186,7 +253,7 @@ Exit `0` là clean, `1` là có confirmed finding, `2` là chỉ có
 potential/unknown, `3` là input/config không hợp lệ, `4` là lỗi hạ tầng/output.
 Không coi mọi exit khác 0 là lỗi parser; hãy mở report để đọc evidence.
 
-## 9. Nếu demo không đúng
+## 10. Nếu demo không đúng
 
 - Không thấy plugin/menu: build lại assembly, đóng toàn bộ USE và mở bằng đúng
   distribution cùng `-H=$useHome`.

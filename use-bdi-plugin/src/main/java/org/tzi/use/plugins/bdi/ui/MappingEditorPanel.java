@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -43,6 +44,7 @@ public final class MappingEditorPanel extends JPanel {
     private final JTextField source = new JTextField(24);
     private final JTextField target = new JTextField(24);
     private final JLabel status = new JLabel("No mapping document loaded");
+    private final JSplitPane body;
     private MappingDocument document = MappingDocument.empty("unknown");
     private Consumer<MappingDocument> documentChangeListener = ignored -> {
     };
@@ -62,41 +64,47 @@ public final class MappingEditorPanel extends JPanel {
                 .map(path -> path.toAbsolutePath().normalize());
         setBorder(BorderFactory.createEmptyBorder(6, 6, 6, 6));
 
-        JPanel editControls = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 0));
-        editControls.add(new JLabel("Kind:"));
-        editControls.add(kind);
-        editControls.add(new JLabel("Source:"));
-        editControls.add(source);
-        editControls.add(new JLabel("Target:"));
-        editControls.add(target);
+        JPanel editControls = new JPanel();
+        editControls.setLayout(new BoxLayout(editControls, BoxLayout.Y_AXIS));
+        JPanel kindRow = row();
+        kindRow.add(new JLabel("Kind:"));
+        kindRow.add(kind);
         JButton upsert = new JButton("Add / update");
         upsert.addActionListener(event -> upsertFromFields());
-        editControls.add(upsert);
+        kindRow.add(upsert);
+        editControls.add(kindRow);
+        editControls.add(fieldRow("Source:", source));
+        editControls.add(fieldRow("Target:", target));
         add(editControls, BorderLayout.NORTH);
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         table.setAutoCreateRowSorter(true);
         table.setFillsViewportHeight(true);
-        table.setPreferredScrollableViewportSize(new Dimension(680, 380));
+        table.setPreferredScrollableViewportSize(new Dimension(620, 220));
         table.getSelectionModel().addListSelectionListener(event -> populateFieldsFromSelection());
 
         suggestions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         suggestions.setVisibleRowCount(12);
-        suggestions.setBorder(BorderFactory.createTitledBorder("Suggestions"));
+        suggestions.setToolTipText("Select a candidate, then confirm it explicitly");
         JPanel suggestionPanel = new JPanel(new BorderLayout(6, 6));
+        suggestionPanel.setBorder(BorderFactory.createTitledBorder("Suggestions (candidates only)"));
         suggestionPanel.add(new JScrollPane(suggestions), BorderLayout.CENTER);
         JButton apply = new JButton("Apply selected suggestion");
         apply.addActionListener(event -> applySelectedSuggestion());
         suggestionPanel.add(apply, BorderLayout.SOUTH);
 
-        JSplitPane body = new JSplitPane(
-                JSplitPane.HORIZONTAL_SPLIT,
+        body = new JSplitPane(
+                JSplitPane.VERTICAL_SPLIT,
                 new JScrollPane(table),
                 suggestionPanel);
-        body.setResizeWeight(0.7);
+        body.setResizeWeight(0.58);
+        body.setContinuousLayout(true);
+        body.setOneTouchExpandable(true);
         add(body, BorderLayout.CENTER);
 
-        JPanel actions = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 0));
+        JPanel footer = new JPanel();
+        footer.setLayout(new BoxLayout(footer, BoxLayout.Y_AXIS));
+        JPanel actions = row();
         JButton remove = new JButton("Remove selected");
         remove.addActionListener(event -> removeSelected());
         JButton save = new JButton("Save...");
@@ -106,8 +114,11 @@ public final class MappingEditorPanel extends JPanel {
         actions.add(remove);
         actions.add(save);
         actions.add(load);
-        actions.add(status);
-        add(actions, BorderLayout.SOUTH);
+        footer.add(actions);
+        status.setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 4));
+        status.setAlignmentX(LEFT_ALIGNMENT);
+        footer.add(status);
+        add(footer, BorderLayout.SOUTH);
     }
 
     public void setDocument(MappingDocument document) {
@@ -165,6 +176,18 @@ public final class MappingEditorPanel extends JPanel {
 
     JLabel statusForTest() {
         return status;
+    }
+
+    JTextField sourceForTest() {
+        return source;
+    }
+
+    JTextField targetForTest() {
+        return target;
+    }
+
+    JSplitPane bodyForTest() {
+        return body;
     }
 
     void applySelectedSuggestionForTest() {
@@ -237,5 +260,22 @@ public final class MappingEditorPanel extends JPanel {
                 status.setText("Load failed: " + error.getMessage());
             }
         }
+    }
+
+    private static JPanel row() {
+        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEADING, 6, 2));
+        row.setAlignmentX(LEFT_ALIGNMENT);
+        return row;
+    }
+
+    private static JPanel fieldRow(String label, JTextField field) {
+        JPanel row = new JPanel(new BorderLayout(6, 0));
+        JLabel fieldLabel = new JLabel(label);
+        fieldLabel.setPreferredSize(new Dimension(56, fieldLabel.getPreferredSize().height));
+        row.add(fieldLabel, BorderLayout.WEST);
+        row.add(field, BorderLayout.CENTER);
+        row.setBorder(BorderFactory.createEmptyBorder(1, 6, 1, 6));
+        row.setAlignmentX(LEFT_ALIGNMENT);
+        return row;
     }
 }

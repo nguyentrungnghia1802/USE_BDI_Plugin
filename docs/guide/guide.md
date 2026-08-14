@@ -26,34 +26,23 @@ $javaExecutable = Join-Path $env:JAVA_HOME 'bin\java.exe'
 
 ## 2. Build và mở USE GUI
 
-Build assembly để có đúng cấu trúc `lib/use-gui.jar` và
-`lib/plugins/use-bdi-plugin-7.1.1.jar`:
+Cách khuyến nghị là dùng launcher. Lệnh này tự tìm Java, build nếu chưa có
+distribution, giải nén và truyền đúng `-H=<USE_HOME>`:
 
 ```powershell
-mvn --batch-mode --no-transfer-progress -pl use-assembly -am package
+.\run-use-gui.ps1
 ```
 
-Giải nén bản phân phối và chạy bằng `-H` trỏ vào thư mục USE đã giải nén:
+Mở thẳng baseline hoàn chỉnh hoặc kiểm tra cấu hình mà không mở GUI:
 
 ```powershell
-$repo = (Resolve-Path '.').Path
-$zip = Join-Path $repo 'use-assembly\target\use-7.1.1.zip'
-$extractRoot = Join-Path $repo 'use-assembly\target\demo-runtime'
-Expand-Archive -Path $zip -DestinationPath $extractRoot -Force
-$useHome = (Get-ChildItem $extractRoot -Directory |
-    Where-Object { Test-Path (Join-Path $_.FullName 'lib\use-gui.jar') } |
-    Select-Object -First 1).FullName
-$javaExecutable = if ($env:JAVA_HOME) {
-    Join-Path $env:JAVA_HOME 'bin\java.exe'
-} else {
-    (Get-Command java -ErrorAction Stop).Source
-}
-& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome"
+.\run-use-gui.ps1 -Demo smart-queue
+.\run-use-gui.ps1 -Demo smart-queue -ValidateOnly
 ```
 
-Có thể dùng nhanh [`run-use-gui.ps1`](../../run-use-gui.ps1), nhưng assembly ở
-trên là đường chạy nên dùng khi demo hoặc kiểm tra package. Sau khi chỉnh code,
-đóng USE hoàn toàn và chạy lại để plugin JAR mới được nạp.
+Sau khi chỉnh code, đóng USE hoàn toàn rồi chạy `.\run-use-gui.ps1 -Rebuild` để
+plugin JAR mới được đóng gói. Không chạy `use-gui\target\use-gui.jar`; launcher
+dùng distribution có `oclextensions` và `lib\plugins` đầy đủ.
 
 ## 3. Quy tắc chọn file
 
@@ -134,10 +123,7 @@ Mở thư mục [`demo/smart-queue`](../../use-bdi-plugin/demo/smart-queue/):
 Cách này chạy GUI và tự thực thi command file sau khi compile model:
 
 ```powershell
-$demo = Join-Path $repo 'use-bdi-plugin\demo\smart-queue'
-& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome" `
-    (Join-Path $demo 'SmartQueue.use') `
-    (Join-Path $demo 'SmartQueue.cmd')
+.\run-use-gui.ps1 -Demo smart-queue
 ```
 
 Nếu USE đã mở sẵn, có thể mở `SmartQueue.use` bằng `File > Open specification...`
@@ -223,41 +209,24 @@ mapping nâng cao được trình bày trong Auction và Smart Queue.
 
 ### Auction static JaCaMo
 
-Sau khi build assembly, chạy từ repository root. Thư mục report là output tạm
-cho demo, không commit các file generated này:
+Chạy script baseline từ repository root. Script tự dùng đúng dependencies và
+tạo JSON/HTML dưới `use-bdi-plugin\target\case-study\auction`:
 
 ```powershell
-$reportDir = Join-Path $repo 'target\demo-reports'
-New-Item -ItemType Directory -Force $reportDir | Out-Null
-$pluginJar = Join-Path $useHome 'lib\plugins\use-bdi-plugin-7.1.1.jar'
-$guiJar = Join-Path $useHome 'lib\use-gui.jar'
-$cp = "$pluginJar;$guiJar"
-$auction = Join-Path $repo 'use-bdi-plugin\demo\auction'
-& $javaExecutable -cp $cp org.tzi.use.plugins.bdi.cli.BdiQualityGateMain `
-    --use (Join-Path $auction 'Auction.use') `
-    --jcm (Join-Path $auction 'auction.jcm') `
-    --mapping (Join-Path $auction 'Auction.bdimap.json') `
-    --rules (Join-Path $auction '.bdi-plugin\rules.json') `
-    --json (Join-Path $reportDir 'auction.json') `
-    --html (Join-Path $reportDir 'auction.html') `
-    --timestamp 2026-08-12T00:00:00Z --overwrite
+powershell -ExecutionPolicy Bypass `
+    -File .\use-bdi-plugin\scripts\auction-baseline.ps1
 $LASTEXITCODE
 ```
 
-Exit `0` means no findings, `1` means confirmed findings, `2` means only
-potential/unknown findings, `3` means invalid input/configuration and `4` means
-infrastructure/output failure. Read the JSON/HTML report instead of treating
-all non-zero semantic results as a parser failure.
+Exit `0` và marker `AUCTION_BASELINE_REPORT_OK` xác nhận report đã được tạo.
+Đọc JSON/HTML thay vì suy diễn mọi finding là lỗi parser.
 
 ### USE snapshot command file
 
 To check the Smart Queue command file without the BDI plugin UI:
 
 ```powershell
-$smartQueue = Join-Path $repo 'use-bdi-plugin\demo\smart-queue'
-& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-q' "-H=$useHome" `
-    (Join-Path $smartQueue 'SmartQueue.use') `
-    (Join-Path $smartQueue 'SmartQueue.cmd')
+.\run-use-gui.ps1 -Demo smart-queue -Headless
 $LASTEXITCODE
 ```
 

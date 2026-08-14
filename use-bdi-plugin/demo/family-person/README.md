@@ -31,19 +31,17 @@ runtime.
 Sau bước chuẩn bị trong [README bộ demo](../README.md), chạy:
 
 ```powershell
-$demo = Join-Path $repo 'use-bdi-plugin\demo\family-person'
-& $javaExecutable -jar (Join-Path $useHome 'lib\use-gui.jar') '-nr' "-H=$useHome" `
-    (Join-Path $demo 'Family.use') `
-    (Join-Path $demo 'Family.cmd')
+.\run-use-gui.ps1 -Demo family-person
 ```
 
-Nếu USE đã mở, mở `Family.use` qua `File > Open specification...`, rồi nhập:
+Nếu USE đã mở, phải mở `Family.use` qua `File > Open specification...` trước.
+Chỉ khi model đã hiện trong cây bên trái mới nhập:
 
 ```text
 open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\family-person\Family.cmd"
 ```
 
-## 4. Flow demo chính (5-7 phút)
+## 4. Kịch bản 1 - flow demo nhanh (5-7 phút)
 
 1. Chọn `View > Create View > Class diagram`.
    Chỉ hai class, association `FamilyMembers` và invariant `HasAdult`.
@@ -67,7 +65,63 @@ open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\family-person\F
 10. Bấm `Export SVG...` để lưu đúng graph đang hiển thị hoặc
     `Export Current Analysis...` để lưu JSON/HTML.
 
-## 5. Flow phụ: organization UML/OCL độc lập (2 phút)
+## 5. Kịch bản 2 - dựng Family thủ công từ GUI (8-10 phút)
+
+Khởi động USE không kèm model theo [kịch bản GUI thủ công](../README.md#5-kịch-bản-2---dựng-toàn-bộ-thủ-công-từ-gui),
+sau đó làm lần lượt và không mở `Family.cmd`.
+
+### A. Mở model và tạo từng object
+
+1. Chọn `File > Open specification...` và mở `Family.use`.
+2. Chọn `View > Create View > Class diagram` để chỉ `Family`, `Person` và
+   association `FamilyMembers`.
+3. Chọn `State > Create object...`, tạo lần lượt:
+
+   | Class | Object name |
+   | --- | --- |
+   | `Family` | `family1` |
+   | `Person` | `alice` |
+   | `Person` | `ben` |
+
+4. Chọn `View > Create View > Object diagram`.
+
+### B. Nhập từng giá trị
+
+Nhấp đúp từng node, sửa cột giá trị trong `Object properties` rồi bấm `Apply`:
+
+| Object | Giá trị OCL cần nhập |
+| --- | --- |
+| `family1` | `name = 'Nguyen family'` |
+| `alice` | `name = 'Alice'`, `age = 28` |
+| `ben` | `name = 'Ben'`, `age = 8` |
+
+### C. Nối từng quan hệ
+
+1. Giữ `Ctrl`, chọn `family1` và `alice`, nhấp phải rồi chọn
+   `insert (family1,alice) into FamilyMembers`.
+2. Làm tương tự với `family1` và `ben`.
+3. Chọn `State > Check structure now`; invariant `HasAdult` phải hợp lệ vì
+   `alice.age = 28`.
+
+### D. Import từng file và tạo mapping thủ công
+
+1. Chọn `Plugins > AgentSpeak > Import AgentSpeak...`, mở `person.asl` để chỉ
+   riêng goal, plan và action của agent.
+2. Trong Explorer vừa mở, vào `Mapping`, chọn candidate `person -> Person` rồi
+   bấm `Apply selected suggestion`; làm tương tự với
+   `greet -> Person::greet()`.
+3. Nếu candidate không có, chọn `AGENT_CLASS` hoặc `ACTION_OPERATION`, nhập
+   `Source`/`Target` đúng như trên rồi bấm `Add / update`.
+4. Bấm `Refresh USE Snapshot`, mở `Diagram`, chọn `BDI Plan` và bấm `Fit`.
+5. Muốn bổ sung organization, chọn
+   `Plugins > AgentSpeak > Import JaCaMo Project...` và mở
+   `family-person.jcm`. File này tự tham chiếu `person.asl` và
+   `family-organization.xml`; không import XML bằng menu riêng.
+
+Đối chiếu cuối cùng: mapping tự tạo phải có cùng ý nghĩa với
+`FamilyPerson.bdimap.json`, nhưng kịch bản này không dùng nút `Load...`.
+
+## 6. Flow phụ: organization UML/OCL độc lập (2 phút)
 
 Flow này chỉ dùng khi cần giải thích ánh xạ organization, không thay thế model
 Family chính:
@@ -80,7 +134,7 @@ Family chính:
 4. Quay lại `family-person.jcm` để nhấn mạnh Moise XML được import tĩnh, không
    enact role/mission ở runtime.
 
-## 6. Lời thoại và kết quả mong đợi
+## 7. Lời thoại và kết quả mong đợi
 
 - "Đây là vertical slice nhỏ nhất: từ goal AgentSpeak tới operation UML."
 - "`Family.cmd` cung cấp state cụ thể để USE kiểm tra invariant, còn `.asl` mô
@@ -89,7 +143,7 @@ Family chính:
 - Class/Object diagram hợp lệ, BDI tree có một goal/plan, mapping `greet` hiện
   rõ và `Diagram` không làm thay đổi snapshot.
 
-## 7. Nếu demo không đúng
+## 8. Nếu demo không đúng
 
 - Không thấy `alice`/`ben`: chạy lại `Family.cmd` trước khi mở Object diagram.
 - Không thấy organization: phải import `family-person.jcm`, không chỉ
