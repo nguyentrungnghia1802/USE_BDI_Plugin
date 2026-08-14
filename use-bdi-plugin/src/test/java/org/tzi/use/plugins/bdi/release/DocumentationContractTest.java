@@ -67,10 +67,22 @@ class DocumentationContractTest {
         assertTrue(Files.isRegularFile(demoGuide));
         assertTrue(!Files.readString(demoGuide).isBlank());
         assertLocalLinksResolve(demoGuide, Files.readString(demoGuide));
+        Path guiLauncher = root.resolve("run-use-gui.ps1");
+        assertTrue(Files.isRegularFile(guiLauncher));
+        String launcher = Files.readString(guiLauncher);
+        assertTrue(launcher.contains("[ValidateSet('auction', 'family-person', 'smart-home', 'smart-queue')]"));
+        assertTrue(launcher.contains("\"-H=$useHome\""));
+        assertTrue(launcher.contains("'lib\\plugins\\use-bdi-plugin-7.1.1.jar'"));
+        assertTrue(launcher.contains("'-CommandFile requires -Specification"));
         Path demoRoot = root.resolve("use-bdi-plugin/demo");
         String demoIndex = Files.readString(demoRoot.resolve("README.md"));
         assertTrue(demoIndex.contains("# Bộ demo USE BDI Plugin"));
-        assertTrue(demoIndex.contains("## 4. Flow UI chung"));
+        assertTrue(demoIndex.contains("## 4. Kịch bản 1 - chạy nhanh bằng snapshot có sẵn"));
+        assertTrue(demoIndex.contains("## 5. Kịch bản 2 - dựng toàn bộ thủ công từ GUI"));
+        assertTrue(demoIndex.contains("`State > Create object...`"));
+        assertTrue(demoIndex.contains("`State > Check structure now`"));
+        assertTrue(demoIndex.contains("`Apply selected suggestion`"));
+        assertTrue(demoIndex.contains(".\\run-use-gui.ps1"));
         assertTrue(demoIndex.contains("`Export SVG...`"));
         for (String demo : List.of("auction", "smart-queue", "family-person", "smart-home")) {
             Path directory = demoRoot.resolve(demo);
@@ -105,6 +117,16 @@ class DocumentationContractTest {
                     () -> "Canonical demo walkthrough misses its Vietnamese file guide: " + directory);
             assertTrue(normalizedWalkthrough.contains("flow demo"),
                     () -> "Canonical demo walkthrough misses its presentation flow: " + directory);
+            assertTrue(walkthrough.contains("Kịch bản 2"),
+                    () -> "Canonical demo walkthrough misses its manual GUI scenario: " + directory);
+            assertTrue(walkthrough.contains("`State > Create object...`"),
+                    () -> "Canonical demo walkthrough misses manual object creation: " + directory);
+            assertTrue(walkthrough.contains("`Object properties`"),
+                    () -> "Canonical demo walkthrough misses manual attribute entry: " + directory);
+            assertTrue(walkthrough.contains("`State > Check structure now`"),
+                    () -> "Canonical demo walkthrough misses manual state validation: " + directory);
+            assertTrue(walkthrough.contains("`Apply selected suggestion`"),
+                    () -> "Canonical demo walkthrough misses explicit mapping confirmation: " + directory);
             assertTrue(normalizedWalkthrough.contains("kết quả"),
                     () -> "Canonical demo walkthrough misses expected observations: " + directory);
             assertTrue(normalizedWalkthrough.contains("nếu demo không đúng"),

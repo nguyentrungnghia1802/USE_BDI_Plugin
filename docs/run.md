@@ -2,7 +2,9 @@
 
 Tài liệu này tổng hợp các câu lệnh cơ bản để biên dịch, đóng gói và chạy dự án **USE** cùng **USE BDI Plugin**.
 
-**Lưu ý:** Các script chạy UI (`run-use-gui.ps1` / `run-use-gui.cmd`) sẽ tự động kiểm tra và chạy `mvn package` nếu chưa có file `use-gui.jar`. Tuy nhiên, bạn cũng có thể chủ động đóng gói trước bằng lệnh `mvn clean package -pl use-assembly -am`.
+**Lưu ý:** Các script chạy UI (`run-use-gui.ps1` / `run-use-gui.cmd`) tự tìm
+Java, kiểm tra packaged distribution, giải nén và đặt đúng `USE_HOME`. Dùng
+`-Rebuild` sau khi thay đổi source/plugin.
 
 ---
 
@@ -20,25 +22,40 @@ Các câu lệnh dưới đây dùng để khởi chạy giao diện GUI của d
   .\run-use-gui.ps1
   ```
 
-### Cách 2: Chạy bằng lệnh Java JAR trực tiếp
-- **Chạy trực tiếp module `use-gui` (sau khi build):**
+  Mở thẳng một demo hoàn chỉnh, đúng thứ tự `.use` rồi `.cmd`:
+
   ```powershell
-  java -jar use-gui/target/use-gui.jar -nr
+  .\run-use-gui.ps1 -Demo smart-queue
   ```
-  *Hoặc chỉ định đường dẫn `JAVA_HOME`:*
-  ```cmd
-  "%JAVA_HOME%\bin\java.exe" -jar use-gui\target\use-gui.jar -nr
+
+  Kiểm tra cấu hình mà không mở GUI:
+
+  ```powershell
+  .\run-use-gui.ps1 -Demo smart-queue -ValidateOnly
   ```
+
+  Compile model, chạy `.cmd` và kiểm tra constraint không mở GUI:
+
+  ```powershell
+  .\run-use-gui.ps1 -Demo smart-queue -Headless
+  ```
+
+### Cách 2: Chạy bằng lệnh Java JAR trực tiếp
+
+Chỉ dùng JAR trong bản phân phối đã giải nén; không dùng
+`use-gui/target/use-gui.jar` vì nó không có đúng `USE_HOME` và plugin package.
 
 - **Chạy từ bản phân phối đóng gói (`use-assembly`):**
   - PowerShell:
     ```powershell
-    $useHome = (Resolve-Path .\use-assembly\target\use-7.1.1).Path
+    .\run-use-gui.ps1 -ValidateOnly
+    $useHome = (Resolve-Path .\use-assembly\target\demo-runtime\use-7.1.1).Path
     java -jar (Join-Path $useHome 'lib\use-gui.jar') -nr "-H=$useHome"
     ```
   - CMD:
     ```cmd
-    java -jar "use-assembly\target\use-7.1.1\lib\use-gui.jar" -nr -H="use-assembly\target\use-7.1.1"
+    run-use-gui.cmd -ValidateOnly
+    java -jar "use-assembly\target\demo-runtime\use-7.1.1\lib\use-gui.jar" -nr -H="use-assembly\target\demo-runtime\use-7.1.1"
     ```
 
 ### Cách 3: Chạy script kiểm thử Smoke GUI
