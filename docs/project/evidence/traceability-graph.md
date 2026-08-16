@@ -27,3 +27,12 @@ The graph and diagram are explanatory views only. They are not persisted, do
 not rerun validation, and do not claim CArtAgO live state, Moise enactment,
 JaCaMo runtime trace, editable graph semantics, or bidirectional model updates.
 Static MAS diagrams display that boundary as text and node metadata.
+
+Task 10 additionally evaluates the four reviewed Auction mutants through
+`AuctionMutantDiagramTest`. `MAP-003` and `SIG-001` retain source, element,
+mapping, target, and issue nodes; `REF-001` retains an explicit gap instead of
+inventing a target; `OCL-001` also retains the OCL constraint. Each bounded
+highlight contains only its expected issue rule and preserves the manifest's
+certainty and evidence token. See
+[`correspondence-coverage.md`](correspondence-coverage.md) for the closed
+11-type correspondence inventory and its limits.

@@ -43,3 +43,8 @@ corpus contains no labeled clean non-mutant negatives for a TN estimate and
 does not cover every rule. In particular, the current `REF-001` policy is
 conservative and the baseline intentionally retains potential/unknown issues.
 The thesis must report the corpus size and this boundary beside the values.
+
+The Task 10 rerun on 2026-08-17 reproduced the same four true positives and
+zero false negatives/process errors across two byte-deterministic packaged
+executions. This repetition checks tooling determinism; it does not add new
+independent mutant observations or narrow the statistical uncertainty.

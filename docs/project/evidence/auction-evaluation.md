@@ -76,3 +76,13 @@ that the caller's USE state fingerprint is unchanged. Metrics describe these
 five reviewed cases only; they do not establish statistical precision/recall,
 runtime JaCaMo behavior, live CArtAgO consistency, or Moise organization
 semantics.
+
+## Task 10 repeated evaluation
+
+The packaged script was rerun on 2026-08-17 after metamodel-aware report
+integration. Both executions again produced `totalCases=5`, `passed=1`,
+`detected=4`, and zero missed, unexpected, unknown, unsupported, invalid-input,
+timeout, or execution-error cases. JSON/CSV/HTML hashes remained exactly the
+fixed identities above. `AuctionMutantDiagramTest` also passed both tests,
+linking each reviewed mutant to its real bounded trace/highlight path without
+changing the external oracle or hiding raw out-of-scope findings.

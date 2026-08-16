@@ -37,7 +37,15 @@
   JaCaMo support.
 - The Auction precision/recall/F1 result covers four targeted mutant
   instances, with no TN estimate and no claim for the whole rule catalog.
-- The performance result is a seven-iteration local baseline on the Smart Queue
-  fixture, not an Auction-scale or memory benchmark.
+- Import performance is a seven-iteration local Smart Queue baseline. Diagram
+  performance adds 15 measured repetitions for four canonical presentation
+  models, but remains a one-machine observational sample without repaint,
+  memory, large-graph scaling, or universal timing thresholds.
+- Metamodel counts measure structural trace coverage, not semantic
+  completeness. Environment evidence remains declaration-only/partial, and
+  organization evidence remains static.
+- The closed 11-type correspondence inventory has issue/report and graphical
+  trace coverage, but organization correspondences are not persisted and
+  reports do not export a standalone detailed mapping graph.
 - Root `mvn clean verify` currently passes after ADR-0019. The release tag and
   complete external data/report/slides backup remain open.

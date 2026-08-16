@@ -29,6 +29,9 @@
 2. Measure larger workloads, memory use, and repeated-run confidence intervals.
 3. Compare the plugin with a manually labeled oracle using issue-level metrics,
    not only mutant-level detection.
+4. Add deterministic synthetic presentation scaling only as a renderer stress
+   test, clearly separated from semantic case-study evidence; consider JMH only
+   if performance becomes a central research claim.
 
 ## Release quality
 
