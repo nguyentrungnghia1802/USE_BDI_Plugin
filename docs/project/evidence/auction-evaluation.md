@@ -50,11 +50,11 @@ the deterministic result are:
 | Identity | SHA-256 |
 | --- | --- |
 | Manifest canonical identity | `050b1d420171f5778bc3950fa58d7fc3bad2a59989a6abda3820e8320c47933f` |
-| Corpus identity | `1f3582883fbd4714aeaa1253b4dea90e74d59e577ab3f9cc64003a8749ec6a41` |
+| Corpus identity | `a7de1f2c32e294a37b495529aac0ad97c20747f596453240ae47aa6238c907c1` |
 | Configuration identity | `c987d2d2efc8e8fb1ea69b54d462d6b92ea45e93b06fa827c3338d593a8a8388` |
-| `evaluation-results.json` | `f42594a77b8ad8fb0cdbb422db47d35a1578b96f0fc0c8e3e9f51356cda85fd3` |
-| `evaluation-results.csv` | `c14fed4198cf132ad604b7a2f2e7f3bd58ffb36050f546164d51457aa92e6f89` |
-| `evaluation-results.html` | `1d abcc43788c2761348010afa4fadcabbe84d0d7845aabec7bda24e52aefb22d` |
+| `evaluation-results.json` | `9e11e35744c41a8af981748b8da8f50261ad899643741c58340e72a69a2abe0a` |
+| `evaluation-results.csv` | `5860a498b44ccc1746bd5aac6172e230f723fb11f5904c6e536baf97b1f9ed36` |
+| `evaluation-results.html` | `121bb2ea14098094bae96b7c80270a7d6e1f3fc07b1910684c1b5de2ec5236bf` |
 
 The report files are under
 `docs/project/evidence/auction-evaluation-run/`. The canonical output metrics

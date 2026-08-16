@@ -103,7 +103,6 @@ documentation. It intentionally traces groups instead of every Java record.
 
 ## 4. Known untraced end-to-end gaps
 
-- One-click export of the current live GUI validation state.
 - Host model/snapshot change subscription for a long-lived BDI Explorer.
 - House Building or a second independent evaluation corpus.
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,

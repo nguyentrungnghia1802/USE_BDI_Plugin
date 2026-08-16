@@ -86,19 +86,22 @@ new ADR that explicitly supersedes the affected entry.
 
 ## 5. Current Validation Record
 
-- Headless CLI/current-snapshot/report focused tests: 10 pass.
-- Plugin suite: 185 pass, including JaCaMo project import, portable
+- Task 01 baseline reconciliation: [source, version, boundary, evidence, and
+  gate record](evidence/baseline-reconciliation.md).
+- Plugin suite: 213 pass, including JaCaMo project import, portable
   traceability, CArtAgO adapter/environment mutants, Moise organization
   normalization, static organization rules/traceability, diagram projection,
   read-only canvas, layout modes, issue highlighting, and boundary tests.
 - Reactor `mvn -pl use-bdi-plugin -am test`: all four modules succeed.
 - Package smoke verifies CArtAgO/Jason/JaCaMo/Moise static classes and
   returns `GUI_SMOKE_OK`; packaged headless smoke verifies exits 1/3.
-- Root `mvn verify`: all five modules, 1 core integration test, 121 GUI
-  integration tests, 185 plugin tests, and
+- Root `mvn clean verify`: all five modules, 1 core integration test, 121 GUI
+  integration tests, 213 plugin tests, and
   ZIP/TAR distributions succeed.
 - Auction evidence covers baseline plus signature, reference, OCL, and structural
   mutants with scoped metrics.
+- Headless quality-gate smoke and the deterministic packaged Auction runner
+  return `HEADLESS_QUALITY_GATE_OK` and `AUCTION_EVALUATION_OK`.
 - Documentation contract checks the compact inventory, links, versions,
   descriptor labels, open risks, JaCaMo boundary, and absence of deleted
   duplicate files.
