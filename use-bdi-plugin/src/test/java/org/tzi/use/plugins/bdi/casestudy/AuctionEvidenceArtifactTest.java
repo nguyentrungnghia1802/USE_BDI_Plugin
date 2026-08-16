@@ -43,8 +43,8 @@ class AuctionEvidenceArtifactTest {
         assertTrue(architecture.contains("UseUmlModelFacade"));
         assertTrue(ir.contains("AgentModel *-- PlanModel"));
         assertTrue(ir.contains("PlanStepModel <|-- ActionStepModel"));
-        assertTrue(bdi.contains("Agent *-- Plan"));
-        assertTrue(bdi.contains("Action --> PredicateSignature"));
+        assertTrue(bdi.contains("BdiAgent *-- \"0..* ordered\" Plan : plans"));
+        assertTrue(bdi.contains("ExternalAction *-- \"1\" Term : action"));
         assertTrue(mappings.contains("14 bindings"));
         assertTrue(mappings.contains("SIG-001"));
         assertTrue(mappings.contains("OCL-001"));

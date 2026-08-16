@@ -48,6 +48,7 @@ new ADR that explicitly supersedes the affected entry.
 | ADR-0034 | Pin official Moise 1.1 behind one static adapter, normalize a bounded immutable organization IR, and keep enactment/rules outside this slice | organization adapter/golden/diagnostic/boundary/package tests |
 | ADR-0035 | Evaluate a separate static organization catalog over confirmed plugin-owned mappings; use reviewer-normalized OCL cardinality bounds and retain runtime enactment as UNKNOWN | Auction organization baseline/mutant/trace tests |
 | ADR-0036 | Define a renderer-neutral immutable diagram domain with portable semantic identity and constructor-enforced graph integrity; keep projection, rendering, and interaction in later slices | diagram invariant, relocation, and package-boundary tests |
+| ADR-0044 | Keep the versioned JaCaMo analysis profile as a specification-only Ecore artifact; validate it with isolated design tooling and retain the immutable Java IR as runtime truth | profile artifact test and metamodel validation evidence |
 
 ## 2. Cross-Cutting Safety Decisions
 
@@ -544,3 +545,25 @@ when available; replacing an existing file requires explicit confirmation.
 Failure leaves the analysis and existing destination unchanged. The JDK-only
 implementation changes no dependency, package notice, parser, validator, OCL
 evaluator, JaCaMo boundary, or runtime claim.
+
+## 24. ADR-0044: Ecore Profile Is A Specification Artifact
+
+**Status:** Accepted. **Date:** 2026-08-17.
+
+The research positioning needs a versioned, inspectable abstract-syntax profile
+without replacing the production IR or expanding the runtime dependency graph.
+Option A, rejected, would generate the Java domain from Ecore or add EMF/Sirius
+to the shaded plugin. Option B, selected, defines the bounded JaCaMo Consistency
+Analysis Profile in `docs/project/metamodel/use-jacamo-analysis.ecore` and keeps
+the existing immutable `model.ir`, `model.mas`, `model.environment`, and
+`model.organization` values as runtime truth.
+
+The profile contains only source/evidence, BDI, static MAS, declaration-level
+environment, and static normalized organization concepts used by current
+analysis. UML/OCL, mappings, issues, trace/diagram state, Swing/report values,
+live CArtAgO state, Moise enactment, and JaCaMo lifecycle remain separate or out
+of scope. EMF validation uses isolated design tooling under EPL-2.0 and adds no
+project POM dependency or packaged class. `MetamodelProfileArtifactTest` keeps
+the namespace, package/classifier counts, boundary vocabulary, coverage, and
+diagram artifacts executable; detailed Java realization is documented rather
+than assumed.

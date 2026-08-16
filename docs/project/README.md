@@ -38,6 +38,8 @@ only when the selected task needs them.
 - [Claim–evidence matrix](research/claim-evidence-matrix.md)
 - [Literature and reuse audit](research/literature-reuse-audit.md)
 - [Metamodel source matrix](research/metamodel-source-matrix.md)
+- [JaCaMo Consistency Analysis Profile](metamodel/USE_JACAMO_ANALYSIS_METAMODEL.md)
+- [Analysis-profile coverage matrix](metamodel/METAMODEL_COVERAGE.md)
 - [Development ideas and JaCaMo roadmap](../idea/idea.md)
 
 ## Source-Of-Truth Order

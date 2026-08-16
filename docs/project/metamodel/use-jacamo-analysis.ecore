@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    name="useJacamoAnalysis"
+    nsURI="https://useocl.github.io/bdi/metamodel/analysis/1.0"
+    nsPrefix="ujap">
+  <eAnnotations source="https://useocl.github.io/bdi/metamodel/metadata">
+    <details key="version" value="1.0.0"/>
+    <details key="role" value="specification-only"/>
+    <details key="runtime" value="RUNTIME_NOT_AVAILABLE"/>
+    <details key="profileName" value="JaCaMo Consistency Analysis Profile"/>
+  </eAnnotations>
+
+  <eSubpackages name="evidence"
+      nsURI="https://useocl.github.io/bdi/metamodel/analysis/1.0/evidence"
+      nsPrefix="ujapEvidence">
+    <eClassifiers xsi:type="ecore:EClass" name="SourceLocatedElement" abstract="true">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="span" lowerBound="1"
+          eType="#//evidence/SourceSpan" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ProjectSourceIdentity">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectPath" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SourceSpan">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+          eType="#//evidence/ProjectSourceIdentity" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="beginLine" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="beginColumn" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="endLine" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="endColumn" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="UnsupportedFeature"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="subject" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="elementQualifiedId"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+  </eSubpackages>
+
+  <eSubpackages name="bdi"
+      nsURI="https://useocl.github.io/bdi/metamodel/analysis/1.0/bdi"
+      nsPrefix="ujapBdi">
+    <eClassifiers xsi:type="ecore:EEnum" name="TriggerOperator">
+      <eLiterals name="ADD" value="0"/>
+      <eLiterals name="DELETE" value="1"/>
+      <eLiterals name="GOAL_STATE" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="TriggerType">
+      <eLiterals name="BELIEF" value="0"/>
+      <eLiterals name="ACHIEVE" value="1"/>
+      <eLiterals name="TEST" value="2"/>
+      <eLiterals name="SIGNAL" value="3"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="UpdateOperator">
+      <eLiterals name="ADD" value="0"/>
+      <eLiterals name="DELETE" value="1"/>
+      <eLiterals name="DELETE_AND_ADD" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="FocusPolicy">
+      <eLiterals name="DEFAULT" value="0"/>
+      <eLiterals name="NEW_FOCUS" value="1"/>
+      <eLiterals name="BEGIN_FOCUS" value="2"/>
+      <eLiterals name="END_FOCUS" value="3"/>
+    </eClassifiers>
+
+    <eClassifiers xsi:type="ecore:EClass" name="Agent"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="parserVersion" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="declaredBeliefCount" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="declaredGoalCount" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="declaredPlanCount" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="beliefs" upperBound="-1"
+          eType="#//bdi/Belief" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="goals" upperBound="-1"
+          eType="#//bdi/Goal" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="plans" upperBound="-1"
+          eType="#//bdi/Plan" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="unsupportedFeatures" upperBound="-1"
+          eType="#//evidence/UnsupportedFeature" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Belief"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="literal" lowerBound="1"
+          eType="#//bdi/LiteralTerm" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Goal"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="literal" lowerBound="1"
+          eType="#//bdi/LiteralTerm" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Plan"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="trigger" lowerBound="1"
+          eType="#//bdi/Trigger" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="context"
+          eType="#//bdi/Context" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="steps" upperBound="-1"
+          eType="#//bdi/Step" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Trigger"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" lowerBound="1"
+          eType="#//bdi/TriggerOperator"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
+          eType="#//bdi/TriggerType"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="term" lowerBound="1"
+          eType="#//bdi/Term" containment="true"/>
+    </eClassifiers>
+
+    <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true"
+        eSuperTypes="#//evidence/SourceLocatedElement"/>
+    <eClassifiers xsi:type="ecore:EClass" name="LiteralContext" eSuperTypes="#//bdi/Context">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="literal" lowerBound="1"
+          eType="#//bdi/LiteralTerm" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="UnaryContext" eSuperTypes="#//bdi/Context">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="operand" lowerBound="1"
+          eType="#//bdi/Context" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BinaryContext" eSuperTypes="#//bdi/Context">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1"
+          eType="#//bdi/Context" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1"
+          eType="#//bdi/Context" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="UnsupportedContext" eSuperTypes="#//bdi/Context">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="feature" lowerBound="1"
+          eType="#//evidence/UnsupportedFeature" containment="true"/>
+    </eClassifiers>
+
+    <eClassifiers xsi:type="ecore:EClass" name="Step" abstract="true"
+        eSuperTypes="#//evidence/SourceLocatedElement"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ExternalAction" eSuperTypes="#//bdi/Step">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="action" lowerBound="1"
+          eType="#//bdi/Term" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="InternalAction" eSuperTypes="#//bdi/Step">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="action" lowerBound="1"
+          eType="#//bdi/Term" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="GoalCall" eSuperTypes="#//bdi/Step">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="newFocus" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="goal" lowerBound="1"
+          eType="#//bdi/LiteralTerm" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TestStep" eSuperTypes="#//bdi/Step">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="condition" lowerBound="1"
+          eType="#//bdi/Context" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="BeliefUpdate" eSuperTypes="#//bdi/Step">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" lowerBound="1"
+          eType="#//bdi/UpdateOperator"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="focusPolicy" lowerBound="1"
+          eType="#//bdi/FocusPolicy"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="belief" lowerBound="1"
+          eType="#//bdi/LiteralTerm" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ConstraintStep" eSuperTypes="#//bdi/Step">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="condition" lowerBound="1"
+          eType="#//bdi/Context" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="UnsupportedStep" eSuperTypes="#//bdi/Step">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="feature" lowerBound="1"
+          eType="#//evidence/UnsupportedFeature" containment="true"/>
+    </eClassifiers>
+
+    <eClassifiers xsi:type="ecore:EClass" name="Term" abstract="true"
+        eSuperTypes="#//evidence/SourceLocatedElement"/>
+    <eClassifiers xsi:type="ecore:EClass" name="LiteralTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="functor" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="negated" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+          eType="#//bdi/Term" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
+          eType="#//bdi/Term" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CompoundTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="functor" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+          eType="#//bdi/Term" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="VariableTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="NumberTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="lexicalValue" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StringTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ListTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+          eType="#//bdi/Term" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="tail"
+          eType="#//bdi/Term" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SetTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+          eType="#//bdi/Term" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ArithmeticTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="operator" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="left"
+          eType="#//bdi/Term" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="right"
+          eType="#//bdi/Term" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="UnsupportedTerm" eSuperTypes="#//bdi/Term">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="feature" lowerBound="1"
+          eType="#//evidence/UnsupportedFeature" containment="true"/>
+    </eClassifiers>
+  </eSubpackages>
+
+  <eSubpackages name="mas"
+      nsURI="https://useocl.github.io/bdi/metamodel/analysis/1.0/mas"
+      nsPrefix="ujapMas">
+    <eClassifiers xsi:type="ecore:EEnum" name="AgentImportStatus">
+      <eLiterals name="IMPORTED" value="0"/>
+      <eLiterals name="MISSING" value="1"/>
+      <eLiterals name="INVALID" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="ResourceKind">
+      <eLiterals name="WORKSPACE" value="0"/>
+      <eLiterals name="ORGANIZATION" value="1"/>
+      <eLiterals name="INSTITUTION" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="ResourceStatus">
+      <eLiterals name="NORMALIZED" value="0"/>
+      <eLiterals name="MISSING" value="1"/>
+      <eLiterals name="INVALID" value="2"/>
+      <eLiterals name="UNSUPPORTED" value="3"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="MasProject"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="agents" upperBound="-1"
+          eType="#//mas/AgentInstance" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
+          eType="#//mas/ProjectResourceReference" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="organizations" upperBound="-1"
+          eType="#//organization/Organization" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="AgentInstance"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" lowerBound="1"
+          eType="#//mas/AgentImportStatus"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="normalizedAgent"
+          eType="#//bdi/Agent" resolveProxies="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ProjectResourceReference">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="kind" lowerBound="1"
+          eType="#//mas/ResourceKind"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" lowerBound="1"
+          eType="#//mas/ResourceStatus"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="span"
+          eType="#//evidence/SourceSpan" containment="true"/>
+    </eClassifiers>
+  </eSubpackages>
+
+  <eSubpackages name="environment"
+      nsURI="https://useocl.github.io/bdi/metamodel/analysis/1.0/environment"
+      nsPrefix="ujapEnvironment">
+    <eClassifiers xsi:type="ecore:EClass" name="EnvironmentModel">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="artifacts" upperBound="-1"
+          eType="#//environment/Artifact" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Artifact">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="workspace" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="instanceName" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="typeName" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
+          eType="#//environment/ArtifactOperation" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="observableProperties" upperBound="-1"
+          eType="#//environment/ObservableProperty" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ArtifactOperation">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="arity" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterTypes" upperBound="-1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          ordered="true" unique="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="guard" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ObservableProperty">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="arity" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimeValuesAvailable" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimeValues" upperBound="-1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          ordered="true" unique="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="evidence" upperBound="-1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+          ordered="true" unique="false"/>
+    </eClassifiers>
+  </eSubpackages>
+
+  <eSubpackages name="organization"
+      nsURI="https://useocl.github.io/bdi/metamodel/analysis/1.0/organization"
+      nsPrefix="ujapOrganization">
+    <eClassifiers xsi:type="ecore:EEnum" name="NormType">
+      <eLiterals name="PERMISSION" value="0"/>
+      <eLiterals name="OBLIGATION" value="1"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Organization"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="roles" upperBound="-1"
+          eType="#//organization/Role" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="groups" upperBound="-1"
+          eType="#//organization/Group" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="schemes" upperBound="-1"
+          eType="#//organization/Scheme" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="norms" upperBound="-1"
+          eType="#//organization/Norm" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="unsupportedFeatures" upperBound="-1"
+          eType="#//evidence/UnsupportedFeature" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Role"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="qualifiedId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Group"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="qualifiedId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parent"
+          eType="#//organization/Group" resolveProxies="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="roleCardinalities" upperBound="-1"
+          eType="#//organization/RoleCardinality" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RoleCardinality">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="role" lowerBound="1"
+          eType="#//organization/Role" resolveProxies="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="cardinality" lowerBound="1"
+          eType="#//organization/Cardinality" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Cardinality">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="minimum" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="maximum" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Scheme"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="qualifiedId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="goals" upperBound="-1"
+          eType="#//organization/OrganizationalGoal" containment="true" ordered="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="missions" upperBound="-1"
+          eType="#//organization/Mission" containment="true" ordered="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="OrganizationalGoal"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="qualifiedId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Mission"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="qualifiedId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="cardinality" lowerBound="1"
+          eType="#//organization/Cardinality" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="goals" upperBound="-1"
+          eType="#//organization/OrganizationalGoal" resolveProxies="true" ordered="true" unique="false"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Norm"
+        eSuperTypes="#//evidence/SourceLocatedElement">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="qualifiedId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
+          eType="#//organization/NormType"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="role" lowerBound="1"
+          eType="#//organization/Role" resolveProxies="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="mission" lowerBound="1"
+          eType="#//organization/Mission" resolveProxies="true"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

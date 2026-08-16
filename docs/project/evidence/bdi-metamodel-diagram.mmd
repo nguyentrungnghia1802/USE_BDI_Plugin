@@ -1,30 +1,259 @@
 classDiagram
-    Agent *-- Belief
-    Agent *-- Goal
-    Agent *-- Plan
-    Plan *-- Trigger
-    Plan *-- Context
-    Plan *-- PlanStep
-    PlanStep <|-- Action
-    PlanStep <|-- BeliefUpdate
-    PlanStep <|-- AchieveGoal
-    PlanStep <|-- InternalAction
-    PlanStep <|-- Test
-    Action --> PredicateSignature
-    Belief --> PredicateSignature
-    Goal --> PredicateSignature
-    Trigger --> PredicateSignature
-    Agent --> AgentObjectReference
-    Agent --> SourceSpan
-    Plan --> SourceSpan
+    direction LR
 
-    class Agent
+    class SourceLocatedElement {
+        <<abstract evidence>>
+    }
+    class ProjectSourceIdentity {
+        projectPath String
+    }
+    class SourceSpan {
+        beginLine Int
+        beginColumn Int
+        endLine Int
+        endColumn Int
+    }
+    class UnsupportedFeature {
+        code String
+        kind String
+        subject String
+        elementQualifiedId String 0..1
+    }
+    SourceLocatedElement *-- "1" SourceSpan : span
+    SourceSpan *-- "1" ProjectSourceIdentity : source
+    SourceLocatedElement <|-- UnsupportedFeature
+
+    class BdiAgent {
+        <<bdi::Agent>>
+        parserVersion String
+        declaredBeliefCount Int
+        declaredGoalCount Int
+        declaredPlanCount Int
+    }
     class Belief
-    class Goal
-    class Plan
-    class Trigger
-    class Context
-    class PlanStep
-    class PredicateSignature
-    class AgentObjectReference
-    class SourceSpan
+    class BdiGoal {
+        <<bdi::Goal>>
+    }
+    class Plan {
+        label String
+    }
+    class Trigger {
+        operator TriggerOperator
+        type TriggerType
+    }
+    SourceLocatedElement <|-- BdiAgent
+    SourceLocatedElement <|-- Belief
+    SourceLocatedElement <|-- BdiGoal
+    SourceLocatedElement <|-- Plan
+    SourceLocatedElement <|-- Trigger
+    BdiAgent *-- "0..* ordered" Belief : beliefs
+    BdiAgent *-- "0..* ordered" BdiGoal : goals
+    BdiAgent *-- "0..* ordered" Plan : plans
+    BdiAgent *-- "0..* ordered" UnsupportedFeature : unsupportedFeatures
+    Belief *-- "1" LiteralTerm : literal
+    BdiGoal *-- "1" LiteralTerm : literal
+    Plan *-- "1" Trigger : trigger
+    Trigger *-- "1" Term : term
+
+    class Context {
+        <<abstract bdi>>
+    }
+    class LiteralContext
+    class UnaryContext {
+        operator String
+    }
+    class BinaryContext {
+        operator String
+    }
+    class UnsupportedContext
+    SourceLocatedElement <|-- Context
+    Context <|-- LiteralContext
+    Context <|-- UnaryContext
+    Context <|-- BinaryContext
+    Context <|-- UnsupportedContext
+    Plan *-- "0..1" Context : context
+    LiteralContext *-- "1" LiteralTerm : literal
+    UnaryContext *-- "1" Context : operand
+    BinaryContext *-- "1" Context : left
+    BinaryContext *-- "1" Context : right
+    UnsupportedContext *-- "1" UnsupportedFeature : feature
+
+    class Step {
+        <<abstract bdi>>
+    }
+    class ExternalAction
+    class InternalAction
+    class GoalCall {
+        newFocus Boolean
+    }
+    class TestStep
+    class BeliefUpdate {
+        operator UpdateOperator
+        focusPolicy FocusPolicy
+    }
+    class ConstraintStep
+    class UnsupportedStep
+    SourceLocatedElement <|-- Step
+    Step <|-- ExternalAction
+    Step <|-- InternalAction
+    Step <|-- GoalCall
+    Step <|-- TestStep
+    Step <|-- BeliefUpdate
+    Step <|-- ConstraintStep
+    Step <|-- UnsupportedStep
+    Plan *-- "0..* ordered" Step : steps
+    ExternalAction *-- "1" Term : action
+    InternalAction *-- "1" Term : action
+    GoalCall *-- "1" LiteralTerm : goal
+    TestStep *-- "1" Context : condition
+    BeliefUpdate *-- "1" LiteralTerm : belief
+    ConstraintStep *-- "1" Context : condition
+    UnsupportedStep *-- "1" UnsupportedFeature : feature
+
+    class Term {
+        <<abstract bdi>>
+    }
+    class LiteralTerm {
+        functor String
+        negated Boolean
+    }
+    class CompoundTerm {
+        functor String
+    }
+    class VariableTerm
+    class NumberTerm
+    class StringTerm
+    class ListTerm
+    class SetTerm
+    class ArithmeticTerm {
+        operator String
+    }
+    class UnsupportedTerm
+    SourceLocatedElement <|-- Term
+    Term <|-- LiteralTerm
+    Term <|-- CompoundTerm
+    Term <|-- VariableTerm
+    Term <|-- NumberTerm
+    Term <|-- StringTerm
+    Term <|-- ListTerm
+    Term <|-- SetTerm
+    Term <|-- ArithmeticTerm
+    Term <|-- UnsupportedTerm
+    LiteralTerm *-- "0..* ordered" Term : arguments
+    LiteralTerm *-- "0..* ordered" Term : annotations
+    CompoundTerm *-- "0..* ordered" Term : arguments
+    ListTerm *-- "0..* ordered" Term : elements
+    ListTerm *-- "0..1" Term : tail
+    SetTerm *-- "0..* ordered" Term : elements
+    ArithmeticTerm *-- "0..1" Term : left
+    ArithmeticTerm *-- "0..1" Term : right
+    UnsupportedTerm *-- "1" UnsupportedFeature : feature
+
+    class MasProject {
+        <<mas>>
+        name String
+    }
+    class AgentInstance {
+        name String
+        status AgentImportStatus
+    }
+    class ProjectResourceReference {
+        kind ResourceKind
+        name String
+        status ResourceStatus
+    }
+    SourceLocatedElement <|-- MasProject
+    SourceLocatedElement <|-- AgentInstance
+    MasProject *-- "0..* ordered" AgentInstance : agents
+    MasProject *-- "0..* ordered" ProjectResourceReference : resources
+    AgentInstance --> "0..1" BdiAgent : normalizedAgent
+    ProjectResourceReference *-- "0..1" SourceSpan : span
+
+    class EnvironmentModel {
+        <<environment declaration-only>>
+    }
+    class Artifact {
+        workspace String
+        instanceName String
+        typeName String
+    }
+    class ArtifactOperation {
+        name String
+        arity Int
+        parameterTypes String[*]
+        guard String
+    }
+    class ObservableProperty {
+        name String
+        arity Int
+        runtimeValuesAvailable Boolean
+        runtimeValues String[*]
+        evidence String[*]
+    }
+    EnvironmentModel *-- "0..* ordered" Artifact : artifacts
+    Artifact *-- "0..* ordered" ArtifactOperation : operations
+    Artifact *-- "0..* ordered" ObservableProperty : observableProperties
+
+    class Organization {
+        <<organization static-normalized>>
+        id String
+    }
+    class Role {
+        id String
+        qualifiedId String
+    }
+    class Group {
+        id String
+        qualifiedId String
+    }
+    class RoleCardinality
+    class Cardinality {
+        minimum Int
+        maximum Int
+    }
+    class Scheme {
+        id String
+        qualifiedId String
+    }
+    class OrganizationalGoal {
+        id String
+        qualifiedId String
+    }
+    class Mission {
+        id String
+        qualifiedId String
+    }
+    class Norm {
+        id String
+        qualifiedId String
+        type NormType
+    }
+    SourceLocatedElement <|-- Organization
+    SourceLocatedElement <|-- Role
+    SourceLocatedElement <|-- Group
+    SourceLocatedElement <|-- Scheme
+    SourceLocatedElement <|-- OrganizationalGoal
+    SourceLocatedElement <|-- Mission
+    SourceLocatedElement <|-- Norm
+    MasProject *-- "0..* ordered" Organization : organizations
+    Organization *-- "0..* ordered" Role : roles
+    Organization *-- "0..* ordered" Group : groups
+    Organization *-- "0..* ordered" Scheme : schemes
+    Organization *-- "0..* ordered" Norm : norms
+    Organization *-- "0..* ordered" UnsupportedFeature : unsupportedFeatures
+    Group --> "0..1" Group : parent
+    Group *-- "0..* ordered" RoleCardinality : roleCardinalities
+    RoleCardinality --> "1" Role : role
+    RoleCardinality *-- "1" Cardinality : cardinality
+    Scheme *-- "0..* ordered" OrganizationalGoal : goals
+    Scheme *-- "0..* ordered" Mission : missions
+    Mission *-- "1" Cardinality : cardinality
+    Mission --> "0..* ordered" OrganizationalGoal : goals
+    Norm --> "1" Role : role
+    Norm --> "1" Mission : mission
+
+    note for MasProject "STATIC_DECLARATION / STATIC_NORMALIZED_MODEL only; no JaCaMo lifecycle"
+    note for ObservableProperty "RUNTIME_NOT_AVAILABLE unless explicit reviewed fixture evidence supplies values"
+    note for Organization "No enactment, current membership, mission commitment, or norm-fulfilment model"
+    note for BdiAgent "No first-class Rule or Message in profile 1.0; .send remains an InternalAction term"
+    note for SourceLocatedElement "No UML, OCL, mapping, issue, trace, diagram, Swing, report, or runtime classes"
