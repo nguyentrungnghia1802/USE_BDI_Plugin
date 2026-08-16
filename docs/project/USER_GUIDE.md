@@ -101,7 +101,9 @@ The `-H` value must be the extracted USE home. It lets USE resolve
 7. Click `Export Current Analysis...`, choose `JSON report` or `HTML report`,
    select a destination, and click `Save`. If the destination exists, confirm
    `Replace existing report?`; choosing No or cancelling keeps it unchanged.
-   The status line displays the absolute output path or the failure cause.
+   The status line displays the absolute output path or the failure cause. The
+   report records the bounded analysis-profile identity separately from the
+   Java IR and parser versions so a reviewer can identify the contract used.
 
 ### 3. Import the static JaCaMo project
 
@@ -171,6 +173,11 @@ Static MAS content visibly states that there is no JaCaMo runtime, Moise
 enactment, or live CArtAgO state. Mapping suggestions remain candidates in the
 Mapping tab until explicitly accepted; they are never drawn as confirmed
 `MAPS_TO` edges.
+
+The “analysis profile” named in reports is the plugin's versioned vocabulary
+for the supported static evidence. Users do not load or edit its Ecore file;
+the Diagram simply presents selected profile and trace concepts already present
+in the current analysis. It does not turn the tab into a graphical editor.
 
 - `View > Create View > Class diagram`: show the UML structure.
 - `View > Create View > Object diagram`: show the current object/link

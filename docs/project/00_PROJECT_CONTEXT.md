@@ -55,6 +55,7 @@ account, server, database, or remote authorization subsystem.
 | G-009 | Import static JaCaMo `.jcm` agent declarations without claiming runtime integration | Auction project IR, diagnostics, and relocation tests |
 | G-010 | Pilot static CArtAgO artifact/UML consistency without starting a runtime | Adapter, environment mutant, trace, and package tests |
 | G-011 | Explain BDI/MAS structure and consistency evidence visually inside USE | Read-only diagram, canonical demos, Auction mutant paths, and SVG export tests |
+| G-012 | Keep the executable analysis aligned with a versioned, bounded JaCaMo analysis profile | Ecore artifact, Java-alignment contract, snapshot/report descriptor tests, and coverage evidence |
 
 ## 5. Non-goals
 
@@ -97,7 +98,8 @@ Optional project artifacts:
   `UNKNOWN` when no dynamic CArtAgO state evidence exists;
 - read-only BDI/MAS diagrams with confirmed mappings, explicit gaps, issue
   evidence paths, and deterministic current-view SVG export;
-- JSON/HTML reports with version and hash metadata when supplied;
+- JSON/HTML reports with the analysis-profile identity, independent IR/parser
+  versions, and hash metadata when supplied;
 - reproducible Auction case-study and benchmark artifacts under `target/`.
 
 ## 8. Trust and safety model
@@ -156,6 +158,9 @@ Optional project artifacts:
 | Auction case study and four mutants | Implemented | Scoped evidence only |
 | Read-only BDI/MAS visualization | Implemented | Derived from immutable snapshot/trace data; no parser, validator, editor, or runtime |
 | Deterministic diagram SVG export | Implemented | Current presentation only; no semantic persistence format |
+| JaCaMo Consistency Analysis Profile | Implemented | Versioned specification vocabulary; no EMF runtime or second parser |
+| Profile-to-Java/correspondence/rule alignment | Implemented | Contract tests and matrices; Java IR and rule engine remain executable truth |
+| Dedicated diagram performance evidence | Implemented | Four canonical models; local observational timings, no universal threshold |
 | House Building import | Optional | Not required for MVP |
 | Release tag | Planned | `v1.0.0-thesis-rc` not created |
 | Complete thesis artifact backup | Partial | Source backup works; external data/slides are absent |
@@ -171,6 +176,10 @@ The MVP is technically successful when:
 - the Auction baseline and mutants are reproducible without live services;
 - the shaded plugin is present and loadable in an extracted USE distribution;
 - root `mvn clean verify`, plugin tests, and package smoke pass;
+- snapshots and reports carry the current analysis-profile descriptor while
+  retaining independent Java IR and parser version evidence;
+- every profile concept and correspondence type is classified in the checked
+  coverage and alignment artifacts;
 - limitations and scoped metrics remain visible in thesis evidence.
 
 These criteria do not claim complete AgentSpeak semantics or formal proof.

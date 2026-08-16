@@ -152,11 +152,20 @@ class DocumentationContractTest {
         assertTrue(requirements.contains("FR-REP-004"));
         assertTrue(requirements.contains("FR-DIA-001"));
         assertTrue(requirements.contains("FR-DIA-008"));
+        assertTrue(requirements.contains("FR-META-001"));
+        assertTrue(requirements.contains("FR-META-004"));
         assertTrue(requirements.contains("FR-REL-004"));
 
         String checklist = read(project.resolve("16_PROJECT_COMPLETION_CHECKLIST.md"));
-        assertTrue(checklist.contains("T28 visualization regression evidence"));
-        assertTrue(checklist.contains("plugin tests: 203 pass"));
+        assertTrue(checklist.contains("Analysis profile and Java-alignment contracts"));
+        assertTrue(checklist.contains("Refreshed raster screenshots"));
+        assertTrue(!checklist.matches("(?s).*plugin tests: \\d+ pass.*"));
+        assertTrue(!checklist.contains("T28 visualization regression evidence"));
+
+        String thesisOutline = read(project.resolve("research/thesis-integration-outline.md"));
+        assertTrue(thesisOutline.contains("## Combemale Language-Engineering Mapping"));
+        assertTrue(thesisOutline.contains("## Related-Work Comparison"));
+        assertTrue(thesisOutline.contains("## Contribution-To-Evidence Trace"));
 
         String design = read(project.resolve("10_PLUGIN_TECHNICAL_DESIGN.md"));
         assertTrue(design.contains("no database/network API"));

@@ -25,6 +25,9 @@ class ThesisEvidenceArtifactTest {
                 "evidence/threats-to-validity.md",
                 "evidence/limitations.md",
                 "evidence/future-work.md",
+                "evidence/traceability-diagram.mmd",
+                "evidence/thesis-integration-validation.md",
+                "research/thesis-integration-outline.md",
                 "PLUGIN_INSTALL_GUIDE.md");
         for (String document : documents) {
             Path path = root.resolve("docs/project").resolve(document);

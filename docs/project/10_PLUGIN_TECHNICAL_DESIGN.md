@@ -248,6 +248,7 @@ mvn --batch-mode --no-transfer-progress clean verify
 | `scripts/auction-evidence.ps1` | `AUCTION_EVIDENCE_OK` |
 | `scripts/auction-evaluation.ps1` | `AUCTION_EVALUATION_OK` |
 | `scripts/performance.ps1` | `PERFORMANCE_BENCHMARK_OK` |
+| `scripts/diagram-performance.ps1` | `DIAGRAM_PERFORMANCE_OK` plus stable structural fingerprint across two runs |
 | `scripts/clean-clone.ps1` | `CLEAN_CLONE_REPRODUCIBILITY_OK` |
 | `scripts/backup-thesis-artifacts.ps1` | `THESIS_BACKUP_OK` plus manifest |
 

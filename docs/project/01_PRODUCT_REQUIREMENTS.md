@@ -141,9 +141,18 @@ implemented.
 | FR-DIA-005 | Project static JaCaMo, CArtAgO, and Moise structures without implying runtime behavior | Implemented |
 | FR-DIA-006 | Render diagrams in USE with deterministic layout, zoom, pan, fit, selection, and highlighting | Implemented |
 | FR-DIA-007 | Navigate diagram selections to existing Explorer, Problems, source, and mapping details | Partial |
-| FR-DIA-008 | Provide validated diagram demos, mutants, screenshots, and performance evidence | Partial: canonical demos, reviewed Auction mutant paths, and SVG export validated |
+| FR-DIA-008 | Provide validated diagram demos, mutants, screenshots, and performance evidence | Partial: canonical demos, reviewed Auction mutant paths, SVG export, and a dedicated four-demo benchmark are validated; refreshed raster screenshots remain open |
 
-### 2.11 Case study and release
+### 2.11 Analysis profile and compatibility
+
+| ID | Requirement | Status |
+| --- | --- | --- |
+| FR-META-001 | Maintain a versioned JaCaMo Consistency Analysis Profile for the supported source/evidence, BDI, static MAS, environment, and organization subset | Implemented |
+| FR-META-002 | Keep the specification profile aligned with the plugin-owned Java IR without introducing an EMF runtime, second parser, or second validator | Implemented |
+| FR-META-003 | Carry the current profile ID, version, and name through immutable snapshots and JSON/HTML reports independently of Java IR and parser versions | Implemented |
+| FR-META-004 | Classify profile, correspondence, rule, and graphical-view changes through the documented compatibility/versioning procedure | Implemented |
+
+### 2.12 Case study and release
 
 | ID | Requirement | Status |
 | --- | --- | --- |
@@ -184,6 +193,7 @@ implemented.
 | BR-018 | Moise concrete classes stop at the organization adapter; static normalization does not imply enactment or runtime consistency. |
 | BR-019 | Organization suggestions remain candidates; static cardinality checks require a confirmed invariant target plus reviewer-normalized bounds, and matching bounds remain UNKNOWN without enactment evidence. |
 | BR-020 | A diagram is an immutable derived presentation, never a parser, validator, editable semantic model, persisted source of truth, or runtime claim. |
+| BR-021 | The analysis-profile descriptor is immutable provenance; Java IR, official parsers, and the rule engine remain executable authorities, and incompatible profile changes require an explicit version/ADR decision. |
 
 ## 4. Core acceptance criteria
 
@@ -221,6 +231,9 @@ implemented.
     private `MSystem`; the input files and caller's USE state are unchanged.
 20. Evaluation metrics identify the declared corpus and excluded layers and are
     documented as evidence for this reviewed corpus, not general correctness.
+21. The current snapshot and both report formats carry profile ID/version/name,
+    reject a mismatched descriptor, and retain separate Java IR and parser
+    version fields.
 
 ## 5. Non-functional requirements
 
@@ -242,6 +255,9 @@ implemented.
 - Import runs outside the Swing event-dispatch thread.
 - Stale worker callbacks cannot replace a newer import result.
 - The benchmark records rather than hard-codes environment-dependent timing.
+- The diagram benchmark covers the four canonical presentation models, repeats
+  build/layout/focus/export measurements, and compares deterministic structural
+  output without imposing a cross-machine latency threshold.
 
 ### Compatibility and portability
 
@@ -276,6 +292,7 @@ implemented.
 | Missing/invalid/duplicate `.jcm` agent | `JCM-002`/`JCM-004`/`JCM-003`; independent valid sources remain imported |
 | JaCaMo workspace/institution resource | Retain `UNSUPPORTED` reference and `JCM-005` warning |
 | Moise organization resource | Normalize or emit `JCM-007..010` with source evidence; never silently ignore |
+| Snapshot profile descriptor differs from the current profile | Reject the inconsistent aggregate before report or presentation use |
 
 ## 7. Requirement synchronization checklist
 
@@ -286,3 +303,5 @@ implemented.
   [the traceability matrix](12_REQUIREMENT_TRACEABILITY.md).
 - [x] No web/database/multi-user requirements were copied from the reference
   project.
+- [x] Profile/version requirements trace to implementation, tests, evidence,
+  and compatibility policy without claiming an EMF runtime.

@@ -2,6 +2,7 @@ flowchart LR
     ASL[auctioneer.asl + bidder.asl] --> J[Jason 3.3.0 adapter]
     J --> IR[Normalized AgentModel IR]
     IR --> IDX[BdiIndex]
+    PROFILE[JaCaMo Consistency Analysis Profile descriptor] --> CUR[Immutable current-analysis snapshot]
     UML[Auction.use + USE snapshot] --> F[UseUmlModelFacade]
     F --> SNAP[Immutable UseModelSnapshot]
     IR --> MAP[Confirmed MappingDocument]
@@ -10,6 +11,10 @@ flowchart LR
     MAP --> V
     SNAP --> V
     V --> ISS[ConsistencyIssue evidence]
+    IDX --> CUR
+    SNAP --> CUR
+    MAP --> CUR
+    ISS --> CUR
     IR --> DM[Immutable DiagramModel]
     MAP --> DM
     SNAP --> DM
@@ -18,7 +23,7 @@ flowchart LR
     DM --> VP[Read-only modes / layers / focus]
     VP --> SWING[Swing canvas]
     VP --> SVG[Deterministic SVG]
-    ISS --> R[JSON / HTML report]
+    CUR --> R[JSON / HTML report with profile / IR / parser versions]
     ISS --> UI[Problems / Mapping UI]
     M[Mutation fixtures] --> V
     STATIC[Static .jcm / organization / environment evidence] --> MAS[Static MAS overview]

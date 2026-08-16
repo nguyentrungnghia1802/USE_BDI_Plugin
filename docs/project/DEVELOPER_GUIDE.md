@@ -58,6 +58,12 @@ powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\smoke.ps1
 # Auction fault-injection and evidence bundle
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\auction-evidence.ps1
 
+# Reviewed Auction manifest evaluation
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\auction-evaluation.ps1
+
+# Repeated four-demo diagram pipeline benchmark
+powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\diagram-performance.ps1
+
 # Packaged headless process/exit/report smoke
 powershell -ExecutionPolicy Bypass -File .\use-bdi-plugin\scripts\headless-quality-gate.ps1
 
@@ -180,11 +186,41 @@ Missing files are defaults; malformed or unknown-rule configuration is a
 blocking, user-visible error. Keep discovery outside domain rules and do not
 introduce a CWD fallback, because USE can be launched from an unrelated folder.
 
+## Maintaining The Analysis Profile
+
+The specification-only profile is
+`docs/project/metamodel/use-jacamo-analysis.ecore`; its normative explanation is
+`USE_JACAMO_ANALYSIS_METAMODEL.md`. The accompanying coverage, Java-alignment,
+rule, correspondence, graphical-view, and compatibility contracts are in the
+same `metamodel/` directory. They document the implemented bounded subset; they
+do not add EMF to production or replace the official Jason/JaCaMo/CArtAgO/Moise
+adapters, immutable Java IR, or rule engine.
+
+When adding a metamodel concept:
+
+1. classify it against primary sources and the supported-subset boundary;
+2. update the Ecore artifact, profile narrative, and coverage matrix;
+3. add or change the producing Java IR/adaptor behavior and update the
+   metamodel-to-Java alignment contract and tests;
+4. update correspondence and rule matrices only where executable mapping or
+   validation evidence exists;
+5. update graphical notation/viewpoints only for a derived, read-only
+   presentation role;
+6. apply `METAMODEL_VERSIONING.md`, update `AnalysisMetamodelDescriptor` when
+   required, and rerun profile, alignment, snapshot, report, and reactor gates.
+
+Use a new or superseding ADR for a breaking profile/schema change, a new
+production dependency or parser/validator, a changed source-of-truth boundary,
+a validation-order or state-safety change, or a material persisted/report
+compatibility change. A documentation clarification that leaves those
+contracts unchanged does not need an ADR.
+
 ## Known Limits
 
 - Mapping suggestions are explainable candidates, not semantic proof.
-- Absolute source IDs make generated mapping/report artifacts checkout
-  specific.
+- New persisted and serialized source identities use project-relative schema
+  v2. Local absolute paths may still exist transiently for navigation; legacy
+  `0.1.0` suppression hashes cannot be reconstructed and remain legacy-only.
 - `ReportMain` is a serializer demonstration; live GUI export must go through
   `CurrentAnalysisReportService` with the Explorer-owned immutable snapshot.
 - The mapping decoder does not currently reject every unknown JSON field.

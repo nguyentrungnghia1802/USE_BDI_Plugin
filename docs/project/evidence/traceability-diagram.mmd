@@ -1,0 +1,17 @@
+flowchart LR
+    SRC[AgentSpeak / JaCaMo source span] --> ELEM[Normalized BDI / MAS element]
+    ELEM --> MAP{Confirmed correspondence?}
+    MAP -->|yes| UML[Qualified UML / OCL target]
+    MAP -->|no| GAP[Explicit missing / stale mapping gap]
+    UML --> RULE[Applicable bounded rule]
+    GAP --> RULE
+    RULE --> ISSUE[Issue status / severity / certainty]
+    ISSUE --> EVID[Evidence tokens and suggested fix]
+    EVID --> REPORT[Deterministic JSON / HTML]
+    EVID --> VIEW[Read-only diagram highlight]
+
+    PROFILE[Analysis-profile descriptor] -. provenance .-> REPORT
+    PROFILE -. vocabulary .-> VIEW
+
+    AUTH[Jason and USE remain syntax / UML-OCL authorities] -. boundary .-> SRC
+    RUNTIME[No JaCaMo runtime, live CArtAgO state, or Moise enactment] -. limitation .-> VIEW

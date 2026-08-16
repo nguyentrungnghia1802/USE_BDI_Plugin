@@ -45,7 +45,9 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-DIA-005 | `MasOverviewDiagramBuilder` and `.jcm` branch in `BdiExplorerView` project static JaCaMo/Moise resources plus optional `EnvironmentModel` artifact operations and organization/environment mapping targets; layer attributes and static-only legend preserve the runtime boundary | `MasOverviewDiagramBuilderTest` covers Auction instances, normalized organization, optional environment operations, confirmed mappings, deterministic output, and explicit missing-operation gaps; `BdiExplorerViewTest` covers the imported `auction.jcm` UI model and static-only legend | ADR-0026/0029/0041, architecture, technical design, checklist |
 | FR-DIA-006 | `BdiDiagramPanel`, `BdiDiagramCanvas`, deterministic Swing layout, BDI-focused view modes, layer filtering, bounded focus, and issue/mapping highlighting | `BdiDiagramPanelTest`, `BdiExplorerViewTest`, `DiagramModeProjectorTest`, `DiagramNavigationProjectorTest`, `DiagramVisualStateTest`, `DiagramHighlightPathTest`, and `BdiProblemPanelTest` cover empty/populated/large/selection/zoom/state cases, mode/layer switching without reparsing, source-model preservation, focus/reset, direct-ASL degradation, Auction focus/fit, plan-step order, confirmed mappings, explicit gaps, issue evidence paths, Problems-to-Diagram selection, and UNKNOWN/STALE/MISSING states | ADR-0038/0039/0040/0042, architecture, technical design |
 | FR-DIA-007 | Problems-to-Diagram issue selection, Diagram-to-detail selection, and agent/goal/plan bounded focus are implemented; direct cross-tab mapping/source navigation remains open | `BdiProblemPanelTest`, `BdiExplorerViewTest`, `BdiDiagramPanelTest`, and `DiagramNavigationProjectorTest` | ADR-0040/0042, architecture, technical design, checklist |
-| FR-DIA-008 | four canonical demo bundles, reviewed Auction `MAP-003`/`SIG-001`/`REF-001`/`OCL-001` paths, and deterministic current-view SVG export are implemented; refreshed raster screenshots and a dedicated diagram benchmark remain open | `CanonicalDemoDiagramTest`; `AuctionMutantDiagramTest`; `DiagramSvgExporterTest` covers filtering, UTF-8/XML, portability, overwrite, determinism, and state preservation; `VisualizationBoundaryContractTest` prevents parser/validator coupling; documentation contracts enforce walkthrough controls | ADR-0043, architecture, technical design, product requirements, checklist |
+| FR-DIA-008 | four canonical demo bundles, reviewed Auction `MAP-003`/`SIG-001`/`REF-001`/`OCL-001` paths, deterministic current-view SVG export, and the repeated four-demo diagram benchmark are implemented; refreshed raster screenshots remain open | `CanonicalDemoDiagramTest`; `AuctionMutantDiagramTest`; `DiagramSvgExporterTest`; `DiagramPerformanceBenchmarkTest`; repeated `diagram-performance.ps1`; `VisualizationBoundaryContractTest`; documentation contracts | ADR-0043, architecture, technical design, diagram-performance evidence, product requirements, checklist |
+| FR-META-001..002 | versioned `use-jacamo-analysis.ecore`, bounded profile specification, coverage matrix, and Java alignment contract; runtime continues to use plugin-owned immutable IR and official adapters | `MetamodelProfileArtifactTest`, `MetamodelJavaAlignmentTest`, importer/IR boundary tests | ADR-0044, profile specification, metamodel coverage/alignment evidence |
+| FR-META-003..004 | `AnalysisMetamodelDescriptor`, `AnalysisVersionMetadata`, current-snapshot services, JSON/HTML exporters, and compatibility/versioning policy | descriptor mismatch, direct `.asl`/`.jcm` snapshot, report metadata, CLI, and backward-compatibility tests | ADR-0045, technical design, metamodel versioning, pipeline-integration evidence |
 | FR-CS-001..003 | Auction fixtures, baseline, mutant/evidence scripts | Auction case-study test suite | experiment protocol/evidence |
 | FR-CS-005..008 | `EvaluationManifestCodec`, `EvaluationRunner`, `EvaluationReportWriter`, `HeadlessStateFixture`, packaged evaluation script | manifest codec/runner tests, real Auction manifest integration, deterministic repeated outputs, timeout/tool-error tests, packaged smoke | ADR-0033, Auction evaluation manifest and result evidence |
 | FR-CS-004 | no required implementation | Optional checklist status | checklist, future work |
@@ -74,6 +76,7 @@ documentation. It intentionally traces groups instead of every Java record.
 | BR-014 | Immutable graph constructors, snapshot-only builder, and graph portability tests |
 | BR-015 | Environment boundary test, UNKNOWN dynamic-state test, and package dependency smoke |
 | BR-016 | Environment document confirmation filter, `ENV-004`, candidate/stale/unknown tests, and deterministic persistence evidence |
+| BR-021 | Current descriptor constructors, snapshot compatibility checks, report propagation tests, versioning policy, and ADR-0044/0045 |
 
 ## 3. Evidence traceability
 
@@ -95,6 +98,10 @@ documentation. It intentionally traces groups instead of every Java record.
 | Canonical diagram demos | four source-backed `CanonicalDemoDiagramTest` paths plus README/guide contracts |
 | Auction mutant visualization | reviewed evaluation manifest, real headless snapshots, trace projection, and directed highlight tests |
 | Diagram SVG export | current visible projection, shared layout/palette, atomic UTF-8 writer, and exporter/panel tests |
+| Analysis-profile structure and alignment | versioned Ecore artifact, coverage matrix, Java alignment contract/tests, and profile validation evidence |
+| Profile-aware pipeline | immutable descriptor propagation through direct and project snapshots, CLI, and JSON/HTML reports |
+| Correspondence coverage | closed correspondence inventory, rule/trace/view matrices, and coverage evidence |
+| Diagram performance | four canonical models, repeated structural fingerprint comparison, and local timing evidence |
 | Visualization regression boundary | exact rule/catalog contract, one-way package dependency scan, state-fingerprint tests, deterministic evaluation rerun, package smoke, and root reactor verification |
 | Static environment consistency | CArtAgO adapter/mutant tests and ADR-0028 |
 | Persisted environment mappings | strict environment codec/repository, relocation and stale-target tests, ADR-0031, and persistence evidence |
@@ -107,8 +114,7 @@ documentation. It intentionally traces groups instead of every Java record.
 - House Building or a second independent evaluation corpus.
 - Live CArtAgO, Moise enactment/monitoring, persisted organization mappings,
   and runtime-trace integration.
-- Direct cross-tab source/mapping navigation, refreshed raster screenshots,
-  and a dedicated diagram-performance benchmark.
+- Direct cross-tab source/mapping navigation and refreshed raster screenshots.
 - Complete external data/report/slides backup and release tag.
 
 These are intentionally Partial/Planned/Optional requirements, not missing
