@@ -567,3 +567,31 @@ project POM dependency or packaged class. `MetamodelProfileArtifactTest` keeps
 the namespace, package/classifier counts, boundary vocabulary, coverage, and
 diagram artifacts executable; detailed Java realization is documented rather
 than assumed.
+
+## 25. ADR-0045: Snapshot And Reports Carry A Distinct Analysis Profile Descriptor
+
+**Status:** Accepted. **Date:** 2026-08-17.
+
+Task 09 needs the specification-only profile to be traceable through executable
+analysis evidence. The existing `BdiMetamodelVersion.CURRENT=0.1.0` already
+means the normalized Java BDI IR/index contract and is stored by the core
+mapping schema. Reinterpreting or replacing it would silently change mapping
+compatibility. Adding EMF runtime objects or validating an Ecore instance on
+every import would create a second semantic pipeline.
+
+The selected option keeps the BDI IR value and adds the immutable
+`AnalysisMetamodelDescriptor` with ID
+`https://useocl.github.io/bdi/metamodel/analysis/1.0`, version `1.0.0`, and
+profile name `JaCaMo Consistency Analysis Profile`. `AnalysisVersionMetadata`
+owns both axes. `CurrentAnalysisSnapshotService` supplies the current
+descriptor after the single validation pass, and the snapshot constructor
+rejects a conflicting descriptor. No EMF class crosses into production.
+
+`CurrentAnalysisReportService` copies the frozen descriptor, BDI IR version,
+and sorted parser versions into JSON and HTML alongside existing plugin/USE
+versions and hashes. This additive report metadata is a material contract
+change approved by this ADR; historical reports without it are version-unknown
+and are never guessed compatible. Exporters remain serializers only: they do
+not parse, validate, read live USE state, or mutate source state. Persistence
+schemas, source identity, validator ordering, USE core, and runtime JaCaMo
+scope are unchanged.

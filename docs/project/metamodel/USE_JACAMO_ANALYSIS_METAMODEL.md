@@ -194,4 +194,4 @@ The following must not be added to this `.ecore` package family: UML class/objec
 
 ## 12. Versioning
 
-The profile namespace is stable for version 1 (`.../analysis/1.0`) and the artifact metadata version is `1.0.0`. A breaking classifier/feature change requires a new namespace or an explicit migration decision. The current production `BdiMetamodelVersion` remains `0.1.0` until Task 09 decides metadata integration; this specification does not silently change runtime/report metadata.
+The profile namespace is stable for version 1 (`.../analysis/1.0`) and the artifact metadata version is `1.0.0`. A breaking classifier/feature change requires a new namespace or an explicit migration decision. Production snapshots and reports expose this identity through `AnalysisMetamodelDescriptor`; the independent normalized Java IR/index contract remains `BdiMetamodelVersion` `0.1.0`.

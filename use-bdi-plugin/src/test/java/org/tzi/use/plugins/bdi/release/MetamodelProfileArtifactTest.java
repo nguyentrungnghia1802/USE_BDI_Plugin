@@ -12,6 +12,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.jupiter.api.Test;
+import org.tzi.use.plugins.bdi.application.AnalysisMetamodelDescriptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -46,6 +47,7 @@ class MetamodelProfileArtifactTest {
         Element root = document.getDocumentElement();
         assertEquals("useJacamoAnalysis", root.getAttribute("name"));
         assertEquals(ANALYSIS_NAMESPACE, root.getAttribute("nsURI"));
+        assertEquals(AnalysisMetamodelDescriptor.CURRENT_ID, root.getAttribute("nsURI"));
         assertEquals("ujap", root.getAttribute("nsPrefix"));
 
         NodeList subpackages = document.getElementsByTagName("eSubpackages");
@@ -71,6 +73,10 @@ class MetamodelProfileArtifactTest {
         }
         assertEquals(48, classes);
         assertEquals(8, enums);
+
+        assertEquals("1.0.0", AnalysisMetamodelDescriptor.CURRENT_VERSION);
+        assertEquals("JaCaMo Consistency Analysis Profile",
+                AnalysisMetamodelDescriptor.CURRENT_PROFILE_NAME);
 
         String specificationText = Files.readString(specification);
         assertTrue(specificationText.contains("RUNTIME_NOT_AVAILABLE"));

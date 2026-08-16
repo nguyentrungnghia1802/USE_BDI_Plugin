@@ -196,6 +196,7 @@ class DocumentationContractTest {
         assertTrue(decisions.contains("ADR-0042"));
         assertTrue(decisions.contains("ADR-0043"));
         assertTrue(decisions.contains("ADR-0044"));
+        assertTrue(decisions.contains("ADR-0045"));
         assertTrue(decisions.contains("OD-004"));
 
         String architecture = read(project.resolve("04_SYSTEM_ARCHITECTURE.md"));

@@ -2,6 +2,7 @@ package org.tzi.use.plugins.bdi.report;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.tzi.use.plugins.bdi.application.AnalysisMetamodelDescriptor;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,6 +72,9 @@ public class HtmlReportExporterTest {
         Assertions.assertTrue(content.contains("Suppressions Count"));
         Assertions.assertTrue(content.contains(SUPPRESSION_FINGERPRINT));
         Assertions.assertTrue(content.contains("mapping approved for baseline"));
+        Assertions.assertTrue(content.contains("Analysis Metamodel ID"));
+        Assertions.assertTrue(content.contains(AnalysisMetamodelDescriptor.CURRENT_ID));
+        Assertions.assertTrue(content.contains("JaCaMo Consistency Analysis Profile"));
         Assertions.assertFalse(content.contains("<script>alert"));
     }
 }

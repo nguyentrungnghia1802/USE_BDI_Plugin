@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.tzi.use.plugins.bdi.application.AnalysisMetamodelDescriptor;
 import org.tzi.use.plugins.bdi.persistence.RuleConfigurationRepository;
 import org.tzi.use.plugins.bdi.validation.RuleConfiguration;
 
@@ -41,8 +42,12 @@ class BdiQualityGateMainTest {
 
         assertEquals(HeadlessExitCode.CONFIRMED_FINDINGS.code(), first.exitCode());
         assertTrue(first.stdout().contains("BDI_QUALITY_GATE_RESULT=CONFIRMED_FINDINGS"));
-        assertTrue(Files.readString(json).contains("\"issues\":[{"));
-        assertTrue(Files.readString(json).contains("MAP-001"));
+        String directReport = Files.readString(json);
+        assertTrue(directReport.contains("\"issues\":[{"));
+        assertTrue(directReport.contains("MAP-001"));
+        assertTrue(directReport.contains(AnalysisMetamodelDescriptor.CURRENT_ID));
+        assertTrue(directReport.contains("\"analysisMetamodelVersion\":\"1.0.0\""));
+        assertTrue(directReport.contains("\"parserVersions\":[\"3.3.0\"]"));
         assertTrue(Files.readString(html).contains("Consistency Issues"));
         assertArrayEquals(useBefore, Files.readAllBytes(use));
         assertArrayEquals(auctioneerBefore, Files.readAllBytes(auctioneer));
@@ -72,6 +77,7 @@ class BdiQualityGateMainTest {
                 "--json", invalidReport.toString());
         assertEquals(HeadlessExitCode.CONFIRMED_FINDINGS.code(), syntax.exitCode());
         assertTrue(Files.readString(invalidReport).contains("ASL-001"));
+        assertTrue(Files.readString(invalidReport).contains(AnalysisMetamodelDescriptor.CURRENT_ID));
         assertTrue(syntax.stdout().contains("parser"));
 
         Path missingReport = tempDir.resolve("missing.json");
@@ -132,7 +138,10 @@ class BdiQualityGateMainTest {
 
         assertEquals(HeadlessExitCode.CONFIRMED_FINDINGS.code(), result.exitCode());
         assertTrue(result.stdout().contains("JCM-005"));
-        assertTrue(Files.readString(report).contains("MAP-001"));
+        String jcmReport = Files.readString(report);
+        assertTrue(jcmReport.contains("MAP-001"));
+        assertTrue(jcmReport.contains(AnalysisMetamodelDescriptor.CURRENT_ID));
+        assertTrue(jcmReport.contains("\"parserVersions\":[\"3.3.0\"]"));
     }
 
     @Test

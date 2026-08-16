@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.tzi.use.plugins.bdi.application.AnalysisMetamodelDescriptor;
 import org.tzi.use.plugins.bdi.application.AnalysisVersionMetadata;
 import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
 import org.tzi.use.plugins.bdi.application.CurrentAnalysisSnapshot;
@@ -58,6 +59,15 @@ class CurrentAnalysisReportServiceTest {
         }
         assertTrue(jsonContent.contains("Đấu giá"));
         assertTrue(htmlContent.contains("Đấu giá"));
+        for (String metadata : List.of(
+                AnalysisMetamodelDescriptor.CURRENT_ID,
+                AnalysisMetamodelDescriptor.CURRENT_VERSION,
+                AnalysisMetamodelDescriptor.CURRENT_PROFILE_NAME,
+                snapshot.versions().bdiMetamodelVersion())) {
+            assertTrue(jsonContent.contains(metadata), metadata);
+            assertTrue(htmlContent.contains(metadata), metadata);
+        }
+        assertTrue(jsonContent.contains("\"parserVersions\":[]"));
     }
 
     @Test

@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.Test;
+import org.tzi.use.plugins.bdi.application.AnalysisMetamodelDescriptor;
 import org.tzi.use.plugins.bdi.application.AnalysisVersionMetadata;
 import org.tzi.use.plugins.bdi.application.BdiImportSnapshot;
 import org.tzi.use.plugins.bdi.application.BdiImportService;
@@ -70,6 +71,7 @@ class CurrentAnalysisSnapshotServiceTest {
         assertEquals(Optional.of(uml.fingerprint()), first.modelHash());
         assertEquals(MappingFingerprint.compute(mapping), first.mappingHash());
         assertEquals(List.of("3.3.0"), first.versions().parserVersions());
+        assertEquals(AnalysisMetamodelDescriptor.current(), first.versions().analysisMetamodel());
         assertEquals(before, after, "analysis must not mutate the current USE state");
         assertThrows(UnsupportedOperationException.class, () -> first.issues().clear());
     }
@@ -125,6 +127,14 @@ class CurrentAnalysisSnapshotServiceTest {
                 new CurrentAnalysisSnapshot(
                         FIXED_TIME, imported, Optional.empty(), mapping, "test", List.of(), List.of(),
                         0, 0, 0, Optional.empty(), "0".repeat(64), versions));
+        AnalysisVersionMetadata wrongProfile = new AnalysisVersionMetadata(
+                "0.1.0", "USE-7.1.1", imported.index().metamodelVersion(),
+                new AnalysisMetamodelDescriptor("urn:test:old-profile", "0.9.0", "Old profile"),
+                List.of());
+        IllegalArgumentException profileError = assertThrows(IllegalArgumentException.class, () ->
+                new CurrentAnalysisSnapshot(
+                        FIXED_TIME, imported, Optional.empty(), mapping, "test", List.of(), List.of(),
+                        0, 0, 0, Optional.empty(), MappingFingerprint.compute(mapping), wrongProfile));
         CurrentAnalysisSnapshotService service = new CurrentAnalysisSnapshotService(
                 new ValidationOrchestrator(), "test", "0.1.0", "USE-7.1.1");
         IllegalArgumentException compositionError = assertThrows(IllegalArgumentException.class, () ->
@@ -137,6 +147,7 @@ class CurrentAnalysisSnapshotServiceTest {
 
         assertTrue(countError.getMessage().contains("importedFileCount"));
         assertTrue(hashError.getMessage().contains("mappingHash"));
+        assertTrue(profileError.getMessage().contains("Analysis metamodel descriptor"));
         assertNotNull(compositionError.getMessage());
     }
 

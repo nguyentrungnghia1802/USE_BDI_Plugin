@@ -137,6 +137,13 @@ The constructor rejects count, hash, parser-version, metamodel, and OCL-without-
 USE inconsistencies. Problems reads this aggregate; Swing controls, `MSystem`,
 Jason AST, and mutable lists do not cross into it.
 
+`AnalysisVersionMetadata` distinguishes the normalized BDI IR/index version
+`0.1.0` from `AnalysisMetamodelDescriptor`, whose current ID/version/profile are
+`https://useocl.github.io/bdi/metamodel/analysis/1.0`, `1.0.0`, and `JaCaMo
+Consistency Analysis Profile`. Snapshot composition rejects a descriptor that
+does not equal the current profile. This is immutable provenance metadata; it
+does not introduce EMF runtime validation or a second parser.
+
 `TraceabilityGraphBuilder` derives typed nodes and edges from that immutable
 snapshot. `ProjectSourceId` v2 identifies source and BDI elements, confirmed
 bindings connect them to qualified UML/OCL targets, and missing bindings create
@@ -181,6 +188,11 @@ suppressions, and optional canonical model/mapping SHA-256 identities.
 and move only a completed serialization into place. Existing targets require
 explicit overwrite confirmation; exporters never parse, validate, or inspect
 the current `MSystem`.
+
+Both report formats copy the frozen analysis-profile ID/version/name, BDI IR
+version, and sorted parser versions alongside plugin/USE versions and
+model/mapping hashes. Historical reports lacking these additive profile fields
+remain version-unknown rather than inheriting a guessed value.
 
 ## 6. GUI Project Composition
 

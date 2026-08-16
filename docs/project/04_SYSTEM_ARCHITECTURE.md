@@ -171,6 +171,14 @@ paths consume the same `BdiImportSnapshot` and snapshot boundary.
 shown in the Explorer tree/status, and export uses the snapshot already held
 by the view. `BdiQualityGateMain --jcm` is the non-Swing equivalent and rejects
 mixed `.asl`/`.jcm` inputs before writing reports.
+
+The snapshot's version evidence distinguishes the Java BDI IR/index contract
+from the broader specification-only JaCaMo Analysis Profile. The stable
+`AnalysisMetamodelDescriptor` is copied unchanged through direct `.asl` and
+`.jcm` composition into GUI/headless JSON/HTML exports. Report, trace, and
+diagram consumers read the frozen snapshot only and never trigger validation
+or a live USE read.
+
 Separately, `CArtAgOArtifactAdapter` can normalize a supplied artifact class's
 official `@OPERATION` metadata and explicit property descriptors. The plugin
 does not start a JaCaMo/CArtAgO runtime, model runtime Moise semantics, dynamically

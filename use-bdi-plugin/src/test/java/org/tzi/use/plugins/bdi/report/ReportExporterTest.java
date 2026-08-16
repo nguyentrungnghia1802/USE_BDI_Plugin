@@ -2,6 +2,7 @@ package org.tzi.use.plugins.bdi.report;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.tzi.use.plugins.bdi.application.AnalysisMetamodelDescriptor;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,5 +70,10 @@ public class ReportExporterTest {
         Assertions.assertTrue(content.contains("\"suppressions\":[{"));
         Assertions.assertTrue(content.contains(SUPPRESSION_FINGERPRINT));
         Assertions.assertTrue(content.contains("accepted parser fixture"));
+        Assertions.assertTrue(content.contains("\"analysisMetamodelId\":\""
+                + AnalysisMetamodelDescriptor.CURRENT_ID + "\""));
+        Assertions.assertTrue(content.contains("\"analysisMetamodelVersion\":\"1.0.0\""));
+        Assertions.assertTrue(content.contains("\"bdiIrMetamodelVersion\":\"0.1.0\""));
+        Assertions.assertTrue(content.contains("\"parserVersions\":[]"));
     }
 }

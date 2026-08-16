@@ -24,6 +24,11 @@ public final class HtmlReportExporter {
         appendRow(sb, "Project", data.projectName());
         appendRow(sb, "Plugin Version", data.pluginVersion());
         appendRow(sb, "USE Version", data.useVersion());
+        appendRow(sb, "Analysis Metamodel ID", data.analysisMetamodel().id());
+        appendRow(sb, "Analysis Metamodel Version", data.analysisMetamodel().version());
+        appendRow(sb, "Analysis Profile", data.analysisMetamodel().profileName());
+        appendRow(sb, "BDI IR Metamodel Version", data.bdiMetamodelVersion());
+        appendRow(sb, "Parser Versions", String.join(", ", data.parserVersions()));
         appendRow(sb, "Timestamp", DateTimeFormatter.ISO_INSTANT.format(data.timestamp()));
         appendRow(sb, "Issues Count", Integer.toString(data.issuesCount()));
         appendRow(sb, "Mappings Count", Integer.toString(data.mappingsCount()));

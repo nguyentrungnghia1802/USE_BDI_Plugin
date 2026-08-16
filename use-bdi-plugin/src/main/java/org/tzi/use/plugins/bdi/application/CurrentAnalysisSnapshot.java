@@ -53,6 +53,9 @@ public record CurrentAnalysisSnapshot(
         if (!bdiImport.index().metamodelVersion().equals(versions.bdiMetamodelVersion())) {
             throw new IllegalArgumentException("BDI metamodel version does not match the import index");
         }
+        if (!AnalysisMetamodelDescriptor.current().equals(versions.analysisMetamodel())) {
+            throw new IllegalArgumentException("Analysis metamodel descriptor is not the current profile");
+        }
         List<String> parserVersions = bdiImport.models().stream()
                 .map(model -> model.parserVersion())
                 .distinct()

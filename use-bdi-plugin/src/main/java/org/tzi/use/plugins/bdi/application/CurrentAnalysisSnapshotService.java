@@ -71,6 +71,7 @@ public final class CurrentAnalysisSnapshotService {
                 pluginVersion,
                 useVersion,
                 imported.index().metamodelVersion(),
+                AnalysisMetamodelDescriptor.current(),
                 imported.models().stream()
                         .map(model -> model.parserVersion())
                         .distinct()

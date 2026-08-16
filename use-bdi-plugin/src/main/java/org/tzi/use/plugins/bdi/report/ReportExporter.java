@@ -24,6 +24,16 @@ public final class ReportExporter {
         sb.append(',');
         appendField(sb, "useVersion", data.useVersion());
         sb.append(',');
+        appendField(sb, "analysisMetamodelId", data.analysisMetamodel().id());
+        sb.append(',');
+        appendField(sb, "analysisMetamodelVersion", data.analysisMetamodel().version());
+        sb.append(',');
+        appendField(sb, "analysisProfileName", data.analysisMetamodel().profileName());
+        sb.append(',');
+        appendField(sb, "bdiIrMetamodelVersion", data.bdiMetamodelVersion());
+        sb.append(',');
+        appendStringArray(sb, "parserVersions", data.parserVersions());
+        sb.append(',');
         appendField(sb, "timestamp", DateTimeFormatter.ISO_INSTANT.format(data.timestamp()));
         sb.append(',');
         appendNumberField(sb, "issuesCount", data.issuesCount());
@@ -106,6 +116,17 @@ public final class ReportExporter {
 
     private static void appendNumberField(StringBuilder sb, String name, int value) {
         sb.append('"').append(escape(name)).append('"').append(':').append(value);
+    }
+
+    private static void appendStringArray(StringBuilder sb, String name, java.util.List<String> values) {
+        sb.append('"').append(escape(name)).append('"').append(':').append('[');
+        for (int index = 0; index < values.size(); index++) {
+            if (index > 0) {
+                sb.append(',');
+            }
+            sb.append('"').append(escape(values.get(index))).append('"');
+        }
+        sb.append(']');
     }
 
     private static String escape(String s) {
