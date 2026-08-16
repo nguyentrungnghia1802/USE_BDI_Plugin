@@ -33,6 +33,11 @@ only when the selected task needs them.
 - [Demo guide](../guide/guide.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Thesis evidence](evidence/)
+- [Research positioning and scope contract](research/research-positioning.md)
+- [Frozen research terminology](research/terminology.md)
+- [Claim–evidence matrix](research/claim-evidence-matrix.md)
+- [Literature and reuse audit](research/literature-reuse-audit.md)
+- [Metamodel source matrix](research/metamodel-source-matrix.md)
 - [Development ideas and JaCaMo roadmap](../idea/idea.md)
 
 ## Source-Of-Truth Order
