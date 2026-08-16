@@ -21,6 +21,9 @@ class RuleCatalogCompletenessTest {
             "REF-001", "REF-002", "MAP-001", "MAP-002", "MAP-003", "SIG-001",
             "SIG-002", "SIG-003", "OWN-001", "BEL-001", "MSG-001", "OCL-001",
             "OCL-002", "CTX-001", "OCL-003", "OCL-004");
+    private static final Set<String> EXPECTED_EXTENSION_IDS = Set.of(
+            "ENV-001", "ENV-002", "ENV-003", "ENV-004",
+            "ORG-001", "ORG-002", "ORG-003");
 
     @Test
     void implementationAndThesisCatalogContainTheSameMvpRules() throws IOException {
@@ -51,6 +54,37 @@ class RuleCatalogCompletenessTest {
         EXPECTED_RULE_IDS.forEach(ruleId -> assertTrue(
                 catalog.contains("| " + ruleId + " |"),
                 () -> "Rule is missing from the documented catalog: " + ruleId));
+
+        Path metamodel = repositoryRoot().resolve("docs/project/metamodel");
+        String semantics = Files.readString(metamodel.resolve("STATIC_SEMANTICS.md"));
+        String matrix = Files.readString(metamodel.resolve("RULE_TO_METAMODEL_MATRIX.md"));
+        Set<String> documentedIds = new java.util.HashSet<>(EXPECTED_RULE_IDS);
+        documentedIds.addAll(EXPECTED_EXTENSION_IDS);
+        documentedIds.forEach(ruleId -> {
+            String rowMarker = "| `" + ruleId + "` |";
+            assertTrue(semantics.contains(rowMarker),
+                    () -> "Rule is missing from static-semantics audit: " + ruleId);
+            assertTrue(matrix.contains(rowMarker),
+                    () -> "Rule is missing from rule/metamodel matrix: " + ruleId);
+        });
+        for (String formalization : Set.of(
+                "PARSER_DIAGNOSTIC",
+                "METAMODEL_WELL_FORMEDNESS",
+                "REFERENCE_RESOLUTION",
+                "CROSS_MODEL_CONSISTENCY",
+                "SNAPSHOT_SEMANTIC",
+                "BOUNDED_SIMULATION",
+                "STATIC_ENVIRONMENT",
+                "STATIC_ORGANIZATION")) {
+            assertTrue(matrix.contains("`" + formalization + "`"),
+                    () -> "Missing formalization type: " + formalization);
+        }
+        assertTrue(semantics.contains("NOT_EVALUATED"));
+        assertTrue(semantics.contains("trigger.operator == ADD"));
+        assertTrue(semantics.contains("There is no separate namespace field or per-agent namespace filter"));
+        assertTrue(semantics.contains("No rule is moved to"));
+        assertTrue(semantics.contains("OCL or EVL"));
+        assertTrue(catalog.contains("confirmed/current persisted environment"));
     }
 
     private static Path repositoryRoot() {

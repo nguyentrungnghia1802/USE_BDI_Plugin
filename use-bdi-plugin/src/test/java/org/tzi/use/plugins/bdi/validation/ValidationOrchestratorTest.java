@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,6 +38,8 @@ import org.tzi.use.plugins.bdi.model.mapping.MappingKind;
 import org.tzi.use.plugins.bdi.model.mapping.MappingSourceId;
 import org.tzi.use.plugins.bdi.use.UmlAttributeRef;
 import org.tzi.use.plugins.bdi.use.UmlClassRef;
+import org.tzi.use.plugins.bdi.use.UmlConstraintRef;
+import org.tzi.use.plugins.bdi.use.UmlObjectRef;
 import org.tzi.use.plugins.bdi.use.UmlOperationRef;
 import org.tzi.use.plugins.bdi.use.UmlParameterRef;
 import org.tzi.use.plugins.bdi.use.UseModelSnapshot;
@@ -104,6 +107,96 @@ class ValidationOrchestratorTest {
         assertTrue(issues.stream().allMatch(issue -> !issue.evidence().isEmpty()));
         assertTrue(issues.stream().anyMatch(issue -> issue.ruleId().equals("SIG-003")
                 && issue.certainty() == IssueCertainty.UNKNOWN));
+    }
+
+    @Test
+    void preservesFailUnknownAndNoFindingAcrossSnapshotSemanticRules() {
+        Set<String> findingIds = new ValidationOrchestrator().evaluate(
+                        snapshotSemanticContext(snapshotEvaluator(true)))
+                .stream().map(ConsistencyIssue::ruleId).collect(Collectors.toSet());
+
+        assertTrue(findingIds.containsAll(Set.of("OCL-001", "OCL-002", "CTX-001", "OCL-003")));
+
+        Set<String> cleanIds = new ValidationOrchestrator().evaluate(
+                        snapshotSemanticContext(snapshotEvaluator(false)))
+                .stream().map(ConsistencyIssue::ruleId).collect(Collectors.toSet());
+        assertTrue(cleanIds.stream().noneMatch(
+                Set.of("OCL-001", "OCL-002", "CTX-001", "OCL-003", "OCL-004")::contains));
+    }
+
+    private static ValidationContext snapshotSemanticContext(SnapshotOclEvaluator evaluator) {
+        Path source = Path.of("snapshot-semantics.asl").toAbsolutePath();
+        LiteralTermModel ready = new LiteralTermModel("ready", List.of(), false, List.of(), span(source, 1));
+        ActionStepModel step = new ActionStepModel(
+                new LiteralTermModel("work", List.of(new StringTermModel("item", span(source, 4))),
+                        false, List.of(), span(source, 4)),
+                span(source, 4));
+        PlanModel plan = new PlanModel(
+                "work_plan",
+                achievementTrigger(new LiteralTermModel("work_goal", List.of(), false, List.of(), span(source, 2)),
+                        source, 2),
+                Optional.of(new ContextLiteral(ready, span(source, 3))),
+                List.of(step),
+                span(source, 2));
+        AgentModel agent = new AgentModel(
+                source, "test", 1, 0, 1,
+                List.of(new org.tzi.use.plugins.bdi.model.ir.BeliefModel(ready, span(source, 1))),
+                List.of(), List.of(plan), List.of());
+        BdiIndex index = new BdiIndexBuilder().build(agent);
+        UmlOperationRef operation = new UmlOperationRef(
+                "Worker", "work", List.of(new UmlParameterRef("item", "String")), Optional.empty(),
+                List.of(new UmlConstraintRef("Worker", Optional.of("work"), "pre", "ready", "self.ready")),
+                List.of(), false, false);
+        UseModelSnapshot uml = new UseModelSnapshot(
+                "SnapshotSemantics", "snapshot-semantics.use",
+                List.of(new UmlClassRef("Worker", false, List.of())),
+                List.of(new UmlAttributeRef("Worker", "ready", "Boolean", false, Optional.empty(), Optional.empty())),
+                List.of(), List.of(operation), List.of(),
+                List.of(new UmlObjectRef("worker1", "Worker", true, Map.of("ready", "true"))),
+                List.of(), "snapshot-semantics-fingerprint");
+        ActionCallSite action = index.allActionCallSites().get(0);
+        MappingDocument mapping = MappingDocument.empty(uml.fingerprint())
+                .upsert(new MappingBinding(MappingKind.AGENT_CLASS, MappingSourceId.agent(agent), "Worker"))
+                .upsert(new MappingBinding(MappingKind.AGENT_OBJECT, MappingSourceId.agent(agent), "worker1"))
+                .upsert(new MappingBinding(MappingKind.BELIEF_ATTRIBUTE, "ready/0", "Worker::ready"))
+                .upsert(new MappingBinding(
+                        MappingKind.ACTION_OPERATION,
+                        MappingSourceId.action(action),
+                        operation.reference(),
+                        Optional.of("soil: worker1.ready := false"),
+                        List.of("bounded test effect")));
+        return new ValidationContext(List.of(agent), List.of(), index, mapping, Optional.of(uml), Optional.of(evaluator));
+    }
+
+    private static SnapshotOclEvaluator snapshotEvaluator(boolean findings) {
+        return new SnapshotOclEvaluator() {
+            @Override
+            public List<OclSnapshotResult> evaluatePreconditions(
+                    UmlOperationRef operation,
+                    String receiverObject,
+                    List<TermModel> arguments) {
+                return findings
+                        ? List.of(
+                                new OclSnapshotResult("pre-fail", OclSnapshotStatus.FAIL, List.of("false")),
+                                new OclSnapshotResult("pre-unknown", OclSnapshotStatus.UNKNOWN, List.of("unknown")))
+                        : List.of(new OclSnapshotResult("pre-pass", OclSnapshotStatus.PASS, List.of("true")));
+            }
+
+            @Override
+            public OclSnapshotResult evaluateExpression(String expression, String subject) {
+                return new OclSnapshotResult(
+                        subject,
+                        findings ? OclSnapshotStatus.FAIL : OclSnapshotStatus.PASS,
+                        List.of(expression));
+            }
+
+            @Override
+            public BoundedEffectResult simulateSoilEffect(String source) {
+                return new BoundedEffectResult(
+                        findings ? BoundedEffectStatus.INVARIANT_VIOLATED : BoundedEffectStatus.PASS,
+                        List.of(source));
+            }
+        };
     }
 
     private static ValidationContext mutantContext() {

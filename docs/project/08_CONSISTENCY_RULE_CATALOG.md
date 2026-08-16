@@ -20,6 +20,26 @@ Issue
   certainty: CONFIRMED | POTENTIAL | UNKNOWN
 ```
 
+The authoritative rule-by-rule semantics, prerequisite behavior, traces,
+limitations, fixes, and tests are specified in [static semantics](metamodel/STATIC_SEMANTICS.md).
+The [rule-to-metamodel matrix](metamodel/RULE_TO_METAMODEL_MATRIX.md) provides
+the compact profile/correspondence/USE trace. These documents explain the
+existing Java engine and do not create an OCL/EVL or Ecore validator.
+
+## 1.1. Research taxonomy
+
+| Research category | Current executable phases/catalogs | IDs |
+|---|---|---|
+| Syntax/import conformance | `PARSE` | `ASL-001..002` |
+| BDI well-formedness/reference | `IR_WELL_FORMEDNESS`, `REFERENCE` | `BDI-001..004`, `REF-001..002` |
+| Cross-model correspondence | `MAPPING`, `SIGNATURE`, message resolution in `REFERENCE` | `MAP-001..003`, `SIG-001..003`, `OWN-001`, `BEL-001`, `MSG-001` |
+| Snapshot/state semantics | `SNAPSHOT_OCL`, `BOUNDED_SIMULATION` | `OCL-001..004`, `CTX-001` |
+| Static environment extension | separate environment catalog/service | `ENV-001..004` |
+| Static organization extension | separate organization catalog/validator | `ORG-001..003` |
+
+This taxonomy is conceptual. The deterministic `RulePhase` order and the
+separate extension catalogs are unchanged.
+
 ## 2. MVP rule catalog
 
 | Rule ID | Mô tả | Severity | Điều kiện |
@@ -27,9 +47,9 @@ Issue
 | ASL-001 | Parse error | Error | Jason parser thất bại |
 | ASL-002 | Unsupported syntax | Warning | AST node ngoài subset |
 | BDI-001 | Duplicate plan label | Error | cùng agent có label trùng |
-| BDI-002 | Goal without supporting plan | Error/Warning | goal signature không có plan trigger tương ứng |
-| BDI-003 | Plan missing/unknown trigger | Error | trigger không hợp lệ trong IR |
-| BDI-004 | Duplicate/invalid step order | Error | index trùng hoặc không tuần tự |
+| BDI-002 | Goal without supporting plan | Error | initial/achievement goal signature không có literal `+!` plan trigger tương ứng trong aggregate index |
+| BDI-003 | Plan trigger term is not a literal signature | Error | trigger term không phải `LiteralTermModel` |
+| BDI-004 | Invalid retained step order | Error | known source line decreases in stored plan-step order |
 | REF-001 | Referenced agent/object not found | Error | message/action receiver không resolve |
 | REF-002 | Test goal/belief reference unresolved | Warning | predicate không có belief/rule/mapping phù hợp |
 | MAP-001 | Agent has no UML mapping | Error | agent cần kiểm tra liên mô hình nhưng chưa map |
@@ -39,13 +59,13 @@ Issue
 | SIG-002 | Parameter type mismatch | Error | type incompatible |
 | SIG-003 | Type unknown | Warning | không đủ bằng chứng infer type |
 | OWN-001 | Operation belongs to wrong owner | Error | receiver/class mapping không phù hợp owner |
-| BEL-001 | Belief mapping missing/incompatible | Warning | belief cần cho cross-check nhưng chưa map |
+| BEL-001 | Belief mapping missing | Warning | initial belief chưa có `BELIEF_ATTRIBUTE` binding |
 | MSG-001 | Message receiver unknown | Error | `.send` receiver không tồn tại/không map |
 | OCL-001 | Operation precondition false | Error | đánh giá trên snapshot cho kết quả false |
 | OCL-002 | Operation precondition unknown | Warning | thiếu binding/snapshot |
 | OCL-003 | Invariant violated after bounded effect | Error | simulated state vi phạm invariant |
-| OCL-004 | Effect not specified; invariant check skipped | Info | không có effect model |
-| CTX-001 | Plan context contradicts current snapshot | Warning | context evaluate false trên snapshot hiện tại |
+| OCL-004 | Effect missing/unknown; invariant check skipped | Info | không có `soil:` effect hoặc bounded simulation trả `UNKNOWN` |
+| CTX-001 | Plan context contradicts current snapshot | Warning | supported mapped context evaluate `FAIL` trên snapshot hiện tại |
 
 ## 2.1. Implementation matrix
 
@@ -104,8 +124,10 @@ domain-specific fixtures before they can support a broader research claim.
 
 These four rules are intentionally separate from `StandardConsistencyRules`,
 so AgentSpeak-only projects retain the exact 22-rule configuration contract.
-They consume `EnvironmentModel`, explicit in-memory environment mappings, and
-the immutable USE projection. They are not yet persisted or exposed in the GUI.
+They consume `EnvironmentModel`, confirmed/current persisted environment
+mappings, and the immutable USE projection. Persistence and GUI editing are
+implemented, but evaluation remains static and candidates do not enter the
+consistency validator.
 
 | Rule ID | Check | Default result | Test/evidence trace |
 |---|---|---|---|
@@ -143,12 +165,16 @@ unavailable and therefore `UNKNOWN`.
 
 Một plan hỗ trợ goal nếu:
 
-- trigger kind là achievement goal;
-- trigger operation phù hợp;
+- trigger term là literal;
+- trigger kind là achievement goal (`ACHIEVE`);
+- trigger operation là addition (`ADD`);
 - functor/arity trùng goal signature;
-- namespace phù hợp theo policy.
+- normalized functor text trùng chính xác theo current policy.
 
 Không yêu cầu context luôn true; context chỉ quyết định applicable tại một snapshot.
+Current aggregate index không có namespace field hoặc per-agent filter riêng,
+vì vậy cùng functor/arity ở source khác hiện có thể được tính là support. Đây là
+limitation được ghi nhận, không phải semantic được Task 05 tự ý sửa.
 
 ## 4. OCL certainty policy
 
@@ -162,6 +188,11 @@ Phân tích effect approximation cho thấy khả năng vi phạm nhưng không 
 Thiếu receiver, argument binding, type, effect hoặc unsupported syntax.
 
 UI phải hiển thị rõ ba mức, không biến `UNKNOWN` thành `PASS`.
+
+Rules that return no issue because an optional snapshot/service is absent are
+`NOT_EVALUATED`, not PASS. A bounded `NO_FINDING` is meaningful only when the
+rule's documented prerequisites were available. Reports and diagrams preserve
+the result model; they do not reinterpret it.
 
 ## 5. Rule execution phases
 
@@ -190,3 +221,12 @@ Cho phép suppress issue bằng rule ID + source fingerprint với lý do. Suppr
 - source trace;
 - suggested fix;
 - đánh dấu limitations.
+
+## 8. Formalization boundary
+
+Required triggers, portable identity, deterministic source ordering, and valid
+cardinality bounds can be stated as profile-local structural constraints.
+Parser diagnostics, mapping staleness, USE owner/type checks, snapshot OCL,
+bounded variation, and certainty require application/service logic. The Java
+engine remains executable truth; this catalog and the metamodel documents are
+its normative research explanation, not a second validator.
