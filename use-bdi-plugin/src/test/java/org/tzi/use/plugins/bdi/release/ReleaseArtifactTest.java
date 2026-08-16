@@ -40,13 +40,16 @@ class ReleaseArtifactTest {
 
         String evidence = read(project.resolve("evidence/release-package.md"));
         assertTrue(evidence.contains("CLEAN_CLONE_REPRODUCIBILITY_OK"));
-        assertTrue(evidence.contains("THESIS_BACKUP_OK"));
+        assertTrue(evidence.contains("THESIS_BACKUP_BLOCKED_EXTERNAL"));
 
         Path backupScript = root.resolve("use-bdi-plugin/scripts/backup-thesis-artifacts.ps1");
         assertTrue(Files.isRegularFile(backupScript), () -> "Missing backup script: " + backupScript);
         String script = read(backupScript);
         assertTrue(script.contains("git -C $repoRoot archive"));
         assertTrue(script.contains("THESIS_BACKUP_OK"));
+        assertTrue(script.contains("THESIS_BACKUP_BLOCKED_EXTERNAL"));
+        assertTrue(script.contains("backupComplete"));
+        assertTrue(Files.isRegularFile(root.resolve("use-bdi-plugin/scripts/release-evidence-manifest.ps1")));
     }
 
     private static String read(Path path) throws IOException {

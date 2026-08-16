@@ -55,11 +55,24 @@ class ThesisEvidenceArtifactTest {
                 "demo_bdi_explorer.png",
                 "demo_bdi_explorer_detail.png",
                 "demo_bdi_problems.png",
-                "demo_uml_class_diagram.png")) {
+                "demo_uml_class_diagram.png",
+                "release_use_class_diagram.png",
+                "release_use_object_diagram.png",
+                "release_bdi_explorer.png",
+                "release_problems.png",
+                "release_mapping.png",
+                "release_current_analysis_export.png",
+                "release_diagram_bdi_plan.png",
+                "release_diagram_mapping_evidence.png",
+                "release_diagram_static_mas.png",
+                "release_svg_export.png",
+                "release_issue_highlight_sig001.png")) {
             Path path = root.resolve("docs/report/images").resolve(image);
             assertTrue(Files.isRegularFile(path), () -> "Missing UI screenshot: " + path);
             assertTrue(Files.size(path) > 0, () -> "Empty UI screenshot: " + path);
         }
+        assertTrue(Files.isRegularFile(root.resolve(
+                "use-bdi-plugin/src/test/java/org/tzi/use/plugins/bdi/ui/ReleaseScreenshotCaptureTest.java")));
     }
 
     private static Path repositoryRoot() {

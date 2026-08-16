@@ -39,8 +39,9 @@ directory and records uncommitted paths separately from the source archive.
 - `smoke.ps1` ending with `GUI_SMOKE_OK` is the local desktop UI evidence.
 - `clean-clone.ps1` ending with `CLEAN_CLONE_REPRODUCIBILITY_OK` is the
   committed-tree package evidence.
-- `THESIS_BACKUP_OK` confirms the source archive and manifest were written; it
-  does not claim that missing external slides/data have been recovered.
+- `THESIS_BACKUP_OK` is emitted only when source, data, reports, and slides are
+  all present. `THESIS_BACKUP_BLOCKED_EXTERNAL` records a readable hashed
+  source/report backup while keeping absent owner-supplied data/slides explicit.
 - Root `mvn clean verify` passed after the ADR-0019 integration-test repair;
   the release tag and complete external-artifact backup remain separate gates.
 

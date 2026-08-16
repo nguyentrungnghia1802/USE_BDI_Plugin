@@ -193,10 +193,10 @@ in the current analysis. It does not turn the tab into a graphical editor.
 - BDI Explorer `Export Current Analysis...`: save the exact Problems snapshot,
   including configuration, hashes, issue evidence, and suppressions.
 
-The tracked screenshots and their exact UI path are indexed in
-`docs/project/evidence/ui-screenshots.md`. Until a refreshed export screenshot
-is captured, that index records the required placeholder and capture policy;
-tests verify the exact button label without fabricating visual evidence.
+The tracked screenshots, inputs, view state, capture environment, and exact UI
+path are indexed in `docs/project/evidence/ui-screenshots.md`. The Task 12 set
+is reproduced from production Swing components by an opt-in capture test; normal
+test runs do not rewrite it.
 Direct cross-tab source/mapping navigation remains the scoped FR-DIA-007
 residual; selection-to-detail, Problems-to-Diagram highlighting, and bounded
 focus are the supported navigation path.

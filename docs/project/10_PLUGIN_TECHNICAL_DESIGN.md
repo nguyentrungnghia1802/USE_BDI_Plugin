@@ -250,7 +250,8 @@ mvn --batch-mode --no-transfer-progress clean verify
 | `scripts/performance.ps1` | `PERFORMANCE_BENCHMARK_OK` |
 | `scripts/diagram-performance.ps1` | `DIAGRAM_PERFORMANCE_OK` plus stable structural fingerprint across two runs |
 | `scripts/clean-clone.ps1` | `CLEAN_CLONE_REPRODUCIBILITY_OK` |
-| `scripts/backup-thesis-artifacts.ps1` | `THESIS_BACKUP_OK` plus manifest |
+| `scripts/release-evidence-manifest.ps1` | `RELEASE_EVIDENCE_MANIFEST_OK` plus portable hashes |
+| `scripts/backup-thesis-artifacts.ps1` | `THESIS_BACKUP_OK` only when source/data/reports/slides are present; otherwise `THESIS_BACKUP_BLOCKED_EXTERNAL` |
 
 Fixtures are separated into valid, invalid, unsupported, golden, Smart Queue,
 USE, and Auction/mutant groups. Tests do not require a network, database, or

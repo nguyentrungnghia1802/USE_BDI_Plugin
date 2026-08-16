@@ -63,8 +63,9 @@ viewpoint.”
   service plus GUI parity and atomic export tests.
 - FR-DIA-007 remains Partial because direct cross-tab source/mapping navigation
   is residual.
-- FR-DIA-008 remains Partial only because refreshed raster screenshot evidence
-  is open; the dedicated repeated diagram benchmark is complete.
+- At the Task 11 gate, FR-DIA-008 remained Partial only because refreshed raster
+  evidence was open. Task 12 subsequently closed that gate with the source-backed
+  capture set and advanced FR-DIA-008 to Implemented.
 - FR-REL-003 is Planned and FR-REL-004 is Partial pending release-owner tag and
   external artifact inputs.
 - Runtime JaCaMo/CArtAgO/Moise behavior remains Planned/out of scope; it is not

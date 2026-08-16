@@ -51,6 +51,9 @@ diaries, commit hashes, dates, or volatile test counts.
 - [x] Packaged parser/report/menu and headless quality-gate smoke checks.
 - [x] Reviewed Auction evaluation and performance scripts.
 - [x] Documentation links, stable facts, and evidence inventory contract tests.
+- [x] Task 12 refreshed Auction raster set covers USE class/object, Explorer,
+  Problems, Mapping, focused BDI/mapping/static-MAS views, reviewed `SIG-001`,
+  current-analysis export, and SVG export.
 - [x] `git diff --check`.
 
 Each completed gate is backed by its task-specific file under `evidence/` and
@@ -60,15 +63,14 @@ old count.
 
 ## 4. Open Must Tasks
 
-- [ ] Refreshed raster screenshots for the current Diagram/export workflow.
 - [ ] Reviewed Git tag `v1.0.0-thesis-rc` after branch integration and release
   owner approval.
 - [ ] Complete, verified backup of source, data, generated report, and thesis
   slides using owner-supplied external artifact locations.
 
-The diagram performance gate is complete. Screenshot evidence remains the only
-open FR-DIA-008 item. Tag and complete-backup entries are release-owner gates;
-do not create or claim them without the release decision and external inputs.
+FR-DIA-008 and its diagram-performance/screenshot gates are complete. Tag and
+complete-backup entries are release-owner gates; do not create or claim them
+without the release decision and external inputs.
 
 ## 5. Optional And Accepted Residual Work
 

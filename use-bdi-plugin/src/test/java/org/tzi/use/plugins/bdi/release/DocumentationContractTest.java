@@ -158,7 +158,7 @@ class DocumentationContractTest {
 
         String checklist = read(project.resolve("16_PROJECT_COMPLETION_CHECKLIST.md"));
         assertTrue(checklist.contains("Analysis profile and Java-alignment contracts"));
-        assertTrue(checklist.contains("Refreshed raster screenshots"));
+        assertTrue(checklist.contains("Task 12 refreshed Auction raster set"));
         assertTrue(!checklist.matches("(?s).*plugin tests: \\d+ pass.*"));
         assertTrue(!checklist.contains("T28 visualization regression evidence"));
 

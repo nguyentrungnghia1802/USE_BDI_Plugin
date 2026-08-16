@@ -64,6 +64,9 @@ Final raster capture is intentionally deferred to Task 12 after all UI-affecting
 work is frozen. Task 08 evidence is deterministic SVG behavior plus automated
 diagram and boundary tests; no fabricated screenshot was substituted.
 
+Task 12 supersedes that deferral with the refreshed source-backed raster set
+and capture metadata in [UI screenshot evidence](ui-screenshots.md).
+
 ## Final gate
 
 ```text
