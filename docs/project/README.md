@@ -43,6 +43,8 @@ only when the selected task needs them.
 - [Metamodel-to-Java IR alignment](metamodel/METAMODEL_TO_JAVA_ALIGNMENT.md)
 - [Cross-model correspondence model](metamodel/CROSS_MODEL_CORRESPONDENCE.md)
 - [Correspondence-to-rule matrix](metamodel/CORRESPONDENCE_RULE_MATRIX.md)
+- [Read-only graphical concrete syntax](metamodel/GRAPHICAL_CONCRETE_SYNTAX.md)
+- [Graphical viewpoint contract](metamodel/GRAPHICAL_VIEWPOINTS.md)
 - [Formalized static semantics](metamodel/STATIC_SEMANTICS.md)
 - [Rule-to-metamodel matrix](metamodel/RULE_TO_METAMODEL_MATRIX.md)
 - [Development ideas and JaCaMo roadmap](../idea/idea.md)

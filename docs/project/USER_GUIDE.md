@@ -158,6 +158,20 @@ projection in the thesis, click `Export SVG...`, choose a `.svg` destination,
 and confirm replacement only when intended. Export preserves Unicode labels,
 does not include hidden layers, and never changes the imported analysis.
 
+This tab is a read-only graphical viewpoint over the frozen analysis. `All`,
+`BDI Plan`, `Agent Overview`, and `Mapping` are presentation modes; `Issues`,
+`UML/OCL`, `Organization`, and `Environment` are layer filters. `Focus Agent`
+and `Focus Goal/Plan` retain only an existing bounded evidence neighborhood.
+`Reset` restores the full original diagram, all layers, zoom, and pan. None of
+these controls edits AgentSpeak, mappings, UML/OCL, or rule results.
+
+Badges distinguish `CONFIRMED ISSUE`, `POTENTIAL ISSUE`, `UNKNOWN`, `MISSING
+MAPPING`, and `STALE MAPPING` with text and border style as well as color.
+Static MAS content visibly states that there is no JaCaMo runtime, Moise
+enactment, or live CArtAgO state. Mapping suggestions remain candidates in the
+Mapping tab until explicitly accepted; they are never drawn as confirmed
+`MAPS_TO` edges.
+
 - `View > Create View > Class diagram`: show the UML structure.
 - `View > Create View > Object diagram`: show the current object/link
   snapshot, after objects have been created.
@@ -176,6 +190,9 @@ The tracked screenshots and their exact UI path are indexed in
 `docs/project/evidence/ui-screenshots.md`. Until a refreshed export screenshot
 is captured, that index records the required placeholder and capture policy;
 tests verify the exact button label without fabricating visual evidence.
+Direct cross-tab source/mapping navigation remains the scoped FR-DIA-007
+residual; selection-to-detail, Problems-to-Diagram highlighting, and bounded
+focus are the supported navigation path.
 
 ## Current Workflow Limits
 

@@ -16,6 +16,7 @@ loading are verified independently by `PluginGuiSmoke`.
 | 4 | Selected BDI element and source/detail panel | [demo_bdi_explorer_detail.png](../../report/images/demo_bdi_explorer_detail.png) |
 | 5 | `Problems` tab with consistency findings | [demo_bdi_problems.png](../../report/images/demo_bdi_problems.png) |
 | 6 | Explorer toolbar with `Export Current Analysis...` and JSON/HTML chooser | Pending capture after the next assembled-GUI evidence run |
+| 7 | `Diagram` tab showing view selector, text status badges, layer/focus controls, static-only legend where applicable, and `Export SVG...` | Pending final Task 12 assembled-GUI capture; do not reuse pre-viewpoint rasters |
 
 ## Live demo path
 
@@ -30,9 +31,13 @@ loading are verified independently by `PluginGuiSmoke`.
    the source/detail panel.
 6. Click the `Problems` tab and show rule ID, severity, certainty, and source
    evidence. Keep `UNKNOWN` findings visible; do not present them as PASS.
-7. Click `Export Current Analysis...`, select JSON or HTML, and show the saved
-   path in the status line. Capture Step 6 only from an assembled USE runtime;
-   do not substitute a mock dialog or generated image.
+7. Open `Diagram`; show `All`, `BDI Plan`, `Agent Overview`, or `Mapping`, keep
+   status badges readable, exercise one layer/focus control, and click `Fit`.
+   For Static MAS evidence keep the “No JaCaMo runtime / No Moise enactment /
+   No live CArtAgO state” legend visible.
+8. Click `Export Current Analysis...`, select JSON or HTML, and show the saved
+   path in the status line. Capture pending Steps 6–7 only from an assembled
+   USE runtime; do not substitute a mock dialog or generated image.
 
 ## Automated trace
 
@@ -49,3 +54,8 @@ The screenshots are intentionally kept under `docs/report/images` because
 they are also referenced by the existing thesis report. This document adds a
 stable checklist and click path without claiming that a screenshot itself is a
 runtime test.
+
+The existing Steps 1–5 predate the finalized graphical-viewpoint contract and
+remain evidence for their listed surfaces only. Task 12 owns the final raster
+refresh for Step 7 after all UI-affecting roadmap work is frozen; deterministic
+SVG and automated diagram tests are the current Task 08 evidence.
