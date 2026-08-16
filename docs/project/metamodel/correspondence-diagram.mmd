@@ -1,0 +1,94 @@
+classDiagram
+    direction LR
+
+    class DomainElement {
+        <<JaCaMo analysis metaclass>>
+    }
+    class UseElement {
+        <<read-only UML/OCL reference>>
+    }
+    class Correspondence {
+        <<logical contract>>
+        type
+        sourceIdentity
+        targetReference
+        provenance
+        evidence
+    }
+    class Candidate {
+        <<review state>>
+        heuristic only
+    }
+    class Confirmed {
+        <<review state>>
+        explicit decision
+    }
+    class Current {
+        <<target validation>>
+    }
+    class Stale {
+        <<target validation>>
+    }
+    class Unknown {
+        <<target validation>>
+    }
+
+    DomainElement "1" --> "0..*" Correspondence : source
+    Correspondence "0..*" --> "1" UseElement : target
+    Correspondence <|-- Candidate
+    Correspondence <|-- Confirmed
+    Confirmed --> Current : revalidated
+    Confirmed --> Stale : changed or missing
+    Confirmed --> Unknown : insufficient evidence
+
+    class Agent
+    class ExternalAction
+    class Argument
+    class Belief
+    class Receiver
+    class ArtifactOperation
+    class ObservableProperty
+    class OrganizationRole
+    class OrganizationMission
+    class RoleCardinality
+
+    DomainElement <|-- Agent
+    DomainElement <|-- ExternalAction
+    DomainElement <|-- Argument
+    DomainElement <|-- Belief
+    DomainElement <|-- Receiver
+    DomainElement <|-- ArtifactOperation
+    DomainElement <|-- ObservableProperty
+    DomainElement <|-- OrganizationRole
+    DomainElement <|-- OrganizationMission
+    DomainElement <|-- RoleCardinality
+
+    class UmlClass
+    class UmlObject
+    class UmlOperation
+    class UmlParameter
+    class UmlAttribute
+    class OclInvariant
+
+    UseElement <|-- UmlClass
+    UseElement <|-- UmlObject
+    UseElement <|-- UmlOperation
+    UseElement <|-- UmlParameter
+    UseElement <|-- UmlAttribute
+    UseElement <|-- OclInvariant
+
+    Agent ..> UmlClass : AGENT_CLASS
+    Agent ..> UmlObject : AGENT_OBJECT
+    ExternalAction ..> UmlOperation : ACTION_OPERATION
+    Argument ..> UmlParameter : PARAMETER
+    Belief ..> UmlAttribute : BELIEF_ATTRIBUTE
+    Receiver ..> UmlObject : RECEIVER_OBJECT
+    ArtifactOperation ..> UmlOperation : environment operation
+    ObservableProperty ..> UmlAttribute : environment property
+    OrganizationRole ..> UmlClass : role mapping
+    OrganizationMission ..> UmlOperation : mission mapping
+    RoleCardinality ..> OclInvariant : reviewed bounds
+
+    note for Candidate "Dashed conceptual relation: never consumed as confirmed"
+    note for Confirmed "Binding still requires currentness/evidence checks"
+    note for Correspondence "Logical metamodel view; not the runtime/IR class diagram"
