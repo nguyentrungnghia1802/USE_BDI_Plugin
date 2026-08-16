@@ -40,6 +40,7 @@ only when the selected task needs them.
 - [Metamodel source matrix](research/metamodel-source-matrix.md)
 - [JaCaMo Consistency Analysis Profile](metamodel/USE_JACAMO_ANALYSIS_METAMODEL.md)
 - [Analysis-profile coverage matrix](metamodel/METAMODEL_COVERAGE.md)
+- [Metamodel-to-Java IR alignment](metamodel/METAMODEL_TO_JAVA_ALIGNMENT.md)
 - [Formalized static semantics](metamodel/STATIC_SEMANTICS.md)
 - [Rule-to-metamodel matrix](metamodel/RULE_TO_METAMODEL_MATRIX.md)
 - [Development ideas and JaCaMo roadmap](../idea/idea.md)

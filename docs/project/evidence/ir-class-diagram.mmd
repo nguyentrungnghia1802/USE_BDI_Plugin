@@ -1,33 +1,191 @@
 classDiagram
+    direction LR
+
+    class JasonAslParserAdapter {
+        <<adapter boundary>>
+        parseModel(Path) AgentModel
+    }
+    class JaCaMoProjectParserAdapter {
+        <<adapter boundary>>
+        parse(Path) ParsedMasProject
+    }
+    class CArtAgOArtifactAdapter {
+        <<adapter boundary>>
+        inspect(Class) ArtifactModel
+    }
+    class MoiseOrganizationParserAdapter {
+        <<adapter boundary>>
+        parse(Path,ProjectRoot) OrganizationModel
+    }
+
+    class AgentModel {
+        <<ir realizes bdi::Agent>>
+    }
+    class BeliefModel {
+        <<realizes bdi::Belief>>
+    }
+    class GoalModel {
+        <<realizes bdi::Goal>>
+    }
+    class PlanModel {
+        <<realizes bdi::Plan>>
+    }
+    class TriggerModel {
+        <<realizes bdi::Trigger>>
+    }
+    class ContextExpr {
+        <<sealed realizes bdi::Context>>
+    }
+    class ContextLiteral
+    class ContextUnary
+    class ContextBinary
+    class ContextUnsupported
+    class PlanStepModel {
+        <<sealed realizes bdi::Step>>
+    }
+    class ActionStepModel
+    class InternalActionStepModel
+    class AchieveGoalStepModel
+    class TestStepModel
+    class BeliefUpdateStepModel
+    class ConstraintStepModel
+    class UnsupportedStepModel
+    class TermModel {
+        <<sealed realizes bdi::Term>>
+    }
+    class LiteralTermModel
+    class CompoundTermModel
+    class VariableTermModel
+    class NumberTermModel
+    class StringTermModel
+    class ListTermModel
+    class SetTermModel
+    class ArithmeticTermModel
+    class UnsupportedTermModel
+    class SourceSpan {
+        <<evidence realization>>
+    }
+    class UnsupportedFeature {
+        <<evidence realization>>
+    }
+
+    JasonAslParserAdapter --> AgentModel : produces
     AgentModel *-- BeliefModel
     AgentModel *-- GoalModel
     AgentModel *-- PlanModel
     AgentModel *-- UnsupportedFeature
     PlanModel *-- TriggerModel
-    PlanModel *-- ContextExpr
-    PlanModel *-- PlanStepModel
+    PlanModel *-- "0..1" ContextExpr
+    PlanModel *-- "0..* ordered" PlanStepModel
+    ContextExpr <|-- ContextLiteral
+    ContextExpr <|-- ContextUnary
+    ContextExpr <|-- ContextBinary
+    ContextExpr <|-- ContextUnsupported
     PlanStepModel <|-- ActionStepModel
-    PlanStepModel <|-- BeliefUpdateStepModel
-    PlanStepModel <|-- AchieveGoalStepModel
     PlanStepModel <|-- InternalActionStepModel
+    PlanStepModel <|-- AchieveGoalStepModel
     PlanStepModel <|-- TestStepModel
+    PlanStepModel <|-- BeliefUpdateStepModel
+    PlanStepModel <|-- ConstraintStepModel
     PlanStepModel <|-- UnsupportedStepModel
     TermModel <|-- LiteralTermModel
     TermModel <|-- CompoundTermModel
+    TermModel <|-- VariableTermModel
     TermModel <|-- NumberTermModel
     TermModel <|-- StringTermModel
-    TermModel <|-- VariableTermModel
-    AgentModel --> SourceSpan
-    PlanModel --> SourceSpan
-    TermModel --> SourceSpan
+    TermModel <|-- ListTermModel
+    TermModel <|-- SetTermModel
+    TermModel <|-- ArithmeticTermModel
+    TermModel <|-- UnsupportedTermModel
+    BeliefModel *-- LiteralTermModel
+    GoalModel *-- LiteralTermModel
+    TriggerModel *-- TermModel
+    ActionStepModel *-- TermModel
+    InternalActionStepModel *-- TermModel
+    AgentModel --> SourceSpan : source evidence
+    PlanModel --> SourceSpan : source evidence
+    TermModel --> SourceSpan : source evidence
 
-    class AgentModel
-    class BeliefModel
-    class GoalModel
-    class PlanModel
-    class TriggerModel
-    class ContextExpr
-    class PlanStepModel
-    class TermModel
-    class SourceSpan
-    class UnsupportedFeature
+    class ProjectSourceId {
+        <<source::portable identity v2>>
+    }
+    class MasProjectModel {
+        <<mas realizes mas::MasProject>>
+    }
+    class MasAgentInstanceModel {
+        <<realizes mas::AgentInstance>>
+    }
+    class MasResourceReference {
+        <<realizes mas::ProjectResourceReference>>
+    }
+    JaCaMoProjectParserAdapter --> MasProjectModel : normalized through import service
+    MasProjectModel *-- "0..*" MasAgentInstanceModel
+    MasProjectModel *-- "0..*" MasResourceReference
+    MasProjectModel --> ProjectSourceId
+    MasAgentInstanceModel --> ProjectSourceId
+    MasResourceReference --> "0..1" ProjectSourceId
+    MasAgentInstanceModel ..> AgentModel : derived by source in aggregate
+
+    class EnvironmentModel {
+        <<environment declaration-only>>
+    }
+    class ArtifactModel {
+        <<realizes environment::Artifact>>
+    }
+    class EnvironmentOperation {
+        <<realizes environment::ArtifactOperation>>
+    }
+    class ObservablePropertyModel {
+        <<realizes environment::ObservableProperty>>
+    }
+    CArtAgOArtifactAdapter --> ArtifactModel : produces
+    EnvironmentModel *-- "0..* sorted" ArtifactModel
+    ArtifactModel *-- "0..* sorted" EnvironmentOperation
+    ArtifactModel *-- "0..* sorted" ObservablePropertyModel
+
+    class OrganizationModel {
+        <<organization static-normalized>>
+    }
+    class OrganizationRole {
+        <<nested Role>>
+    }
+    class OrganizationGroup {
+        <<nested Group>>
+    }
+    class OrganizationRoleCardinality {
+        <<nested RoleCardinality>>
+    }
+    class OrganizationCardinality {
+        <<nested Cardinality>>
+    }
+    class OrganizationScheme {
+        <<nested Scheme>>
+    }
+    class OrganizationGoal {
+        <<nested Goal>>
+    }
+    class OrganizationMission {
+        <<nested Mission>>
+    }
+    class OrganizationNorm {
+        <<nested Norm>>
+    }
+    MoiseOrganizationParserAdapter --> OrganizationModel : produces
+    MasProjectModel *-- "0..*" OrganizationModel
+    OrganizationModel *-- "0..*" OrganizationRole
+    OrganizationModel *-- "0..*" OrganizationGroup
+    OrganizationModel *-- "0..*" OrganizationScheme
+    OrganizationModel *-- "0..*" OrganizationNorm
+    OrganizationGroup *-- "0..*" OrganizationRoleCardinality
+    OrganizationRoleCardinality *-- OrganizationCardinality
+    OrganizationScheme *-- "0..*" OrganizationGoal
+    OrganizationScheme *-- "0..*" OrganizationMission
+    OrganizationMission *-- OrganizationCardinality
+
+    note for JasonAslParserAdapter "Jason concrete AST stops inside importer/normalizer"
+    note for JaCaMoProjectParserAdapter "JaCaMo parser/model types stop inside importer"
+    note for CArtAgOArtifactAdapter "CArtAgO reflection types stop inside importer"
+    note for MoiseOrganizationParserAdapter "Moise OS types stop inside importer"
+    note for ProjectSourceId "Persisted/exposed identity is project-relative; local absolute paths are navigation-only"
+    note for EnvironmentModel "No live workspace or observable-value stream"
+    note for OrganizationModel "No enactment, membership, commitment, or norm-fulfilment state"
