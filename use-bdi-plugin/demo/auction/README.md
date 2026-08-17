@@ -49,6 +49,7 @@ Sau bước chuẩn bị trong [README bộ demo](../README.md), chạy từ rep
 
 ```powershell
 .\run-use-gui.ps1 -Demo auction
+.\run-use-gui.cmd -Demo auction -Rebuild
 ```
 
 Nếu USE đã mở, chọn `File > Open specification...` và mở `Auction.use` trước.
