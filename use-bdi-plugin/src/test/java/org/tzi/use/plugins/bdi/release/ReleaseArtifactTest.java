@@ -18,7 +18,8 @@ class ReleaseArtifactTest {
                 "USER_GUIDE.md",
                 "DEVELOPER_GUIDE.md",
                 "THIRD_PARTY_NOTICES.md",
-                "evidence/release-package.md")) {
+                "evidence/release-package.md",
+                "evidence/release-candidate-validation.md")) {
             Path path = project.resolve(document);
             assertTrue(Files.isRegularFile(path), () -> "Missing release document: " + path);
             assertTrue(Files.size(path) > 0, () -> "Empty release document: " + path);

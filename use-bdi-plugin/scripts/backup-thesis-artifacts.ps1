@@ -6,6 +6,16 @@ param(
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 
+function Get-ContainedRelativePath([string]$BasePath, [string]$TargetPath) {
+    $baseFull = [System.IO.Path]::GetFullPath($BasePath).TrimEnd('\', '/')
+    $targetFull = [System.IO.Path]::GetFullPath($TargetPath)
+    $prefix = $baseFull + [System.IO.Path]::DirectorySeparatorChar
+    if (-not $targetFull.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Path is outside the expected base directory: $targetFull"
+    }
+    return $targetFull.Substring($prefix.Length)
+}
+
 if ([string]::IsNullOrWhiteSpace($Destination)) {
     $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
     $Destination = Join-Path $repoRoot "target\backups\thesis-$stamp"
@@ -72,7 +82,7 @@ foreach ($kind in $requirements.Keys) {
     foreach ($file in $files) {
         $copiedArtifacts.Add([ordered]@{
             kind = $kind
-            file = [System.IO.Path]::GetRelativePath($destinationFull, $file.FullName).Replace('\', '/')
+            file = (Get-ContainedRelativePath $destinationFull $file.FullName).Replace('\', '/')
             sha256 = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
             bytes = $file.Length
         })

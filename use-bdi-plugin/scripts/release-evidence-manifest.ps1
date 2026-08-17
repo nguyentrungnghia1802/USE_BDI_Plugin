@@ -5,6 +5,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+
+function Get-ContainedRelativePath([string]$BasePath, [string]$TargetPath) {
+    $baseFull = [System.IO.Path]::GetFullPath($BasePath).TrimEnd('\', '/')
+    $targetFull = [System.IO.Path]::GetFullPath($TargetPath)
+    $prefix = $baseFull + [System.IO.Path]::DirectorySeparatorChar
+    if (-not $targetFull.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Path is outside the expected base directory: $targetFull"
+    }
+    return $targetFull.Substring($prefix.Length)
+}
+
 $outputPath = if ([System.IO.Path]::IsPathRooted($Output)) {
     [System.IO.Path]::GetFullPath($Output)
 } else {
@@ -54,16 +65,16 @@ foreach ($path in Get-ChildItem -LiteralPath (Join-Path $repoRoot 'docs\project'
             '10_PLUGIN_TECHNICAL_DESIGN.md', '12_REQUIREMENT_TRACEABILITY.md',
             '16_PROJECT_COMPLETION_CHECKLIST.md', 'DECISION_LOG.md',
             'DEVELOPER_GUIDE.md', 'USER_GUIDE.md') }) {
-    $required.Add([System.IO.Path]::GetRelativePath($repoRoot, $path.FullName))
+    $required.Add((Get-ContainedRelativePath $repoRoot $path.FullName))
 }
 foreach ($path in Get-ChildItem -LiteralPath (Join-Path $repoRoot 'docs\report\images') -Filter 'release_*.png' -File) {
-    $required.Add([System.IO.Path]::GetRelativePath($repoRoot, $path.FullName))
+    $required.Add((Get-ContainedRelativePath $repoRoot $path.FullName))
 }
 
 $artifacts = [System.Collections.Generic.List[object]]::new()
 $artifacts.Add([ordered]@{
     kind = 'source-archive'
-    path = [System.IO.Path]::GetRelativePath($repoRoot, $sourceArchive).Replace('\', '/')
+    path = (Get-ContainedRelativePath $repoRoot $sourceArchive).Replace('\', '/')
     sha256 = (Get-FileHash -LiteralPath $sourceArchive -Algorithm SHA256).Hash.ToLowerInvariant()
     bytes = (Get-Item -LiteralPath $sourceArchive).Length
 })
@@ -86,7 +97,15 @@ $javaExecutable = if (-not [string]::IsNullOrWhiteSpace($env:JAVA_HOME)) {
 } else {
     (Get-Command java -ErrorAction Stop).Source
 }
-$javaVersion = (& $javaExecutable -version 2>&1 | Select-Object -First 1).ToString()
+$savedErrorPreference = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+$javaVersionOutput = @(& $javaExecutable -version 2>&1)
+$javaExitCode = $LASTEXITCODE
+$ErrorActionPreference = $savedErrorPreference
+if ($javaExitCode -ne 0 -or $javaVersionOutput.Count -eq 0) {
+    throw 'Could not inspect the Java version.'
+}
+$javaVersion = $javaVersionOutput[0].ToString()
 $mavenVersion = (& mvn --version | Select-Object -First 1).ToString()
 $dependencyTree = & mvn --batch-mode --no-transfer-progress -pl use-bdi-plugin dependency:tree
 if ($LASTEXITCODE -ne 0) {

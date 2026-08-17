@@ -54,3 +54,24 @@ directory and records uncommitted paths separately from the source archive.
   shaded plugin, Jason runtime class, embedded notice, and ZIP plugin entry.
 - The root `mvn --batch-mode --no-transfer-progress clean verify` run passed
   `use-core`, 121 `use-gui` integration tests, 74 plugin tests, and assembly.
+
+## Task 12 release-candidate run - 2026-08-17
+
+Candidate `6a84fc5ee0cff7e06c1873d0a5d7c05e52fdc0c0` passed the prescribed ordered
+plugin-reactor, assembly, GUI smoke, headless smoke, Auction evidence, Auction
+evaluation, general performance, diagram performance, clean-clone, root clean
+verify, and diff gates. The clean clone ended with
+`CLEAN_CLONE_REPRODUCIBILITY_OK` for that exact commit. Package inspection
+confirmed the JaCaMo project parser, Jason agent runtime, CArtAgO operation and
+artifact APIs, Moise OS parser/model plus schema, embedded third-party notice,
+`useplugin.xml`, and root `COPYING`; the dependency tree contained no EMF or
+Sirius runtime.
+
+The generated release-evidence manifest covered 40 hashed artifacts. Its first
+successful run recorded SHA-256
+`41eacdccc301208c33886b6b5642cbe9db6fed282a8d700662aacb9d9da76cfb`;
+the final manifest is regenerated after the evidence-only commit. The backup
+created a readable committed-source archive and report copy, but correctly
+ended `THESIS_BACKUP_BLOCKED_EXTERNAL: missing=data,slides`. No tag was created
+because release-owner approval and a complete external-artifact backup were
+not available.

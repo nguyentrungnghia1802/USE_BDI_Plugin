@@ -86,3 +86,24 @@ This one-machine, 15-sample measurement has no confidence interval, memory
 profile, repaint timing, interaction study, statistical comparison, or
 catastrophic-regression threshold. It demonstrates a repeatable protocol and
 records current behavior; it does not prove “real-time” performance.
+
+## Task 12 release-candidate freeze
+
+The exact documented script was rerun on 2026-08-17 (Asia/Bangkok) against
+candidate `6a84fc5ee0cff7e06c1873d0a5d7c05e52fdc0c0`, using the same four inputs,
+three warmups, 15 measured repetitions, fixed analysis timestamp, `ALL` mode,
+no hidden layers, and deterministic first-node focus. Java `21.0.5`, Windows
+11 `10.0` amd64, 16 logical processors, and 16088 MiB physical RAM were
+recorded. The second run observed:
+
+| Case | Nodes | Edges | Groups | Build median / p95 | Layout median / p95 | Focus/filter median / p95 | SVG median / p95 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Family Person | 8 | 8 | 1 | 0.5652 / 1.0951 | 0.0730 / 0.1231 | 0.2194 / 0.3826 | 0.2906 / 0.4209 |
+| Smart Queue | 55 | 59 | 1 | 2.8450 / 5.2262 | 0.1893 / 0.7405 | 0.7021 / 1.6565 | 0.2015 / 0.5762 |
+| Smart Home | 8 | 8 | 1 | 0.2725 / 0.5699 | 0.0413 / 0.0619 | 0.1351 / 0.3319 | 0.1320 / 0.2383 |
+| Auction | 43 | 48 | 2 | 1.4296 / 4.9789 | 0.1009 / 0.4460 | 0.5172 / 0.6565 | 0.0914 / 0.1491 |
+
+The release run ended with `DIAGRAM_PERFORMANCE_OK` and the unchanged
+structural fingerprint
+`19c5cc0d5d9e103db160a71c3e0ba2e45f9ef20eedfacb803b1f9f4a64135591`.
+These timings remain an environment sample, not a universal performance bound.
