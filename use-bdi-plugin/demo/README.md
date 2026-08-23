@@ -40,9 +40,11 @@ Từ thư mục gốc repository, dùng launcher để tự tìm Java, build khi
 distribution, giải nén và đặt đúng `USE_HOME`:
 
 ```powershell
-Set-Location 'D:\_CODE_BANK\Project_\vnu-sme-lab\use'
+Set-Location '<repo-root>'
 .\run-use-gui.ps1 -ValidateOnly
 ```
+
+Thay `<repo-root>` bằng thư mục checkout hiện tại của repository.
 
 Nếu vừa sửa source/plugin, dùng `.\run-use-gui.ps1 -Rebuild`. Không chạy riêng
 `use-gui\target\use-gui.jar`: launcher luôn dùng packaged distribution có đúng

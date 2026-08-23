@@ -38,7 +38,7 @@ Nếu USE đã mở, phải mở `Family.use` qua `File > Open specification...`
 Chỉ khi model đã hiện trong cây bên trái mới nhập:
 
 ```text
-open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\family-person\Family.cmd"
+open "Family.cmd"
 ```
 
 ## 4. Kịch bản 1 - flow demo nhanh (5-7 phút)

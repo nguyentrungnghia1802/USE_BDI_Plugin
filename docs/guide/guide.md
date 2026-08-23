@@ -10,10 +10,12 @@ mapping, Problems và report. Các demo chính nằm trong
 Thực hiện từ thư mục repository:
 
 ```powershell
-Set-Location 'D:\_CODE_BANK\Project_\vnu-sme-lab\use'
+Set-Location '<repo-root>'
 java -version
 mvn -version
 ```
+
+Thay `<repo-root>` bằng thư mục checkout hiện tại của repository.
 
 Nên dùng Java 21. Nếu máy có nhiều Java, đặt `JAVA_HOME` trước khi build và
 chạy để tránh Java cũ trong `PATH`:
@@ -46,17 +48,13 @@ dùng distribution có `oclextensions` và `lib\plugins` đầy đủ.
 
 ## 3. Quy tắc chọn file
 
-Các dialog do plugin sở hữu hiện mở mặc định tại:
-
-```text
-D:\_CODE_BANK\Project_\vnu-sme-lab\use
-```
-
-Quy tắc này áp dụng cho `Import AgentSpeak`, `Import JaCaMo Project`, load/save
-mapping và export report. Khi plugin khởi tạo, nó cũng đặt USE
-`Options.setLastDirectory(...)`, nên `File > Open specification...` bắt đầu ở
-cùng thư mục sau khi plugin đã được nạp. Nếu checkout được chuyển sang máy
-khác, plugin dùng working directory hiện tại làm fallback.
+Các dialog do plugin sở hữu mặc định mở tại root của checkout hiện tại khi
+launcher chạy từ trong repository. Quy tắc này áp dụng cho `Import AgentSpeak`,
+`Import JaCaMo Project`, load/save mapping và export report. Khi plugin khởi
+tạo, nó cũng đặt USE `Options.setLastDirectory(...)`, nên
+`File > Open specification...` bắt đầu ở cùng thư mục sau khi plugin đã được
+nạp. Nếu không tìm được Maven root chứa module `use-bdi-plugin`, plugin dùng
+working directory hiện tại làm fallback.
 
 ## 4. Demo A: Auction
 

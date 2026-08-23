@@ -37,7 +37,7 @@ Nếu USE đã mở, chọn `File > Open specification...` và mở `SmartQueue.
 Chỉ khi model đã hiện trong cây bên trái mới gõ vào shell dưới cùng:
 
 ```text
-open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\smart-queue\SmartQueue.cmd"
+open "SmartQueue.cmd"
 ```
 
 Đợi log báo command file hoàn tất trước khi tạo Object diagram.

@@ -56,7 +56,7 @@ Nếu USE đã mở, chọn `File > Open specification...` và mở `Auction.use
 Chỉ khi model đã hiện trong cây bên trái mới gõ trong shell dưới cùng:
 
 ```text
-open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\auction\Auction.cmd"
+open "Auction.cmd"
 ```
 
 Đợi `check` hoàn tất. Snapshot baseline có `auction1.status = #open`, reserve

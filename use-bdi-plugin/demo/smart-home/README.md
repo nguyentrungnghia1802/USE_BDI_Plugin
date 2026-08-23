@@ -38,7 +38,7 @@ Nếu USE đã mở, chọn `File > Open specification...` và mở `SmartHome.u
 Chỉ khi model đã hiện trong cây bên trái mới gõ trong shell:
 
 ```text
-open "D:\_CODE_BANK\Project_\vnu-sme-lab\use\use-bdi-plugin\demo\smart-home\SmartHome.cmd"
+open "SmartHome.cmd"
 ```
 
 ## 4. Kịch bản 1 - flow demo nhanh (7-9 phút)
