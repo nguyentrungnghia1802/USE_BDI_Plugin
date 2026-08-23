@@ -33,6 +33,7 @@ only when the selected task needs them.
 - [Demo guide](../guide/guide.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Thesis evidence](evidence/)
+- [Full-project audit evidence](evidence/project-audit-2026-08-23.md)
 - [Research positioning and scope contract](research/research-positioning.md)
 - [Frozen research terminology](research/terminology.md)
 - [Claim–evidence matrix](research/claim-evidence-matrix.md)
