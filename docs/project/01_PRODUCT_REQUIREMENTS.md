@@ -27,7 +27,7 @@ implemented.
 | FR-PLG-003 | Open a USE `ViewFrame` and use the current `Session`/`MSystem` when available | Implemented |
 | FR-PLG-004 | Keep import available without a loaded UML model and degrade model-dependent checks safely | Implemented |
 | FR-PLG-005 | Reload a changed plugin without restarting USE | Planned |
-| FR-PLG-006 | Start plugin-owned and USE file choosers at the preferred repository root with a safe moved-checkout fallback | Implemented |
+| FR-PLG-006 | Start plugin-owned and USE file choosers at the current repository root when it can be inferred, with a safe working-directory fallback | Implemented |
 
 ### 2.2 AgentSpeak import and normalized model
 

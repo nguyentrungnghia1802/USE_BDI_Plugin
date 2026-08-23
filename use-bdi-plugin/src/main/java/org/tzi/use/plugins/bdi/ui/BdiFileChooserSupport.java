@@ -7,24 +7,34 @@ import javax.swing.JFileChooser;
 
 /** Shared file-dialog defaults for plugin-owned import, mapping, and report actions. */
 public final class BdiFileChooserSupport {
-    private static final Path PREFERRED_REPOSITORY_ROOT = Path.of(
-            "D:\\_CODE_BANK\\Project_\\vnu-sme-lab\\use");
-
     private BdiFileChooserSupport() {
     }
 
     /**
-     * Creates a chooser rooted at the checked-out USE repository when it is available.
-     * A moved clone falls back to the process working directory rather than failing import.
+     * Creates a chooser rooted at the current USE checkout when it can be inferred.
+     * Installed distributions fall back to the process working directory.
      */
     public static JFileChooser create() {
         return new JFileChooser(defaultDirectory().toFile());
     }
 
     public static Path defaultDirectory() {
-        if (Files.isDirectory(PREFERRED_REPOSITORY_ROOT)) {
-            return PREFERRED_REPOSITORY_ROOT;
+        Path workingDirectory = Path.of(System.getProperty("user.dir"))
+                .toAbsolutePath()
+                .normalize();
+        return defaultDirectory(workingDirectory);
+    }
+
+    static Path defaultDirectory(Path workingDirectory) {
+        Path normalizedWorkingDirectory = workingDirectory.toAbsolutePath().normalize();
+        for (Path candidate = normalizedWorkingDirectory;
+                candidate != null;
+                candidate = candidate.getParent()) {
+            if (Files.isRegularFile(candidate.resolve("pom.xml"))
+                    && Files.isDirectory(candidate.resolve("use-bdi-plugin"))) {
+                return candidate;
+            }
         }
-        return Path.of(System.getProperty("user.dir")).toAbsolutePath().normalize();
+        return normalizedWorkingDirectory;
     }
 }

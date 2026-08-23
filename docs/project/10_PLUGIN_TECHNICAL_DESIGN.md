@@ -20,9 +20,10 @@ The verified plugin lifecycle uses `IPlugin`, `IPluginActionDelegate`,
 `IPluginAction.getSession()`, `Session.hasSystem()`, `Session.system()`, and
 `MainWindow.addNewViewFrame(...)`. Do not invent descriptor-level view APIs.
 
-Plugin-owned Swing file dialogs use `BdiFileChooserSupport`. On the preferred
-Windows checkout they start at `D:\_CODE_BANK\Project_\vnu-sme-lab\use`; a
-moved checkout falls back to the process working directory. This helper is
+Plugin-owned Swing file dialogs use `BdiFileChooserSupport`. The helper walks
+up from the process working directory and selects the nearest Maven root that
+contains the `use-bdi-plugin` module. An installed distribution or unrelated
+working directory safely falls back to that working directory. The helper is
 used by AgentSpeak/JaCaMo import, mapping load/save, and current-analysis
 export. During plugin initialization, `BdiPlugin` also applies the same path
 through USE's verified `Options.setLastDirectory(...)` API, so the core
