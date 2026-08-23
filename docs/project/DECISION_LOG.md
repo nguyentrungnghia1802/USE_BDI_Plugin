@@ -595,3 +595,23 @@ and are never guessed compatible. Exporters remain serializers only: they do
 not parse, validate, read live USE state, or mutate source state. Persistence
 schemas, source identity, validator ordering, USE core, and runtime JaCaMo
 scope are unchanged.
+
+## 26. ADR-0046: File Dialogs Discover The Active Checkout Without Machine Paths
+
+**Status:** Accepted. **Date:** 2026-08-23.
+
+Plugin and USE file dialogs need a useful initial directory, but a fixed
+developer-machine path is neither portable nor safe when several clones exist.
+Option A, rejected, keeps a preferred absolute checkout and redirects every
+clone on that machine to it. Option B, rejected, always uses the process working
+directory and loses the repository-root convenience when launched from a demo
+or module. Option C, selected, walks from the normalized working directory to
+the nearest ancestor containing both the root `pom.xml` and `use-bdi-plugin`.
+
+If no such ancestor exists, as in an installed distribution, the normalized
+working directory is retained. `BdiFileChooserSupport` owns this plugin behavior
+and `BdiPlugin` continues to apply it through the existing
+`Options.setLastDirectory(...)` API; USE core is unchanged. Tests cover nested
+checkout discovery, unrelated-directory fallback, plugin initialization, and
+both import choosers. Requirements, technical design, and demo guidance use the
+same portable contract and contain no machine-specific checkout path.
