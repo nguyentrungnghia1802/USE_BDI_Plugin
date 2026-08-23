@@ -197,6 +197,9 @@
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                         <exclude>module-info.class</exclude>
                                         <exclude>META-INF/versions/*/module-info.class</exclude>
+                                        <!-- JaCaMo/Jason duplicate project-generator assets are outside static analysis. -->
+                                        <exclude>pygments_init.rb</exclude>
+                                        <exclude>templates/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>
