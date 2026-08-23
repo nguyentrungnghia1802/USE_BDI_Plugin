@@ -23,6 +23,7 @@
 
     <build>
         <sourceDirectory>src</sourceDirectory>
+        <finalName>use-${project.version}</finalName>
 
         <plugins>
             <plugin>
@@ -32,7 +33,6 @@
                     <descriptors>
                         <descriptor>src/assembly/assembly.xml</descriptor>
                     </descriptors>
-                    <finalName>use-${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
