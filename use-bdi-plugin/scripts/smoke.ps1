@@ -60,19 +60,19 @@ try {
         throw "Packaged parser smoke failed with exit code $LASTEXITCODE."
     }
 
-    # Run the lightweight report generator via Maven exec to produce docs/bdi-report.json
+    # Run the lightweight report generator via Maven exec. Smoke artifacts stay under target.
     Write-Host 'Running report generator (exec:java)...'
     & mvn -pl use-bdi-plugin exec:java "-Dexec.mainClass=org.tzi.use.plugins.bdi.report.ReportMain" -DskipTests=true -e
     if ($LASTEXITCODE -ne 0) {
         throw "Report generator failed with exit code $LASTEXITCODE."
     }
 
-    $generatedReport = Join-Path $repoRoot 'docs\bdi-report.json'
+    $generatedReport = Join-Path $repoRoot 'use-bdi-plugin\target\report-smoke\bdi-report.json'
     if (-not (Test-Path -LiteralPath $generatedReport)) {
         throw "Generated report not found: $generatedReport"
     }
 
-    $generatedHtml = Join-Path $repoRoot 'docs\bdi-report.html'
+    $generatedHtml = Join-Path $repoRoot 'use-bdi-plugin\target\report-smoke\bdi-report.html'
     if (-not (Test-Path -LiteralPath $generatedHtml)) {
         throw "Generated HTML report not found: $generatedHtml"
     }

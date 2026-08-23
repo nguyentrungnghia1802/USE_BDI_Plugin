@@ -13,7 +13,9 @@ public final class ReportMain {
     public static void main(String[] args) {
         try {
             Path projectRoot = Path.of(System.getProperty("user.dir"));
-            Path out = projectRoot.resolve(Path.of("docs", "bdi-report.json"));
+            Path outputDirectory = projectRoot.resolve(Path.of(
+                    "use-bdi-plugin", "target", "report-smoke"));
+            Path out = outputDirectory.resolve("bdi-report.json");
             Path suppressionFile = projectRoot.resolve(Path.of(
                     "use-bdi-plugin", ".bdi-plugin", "suppressions.json"));
             List<Suppression> suppressions = Files.exists(suppressionFile)
@@ -36,7 +38,7 @@ public final class ReportMain {
             ReportExporter.exportJson(data, out);
             System.out.println("Wrote report to: " + out.toAbsolutePath());
 
-            Path outHtml = projectRoot.resolve(Path.of("docs", "bdi-report.html"));
+            Path outHtml = outputDirectory.resolve("bdi-report.html");
             HtmlReportExporter.exportHtml(data, outHtml);
             System.out.println("Wrote HTML report to: " + outHtml.toAbsolutePath());
             System.exit(0);
