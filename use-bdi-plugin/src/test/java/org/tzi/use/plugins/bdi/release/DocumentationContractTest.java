@@ -156,6 +156,12 @@ class DocumentationContractTest {
         assertTrue(requirements.contains("FR-META-004"));
         assertTrue(requirements.contains("FR-REL-004"));
 
+        String traceability = read(project.resolve("12_REQUIREMENT_TRACEABILITY.md"));
+        assertTrue(traceability.contains("| FR-PLG-005 | no implementation claimed |"));
+        assertTrue(traceability.contains("| FR-ENV-004 | no implementation claimed |"));
+        assertTrue(!traceability.contains("FR-PLG-001..006"));
+        assertTrue(!traceability.contains("FR-ENV-001..004"));
+
         String checklist = read(project.resolve("16_PROJECT_COMPLETION_CHECKLIST.md"));
         assertTrue(checklist.contains("Analysis profile and Java-alignment contracts"));
         assertTrue(checklist.contains("Task 12 refreshed Auction raster set"));

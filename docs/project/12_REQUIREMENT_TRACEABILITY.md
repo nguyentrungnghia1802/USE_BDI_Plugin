@@ -10,7 +10,9 @@ documentation. It intentionally traces groups instead of every Java record.
 
 | Requirement IDs | Primary source | Primary automated evidence | Detailed docs |
 | --- | --- | --- | --- |
-| FR-PLG-001..006 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction`, `ImportJaCaMoAction`, `BdiFileChooserSupport` | `HelloBdiActionTest`, `BdiPluginTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | architecture, technical design, install/user guides, demo guide |
+| FR-PLG-001..004 | `useplugin.xml`, `BdiPlugin`, `HelloBdiAction`, `ImportBdiAction`, `ImportJaCaMoAction` | `HelloBdiActionTest`, `BdiPluginTest`, `ImportBdiActionTest`, `PluginGuiSmoke` | architecture, technical design, install/user guides, demo guide |
+| FR-PLG-005 | no implementation claimed | none required while Planned | requirements, developer guide, baseline reconciliation |
+| FR-PLG-006 | `BdiFileChooserSupport`, `BdiPlugin` | `BdiFileChooserSupportTest`, `BdiPluginTest`, `ImportBdiActionTest` | requirements, technical design, demo guide |
 | FR-IMP-001..003 | `JasonAslParserAdapter`, `JasonAslImporter`, import result/diagnostics | `JasonAslParserAdapterTest`, `JasonAslImporterTest`, `AslImportReportTest` | technical design, ADR-0002..0008 |
 | FR-IMP-004..006 | `JasonAstToIrNormalizer`, `model/ir`, `BdiIndexBuilder` | `AgentModelTest`, `IrHierarchyTest`, golden and index tests | architecture, technical design |
 | FR-IMP-007..008 | `BdiImportService`, `BdiImportWorker`, `BdiSourceTracker`, `BdiExplorerView` | application/worker/tracker/explorer tests | architecture, developer guide |
@@ -34,7 +36,8 @@ documentation. It intentionally traces groups instead of every Java record.
 | FR-REP-006 | `CurrentAnalysisSnapshotService`, immutable aggregate | Auction, malformed, deterministic-time, state-safety, and Explorer parity tests | ADR-0024, architecture, technical design |
 | FR-REP-007 | `BdiQualityGateMain`, `HeadlessAnalysisService`, packaged smoke | Auction, `.jcm`, invalid/conflicting input, review-only, deterministic and process-exit tests | ADR-0025/0030, developer guide |
 | FR-TRC-001..003 | `trace` graph values, builder, query, and serializer | `AuctionTraceabilityGraphTest` complete-chain, gap, deduplication, certainty, and portability tests | ADR-0027, architecture, technical design |
-| FR-ENV-001..004 | `CArtAgOArtifactAdapter`, `model.environment`, environment validator/trace contributor | adapter, Auction baseline, three mutants, boundary, catalog, and package tests | ADR-0028, CArtAgO spike evidence |
+| FR-ENV-001..003 | `CArtAgOArtifactAdapter`, `model.environment`, environment validator/trace contributor | adapter, Auction baseline, three mutants, boundary, catalog, and package tests | ADR-0028, CArtAgO spike evidence |
+| FR-ENV-004 | no implementation claimed | static-only boundary and UNKNOWN tests prevent runtime claims | requirements, architecture, limitations, ADR-0028 |
 | FR-ENV-005..006 | `EnvironmentMappingDocument`, typed persisted records, strict codec/repository, staleness detector, validation service | round-trip/relocation, invalid-record, candidate/unknown, BDI regression, persisted Auction, stale-target, and catalog tests | ADR-0031, environment mapping persistence evidence |
 | FR-ORG-001..004 | `MoiseOrganizationParserAdapter`, `OrganizationModel`, `MasProjectImportService` | Auction normalization, missing/invalid/duplicate/unsupported, relocation, boundary, and package tests | ADR-0034, Moise organization evidence |
 | FR-ORG-005 | organization mapping records, `OrganizationConsistencyValidator`, `OrganizationRuleCatalog`, organization trace contributor | Auction baseline, role/mission/cardinality mutants, candidate/UNKNOWN, dedup/serialization, boundary tests | ADR-0035, organization consistency evidence, rule catalog |
